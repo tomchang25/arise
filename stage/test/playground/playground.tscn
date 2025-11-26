@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://bn13d02jyg5d7"]
+[gd_scene load_steps=6 format=3 uid="uid://bn13d02jyg5d7"]
 
 [ext_resource type="Texture2D" uid="uid://bylg7d5anp8c7" path="res://stage/test/playground/art/grass_background.png" id="1_avbqp"]
 [ext_resource type="PackedScene" uid="uid://dbhtrssgng58f" path="res://entity/player/player.tscn" id="2_54ftc"]
 [ext_resource type="PackedScene" uid="uid://dccho5kdagt0e" path="res://entity/environment/bush/bush.tscn" id="3_eeu4c"]
 [ext_resource type="PackedScene" uid="uid://csanq2hkw7h68" path="res://entity/enemy/enemy.tscn" id="4_54ftc"]
+[ext_resource type="PackedScene" uid="uid://dybnb2lmsq7s0" path="res://entity/army/ninja_green/ninja_geen.tscn" id="4_eeu4c"]
 
 [node name="Playground" type="Node2D"]
 y_sort_enabled = true
@@ -37,6 +38,11 @@ position = Vector2(93, 80)
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
 
+[node name="Army" type="Node2D" parent="Player"]
+
+[node name="NinjaGeen" parent="Player/Army" instance=ExtResource("4_eeu4c")]
+position = Vector2(17, -13)
+
 [node name="EnemyHandler" type="Node2D" parent="."]
 position = Vector2(93, 80)
 
@@ -44,7 +50,7 @@ position = Vector2(93, 80)
 position = Vector2(37, 41)
 
 [node name="Enemy2" parent="EnemyHandler" instance=ExtResource("4_54ftc")]
-position = Vector2(65, 30)
+position = Vector2(-92, -6)
 
 [node name="Enemy3" parent="EnemyHandler" instance=ExtResource("4_54ftc")]
 position = Vector2(56, 52)

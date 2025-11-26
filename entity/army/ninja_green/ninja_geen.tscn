@@ -1,0 +1,41 @@
+[gd_scene load_steps=7 format=3 uid="uid://dybnb2lmsq7s0"]
+
+[ext_resource type="Script" uid="uid://be5rffb7rwigg" path="res://entity/army/ninja_green/ninja_geen.gd" id="1_eropg"]
+[ext_resource type="Texture2D" uid="uid://dcefsfe6uvtoj" path="res://entity/army/ninja_green/art/SpriteSheet.png" id="2_tn28i"]
+[ext_resource type="PackedScene" uid="uid://do052sqt3wjdp" path="res://common/detectbox/detectbox.tscn" id="3_lqaih"]
+[ext_resource type="Script" uid="uid://ekkn4dbt30hh" path="res://common/projectile_attack/projectile_attack.gd" id="7_i87wb"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ocq7q"]
+radius = 1.0
+height = 6.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_b15sj"]
+radius = 100.0
+
+[node name="NinjaGeen" type="CharacterBody2D"]
+collision_layer = 256
+collision_mask = 4
+script = ExtResource("1_eropg")
+
+[node name="Skin" type="Sprite2D" parent="."]
+position = Vector2(0, -7)
+texture = ExtResource("2_tn28i")
+hframes = 4
+vframes = 7
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_ocq7q")
+
+[node name="AutoAttackDetectbox" parent="." instance=ExtResource("3_lqaih")]
+position = Vector2(0, -5)
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AutoAttackDetectbox"]
+shape = SubResource("CircleShape2D_b15sj")
+debug_color = Color(0.631373, 0.862745, 0.301961, 0.235294)
+
+[node name="ProjectileAttack" type="Node2D" parent="."]
+position = Vector2(0, -5)
+script = ExtResource("7_i87wb")

@@ -1,13 +1,9 @@
-class_name Player
+class_name NinjaGreen
 extends CharacterBody2D
 
-@onready var movement: PlayerMovement = $PlayerMovement
-@onready var animation: PlayerAnimation = $PlayerAnimation
-
-@onready var melee_attack: MeleeAttack = $MeleeAttack
+@onready var attack_handler: ProjectileAttack = $ProjectileAttack
 @onready var auto_attack_detectbox: Detectbox = $AutoAttackDetectbox
 
-@onready var state_machine := $PlayerStateMachine
 
 var nearest_enemy: Enemy = null
 
@@ -15,8 +11,6 @@ var nearest_enemy: Enemy = null
 func _ready() -> void:
     auto_attack_detectbox.detected.connect(_on_enemies_detected)
     auto_attack_detectbox.last_node_left.connect(_on_last_enemy_left)
-
-    animation.animation_finished.connect(_on_animation_finished)
 
 
 func _on_enemies_detected(nodes_in_range: Array) -> void:
@@ -33,13 +27,3 @@ func _on_enemies_detected(nodes_in_range: Array) -> void:
 
 func _on_last_enemy_left() -> void:
     nearest_enemy = null
-
-
-func _on_animation_finished(anim_name: String) -> void:
-    if animation.ANIMATION_STATE_ATTACK in anim_name:
-        melee_attack.end_attack()
-
-
-func attack(target_position: Vector2) -> void:
-    melee_attack.aim_at(target_position)
-    melee_attack.start_attack()

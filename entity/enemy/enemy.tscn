@@ -61,17 +61,18 @@ script = ExtResource("1_pmu85")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_506ku")
-frame_progress = 0.281959
-offset = Vector2(0, -6)
+autoplay = "default"
+frame_progress = 0.642043
+offset = Vector2(0, -4)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 rotation = 1.5708
 shape = SubResource("CapsuleShape2D_lvn57")
 
 [node name="Hitbox" parent="." instance=ExtResource("1_8vdsg")]
+position = Vector2(0, -2)
 collision_layer = 2
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
-position = Vector2(0, -5)
 shape = SubResource("CircleShape2D_pmu85")

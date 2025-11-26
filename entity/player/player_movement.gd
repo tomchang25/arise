@@ -53,6 +53,10 @@ func stop():
     current_direction = Vector2.ZERO
 
 
+func set_direction(direction: Vector2) -> void:
+    current_direction = direction
+
+
 func update_direction() -> void:
     current_direction = self.get_input_direction()
 
