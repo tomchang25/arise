@@ -1,0 +1,44 @@
+[gd_scene load_steps=8 format=3 uid="uid://dagjfgo7sjdn0"]
+
+[ext_resource type="Texture2D" uid="uid://cseyv5xmli7oe" path="res://entity/projectile/arrow/Arrow.png" id="1_bl6tl"]
+[ext_resource type="PackedScene" uid="uid://qajmxbs2ech3" path="res://common/hurtbox/hurtbox.tscn" id="1_ssoyc"]
+[ext_resource type="Script" uid="uid://b6d8hqjqgc8l6" path="res://entity/projectile/projectile.gd" id="1_tclps"]
+[ext_resource type="Script" uid="uid://3lp7jvr6ovc2" path="res://common/attack/attack_data.gd" id="4_p1x50"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_bl6tl"]
+radius = 2.0
+height = 20.0
+
+[sub_resource type="Resource" id="Resource_u57so"]
+script = ExtResource("4_p1x50")
+base_damage = 1.0
+knockback_force = 50.0
+element_type = "Normal"
+metadata/_custom_type_script = "uid://3lp7jvr6ovc2"
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_bl6tl"]
+radius = 3.0
+
+[node name="Arrow" type="CharacterBody2D"]
+collision_layer = 0
+collision_mask = 4
+motion_mode = 1
+script = ExtResource("1_tclps")
+speed = 500.0
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+rotation = 0.785398
+texture = ExtResource("1_bl6tl")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(1, 0)
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_bl6tl")
+
+[node name="Hurtbox" parent="." instance=ExtResource("1_ssoyc")]
+position = Vector2(8, 0)
+attack_data = SubResource("Resource_u57so")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+shape = SubResource("CircleShape2D_bl6tl")
+debug_color = Color(0.92549, 0.6, 0.701961, 0.235294)

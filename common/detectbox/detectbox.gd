@@ -50,7 +50,8 @@ func _on_scan_timer_timeout() -> void:
             entities_in_range.remove_at(i)
             removed_count += 1
 
-    detected.emit(entities_in_range)
+    if not entities_in_range.is_empty():
+        detected.emit(entities_in_range)
 
     # Check if the array became empty due to invalid instances
     if removed_count > 0 and entities_in_range.is_empty():

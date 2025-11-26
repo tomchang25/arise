@@ -1,7 +1,7 @@
 class_name ProjectileAttack
 extends Node2D
 
-@export var bullet_scene: PackedScene
+@export var projectile_scene: PackedScene
 
 @export var attack_cooldown: float = 0.5
 @export var max_targets: int = 1
@@ -21,13 +21,7 @@ func _ready():
     add_child(cooldown_timer)
 
 
-func aim_at(global: Vector2):
-    var direction_vector: Vector2 = (self.global_position - global).normalized()
-    var angle: float = direction_vector.angle()
-    self.global_rotation = angle
-
-
-func start_attack():
+func attack(target_position: Vector2):
     if locked:
         return
 
@@ -35,20 +29,19 @@ func start_attack():
 
     locked = true
 
+    var spawned_projectile: Projectile = projectile_scene.instantiate()
+    get_tree().root.add_child(spawned_projectile)
 
-func end_attack():
+    spawned_projectile.global_position = global_position
+
+    var aim_direction := target_position - global_position
+    spawned_projectile.rotation = aim_direction.angle()
+
     cooldown_timer.start()
 
 
 func can_attack() -> bool:
     return not locked
-
-
-# func _on_enemy_hit():
-#     targets_hit_count += 1
-
-#     if targets_hit_count >= max_targets:
-#         hurtbox.enabled = false
 
 
 func _on_cooldown_timer_timeout():
