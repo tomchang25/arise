@@ -1,10 +1,11 @@
-class_name MeleeAttack
+class_name ProjectileAttack
 extends Node2D
+
+@export var bullet_scene: PackedScene
 
 @export var attack_cooldown: float = 0.5
 @export var max_targets: int = 1
 
-var hurtbox: Hurtbox
 var cooldown_timer: Timer
 
 var locked := false
@@ -12,17 +13,6 @@ var targets_hit_count: int = 0
 
 
 func _ready():
-    for child in get_children():
-        if child is Hurtbox:
-            hurtbox = child
-            continue
-
-    if hurtbox == null:
-        push_error("MeleeAttack must have a Hurtbox child")
-        return
-
-    hurtbox.hit_enemy.connect(_on_enemy_hit)
-
     cooldown_timer = Timer.new()
     cooldown_timer.wait_time = attack_cooldown
     cooldown_timer.one_shot = true
@@ -44,11 +34,9 @@ func start_attack():
     targets_hit_count = 0
 
     locked = true
-    hurtbox.enabled = true
 
 
 func end_attack():
-    hurtbox.enabled = false
     cooldown_timer.start()
 
 
@@ -56,11 +44,11 @@ func can_attack() -> bool:
     return not locked
 
 
-func _on_enemy_hit():
-    targets_hit_count += 1
+# func _on_enemy_hit():
+#     targets_hit_count += 1
 
-    if targets_hit_count >= max_targets:
-        hurtbox.enabled = false
+#     if targets_hit_count >= max_targets:
+#         hurtbox.enabled = false
 
 
 func _on_cooldown_timer_timeout():

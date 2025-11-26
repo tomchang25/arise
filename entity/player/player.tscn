@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=3 uid="uid://dbhtrssgng58f"]
+[gd_scene load_steps=39 format=3 uid="uid://dbhtrssgng58f"]
 
 [ext_resource type="Script" uid="uid://bwkkatjpy72kv" path="res://entity/player/player.gd" id="1_e6ar1"]
 [ext_resource type="Texture2D" uid="uid://e7rr31b6fwkg" path="res://entity/player/art/player.png" id="2_e6ar1"]
@@ -12,6 +12,7 @@
 [ext_resource type="Script" uid="uid://csbiyk7lqxll7" path="res://entity/player/state_manager/player_state_machine.gd" id="5_482rp"]
 [ext_resource type="Script" uid="uid://b6r7vut6vta3w" path="res://entity/player/state_manager/state/player_idle_state.gd" id="6_2iqu4"]
 [ext_resource type="Script" uid="uid://cj27uflq53tq3" path="res://entity/player/state_manager/state/player_walk_state.gd" id="7_4btn6"]
+[ext_resource type="Script" uid="uid://ekkn4dbt30hh" path="res://common/projectile_attack/projectile_attack.gd" id="7_b15sj"]
 [ext_resource type="Script" uid="uid://xnbyyjcryjnf" path="res://entity/player/state_manager/state/player_run_state.gd" id="8_4btn6"]
 [ext_resource type="Script" uid="uid://jtqne3plv0gg" path="res://entity/player/state_manager/state/player_roll_state.gd" id="9_t2ln0"]
 [ext_resource type="Script" uid="uid://chearh86c82uf" path="res://entity/player/state_manager/state/player_attack_state.gd" id="11_klmji"]
@@ -382,6 +383,10 @@ attack_data = SubResource("Resource_ivlxb")
 position = Vector2(-15, 0)
 shape = SubResource("CapsuleShape2D_klmji")
 debug_color = Color(0.901961, 0.243137, 0.501961, 0.235294)
+
+[node name="ProjectileAttack" type="Node2D" parent="."]
+position = Vector2(-2, -5)
+script = ExtResource("7_b15sj")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
