@@ -1,0 +1,8 @@
+**/.godot
+**/shader_cache
+**/asset
+
+**/*.uid
+**/*.tmp
+**/*.import
+

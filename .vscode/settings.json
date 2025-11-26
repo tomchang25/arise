@@ -1,0 +1,27 @@
+{
+    "godotTools.editorPath.godot4": "e:\\Application\\godot\\Godot_v4.4.1-stable_win64\\Godot_v4.4.1-stable_win64.exe",
+    "files.exclude": {
+        "**/*.uid": true,
+        "**/*.tmp": true,
+        "**/*.tscn": true,
+        "**/*.import": true,
+        "**/.godot": true,
+        "**/shader_cache": true
+    },
+    // "tree-generator.exclude": {
+    //     "**/*.*": true,
+    // },
+    "godotTools.lsp.serverPort": 6005,
+    "editor.formatOnType": true,
+    "editor.formatOnSave": true,
+    "[gdscript]": {
+        "editor.defaultFormatter": "EddieDover.gdscript-formatter-linter",
+        "editor.formatOnSave": true,
+        "editor.formatOnType": true,
+        "editor.formatOnPaste": false, //Black didn;t support format selection
+        "editor.insertSpaces": true,
+        "editor.detectIndentation": true,
+        "editor.tabSize": 4
+    },
+    "files.autoSave": "onFocusChange",
+}

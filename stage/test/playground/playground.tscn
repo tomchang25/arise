@@ -1,0 +1,59 @@
+[gd_scene load_steps=5 format=3 uid="uid://bn13d02jyg5d7"]
+
+[ext_resource type="Texture2D" uid="uid://bylg7d5anp8c7" path="res://stage/test/playground/art/grass_background.png" id="1_avbqp"]
+[ext_resource type="PackedScene" uid="uid://dbhtrssgng58f" path="res://entity/player/player.tscn" id="2_54ftc"]
+[ext_resource type="PackedScene" uid="uid://dccho5kdagt0e" path="res://entity/environment/bush/bush.tscn" id="3_eeu4c"]
+[ext_resource type="PackedScene" uid="uid://csanq2hkw7h68" path="res://entity/enemy/enemy.tscn" id="4_54ftc"]
+
+[node name="Playground" type="Node2D"]
+y_sort_enabled = true
+
+[node name="Background" type="TextureRect" parent="."]
+offset_left = -210.0
+offset_top = -75.0
+offset_right = 627.0
+offset_bottom = 408.0
+texture = ExtResource("1_avbqp")
+stretch_mode = 1
+metadata/_edit_lock_ = true
+
+[node name="Environment" type="Node2D" parent="."]
+metadata/_edit_lock_ = true
+metadata/_edit_group_ = true
+
+[node name="BushGroup" type="Node2D" parent="Environment"]
+
+[node name="Bush" parent="Environment/BushGroup" instance=ExtResource("3_eeu4c")]
+position = Vector2(70, 42)
+
+[node name="Bush2" parent="Environment/BushGroup" instance=ExtResource("3_eeu4c")]
+position = Vector2(68, 126)
+
+[node name="Bush3" parent="Environment/BushGroup" instance=ExtResource("3_eeu4c")]
+position = Vector2(153, 86)
+
+[node name="Player" parent="." instance=ExtResource("2_54ftc")]
+position = Vector2(93, 80)
+
+[node name="Camera2D" type="Camera2D" parent="Player"]
+
+[node name="EnemyHandler" type="Node2D" parent="."]
+position = Vector2(93, 80)
+
+[node name="Enemy" parent="EnemyHandler" instance=ExtResource("4_54ftc")]
+position = Vector2(37, 41)
+
+[node name="Enemy2" parent="EnemyHandler" instance=ExtResource("4_54ftc")]
+position = Vector2(65, 30)
+
+[node name="Enemy3" parent="EnemyHandler" instance=ExtResource("4_54ftc")]
+position = Vector2(56, 52)
+
+[node name="Enemy4" parent="EnemyHandler" instance=ExtResource("4_54ftc")]
+position = Vector2(38, 54)
+
+[node name="Enemy5" parent="EnemyHandler" instance=ExtResource("4_54ftc")]
+position = Vector2(-28, 71)
+
+[node name="Enemy6" parent="EnemyHandler" instance=ExtResource("4_54ftc")]
+position = Vector2(-16, 76)

@@ -1,0 +1,77 @@
+[gd_scene load_steps=12 format=3 uid="uid://csanq2hkw7h68"]
+
+[ext_resource type="PackedScene" uid="uid://bphvl1tkicrfo" path="res://common/hitbox/hitbox.tscn" id="1_8vdsg"]
+[ext_resource type="Texture2D" uid="uid://dhjwl04036bsq" path="res://entity/enemy/art/bat.png" id="1_lvn57"]
+[ext_resource type="Script" uid="uid://bmdh4vf3luco6" path="res://entity/enemy/enemy.gd" id="1_pmu85"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pmu85"]
+atlas = ExtResource("1_lvn57")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0p2mk"]
+atlas = ExtResource("1_lvn57")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7mx5f"]
+atlas = ExtResource("1_lvn57")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gevl6"]
+atlas = ExtResource("1_lvn57")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xxpe2"]
+atlas = ExtResource("1_lvn57")
+region = Rect2(64, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_506ku"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pmu85")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0p2mk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7mx5f")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gevl6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xxpe2")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_lvn57"]
+radius = 1.0
+height = 4.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_pmu85"]
+radius = 5.0
+
+[node name="Enemy" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 2
+script = ExtResource("1_pmu85")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_506ku")
+frame_progress = 0.281959
+offset = Vector2(0, -6)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_lvn57")
+
+[node name="Hitbox" parent="." instance=ExtResource("1_8vdsg")]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+position = Vector2(0, -5)
+shape = SubResource("CircleShape2D_pmu85")

@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://do052sqt3wjdp"]
+
+[ext_resource type="Script" uid="uid://d3c7jiqm6ov40" path="res://common/detectbox/detectbox.gd" id="1_nyt5h"]
+
+[node name="Detectbox" type="Area2D"]
+monitorable = false
+script = ExtResource("1_nyt5h")
