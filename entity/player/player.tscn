@@ -344,7 +344,7 @@ _data = {
 &"RollUp": SubResource("Animation_ivlxb")
 }
 
-[node name="Player" type="CharacterBody2D"]
+[node name="Player" type="CharacterBody2D" groups=["player"]]
 collision_mask = 4
 script = ExtResource("1_e6ar1")
 

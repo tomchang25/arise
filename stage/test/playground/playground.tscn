@@ -1,10 +1,15 @@
-[gd_scene load_steps=6 format=3 uid="uid://bn13d02jyg5d7"]
+[gd_scene load_steps=7 format=3 uid="uid://bn13d02jyg5d7"]
 
 [ext_resource type="Texture2D" uid="uid://bylg7d5anp8c7" path="res://stage/test/playground/art/grass_background.png" id="1_avbqp"]
 [ext_resource type="PackedScene" uid="uid://dbhtrssgng58f" path="res://entity/player/player.tscn" id="2_54ftc"]
 [ext_resource type="PackedScene" uid="uid://dccho5kdagt0e" path="res://entity/environment/bush/bush.tscn" id="3_eeu4c"]
 [ext_resource type="PackedScene" uid="uid://csanq2hkw7h68" path="res://entity/enemy/enemy.tscn" id="4_54ftc"]
 [ext_resource type="PackedScene" uid="uid://dybnb2lmsq7s0" path="res://entity/army/ninja_green/ninja_geen.tscn" id="4_eeu4c"]
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_eeu4c"]
+vertices = PackedVector2Array(551.922, 291.023, -96.9063, 292.961, -94.0938, -30, 582.992, -30)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-104, -40, 594, -40, 561, 301, -107, 303)])
 
 [node name="Playground" type="Node2D"]
 y_sort_enabled = true
@@ -33,15 +38,25 @@ position = Vector2(68, 126)
 [node name="Bush3" parent="Environment/BushGroup" instance=ExtResource("3_eeu4c")]
 position = Vector2(153, 86)
 
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+navigation_polygon = SubResource("NavigationPolygon_eeu4c")
+
+[node name="NinjaGeen" parent="NavigationRegion2D" instance=ExtResource("4_eeu4c")]
+position = Vector2(110, 67)
+
+[node name="NinjaGeen2" parent="NavigationRegion2D" instance=ExtResource("4_eeu4c")]
+position = Vector2(110, 67)
+
+[node name="NinjaGeen3" parent="NavigationRegion2D" instance=ExtResource("4_eeu4c")]
+position = Vector2(110, 67)
+
+[node name="NinjaGeen4" parent="NavigationRegion2D" instance=ExtResource("4_eeu4c")]
+position = Vector2(110, 67)
+
 [node name="Player" parent="." instance=ExtResource("2_54ftc")]
 position = Vector2(93, 80)
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
-
-[node name="Army" type="Node2D" parent="Player"]
-
-[node name="NinjaGeen" parent="Player/Army" instance=ExtResource("4_eeu4c")]
-position = Vector2(17, -13)
 
 [node name="EnemyHandler" type="Node2D" parent="."]
 position = Vector2(93, 80)

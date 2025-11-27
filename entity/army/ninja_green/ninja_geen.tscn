@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://dcefsfe6uvtoj" path="res://entity/army/ninja_green/art/SpriteSheet.png" id="2_tn28i"]
 [ext_resource type="PackedScene" uid="uid://do052sqt3wjdp" path="res://common/component/detectbox/detectbox.tscn" id="3_lqaih"]
 [ext_resource type="PackedScene" uid="uid://dagjfgo7sjdn0" path="res://entity/projectile/arrow/arrow.tscn" id="5_bahv0"]
-[ext_resource type="Script" uid="uid://dt8ub3dur51rx" path="res://entity/army/army_movement.gd" id="6_e4gwk"]
+[ext_resource type="Script" uid="uid://bm7yfviy11fh4" path="res://entity/army/follow_player.gd" id="6_e4gwk"]
 [ext_resource type="Script" uid="uid://ekkn4dbt30hh" path="res://common/component/projectile_attack/projectile_attack.gd" id="7_i87wb"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ocq7q"]
@@ -29,6 +29,11 @@ vframes = 7
 rotation = 1.5708
 shape = SubResource("CapsuleShape2D_ocq7q")
 
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+avoidance_enabled = true
+debug_use_custom = true
+debug_path_custom_color = Color(1, 0, 1, 1)
+
 [node name="AutoAttackDetectbox" parent="." instance=ExtResource("3_lqaih")]
 position = Vector2(0, -5)
 collision_layer = 0
@@ -43,5 +48,7 @@ position = Vector2(0, -5)
 script = ExtResource("7_i87wb")
 projectile_scene = ExtResource("5_bahv0")
 
-[node name="ArmyMovement" type="Node" parent="."]
+[node name="FollowPlayer" type="Node" parent="." node_paths=PackedStringArray("who", "navigation_agent")]
 script = ExtResource("6_e4gwk")
+who = NodePath("..")
+navigation_agent = NodePath("../NavigationAgent2D")
