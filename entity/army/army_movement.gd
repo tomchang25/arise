@@ -1,12 +1,9 @@
-# PlayerMovement.gd (Component)
-class_name PlayerMovement
+class_name ArmyMovement
 extends Node
 
 # Export properties for speed, controlled by the Movement Component
 @export var idle_speed: float = 0.0
 @export var walk_speed: float = 75.0
-@export var run_speed: float = 125.0
-@export var roll_speed: float = 150.0
 
 @onready var player: CharacterBody2D = get_owner()
 
@@ -77,17 +74,7 @@ func set_idle_speed() -> void:
 func set_walk_speed() -> void:
     _apply_speed(walk_speed)
 
-
-func set_run_speed() -> void:
-    _apply_speed(run_speed)
-
-
-func set_roll_speed() -> void:
-    _apply_speed(roll_speed)
-
-
 ## --- Private Helpers ---
-
 
 func _apply_speed(speed: float) -> void:
     current_target_speed = speed

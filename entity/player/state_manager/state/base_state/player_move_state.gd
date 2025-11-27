@@ -35,7 +35,7 @@ func update(delta: float) -> void:
     #     self.change_state(PlayerState.PlayerStateId.ATTACK)
     #     return
 
-    player.movement.update_direction()
+    player.movement.set_direction_to_input()
     if player.movement.get_input_direction().length() > 0:
         player.animation.set_animation_direction(player.movement.get_input_direction())
 

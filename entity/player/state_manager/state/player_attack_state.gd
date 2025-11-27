@@ -36,7 +36,7 @@ func _exit() -> void:
 func _update(_delta: float) -> void:
     player.melee_attack.aim_at(target_position)
     player.animation.set_animation_direction(player.melee_attack.global_position.direction_to(target_position))
-    player.movement.update_direction()
+    player.movement.set_direction_to_input()
 
 
 func _on_animation_finished(anim_name: StringName) -> void:

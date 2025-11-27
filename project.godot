@@ -15,6 +15,10 @@ run/main_scene="uid://bn13d02jyg5d7"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
 
+[autoload]
+
+AudioManager="*res://global/autoload/audio_manager/audio_manager.tscn"
+
 [display]
 
 window/size/viewport_width=320
@@ -36,6 +40,10 @@ folder_colors={
 "res://stage/": "purple",
 "res://ui/": "pink"
 }
+
+[gui]
+
+theme/custom="uid://m8fg7e20e3g"
 
 [input]
 
@@ -81,6 +89,7 @@ attack={
 2d_physics/layer_2="Enemy"
 2d_physics/layer_3="Environment"
 2d_physics/layer_9="Army"
+2d_physics/layer_26="Wall"
 
 [rendering]
 

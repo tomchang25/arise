@@ -1,10 +1,11 @@
-[gd_scene load_steps=8 format=3 uid="uid://dybnb2lmsq7s0"]
+[gd_scene load_steps=9 format=3 uid="uid://dybnb2lmsq7s0"]
 
 [ext_resource type="Script" uid="uid://be5rffb7rwigg" path="res://entity/army/ninja_green/ninja_geen.gd" id="1_eropg"]
 [ext_resource type="Texture2D" uid="uid://dcefsfe6uvtoj" path="res://entity/army/ninja_green/art/SpriteSheet.png" id="2_tn28i"]
-[ext_resource type="PackedScene" uid="uid://do052sqt3wjdp" path="res://common/detectbox/detectbox.tscn" id="3_lqaih"]
+[ext_resource type="PackedScene" uid="uid://do052sqt3wjdp" path="res://common/component/detectbox/detectbox.tscn" id="3_lqaih"]
 [ext_resource type="PackedScene" uid="uid://dagjfgo7sjdn0" path="res://entity/projectile/arrow/arrow.tscn" id="5_bahv0"]
-[ext_resource type="Script" uid="uid://ekkn4dbt30hh" path="res://common/projectile_attack/projectile_attack.gd" id="7_i87wb"]
+[ext_resource type="Script" uid="uid://dt8ub3dur51rx" path="res://entity/army/army_movement.gd" id="6_e4gwk"]
+[ext_resource type="Script" uid="uid://ekkn4dbt30hh" path="res://common/component/projectile_attack/projectile_attack.gd" id="7_i87wb"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ocq7q"]
 radius = 1.0
@@ -41,3 +42,6 @@ debug_color = Color(0.631373, 0.862745, 0.301961, 0.235294)
 position = Vector2(0, -5)
 script = ExtResource("7_i87wb")
 projectile_scene = ExtResource("5_bahv0")
+
+[node name="ArmyMovement" type="Node" parent="."]
+script = ExtResource("6_e4gwk")

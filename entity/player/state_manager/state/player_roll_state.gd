@@ -7,7 +7,7 @@ func _init() -> void:
 
 func _enter() -> void:
     player.movement.set_roll_speed()
-    player.movement.update_direction()
+    player.movement.set_direction_to_input()
 
     player.animation.travel_to_state(player.animation.ANIMATION_STATE_ROLL)
     player.animation.set_animation_direction(player.movement.get_input_direction())

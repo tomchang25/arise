@@ -24,7 +24,7 @@ func _on_enemies_detected(nodes_in_range: Array) -> void:
             nearest_enemy = enemy
 
     if attack_handler.can_attack():
-        attack_handler.attack(nearest_enemy.global_position)
+        attack_handler.attack(nearest_enemy.hitbox.global_position)
 
 
 func _on_last_enemy_left() -> void:

@@ -1,38 +1,40 @@
-[gd_scene load_steps=12 format=3 uid="uid://csanq2hkw7h68"]
+[gd_scene load_steps=16 format=3 uid="uid://csanq2hkw7h68"]
 
-[ext_resource type="PackedScene" uid="uid://bphvl1tkicrfo" path="res://common/hitbox/hitbox.tscn" id="1_8vdsg"]
+[ext_resource type="PackedScene" uid="uid://bphvl1tkicrfo" path="res://common/component/hitbox/hitbox.tscn" id="1_8vdsg"]
 [ext_resource type="Texture2D" uid="uid://dhjwl04036bsq" path="res://entity/enemy/art/bat.png" id="1_lvn57"]
 [ext_resource type="Script" uid="uid://bmdh4vf3luco6" path="res://entity/enemy/enemy.gd" id="1_pmu85"]
+[ext_resource type="Shader" uid="uid://c4tcr87bgvjy" path="res://common/shader/dynamic_color_overlay.gdshader" id="2_7mx5f"]
+[ext_resource type="Script" uid="uid://bu6qty8wweb6r" path="res://common/component/health/health.gd" id="4_0p2mk"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_pmu85"]
-atlas = ExtResource("1_lvn57")
-region = Rect2(0, 0, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_0p2mk"]
-atlas = ExtResource("1_lvn57")
-region = Rect2(16, 0, 16, 16)
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7mx5f"]
+resource_local_to_scene = true
+shader = ExtResource("2_7mx5f")
+shader_parameter/overlay_amount = 0.0
+shader_parameter/overlay_color = Color(1, 0, 0, 1)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7mx5f"]
 atlas = ExtResource("1_lvn57")
-region = Rect2(32, 0, 16, 16)
+region = Rect2(0, 0, 16, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_gevl6"]
 atlas = ExtResource("1_lvn57")
-region = Rect2(48, 0, 16, 16)
+region = Rect2(16, 0, 16, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_xxpe2"]
 atlas = ExtResource("1_lvn57")
-region = Rect2(64, 0, 16, 16)
+region = Rect2(32, 0, 16, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_506ku"]
+atlas = ExtResource("1_lvn57")
+region = Rect2(48, 0, 16, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0tnqs"]
+atlas = ExtResource("1_lvn57")
+region = Rect2(64, 0, 16, 24)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_506ku"]
 animations = [{
 "frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_pmu85")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_0p2mk")
-}, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_7mx5f")
 }, {
@@ -41,6 +43,12 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_xxpe2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_506ku")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0tnqs")
 }],
 "loop": true,
 "name": &"default",
@@ -48,11 +56,14 @@ animations = [{
 }]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_lvn57"]
-radius = 1.0
-height = 4.0
+radius = 2.0
+height = 8.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_pmu85"]
 radius = 5.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_0p2mk"]
+font_size = 4
 
 [node name="Enemy" type="CharacterBody2D"]
 collision_layer = 2
@@ -60,19 +71,35 @@ collision_mask = 2
 script = ExtResource("1_pmu85")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+material = SubResource("ShaderMaterial_7mx5f")
 sprite_frames = SubResource("SpriteFrames_506ku")
 autoplay = "default"
-frame_progress = 0.642043
-offset = Vector2(0, -4)
+frame_progress = 0.627763
+offset = Vector2(0, -12)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 rotation = 1.5708
 shape = SubResource("CapsuleShape2D_lvn57")
 
 [node name="Hitbox" parent="." instance=ExtResource("1_8vdsg")]
-position = Vector2(0, -2)
+position = Vector2(0, -15)
 collision_layer = 2
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
 shape = SubResource("CircleShape2D_pmu85")
+
+[node name="HealthLabel" type="Label" parent="."]
+anchors_preset = -1
+anchor_bottom = 6.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "HP: 666"
+label_settings = SubResource("LabelSettings_0p2mk")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Health" type="Node" parent="." node_paths=PackedStringArray("hitbox")]
+script = ExtResource("4_0p2mk")
+hitbox = NodePath("../Hitbox")

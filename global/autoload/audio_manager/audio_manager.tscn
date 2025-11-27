@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://bs2i6wc2kwcqd"]
+
+[ext_resource type="PackedScene" uid="uid://cmmq4ucu4lr37" path="res://global/autoload/audio_manager/music_handler.tscn" id="1_o0c8y"]
+[ext_resource type="PackedScene" uid="uid://cd3bula8paxcv" path="res://global/autoload/audio_manager/sound_handler.tscn" id="2_1sgjh"]
+
+[node name="AudioManager" type="Node"]
+
+[node name="MusicHandler" parent="." instance=ExtResource("1_o0c8y")]
+
+[node name="SoundHandler" parent="." instance=ExtResource("2_1sgjh")]
