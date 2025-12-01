@@ -1,15 +1,29 @@
 class_name FollowPlayer
 extends Node
 
+@export var enabled := true
 @export var who: CharacterBody2D
 
-@export var move_speed: float = 200.0
+@export var move_speed: float = 100.0
 @export var follow_distance: float = 50.0  # Ideal distance to player
-@export var separation_weight: float = 1.0  # For flocking/separation behavior
 
 @export var navigation_agent: NavigationAgent2D
 
+@export var target_update_interval: float = 3.0
+
 var target_position: Vector2  # Where the army member is trying to go
+
+var target_update_timer: float = 0
+
+var movement_vector: Vector2
+
+# The array of all other army members (CharacterBody2D nodes)
+var _army_group: Array[CharacterBody2D] = []:
+    set = set_group
+
+
+func set_group(group: Array):
+    _army_group = group.filter(func(member): return member != who)  # Exclude self
 
 
 # Called when the node enters the scene tree for the first time.
@@ -26,23 +40,35 @@ func set_target(new_target_pos: Vector2):
     target_position = new_target_pos
     navigation_agent.target_position = target_position
 
-func _physics_process(_delta):
-    # 1. Pathfinding (Runs only when the target changes or the current path is invalidated)
-    if navigation_agent.is_navigation_finished():
-        # You can add logic here if you want to constantly update the target even if it hasn't moved far
+    # Reset the target update timer
+    target_update_timer = 0
+
+
+func _physics_process(delta):
+    if not enabled:
         return
 
-    # 2. Get the next point on the path
+    # 1. Pathfinding (Runs only when the target changes or the current path is invalidated)
+    if navigation_agent.is_navigation_finished():
+        movement_vector = Vector2.ZERO
+        return
+
+    # 2. Calculate the Desired Velocity from the Navigation Agent (Target Force)
     var next_point = navigation_agent.get_next_path_position()
+    var target_force = (next_point - who.global_position).normalized() * move_speed
+    target_force = target_force.limit_length(move_speed)
 
-    # 3. Calculate steering velocity towards the next point
-    var desired_velocity = (next_point - who.global_position).normalized() * move_speed
+    if navigation_agent.avoidance_enabled:
+        navigation_agent.set_velocity(target_force)
+    else:
+        movement_vector = target_force
 
-    # 4. Give this velocity to the NavigationAgent for smooth steering and obstacle avoidance
-    navigation_agent.set_velocity(desired_velocity)
+    target_update_timer += delta
 
 
 # This function is called by the NavigationAgent with the calculated steering velocity
-func _on_velocity_computed(safe_velocity: Vector2):    
-    who.velocity = safe_velocity
-    who.move_and_slide()
+func _on_velocity_computed(safe_velocity: Vector2):
+    if target_update_timer > target_update_interval:
+        movement_vector = Vector2.ZERO
+    else:
+        movement_vector = safe_velocity

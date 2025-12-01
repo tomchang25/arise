@@ -397,6 +397,12 @@ parameters/StateMachine/Move/blend_position = false
 parameters/StateMachine/Roll/blend_position = Vector2(-0.477082, -0.319328)
 parameters/TimeScale/scale = 1.0
 
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+avoidance_enabled = true
+radius = 20.0
+debug_use_custom = true
+debug_path_custom_color = Color(1, 0, 1, 1)
+
 [node name="PlayerMovement" type="Node" parent="."]
 script = ExtResource("3_4pl66")
 

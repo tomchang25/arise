@@ -5,11 +5,14 @@ extends CharacterBody2D
 @onready var auto_attack_detectbox: Detectbox = $AutoAttackDetectbox
 
 @onready var follow_player: FollowPlayer = $FollowPlayer
+@onready var soft_collision: SoftCollision = $SoftCollision
 
 var nearest_enemy: Enemy = null
 var player: Player
 
 var check_player_timer: float = 0
+
+var prev_player_position: Vector2
 
 
 func _ready() -> void:
@@ -23,7 +26,21 @@ func _physics_process(delta: float) -> void:
     check_player_timer += delta
     if check_player_timer > 0.05:
         check_player_timer = 0
-        follow_player.set_target(player.global_position)
+        if prev_player_position != player.global_position:
+            prev_player_position = player.global_position
+            follow_player.set_target(player.global_position)
+
+    var movement_vector: Vector2 = follow_player.movement_vector
+    var soft_push_velocity: Vector2 = soft_collision.soft_push_velocity
+
+    if movement_vector != Vector2.ZERO:
+        velocity = movement_vector
+    else:
+        velocity = soft_push_velocity
+
+    # print(movement_vector, " - ", soft_push_velocity, " - ", velocity)
+
+    move_and_slide()
 
 
 func _on_enemies_detected(nodes_in_range: Array) -> void:
