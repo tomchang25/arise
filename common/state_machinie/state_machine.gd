@@ -32,7 +32,7 @@ func _on_transition_requested(from: State, to: int) -> void:
         push_error("transition requested from ", from.name, " to ", states[to].name, " but current state is ", current_state.name)
         return
 
-    print("transitioning from ", from.name, " to ", states[to].name)
+    # print("transitioning from ", from.name, " to ", states[to].name)
 
     var new_state: State = states[to]
     if not new_state:

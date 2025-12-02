@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://dybnb2lmsq7s0"]
+[gd_scene load_steps=12 format=3 uid="uid://dybnb2lmsq7s0"]
 
 [ext_resource type="Script" uid="uid://be5rffb7rwigg" path="res://entity/army/ninja_green/ninja_geen.gd" id="1_eropg"]
 [ext_resource type="Texture2D" uid="uid://dcefsfe6uvtoj" path="res://entity/army/ninja_green/art/SpriteSheet.png" id="2_tn28i"]
@@ -9,14 +9,16 @@
 [ext_resource type="Script" uid="uid://ekkn4dbt30hh" path="res://common/component/projectile_attack/projectile_attack.gd" id="7_i87wb"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_m0xvt"]
-radius = 9.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ocq7q"]
 radius = 1.0
 height = 6.0
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_tn28i"]
+radius = 80.0
+
 [sub_resource type="CircleShape2D" id="CircleShape2D_b15sj"]
-radius = 100.0
+radius = 40.0
 
 [node name="NinjaGeen" type="CharacterBody2D"]
 collision_layer = 256
@@ -35,6 +37,9 @@ position = Vector2(0, -5)
 collision_layer = 512
 collision_mask = 512
 script = ExtResource("3_m0xvt")
+push_distance = 5.0
+soft_push_velocity_min = 20
+overlapping_max_count = 20
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="SoftCollision"]
 shape = SubResource("CircleShape2D_m0xvt")
@@ -43,14 +48,21 @@ debug_color = Color(0.776471, 0.431373, 0.2, 0.109804)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 rotation = 1.5708
 shape = SubResource("CapsuleShape2D_ocq7q")
+disabled = true
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 target_desired_distance = 50.0
 avoidance_enabled = true
 radius = 5.0
-debug_enabled = true
 debug_use_custom = true
 debug_path_custom_color = Color(1, 0, 1, 1)
+
+[node name="EnemyCheckDetectbox" parent="." instance=ExtResource("3_lqaih")]
+position = Vector2(0, -5)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyCheckDetectbox"]
+shape = SubResource("CircleShape2D_tn28i")
+debug_color = Color(0, 0.129412, 0.701961, 0.0784314)
 
 [node name="AutoAttackDetectbox" parent="." instance=ExtResource("3_lqaih")]
 position = Vector2(0, -5)
@@ -59,7 +71,7 @@ collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AutoAttackDetectbox"]
 shape = SubResource("CircleShape2D_b15sj")
-debug_color = Color(0.631373, 0.862745, 0.301961, 0.235294)
+debug_color = Color(0.631373, 0.862745, 0.301961, 0.0784314)
 
 [node name="ProjectileAttack" type="Node2D" parent="."]
 position = Vector2(0, -5)
@@ -70,3 +82,11 @@ projectile_scene = ExtResource("5_bahv0")
 script = ExtResource("6_e4gwk")
 who = NodePath("..")
 navigation_agent = NodePath("../NavigationAgent2D")
+
+[node name="ArmyStateMachine" type="Node" parent="."]
+
+[node name="Follow" type="Node" parent="ArmyStateMachine"]
+
+[node name="Chase" type="Node" parent="ArmyStateMachine"]
+
+[node name="Attack" type="Node" parent="ArmyStateMachine"]

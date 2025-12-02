@@ -1,10 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://bn13d02jyg5d7"]
+[gd_scene load_steps=8 format=3 uid="uid://bn13d02jyg5d7"]
 
 [ext_resource type="Texture2D" uid="uid://bylg7d5anp8c7" path="res://stage/test/playground/art/grass_background.png" id="1_avbqp"]
 [ext_resource type="PackedScene" uid="uid://dbhtrssgng58f" path="res://entity/player/player.tscn" id="2_54ftc"]
 [ext_resource type="PackedScene" uid="uid://dccho5kdagt0e" path="res://entity/environment/bush/bush.tscn" id="3_eeu4c"]
 [ext_resource type="PackedScene" uid="uid://csanq2hkw7h68" path="res://entity/enemy/enemy.tscn" id="4_54ftc"]
 [ext_resource type="PackedScene" uid="uid://dybnb2lmsq7s0" path="res://entity/army/ninja_green/ninja_geen.tscn" id="4_eeu4c"]
+[ext_resource type="PackedScene" uid="uid://12rdjr3aafmv" path="res://entity/spawner/arise_box/arise_box.tscn" id="6_fu4i5"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_eeu4c"]
 vertices = PackedVector2Array(628.047, -73.0234, 630.938, 406.117, -223.727, 416.859, -211.242, -74.9688)
@@ -23,69 +24,8 @@ texture = ExtResource("1_avbqp")
 stretch_mode = 1
 metadata/_edit_lock_ = true
 
-[node name="Armies" type="Node2D" parent="."]
-
-[node name="NinjaGeen" parent="Armies" instance=ExtResource("4_eeu4c")]
-position = Vector2(110, 67)
-
-[node name="NinjaGeen2" parent="Armies" instance=ExtResource("4_eeu4c")]
-position = Vector2(110, 67)
-
-[node name="NinjaGeen3" parent="Armies" instance=ExtResource("4_eeu4c")]
-position = Vector2(110, 67)
-
-[node name="NinjaGeen4" parent="Armies" instance=ExtResource("4_eeu4c")]
-position = Vector2(110, 67)
-
-[node name="NinjaGeen5" parent="Armies" instance=ExtResource("4_eeu4c")]
-position = Vector2(110, 67)
-
-[node name="NinjaGeen6" parent="Armies" instance=ExtResource("4_eeu4c")]
-position = Vector2(110, 67)
-
-[node name="NinjaGeen7" parent="Armies" instance=ExtResource("4_eeu4c")]
-position = Vector2(110, 67)
-
-[node name="NinjaGeen8" parent="Armies" instance=ExtResource("4_eeu4c")]
-position = Vector2(110, 67)
-
-[node name="NinjaGeen9" parent="Armies" instance=ExtResource("4_eeu4c")]
-position = Vector2(110, 67)
-
-[node name="NinjaGeen10" parent="Armies" instance=ExtResource("4_eeu4c")]
-position = Vector2(110, 67)
-
-[node name="NinjaGeen11" parent="Armies" instance=ExtResource("4_eeu4c")]
-position = Vector2(110, 67)
-
-[node name="NinjaGeen12" parent="Armies" instance=ExtResource("4_eeu4c")]
-position = Vector2(110, 67)
-
-[node name="NinjaGeen13" parent="Armies" instance=ExtResource("4_eeu4c")]
-position = Vector2(110, 67)
-
-[node name="NinjaGeen14" parent="Armies" instance=ExtResource("4_eeu4c")]
-position = Vector2(110, 67)
-
-[node name="NinjaGeen15" parent="Armies" instance=ExtResource("4_eeu4c")]
-position = Vector2(110, 67)
-
-[node name="NinjaGeen16" parent="Armies" instance=ExtResource("4_eeu4c")]
-position = Vector2(110, 67)
-
-[node name="NinjaGeen17" parent="Armies" instance=ExtResource("4_eeu4c")]
-position = Vector2(110, 67)
-
-[node name="NinjaGeen18" parent="Armies" instance=ExtResource("4_eeu4c")]
-position = Vector2(110, 67)
-
-[node name="NinjaGeen19" parent="Armies" instance=ExtResource("4_eeu4c")]
-position = Vector2(110, 67)
-
-[node name="NinjaGeen20" parent="Armies" instance=ExtResource("4_eeu4c")]
-position = Vector2(110, 67)
-
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+visible = false
 navigation_polygon = SubResource("NavigationPolygon_eeu4c")
 
 [node name="Environment" type="Node2D" parent="."]
@@ -109,6 +49,7 @@ position = Vector2(93, 80)
 [node name="Camera2D" type="Camera2D" parent="Player"]
 
 [node name="EnemyHandler" type="Node2D" parent="."]
+y_sort_enabled = true
 position = Vector2(93, 80)
 
 [node name="Enemy" parent="EnemyHandler" instance=ExtResource("4_54ftc")]
@@ -128,3 +69,29 @@ position = Vector2(-28, 71)
 
 [node name="Enemy6" parent="EnemyHandler" instance=ExtResource("4_54ftc")]
 position = Vector2(-16, 76)
+
+[node name="ArmyHandler" type="Node2D" parent="." groups=["army_handler"]]
+y_sort_enabled = true
+
+[node name="Spawner" type="Node2D" parent="."]
+
+[node name="AriseBox" parent="Spawner" instance=ExtResource("6_fu4i5")]
+position = Vector2(212, 76)
+spawn_blueprint = ExtResource("4_eeu4c")
+spawn_number = 4
+
+[node name="AriseBox2" parent="Spawner" instance=ExtResource("6_fu4i5")]
+position = Vector2(188, 132)
+spawn_blueprint = ExtResource("4_eeu4c")
+spawn_number = 4
+
+[node name="AriseBox3" parent="Spawner" instance=ExtResource("6_fu4i5")]
+position = Vector2(225, 111)
+spawn_blueprint = ExtResource("4_eeu4c")
+spawn_number = 4
+
+[node name="AriseBox4" parent="Spawner" instance=ExtResource("6_fu4i5")]
+position = Vector2(185, 31)
+spawn_blueprint = ExtResource("4_eeu4c")
+spawn_time = 1.0
+spawn_number = 200

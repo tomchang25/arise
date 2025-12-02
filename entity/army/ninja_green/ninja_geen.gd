@@ -3,6 +3,9 @@ extends CharacterBody2D
 
 @onready var attack_handler: ProjectileAttack = $ProjectileAttack
 @onready var auto_attack_detectbox: Detectbox = $AutoAttackDetectbox
+@onready var enemy_check_detectbox: Detectbox = $EnemyCheckDetectbox
+
+@onready var navigation_agent_2d: NavigationAgent2D = $NavigationAgent2D
 
 @onready var follow_player: FollowPlayer = $FollowPlayer
 @onready var soft_collision: SoftCollision = $SoftCollision
@@ -33,10 +36,16 @@ func _physics_process(delta: float) -> void:
     var movement_vector: Vector2 = follow_player.movement_vector
     var soft_push_velocity: Vector2 = soft_collision.soft_push_velocity
 
+    # if not navigation_agent_2d.is_navigation_finished():
     if movement_vector != Vector2.ZERO:
+        soft_collision.enabled = false
         velocity = movement_vector
     else:
+        soft_collision.enabled = true
         velocity = soft_push_velocity
+
+    # soft_collision.enabled = true
+    # velocity = soft_push_velocity
 
     # print(movement_vector, " - ", soft_push_velocity, " - ", velocity)
 
