@@ -2,7 +2,7 @@ class_name SoftCollision
 extends Area2D
 
 @export var enabled := true
-@export var push_force := 100.0
+@export var push_force := 500.0
 @export var push_distance := 20.0
 @export var soft_push_velocity_min := 1
 
@@ -50,17 +50,13 @@ func _physics_process(_delta: float) -> void:
 
             var overlap_amount = max(0.0, push_distance - distance)
 
-            var push_magnitude = overlap_amount / (distance*distance)
+            var push_magnitude = overlap_amount / (distance * distance)
 
             var push_vector = push_direction.normalized() * push_magnitude
             total_push_vector += push_vector
 
     if overlapping_areas_set.size() > 0:
-        # soft_push_velocity = total_push_vector.normalized() * push_force
-        var push_power = push_force * (1.0 - (min(total_push_vector.length(), push_distance) / push_distance))
-        soft_push_velocity = total_push_vector.normalized() * push_power
-    else:
-        soft_push_velocity = lerp(soft_push_velocity, Vector2.ZERO, 1)
+        soft_push_velocity = total_push_vector.limit_length(push_force)
 
     if soft_push_velocity.length() < soft_push_velocity_min:
         soft_push_velocity = Vector2.ZERO

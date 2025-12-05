@@ -1,7 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://12rdjr3aafmv"]
+[gd_scene load_steps=8 format=3 uid="uid://12rdjr3aafmv"]
 
 [ext_resource type="Script" uid="uid://dwxb7wnycy3tx" path="res://common/component/spawner/spawner.gd" id="1_0auj6"]
 [ext_resource type="Texture2D" uid="uid://ds3evo5k4cm85" path="res://entity/spawner/arise_box/BigTreasureChest.png" id="1_h1425"]
+[ext_resource type="PackedScene" uid="uid://dybnb2lmsq7s0" path="res://entity/army/ninja_green/ninja_geen.tscn" id="2_cjsci"]
+[ext_resource type="AudioStream" uid="uid://c5wgm6vyfi3ax" path="res://asset/unmanaged/Ninja Adventure - Asset Pack/Audio/Sounds/Alert/Alert3.wav" id="3_qroud"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_0auj6"]
 radius = 24.0
@@ -21,8 +23,11 @@ border_width_top = 1
 border_width_bottom = 1
 border_color = Color(0, 0, 0, 1)
 
-[node name="AriseBox" type="Area2D"]
+[node name="AriseBox" type="Area2D" node_paths=PackedStringArray("sprite")]
 script = ExtResource("1_0auj6")
+sprite = NodePath("Sprite2D")
+spawn_blueprint = ExtResource("2_cjsci")
+spawn_sound = ExtResource("3_qroud")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_h1425")

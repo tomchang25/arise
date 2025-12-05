@@ -2,12 +2,16 @@ class_name StateMachine
 extends Node
 
 @export var initial_state: State
+@onready var target: Node = self.owner
 
 var current_state: State
 var states := {}
 
 
 func _ready() -> void:
+    if not target.is_node_ready():
+        await target.ready
+
     for child in get_children():
         if child is State:
             # print(child.state_id, child.name)

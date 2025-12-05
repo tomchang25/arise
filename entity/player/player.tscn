@@ -10,12 +10,12 @@
 [ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/component/hurtbox/hurtbox.gd" id="3_wltfy"]
 [ext_resource type="Script" uid="uid://bgbsjtyrt5ehh" path="res://entity/player/player_animation.gd" id="4_bgq54"]
 [ext_resource type="Script" uid="uid://3lp7jvr6ovc2" path="res://common/resource/attack/attack_data.gd" id="4_ivlxb"]
-[ext_resource type="Script" uid="uid://csbiyk7lqxll7" path="res://entity/player/state_manager/player_state_machine.gd" id="5_482rp"]
-[ext_resource type="Script" uid="uid://b6r7vut6vta3w" path="res://entity/player/state_manager/state/player_idle_state.gd" id="6_2iqu4"]
-[ext_resource type="Script" uid="uid://cj27uflq53tq3" path="res://entity/player/state_manager/state/player_walk_state.gd" id="7_4btn6"]
-[ext_resource type="Script" uid="uid://xnbyyjcryjnf" path="res://entity/player/state_manager/state/player_run_state.gd" id="8_4btn6"]
-[ext_resource type="Script" uid="uid://jtqne3plv0gg" path="res://entity/player/state_manager/state/player_roll_state.gd" id="9_t2ln0"]
-[ext_resource type="Script" uid="uid://chearh86c82uf" path="res://entity/player/state_manager/state/player_attack_state.gd" id="11_klmji"]
+[ext_resource type="Script" uid="uid://b6r7vut6vta3w" path="res://entity/player/state/player_idle_state.gd" id="6_2iqu4"]
+[ext_resource type="Script" uid="uid://cj27uflq53tq3" path="res://entity/player/state/player_walk_state.gd" id="7_4btn6"]
+[ext_resource type="Script" uid="uid://xnbyyjcryjnf" path="res://entity/player/state/player_run_state.gd" id="8_4btn6"]
+[ext_resource type="Script" uid="uid://jtqne3plv0gg" path="res://entity/player/state/player_roll_state.gd" id="9_t2ln0"]
+[ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/state_machinie/state_machine.gd" id="11_b15sj"]
+[ext_resource type="Script" uid="uid://chearh86c82uf" path="res://entity/player/state/player_attack_state.gd" id="11_klmji"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_nqnt1"]
 radius = 3.0
@@ -375,6 +375,7 @@ debug_color = Color(0, 0.631373, 0.478431, 0.235294)
 position = Vector2(0, -5)
 collision_layer = 0
 collision_mask = 2
+radius = 25.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AutoAttackDetectbox"]
 shape = SubResource("CircleShape2D_n81ss")
@@ -425,7 +426,7 @@ script = ExtResource("4_bgq54")
 animation_tree = NodePath("../AnimationTree")
 
 [node name="PlayerStateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
-script = ExtResource("5_482rp")
+script = ExtResource("11_b15sj")
 initial_state = NodePath("Idle")
 
 [node name="Idle" type="Node" parent="PlayerStateMachine"]

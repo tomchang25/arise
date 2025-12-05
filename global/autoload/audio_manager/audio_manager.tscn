@@ -1,9 +1,11 @@
-[gd_scene load_steps=3 format=3 uid="uid://bs2i6wc2kwcqd"]
+[gd_scene load_steps=4 format=3 uid="uid://bs2i6wc2kwcqd"]
 
+[ext_resource type="Script" uid="uid://bhhaho37wph5e" path="res://global/autoload/audio_manager/audio_manager.gd" id="1_1sgjh"]
 [ext_resource type="PackedScene" uid="uid://cmmq4ucu4lr37" path="res://global/autoload/audio_manager/music_handler.tscn" id="1_o0c8y"]
 [ext_resource type="PackedScene" uid="uid://cd3bula8paxcv" path="res://global/autoload/audio_manager/sound_handler.tscn" id="2_1sgjh"]
 
 [node name="AudioManager" type="Node"]
+script = ExtResource("1_1sgjh")
 
 [node name="MusicHandler" parent="." instance=ExtResource("1_o0c8y")]
 

@@ -1,6 +1,5 @@
 class_name Player
 extends CharacterBody2D
-
 @onready var movement: PlayerMovement = $PlayerMovement
 @onready var animation: PlayerAnimation = $PlayerAnimation
 
@@ -14,12 +13,13 @@ var nearest_enemy: Enemy = null
 
 func _ready() -> void:
     auto_attack_detectbox.detected.connect(_on_enemies_detected)
-    auto_attack_detectbox.last_node_left.connect(_on_last_enemy_left)
-
     animation.animation_finished.connect(_on_animation_finished)
 
 
 func _on_enemies_detected(nodes_in_range: Array) -> void:
+    if nodes_in_range.is_empty():
+        nearest_enemy = null
+
     for node in nodes_in_range:
         if node.get_owner() is not Enemy:
             continue
@@ -29,10 +29,6 @@ func _on_enemies_detected(nodes_in_range: Array) -> void:
 
         if nearest_enemy == null or distance < nearest_enemy.global_position.distance_to(self.global_position):
             nearest_enemy = enemy
-
-
-func _on_last_enemy_left() -> void:
-    nearest_enemy = null
 
 
 func _on_animation_finished(anim_name: String) -> void:

@@ -2,8 +2,8 @@ class_name Spawner
 extends Area2D
 
 @export var sprite: Sprite2D
-
 @export var spawn_blueprint: PackedScene
+@export var spawn_sound: AudioStream
 
 @export var spawn_time: float = 3.0
 @export var spawn_number: int = 1
@@ -68,5 +68,8 @@ func spawn():
 
     spawn_progress = 0.0
     _update_progress_ui()
+
+    if spawn_sound:
+        AudioManager.play_sound(spawn_sound)
 
     queue_free()
