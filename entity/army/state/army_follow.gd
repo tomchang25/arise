@@ -12,7 +12,7 @@ func _init() -> void:
 
 func _enter() -> void:
     target.soft_collision.enabled = false
-    target.follow_player.set_arrive_distance(50)
+    target.follow_player.set_arrive_distance(20)
 
 
 func _update(delta: float) -> void:

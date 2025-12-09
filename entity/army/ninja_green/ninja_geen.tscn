@@ -1,6 +1,6 @@
 [gd_scene load_steps=16 format=3 uid="uid://dybnb2lmsq7s0"]
 
-[ext_resource type="Script" uid="uid://be5rffb7rwigg" path="res://entity/army/ninja_green/ninja_geen.gd" id="1_eropg"]
+[ext_resource type="Script" uid="uid://be5rffb7rwigg" path="res://entity/army/army.gd" id="1_13omc"]
 [ext_resource type="Texture2D" uid="uid://dcefsfe6uvtoj" path="res://entity/army/ninja_green/art/SpriteSheet.png" id="2_tn28i"]
 [ext_resource type="PackedScene" uid="uid://do052sqt3wjdp" path="res://common/component/detectbox/detectbox.tscn" id="3_lqaih"]
 [ext_resource type="Script" uid="uid://clio077y7ei1t" path="res://common/component/soft_collision/soft_collision.gd" id="3_m0xvt"]
@@ -26,8 +26,7 @@ radius = 75.0
 collision_layer = 256
 collision_mask = 4
 motion_mode = 1
-script = ExtResource("1_eropg")
-follow_threshold = 100.0
+script = ExtResource("1_13omc")
 
 [node name="Skin" type="Sprite2D" parent="."]
 position = Vector2(0, -7)
@@ -40,7 +39,7 @@ position = Vector2(0, -5)
 collision_layer = 512
 collision_mask = 512
 script = ExtResource("3_m0xvt")
-soft_push_velocity_min = 20
+push_force = 1000.0
 overlapping_max_count = 20
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="SoftCollision"]
@@ -53,7 +52,6 @@ shape = SubResource("CapsuleShape2D_ocq7q")
 disabled = true
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
-target_desired_distance = 50.0
 avoidance_enabled = true
 radius = 5.0
 debug_use_custom = true

@@ -1,5 +1,5 @@
 @tool
-class_name NinjaGreen
+class_name Army
 extends CharacterBody2D
 
 @export var attack_range: float = 50

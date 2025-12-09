@@ -1,6 +1,6 @@
 [gd_scene load_steps=40 format=3 uid="uid://dbhtrssgng58f"]
 
-[ext_resource type="Script" uid="uid://bwkkatjpy72kv" path="res://entity/player/player.gd" id="1_n81ss"]
+[ext_resource type="Script" uid="uid://bwkkatjpy72kv" path="res://entity/player/player.gd" id="1_b15sj"]
 [ext_resource type="Texture2D" uid="uid://e7rr31b6fwkg" path="res://entity/player/art/player.png" id="2_e6ar1"]
 [ext_resource type="Script" uid="uid://vsf0ha5hqr1p" path="res://entity/player/player_movement.gd" id="3_4pl66"]
 [ext_resource type="Script" uid="uid://cbkom3y372wt7" path="res://common/component/melee_attack/melee_attack.gd" id="3_5afgs"]
@@ -22,7 +22,7 @@ radius = 3.0
 height = 16.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_mx88g"]
-radius = 0.01
+radius = 20.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_n81ss"]
 radius = 25.0
@@ -350,7 +350,7 @@ _data = {
 
 [node name="Player" type="CharacterBody2D" groups=["player"]]
 collision_mask = 4
-script = ExtResource("1_n81ss")
+script = ExtResource("1_b15sj")
 
 [node name="Skin" type="Sprite2D" parent="."]
 texture = ExtResource("2_e6ar1")
@@ -363,8 +363,8 @@ shape = SubResource("CapsuleShape2D_nqnt1")
 
 [node name="SoftCollision" parent="." instance=ExtResource("3_b15sj")]
 collision_layer = 512
-push_force = 50.0
-push_distance = 1.0
+push_force = 50000.0
+push_distance = 500.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="SoftCollision"]
 position = Vector2(0, -5)

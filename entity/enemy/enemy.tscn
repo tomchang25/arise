@@ -1,10 +1,12 @@
-[gd_scene load_steps=16 format=3 uid="uid://csanq2hkw7h68"]
+[gd_scene load_steps=18 format=3 uid="uid://csanq2hkw7h68"]
 
 [ext_resource type="PackedScene" uid="uid://bphvl1tkicrfo" path="res://common/component/hitbox/hitbox.tscn" id="1_8vdsg"]
 [ext_resource type="Texture2D" uid="uid://dhjwl04036bsq" path="res://entity/enemy/art/bat.png" id="1_lvn57"]
 [ext_resource type="Script" uid="uid://bmdh4vf3luco6" path="res://entity/enemy/enemy.gd" id="1_pmu85"]
 [ext_resource type="Shader" uid="uid://c4tcr87bgvjy" path="res://common/shader/dynamic_color_overlay.gdshader" id="2_7mx5f"]
 [ext_resource type="Script" uid="uid://bu6qty8wweb6r" path="res://common/component/health/health.gd" id="4_0p2mk"]
+[ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/state_machinie/state_machine.gd" id="6_gevl6"]
+[ext_resource type="Script" uid="uid://ixpqntb22d76" path="res://entity/enemy/state/enemy_idle.gd" id="7_cti5q"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_7mx5f"]
 resource_local_to_scene = true
@@ -103,3 +105,16 @@ vertical_alignment = 1
 [node name="Health" type="Node" parent="." node_paths=PackedStringArray("hitbox")]
 script = ExtResource("4_0p2mk")
 hitbox = NodePath("../Hitbox")
+
+[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
+script = ExtResource("6_gevl6")
+initial_state = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="StateMachine"]
+script = ExtResource("7_cti5q")
+
+[node name="Wander" type="Node" parent="StateMachine"]
+
+[node name="Chase" type="Node" parent="StateMachine"]
+
+[node name="Attack" type="Node" parent="StateMachine"]

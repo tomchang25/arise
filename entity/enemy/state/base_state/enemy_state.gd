@@ -1,4 +1,4 @@
-class_name ArmyState
+class_name EnemyState
 extends State
 
 enum ArmyStateId { NULL = -1, IDLE = 0, FOLLOW = 1, CHASE = 2, RETREAT = 3, ATTACK = 4 }
