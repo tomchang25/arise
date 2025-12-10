@@ -6,15 +6,15 @@ func _init() -> void:
 
 
 func _enter() -> void:
-    player.movement.set_idle_speed()
+    player.movement.stop()
     player.animation.travel_to_state(player.animation.ANIMATION_STATE_IDLE)
 
 
 func _update(_delta: float) -> void:
-    if player.movement.get_input_direction().length() > 0:
-        self.change_state(PlayerState.PlayerStateId.WALK)
+    if player.player_input.get_movement_direction().length() > 0:
+        self.change_state(PlayerState.PlayerStateId.MOVE)
         return
 
-    if (player.movement.is_attack_pressed() or player.nearest_enemy != null) and player.melee_attack.can_attack():
+    if (player.player_input.is_attack_pressed() or player.nearest_enemy != null) and player.melee_attack.can_attack():
         self.change_state(PlayerState.PlayerStateId.ATTACK)
         return

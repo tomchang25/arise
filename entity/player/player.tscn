@@ -2,20 +2,20 @@
 
 [ext_resource type="Script" uid="uid://bwkkatjpy72kv" path="res://entity/player/player.gd" id="1_b15sj"]
 [ext_resource type="Texture2D" uid="uid://e7rr31b6fwkg" path="res://entity/player/art/player.png" id="2_e6ar1"]
-[ext_resource type="Script" uid="uid://vsf0ha5hqr1p" path="res://entity/player/player_movement.gd" id="3_4pl66"]
 [ext_resource type="Script" uid="uid://cbkom3y372wt7" path="res://common/component/melee_attack/melee_attack.gd" id="3_5afgs"]
 [ext_resource type="PackedScene" uid="uid://b1ju0utxkl773" path="res://common/component/soft_collision/soft_collision.tscn" id="3_b15sj"]
 [ext_resource type="PackedScene" uid="uid://do052sqt3wjdp" path="res://common/component/detectbox/detectbox.tscn" id="3_n81ss"]
 [ext_resource type="AnimationNodeBlendTree" uid="uid://bam4152vw8gtf" path="res://entity/player/data/player_animation_tree.tres" id="3_qa8rf"]
 [ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/component/hurtbox/hurtbox.gd" id="3_wltfy"]
-[ext_resource type="Script" uid="uid://bgbsjtyrt5ehh" path="res://entity/player/player_animation.gd" id="4_bgq54"]
 [ext_resource type="Script" uid="uid://3lp7jvr6ovc2" path="res://common/resource/attack/attack_data.gd" id="4_ivlxb"]
 [ext_resource type="Script" uid="uid://b6r7vut6vta3w" path="res://entity/player/state/player_idle_state.gd" id="6_2iqu4"]
-[ext_resource type="Script" uid="uid://cj27uflq53tq3" path="res://entity/player/state/player_walk_state.gd" id="7_4btn6"]
-[ext_resource type="Script" uid="uid://xnbyyjcryjnf" path="res://entity/player/state/player_run_state.gd" id="8_4btn6"]
+[ext_resource type="Script" uid="uid://lnjp761bf75g" path="res://common/component/movement/base_movement.gd" id="8_mx88g"]
+[ext_resource type="Script" uid="uid://dy3rk0lce0h2g" path="res://entity/player/player_animation.gd" id="9_b15sj"]
+[ext_resource type="Script" uid="uid://b2efdribe7jd0" path="res://entity/player/player_input.gd" id="9_mx88g"]
 [ext_resource type="Script" uid="uid://jtqne3plv0gg" path="res://entity/player/state/player_roll_state.gd" id="9_t2ln0"]
 [ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/state_machinie/state_machine.gd" id="11_b15sj"]
 [ext_resource type="Script" uid="uid://chearh86c82uf" path="res://entity/player/state/player_attack_state.gd" id="11_klmji"]
+[ext_resource type="Script" uid="uid://csp44dwfwcqu0" path="res://entity/player/state/player_move_state.gd" id="14_b15sj"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_nqnt1"]
 radius = 3.0
@@ -350,6 +350,7 @@ _data = {
 
 [node name="Player" type="CharacterBody2D" groups=["player"]]
 collision_mask = 4
+motion_mode = 1
 script = ExtResource("1_b15sj")
 
 [node name="Skin" type="Sprite2D" parent="."]
@@ -398,12 +399,27 @@ position = Vector2(-15, 0)
 shape = SubResource("CapsuleShape2D_klmji")
 debug_color = Color(0.901961, 0.243137, 0.501961, 0.235294)
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+avoidance_enabled = true
+radius = 20.0
+debug_use_custom = true
+debug_path_custom_color = Color(1, 0, 1, 1)
+
+[node name="PlayerMovement" type="Node" parent="."]
+script = ExtResource("8_mx88g")
+
+[node name="PlayerAnimation" type="Node" parent="." node_paths=PackedStringArray("animation_tree")]
+script = ExtResource("9_b15sj")
+animation_tree = NodePath("AnimationTree")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="PlayerAnimation"]
+root_node = NodePath("../..")
 libraries = {
 &"": SubResource("AnimationLibrary_5afgs")
 }
 
-[node name="AnimationTree" type="AnimationTree" parent="."]
+[node name="AnimationTree" type="AnimationTree" parent="PlayerAnimation"]
+root_node = NodePath("../..")
 tree_root = ExtResource("3_qa8rf")
 anim_player = NodePath("../AnimationPlayer")
 parameters/StateMachine/Attack/blend_position = Vector2(-0.202066, 0.0966387)
@@ -412,18 +428,8 @@ parameters/StateMachine/Move/blend_position = false
 parameters/StateMachine/Roll/blend_position = Vector2(-0.477082, -0.319328)
 parameters/TimeScale/scale = 1.0
 
-[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
-avoidance_enabled = true
-radius = 20.0
-debug_use_custom = true
-debug_path_custom_color = Color(1, 0, 1, 1)
-
-[node name="PlayerMovement" type="Node" parent="."]
-script = ExtResource("3_4pl66")
-
-[node name="PlayerAnimation" type="Node" parent="." node_paths=PackedStringArray("animation_tree")]
-script = ExtResource("4_bgq54")
-animation_tree = NodePath("../AnimationTree")
+[node name="PlayerInput" type="Node" parent="."]
+script = ExtResource("9_mx88g")
 
 [node name="PlayerStateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
 script = ExtResource("11_b15sj")
@@ -432,11 +438,8 @@ initial_state = NodePath("Idle")
 [node name="Idle" type="Node" parent="PlayerStateMachine"]
 script = ExtResource("6_2iqu4")
 
-[node name="Walk" type="Node" parent="PlayerStateMachine"]
-script = ExtResource("7_4btn6")
-
-[node name="Run" type="Node" parent="PlayerStateMachine"]
-script = ExtResource("8_4btn6")
+[node name="Move" type="Node" parent="PlayerStateMachine"]
+script = ExtResource("14_b15sj")
 
 [node name="Roll" type="Node" parent="PlayerStateMachine"]
 script = ExtResource("9_t2ln0")

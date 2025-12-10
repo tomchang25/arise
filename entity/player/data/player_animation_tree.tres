@@ -130,7 +130,6 @@ graph_offset = Vector2(-86, -86)
 [sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_482rp"]
 
 [resource]
-graph_offset = Vector2(-529, -74)
 nodes/StateMachine/node = SubResource("AnimationNodeStateMachine_bgq54")
 nodes/StateMachine/position = Vector2(-340, 120)
 nodes/TimeScale/node = SubResource("AnimationNodeTimeScale_482rp")

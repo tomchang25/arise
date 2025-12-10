@@ -1,7 +1,8 @@
 class_name Player
 extends CharacterBody2D
-@onready var movement: PlayerMovement = $PlayerMovement
+@onready var movement: BaseMovement = $PlayerMovement
 @onready var animation: PlayerAnimation = $PlayerAnimation
+@onready var player_input: PlayerInput = $PlayerInput
 
 @onready var melee_attack: MeleeAttack = $MeleeAttack
 @onready var auto_attack_detectbox: Detectbox = $AutoAttackDetectbox
@@ -14,7 +15,7 @@ var nearest_enemy: Enemy = null
 func _ready() -> void:
     auto_attack_detectbox.detected.connect(_on_enemies_detected)
     animation.animation_finished.connect(_on_animation_finished)
-
+    
 
 func _on_enemies_detected(nodes_in_range: Array) -> void:
     if nodes_in_range.is_empty():

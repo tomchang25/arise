@@ -1,5 +1,6 @@
 extends PlayerState
 
+@export var attack_speed: float = 50
 var target_position: Vector2
 
 
@@ -12,7 +13,7 @@ func _enter() -> void:
         self.change_state(PlayerState.PlayerStateId.IDLE)
         return
 
-    player.movement.set_walk_speed()
+    player.movement.apply_speed(attack_speed)
 
     player.animation.travel_to_state(player.animation.ANIMATION_STATE_ATTACK)
 
@@ -24,19 +25,13 @@ func _enter() -> void:
     player.attack(target_position)
     player.animation.set_animation_direction(player.melee_attack.global_position.direction_to(target_position))
 
-    if not player.animation.animation_finished.is_connected(_on_animation_finished):
-        player.animation.animation_finished.connect(_on_animation_finished)
-
-
-func _exit() -> void:
-    if player.animation.animation_finished.is_connected(_on_animation_finished):
-        player.animation.animation_finished.disconnect(_on_animation_finished)
-
 
 func _update(_delta: float) -> void:
     player.melee_attack.aim_at(target_position)
     player.animation.set_animation_direction(player.melee_attack.global_position.direction_to(target_position))
-    player.movement.set_direction_to_input()
+
+    var movement_direction: Vector2 = player.player_input.get_movement_direction()
+    player.movement.set_direction(movement_direction)
 
 
 func _on_animation_finished(anim_name: StringName) -> void:
