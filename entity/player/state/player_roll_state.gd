@@ -10,7 +10,7 @@ func _init() -> void:
 func _enter() -> void:
     var direction: Vector2 = player.player_input.get_movement_direction()
 
-    player.movement.apply_speed(roll_speed)
+    player.movement.set_speed(roll_speed)
     player.movement.set_direction(direction)
 
     player.animation.travel_to_state(player.animation.ANIMATION_STATE_ROLL)

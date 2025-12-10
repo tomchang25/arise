@@ -13,7 +13,7 @@ func _enter() -> void:
         self.change_state(PlayerState.PlayerStateId.IDLE)
         return
 
-    player.movement.apply_speed(attack_speed)
+    player.movement.set_speed(attack_speed)
 
     player.animation.travel_to_state(player.animation.ANIMATION_STATE_ATTACK)
 

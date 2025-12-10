@@ -24,10 +24,10 @@ func _update(delta: float) -> void:
         return
 
     if player.player_input.is_run_pressed():
-        player.movement.apply_speed(run_speed)
+        player.movement.set_speed(run_speed)
         player.animation.set_time_scale(2.0)
     else:
-        player.movement.apply_speed(walk_speed)
+        player.movement.set_speed(walk_speed)
         player.animation.set_time_scale(1.0)
 
     if player.player_input.is_roll_pressed():

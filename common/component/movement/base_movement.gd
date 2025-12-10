@@ -15,10 +15,7 @@ var velocity: Vector2:
 ## --- Physics Processing (CORE MOVEMENT LOGIC) ---
 
 
-# Note: The _physics_process moves the character based on the current velocity
-# set by the public API functions.
 func _physics_process(_delta: float):
-    # Apply the calculated velocity to the CharacterBody2D
     character.velocity = self.velocity
     character.move_and_slide()
 
@@ -26,17 +23,22 @@ func _physics_process(_delta: float):
 ## --- Public API for Setting Movement State ---
 
 
-func set_direction(direction: Vector2) -> void:
+func set_velocity(new_velocity: Vector2) -> void:
+    current_direction = new_velocity.normalized()
+    current_target_speed = new_velocity.length()
+
+
+func set_direction(new_direction: Vector2) -> void:
     # Ensure the direction is normalized if it's not already
-    current_direction = direction.normalized()
+    current_direction = new_direction.normalized()
 
 
-func apply_speed(speed: float) -> void:
-    current_target_speed = speed
+func set_speed(new_speed: float) -> void:
+    current_target_speed = new_speed
 
 
 func stop() -> void:
     set_direction(Vector2.ZERO)
-    apply_speed(0)
+    set_speed(0)
 
 ## --- Private Helpers ---
