@@ -10,7 +10,7 @@
 [ext_resource type="Script" uid="uid://3lp7jvr6ovc2" path="res://common/resource/attack/attack_data.gd" id="4_ivlxb"]
 [ext_resource type="Script" uid="uid://b6r7vut6vta3w" path="res://entity/player/state/player_idle_state.gd" id="6_2iqu4"]
 [ext_resource type="Script" uid="uid://lnjp761bf75g" path="res://common/component/movement/base_movement.gd" id="8_mx88g"]
-[ext_resource type="Script" uid="uid://dy3rk0lce0h2g" path="res://entity/player/player_animation.gd" id="9_b15sj"]
+[ext_resource type="Script" uid="uid://bu436ru5hhd66" path="res://common/component/animation/base_animation.gd" id="9_b15sj"]
 [ext_resource type="Script" uid="uid://b2efdribe7jd0" path="res://entity/player/player_input.gd" id="9_mx88g"]
 [ext_resource type="Script" uid="uid://jtqne3plv0gg" path="res://entity/player/state/player_roll_state.gd" id="9_t2ln0"]
 [ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/state_machinie/state_machine.gd" id="11_b15sj"]
@@ -437,12 +437,16 @@ initial_state = NodePath("Idle")
 
 [node name="Idle" type="Node" parent="PlayerStateMachine"]
 script = ExtResource("6_2iqu4")
+animation_state = "Idle"
 
 [node name="Move" type="Node" parent="PlayerStateMachine"]
 script = ExtResource("14_b15sj")
+animation_state = "Move"
 
 [node name="Roll" type="Node" parent="PlayerStateMachine"]
 script = ExtResource("9_t2ln0")
+animation_state = "Roll"
 
 [node name="Attack" type="Node" parent="PlayerStateMachine"]
 script = ExtResource("11_klmji")
+animation_state = "Attack"

@@ -15,7 +15,7 @@ func _enter() -> void:
 
     player.movement.set_speed(attack_speed)
 
-    player.animation.travel_to_state(player.animation.ANIMATION_STATE_ATTACK)
+    player.animation.travel_to_state(self.animation_state)
 
     if player.nearest_enemy != null:
         target_position = player.nearest_enemy.global_position
@@ -23,17 +23,20 @@ func _enter() -> void:
         target_position = player.get_global_mouse_position()
 
     player.attack(target_position)
-    player.animation.set_animation_direction(player.melee_attack.global_position.direction_to(target_position))
 
 
 func _update(_delta: float) -> void:
     player.melee_attack.aim_at(target_position)
-    player.animation.set_animation_direction(player.melee_attack.global_position.direction_to(target_position))
+
+    var attack_direction: Vector2 = player.melee_attack.global_position.direction_to(target_position)
+    player.animation.set_animation_direction(attack_direction, self.animation_state)
 
     var movement_direction: Vector2 = player.player_input.get_movement_direction()
     player.movement.set_direction(movement_direction)
 
 
 func _on_animation_finished(anim_name: StringName) -> void:
-    if player.animation.ANIMATION_STATE_ATTACK in anim_name:
+    if self.animation_state in anim_name:
+        player.melee_attack.end_attack()
         self.change_state(PlayerState.PlayerStateId.IDLE)
+        return

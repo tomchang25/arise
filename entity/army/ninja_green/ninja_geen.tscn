@@ -1,12 +1,13 @@
-[gd_scene load_steps=16 format=3 uid="uid://dybnb2lmsq7s0"]
+[gd_scene load_steps=17 format=3 uid="uid://dybnb2lmsq7s0"]
 
 [ext_resource type="Script" uid="uid://be5rffb7rwigg" path="res://entity/army/army.gd" id="1_13omc"]
 [ext_resource type="Texture2D" uid="uid://dcefsfe6uvtoj" path="res://entity/army/ninja_green/art/SpriteSheet.png" id="2_tn28i"]
 [ext_resource type="PackedScene" uid="uid://do052sqt3wjdp" path="res://common/component/detectbox/detectbox.tscn" id="3_lqaih"]
 [ext_resource type="Script" uid="uid://clio077y7ei1t" path="res://common/component/soft_collision/soft_collision.gd" id="3_m0xvt"]
 [ext_resource type="PackedScene" uid="uid://dagjfgo7sjdn0" path="res://entity/projectile/arrow/arrow.tscn" id="5_bahv0"]
-[ext_resource type="Script" uid="uid://bm7yfviy11fh4" path="res://entity/army/follow_player.gd" id="6_e4gwk"]
+[ext_resource type="Script" uid="uid://bm7yfviy11fh4" path="res://common/component/pathfinding/pathfinding.gd" id="6_e4gwk"]
 [ext_resource type="Script" uid="uid://ekkn4dbt30hh" path="res://common/component/projectile_attack/projectile_attack.gd" id="7_i87wb"]
+[ext_resource type="Script" uid="uid://bu436ru5hhd66" path="res://common/component/animation/base_animation.gd" id="8_4aipm"]
 [ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/state_machinie/state_machine.gd" id="8_13omc"]
 [ext_resource type="Script" uid="uid://dplrsortb8ufa" path="res://entity/army/state/army_idle.gd" id="8_lqaih"]
 [ext_resource type="Script" uid="uid://d0008vj2c0w5u" path="res://entity/army/state/army_follow.gd" id="9_6k810"]
@@ -51,12 +52,6 @@ rotation = 1.5708
 shape = SubResource("CapsuleShape2D_ocq7q")
 disabled = true
 
-[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
-avoidance_enabled = true
-radius = 5.0
-debug_use_custom = true
-debug_path_custom_color = Color(1, 0, 1, 1)
-
 [node name="EnemyCheckDetectbox" parent="." instance=ExtResource("3_lqaih")]
 position = Vector2(0, -5)
 collision_layer = 0
@@ -72,10 +67,20 @@ position = Vector2(0, -5)
 script = ExtResource("7_i87wb")
 projectile_scene = ExtResource("5_bahv0")
 
-[node name="FollowPlayer" type="Node" parent="." node_paths=PackedStringArray("who", "navigation_agent")]
+[node name="Pathfinding" type="Node2D" parent="." node_paths=PackedStringArray("navigation_agent")]
 script = ExtResource("6_e4gwk")
-who = NodePath("..")
-navigation_agent = NodePath("../NavigationAgent2D")
+navigation_agent = NodePath("NavigationAgent2D")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="Pathfinding"]
+avoidance_enabled = true
+radius = 5.0
+debug_use_custom = true
+debug_path_custom_color = Color(1, 0, 1, 1)
+
+[node name="Animation" type="Node" parent="."]
+script = ExtResource("8_4aipm")
+
+[node name="AnimationTree" type="AnimationTree" parent="Animation"]
 
 [node name="ArmyStateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
 script = ExtResource("8_13omc")
@@ -89,6 +94,7 @@ script = ExtResource("9_6k810")
 
 [node name="Chase" type="Node" parent="ArmyStateMachine"]
 script = ExtResource("11_6k810")
+attack_range = null
 
 [node name="Attack" type="Node" parent="ArmyStateMachine"]
 script = ExtResource("12_4aipm")

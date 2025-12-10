@@ -1,16 +1,13 @@
-class_name FollowPlayer
-extends Node
+class_name Pathfinding
+extends Node2D
 
 @export var enabled := true
-@export var who: CharacterBody2D
 
 @export var move_speed: float = 100.0
 
 @export var navigation_agent: NavigationAgent2D
 
 @export var target_update_interval: float = 5.0
-
-var target_position: Vector2  # Where the army member is trying to go
 
 var target_update_timer: float = 0
 
@@ -28,8 +25,7 @@ func _ready():
 # Function to be called from the Player script
 func set_target(new_target_pos: Vector2):
     # This is the destination position (e.g., player's current location or a point near the enemy)
-    target_position = new_target_pos
-    navigation_agent.target_position = target_position
+    navigation_agent.target_position = new_target_pos
 
     # Reset the target update timer
     target_update_timer = 0
@@ -50,7 +46,7 @@ func _physics_process(delta):
 
     # 2. Calculate the Desired Velocity from the Navigation Agent (Target Force)
     var next_point = navigation_agent.get_next_path_position()
-    var target_force = (next_point - who.global_position).normalized() * move_speed
+    var target_force = (next_point - global_position).normalized() * move_speed
     target_force = target_force.limit_length(move_speed)
 
     if navigation_agent.avoidance_enabled:

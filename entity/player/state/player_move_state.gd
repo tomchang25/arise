@@ -15,7 +15,7 @@ func _init() -> void:
 
 func _enter() -> void:
     _idle_timer = 0.0
-    player.animation.travel_to_state(player.animation.ANIMATION_STATE_MOVE)
+    player.animation.travel_to_state(self.animation_state)
 
 
 func _update(delta: float) -> void:
@@ -46,7 +46,7 @@ func _update(delta: float) -> void:
     player.movement.set_direction(input_direction)
 
     if input_direction.length() > 0:
-        player.animation.set_animation_direction(input_direction)
+        player.animation.set_animation_direction(input_direction, self.animation_state)
 
 
 func _check_idle(delta: float) -> bool:

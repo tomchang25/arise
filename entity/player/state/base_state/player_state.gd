@@ -3,6 +3,8 @@ extends State
 
 enum PlayerStateId { NULL = -1, IDLE = 0, MOVE = 1, ROLL = 2, ATTACK = 3 }
 
+@export var animation_state: String
+
 var player: Player
 
 

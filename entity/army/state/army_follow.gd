@@ -12,13 +12,13 @@ func _init() -> void:
 
 func _enter() -> void:
     target.soft_collision.enabled = false
-    target.follow_player.set_arrive_distance(20)
+    target.pathfinding.set_arrive_distance(20)
 
 
 func _update(delta: float) -> void:
     _update_player_position(delta)
 
-    var movement_vector: Vector2 = target.follow_player.movement_vector
+    var movement_vector: Vector2 = target.pathfinding.movement_vector
     target.velocity = movement_vector
 
     if not target.is_too_far_from_player():
@@ -41,5 +41,5 @@ func _update_player_position(delta: float) -> void:
 
         if prev_player_position.distance_to(target.player.global_position) > 10:
             prev_player_position = target.player.global_position
-            target.follow_player.set_target(target.player.global_position)
+            target.pathfinding.set_target(target.player.global_position)
     check_player_timer += delta

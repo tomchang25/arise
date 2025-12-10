@@ -11,9 +11,9 @@ func _enter() -> void:
 
 
 func _update(_delta: float) -> void:
-    # if target.is_too_far_from_player():
-    #     change_state(ArmyState.ArmyStateId.FOLLOW)
-    #     return
+    if target.is_too_far_from_player():
+        change_state(ArmyState.ArmyStateId.FOLLOW)
+        return
 
     # if target.is_enemy_visible():
     #     change_state(ArmyState.ArmyStateId.CHASE)

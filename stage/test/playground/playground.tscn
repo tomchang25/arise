@@ -78,81 +78,14 @@ script = ExtResource("5_que0v")
 
 [node name="AriseBox" parent="Spawner" instance=ExtResource("6_fu4i5")]
 position = Vector2(212, 76)
-spawn_number = 4
+spawn_time = 1.0
 
 [node name="AriseBox2" parent="Spawner" instance=ExtResource("6_fu4i5")]
 position = Vector2(188, 132)
-spawn_number = 4
+spawn_time = 1.0
+spawn_number = 2
 
 [node name="AriseBox3" parent="Spawner" instance=ExtResource("6_fu4i5")]
 position = Vector2(225, 111)
-spawn_number = 4
-
-[node name="AriseBox4" parent="Spawner" instance=ExtResource("6_fu4i5")]
-position = Vector2(185, 31)
 spawn_time = 1.0
-spawn_number = 200
-
-[node name="AriseBox5" parent="Spawner" instance=ExtResource("6_fu4i5")]
-position = Vector2(25, 22)
-spawn_number = 4
-
-[node name="AriseBox6" parent="Spawner" instance=ExtResource("6_fu4i5")]
-position = Vector2(25, 22)
-spawn_number = 4
-
-[node name="AriseBox7" parent="Spawner" instance=ExtResource("6_fu4i5")]
-position = Vector2(25, 22)
-spawn_number = 4
-
-[node name="AriseBox8" parent="Spawner" instance=ExtResource("6_fu4i5")]
-position = Vector2(25, 22)
-spawn_number = 4
-
-[node name="AriseBox9" parent="Spawner" instance=ExtResource("6_fu4i5")]
-position = Vector2(25, 22)
-spawn_number = 4
-
-[node name="AriseBox10" parent="Spawner" instance=ExtResource("6_fu4i5")]
-position = Vector2(25, 22)
-spawn_number = 4
-
-[node name="AriseBox11" parent="Spawner" instance=ExtResource("6_fu4i5")]
-position = Vector2(25, 22)
-spawn_number = 4
-
-[node name="AriseBox12" parent="Spawner" instance=ExtResource("6_fu4i5")]
-position = Vector2(25, 22)
-spawn_number = 4
-
-[node name="AriseBox13" parent="Spawner" instance=ExtResource("6_fu4i5")]
-position = Vector2(25, 22)
-spawn_number = 4
-
-[node name="AriseBox14" parent="Spawner" instance=ExtResource("6_fu4i5")]
-position = Vector2(25, 22)
-spawn_number = 4
-
-[node name="AriseBox15" parent="Spawner" instance=ExtResource("6_fu4i5")]
-position = Vector2(25, 22)
-spawn_number = 4
-
-[node name="AriseBox16" parent="Spawner" instance=ExtResource("6_fu4i5")]
-position = Vector2(25, 22)
-spawn_number = 4
-
-[node name="AriseBox17" parent="Spawner" instance=ExtResource("6_fu4i5")]
-position = Vector2(25, 22)
-spawn_number = 4
-
-[node name="AriseBox18" parent="Spawner" instance=ExtResource("6_fu4i5")]
-position = Vector2(25, 22)
-spawn_number = 4
-
-[node name="AriseBox19" parent="Spawner" instance=ExtResource("6_fu4i5")]
-position = Vector2(25, 22)
-spawn_number = 4
-
-[node name="AriseBox20" parent="Spawner" instance=ExtResource("6_fu4i5")]
-position = Vector2(25, 22)
 spawn_number = 4

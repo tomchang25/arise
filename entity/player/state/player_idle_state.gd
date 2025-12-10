@@ -7,7 +7,7 @@ func _init() -> void:
 
 func _enter() -> void:
     player.movement.stop()
-    player.animation.travel_to_state(player.animation.ANIMATION_STATE_IDLE)
+    player.animation.travel_to_state(self.animation_state)
 
 
 func _update(_delta: float) -> void:

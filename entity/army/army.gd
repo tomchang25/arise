@@ -9,9 +9,8 @@ extends CharacterBody2D
 # @onready var auto_attack_detectbox: Detectbox = $AutoAttackDetectbox
 @onready var enemy_check_detectbox: Detectbox = $EnemyCheckDetectbox
 
-@onready var navigation_agent_2d: NavigationAgent2D = $NavigationAgent2D
+@onready var pathfinding: Pathfinding = $Pathfinding
 
-@onready var follow_player: FollowPlayer = $FollowPlayer
 @onready var soft_collision: SoftCollision = $SoftCollision
 
 var enemies_in_range: Array = []:
