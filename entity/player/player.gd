@@ -1,7 +1,7 @@
 class_name Player
 extends CharacterBody2D
 @onready var movement: BaseMovement = $PlayerMovement
-@onready var animation: BaseAnimation = $PlayerAnimationddddddd
+@onready var animation: BaseAnimation = $PlayerAnimation
 @onready var player_input: PlayerInput = $PlayerInput
 
 @onready var melee_attack: MeleeAttack = $MeleeAttack

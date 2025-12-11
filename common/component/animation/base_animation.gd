@@ -7,6 +7,7 @@ signal animation_finished(anim_name: StringName)
 @export var animation_tree: AnimationTree
 @onready var animation_state_machine: AnimationNodeStateMachinePlayback = animation_tree.get("parameters/StateMachine/playback")
 
+var _prev_animation_direction: Vector2
 # var _animation_states: Array[String] = []
 
 
@@ -37,8 +38,13 @@ func set_time_scale(time_scale: float):
 
 
 # Sets the blend position for states that use a BlendSpace2D (like movement)
-func set_animation_direction(new_direction: Vector2, anim_state: StringName):
-    animation_tree.set("parameters/StateMachine/" + anim_state + "/blend_position", new_direction)
+func set_animation_direction(new_direction: Vector2, anim_name: StringName = get_current_animation_state()):
+    animation_tree.set("parameters/StateMachine/" + anim_name + "/blend_position", new_direction)
+    _prev_animation_direction = new_direction
+
+
+func set_as_prev_animation_direction(anim_name: StringName = get_current_animation_state()):
+    animation_tree.set("parameters/StateMachine/" + anim_name + "/blend_position", _prev_animation_direction)
 
 
 # --- Utility Function for State Logic ---

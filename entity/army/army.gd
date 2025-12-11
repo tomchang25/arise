@@ -2,11 +2,28 @@
 class_name Army
 extends CharacterBody2D
 
-@export var attack_range: float = 50
-@export var follow_threshold: float = 50.0
+@export var attack_range: float = 50:
+    set(value):
+        if not is_node_ready():
+            return
+
+        attack_range = value
+        attack_handler.attack_range = value
+
+@export var enemy_check_range: float = 75:
+    set(value):
+        if not is_node_ready():
+            return
+
+        enemy_check_range = value
+        enemy_check_detectbox.radius = value
+
+# @export var follow_threshold: float = 50.0
+
+@onready var movement: BaseMovement = $Movement
+@onready var animation: BaseAnimation = $Animation
 
 @onready var attack_handler: ProjectileAttack = $ProjectileAttack
-# @onready var auto_attack_detectbox: Detectbox = $AutoAttackDetectbox
 @onready var enemy_check_detectbox: Detectbox = $EnemyCheckDetectbox
 
 @onready var pathfinding: Pathfinding = $Pathfinding
@@ -35,11 +52,15 @@ func is_enemy_visible() -> bool:
 
 
 func is_enemy_attackable() -> bool:
-    return enemies_in_range.filter(func(enemy): return enemy.global_position.distance_to(self.global_position) <= attack_range).size() > 0
+    for enemy in enemies_in_range:
+        if attack_handler.is_in_range(enemy.global_position):
+            return true
+
+    return false
 
 
-func is_too_far_from_player() -> bool:
-    return player.global_position.distance_to(self.global_position) > follow_threshold
+# func is_too_far_from_player() -> bool:
+#     return player.global_position.distance_to(self.global_position) > follow_threshold
 
 
 func get_current_state() -> ArmyState:

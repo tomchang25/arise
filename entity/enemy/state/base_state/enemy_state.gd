@@ -5,17 +5,16 @@ enum ArmyStateId { NULL = -1, IDLE = 0, FOLLOW = 1, CHASE = 2, RETREAT = 3, ATTA
 
 var target: Army
 
+# func _ready() -> void:
+#     if owner == null:
+#         push_error("ArmyState must have an owner")
+#         return
 
-func _ready() -> void:
-    if owner == null:
-        push_error("ArmyState must have an owner")
-        return
+#     if not owner.is_node_ready():
+#         await owner.ready
 
-    if not owner.is_node_ready():
-        await owner.ready
+#     if owner is not Army:
+#         push_error("ArmyState owner must be an Army")
+#         return
 
-    if owner is not Army:
-        push_error("ArmyState owner must be an Army")
-        return
-
-    target = owner
+#     target = owner

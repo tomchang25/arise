@@ -4,6 +4,7 @@ extends Node2D
 @export var projectile_scene: PackedScene
 
 @export var attack_cooldown: float = 0.5
+@export var attack_range: float = 20
 @export var max_targets: int = 1
 
 var cooldown_timer: Timer
@@ -23,6 +24,11 @@ func _ready():
 
 func attack(target_position: Vector2):
     if locked:
+        push_warning("ProjectileAttack is already locked")
+        return
+
+    if not is_in_range(target_position):
+        push_warning("ProjectileAttack is not in range")
         return
 
     targets_hit_count = 0
@@ -38,6 +44,10 @@ func attack(target_position: Vector2):
     spawned_projectile.rotation = aim_direction.angle()
 
     cooldown_timer.start()
+
+
+func is_in_range(target_position: Vector2) -> bool:
+    return global_position.distance_to(target_position) <= attack_range
 
 
 func can_attack() -> bool:

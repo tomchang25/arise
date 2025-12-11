@@ -9,6 +9,8 @@ func _enter() -> void:
     player.movement.stop()
     player.animation.travel_to_state(self.animation_state)
 
+    player.animation.set_as_prev_animation_direction(self.animation_state)
+
 
 func _update(_delta: float) -> void:
     if player.player_input.get_movement_direction().length() > 0:

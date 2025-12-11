@@ -1,6 +1,6 @@
 extends ArmyState
 
-@export var attack_range: float = 50
+@export var follow_threshold: float = 100
 
 
 func _init() -> void:
@@ -13,7 +13,7 @@ func _enter() -> void:
 
 
 func _update(_delta: float) -> void:
-    if not target.is_enemy_visible() or target.is_too_far_from_player():
+    if not target.is_enemy_visible():
         change_state(ArmyState.ArmyStateId.IDLE)
         return
 
@@ -25,14 +25,17 @@ func _update(_delta: float) -> void:
         ):
             nearest_enemy = enemy
 
-    target.pathfinding.set_target(nearest_enemy.global_position)
+    target.pathfinding.set_target(nearest_enemy)
+    target.movement.set_velocity(target.pathfinding.get_velocity())
 
-    # var distance_to_enemy: float = target.global_position.distance_to(nearest_enemy.global_position)
-    # if distance_to_enemy <= attack_range:
-    #     change_state(ArmyState.ArmyStateId.ATTACK)
-    #     return
+    if target.attack_handler.is_in_range(nearest_enemy.global_position):
+        print("Attack")
+        # change_state(ArmyState.ArmyStateId.ATTACK)
+        # return
 
-    target.velocity = target.pathfinding.movement_vector
+    if target.global_position.distance_to(target.player.global_position) > follow_threshold:
+        change_state(ArmyState.ArmyStateId.FOLLOW)
+        return
 
 
 func _exit() -> void:

@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://b1ld6oxdabven"]
+
+[ext_resource type="Script" uid="uid://cbkom3y372wt7" path="res://common/component/melee_attack/melee_attack.gd" id="1_p568x"]
+
+[node name="MeleeAttack" type="Node2D"]
+position = Vector2(0, -5)
+script = ExtResource("1_p568x")
+attack_cooldown = 0.1

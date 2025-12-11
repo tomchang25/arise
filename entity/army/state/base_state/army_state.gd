@@ -3,6 +3,7 @@ extends State
 
 enum ArmyStateId { NULL = -1, IDLE = 0, FOLLOW = 1, CHASE = 2, RETREAT = 3, ATTACK = 4 }
 
+@export var animation_state: String
 var target: Army
 
 

@@ -422,10 +422,10 @@ libraries = {
 root_node = NodePath("../..")
 tree_root = ExtResource("3_qa8rf")
 anim_player = NodePath("../AnimationPlayer")
-parameters/StateMachine/Attack/blend_position = Vector2(-0.202066, 0.0966387)
+parameters/StateMachine/Attack/blend_position = Vector2(0, 0)
 parameters/StateMachine/Idle/blend_position = Vector2(0, 0)
-parameters/StateMachine/Move/blend_position = false
-parameters/StateMachine/Roll/blend_position = Vector2(-0.477082, -0.319328)
+parameters/StateMachine/Move/blend_position = Vector2(0, 0)
+parameters/StateMachine/Roll/blend_position = Vector2(0, 0)
 parameters/TimeScale/scale = 1.0
 
 [node name="PlayerInput" type="Node" parent="."]
