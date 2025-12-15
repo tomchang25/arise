@@ -16,6 +16,7 @@ func _enter() -> void:
     target.soft_collision.enabled = false
     target.pathfinding.set_arrive_distance(20)
     target.pathfinding.set_speed(move_speed)
+    target.pathfinding.set_target(target.player)
 
     target.animation.travel_to_state(self.animation_state)
 

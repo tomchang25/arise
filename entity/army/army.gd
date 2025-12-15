@@ -59,6 +59,20 @@ func is_enemy_attackable() -> bool:
     return false
 
 
+func get_nearest_enemy() -> Node2D:
+    var nearest_enemy: Node2D = null
+
+    for enemy in enemies_in_range:
+        if nearest_enemy == null:
+            nearest_enemy = enemy
+            continue
+
+        if nearest_enemy.global_position.distance_to(self.global_position) > enemy.global_position.distance_to(self.global_position):
+            nearest_enemy = enemy
+
+    return nearest_enemy
+
+
 # func is_too_far_from_player() -> bool:
 #     return player.global_position.distance_to(self.global_position) > follow_threshold
 

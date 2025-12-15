@@ -12,7 +12,7 @@ func _ready():
 
 
 func _on_check_timer_timeout():
-    var armies_state = {&"Follow": 0, &"Chase": 0, &"Idle": 0}
+    var armies_state = {&"Follow": 0, &"Chase": 0, &"Idle": 0, &"Attack": 0}
     for army in get_children():
         if army is not CharacterBody2D:
             continue
