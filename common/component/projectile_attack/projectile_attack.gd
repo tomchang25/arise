@@ -21,6 +21,8 @@ func _ready():
     cooldown_timer.timeout.connect(_on_cooldown_timer_timeout)
     add_child(cooldown_timer)
 
+    print(attack_range)
+
 
 func attack(target_position: Vector2):
     if locked:

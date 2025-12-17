@@ -22,7 +22,7 @@ radius = 1.0
 height = 6.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_tn28i"]
-radius = 75.0
+radius = 100.0
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_mvkfs"]
 animation = &"AttackDown"
@@ -371,7 +371,7 @@ disabled = true
 position = Vector2(0, -5)
 collision_layer = 0
 collision_mask = 2
-radius = 75.0
+radius = 100.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyCheckDetectbox"]
 shape = SubResource("CircleShape2D_tn28i")
@@ -381,6 +381,7 @@ debug_color = Color(0, 0.129412, 0.701961, 0.0784314)
 position = Vector2(0, -5)
 script = ExtResource("7_i87wb")
 projectile_scene = ExtResource("5_bahv0")
+attack_range = 50.0
 
 [node name="Pathfinding" parent="." node_paths=PackedStringArray("movement") instance=ExtResource("7_iga26")]
 movement = NodePath("../Movement")
@@ -389,7 +390,7 @@ movement = NodePath("../Movement")
 path_desired_distance = 40.0
 target_desired_distance = 20.0
 avoidance_enabled = true
-radius = 5.0
+radius = 1.0
 debug_use_custom = true
 debug_path_custom_color = Color(1, 0, 1, 1)
 
@@ -417,6 +418,7 @@ initial_state = NodePath("Idle")
 
 [node name="Idle" type="Node" parent="ArmyStateMachine"]
 script = ExtResource("8_lqaih")
+follow_threshold = 16.0
 animation_state = "Idle"
 
 [node name="Follow" type="Node" parent="ArmyStateMachine"]
@@ -426,8 +428,8 @@ animation_state = "Move"
 
 [node name="Chase" type="Node" parent="ArmyStateMachine"]
 script = ExtResource("11_6k810")
+animation_state = "Move"
 
 [node name="Attack" type="Node" parent="ArmyStateMachine"]
 script = ExtResource("12_4aipm")
-follow_threshold = 400.0
 animation_state = "Attack"

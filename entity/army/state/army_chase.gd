@@ -9,7 +9,10 @@ func _init() -> void:
 
 func _enter() -> void:
     target.soft_collision.enabled = false
-    target.pathfinding.set_arrive_distance(10)
+    target.pathfinding.set_arrive_distance(target.attack_range / 2)
+    target.set_target_position(target.get_nearest_enemy().global_position)
+
+    target.animation.travel_to_state(self.animation_state)
 
 
 func _update(_delta: float) -> void:
@@ -21,11 +24,11 @@ func _update(_delta: float) -> void:
         change_state(ArmyState.ArmyStateId.ATTACK)
         return
 
-    if target.global_position.distance_to(target.player.global_position) > follow_threshold:
+    if target.get_distance_to_player() > follow_threshold:
         change_state(ArmyState.ArmyStateId.FOLLOW)
         return
 
-    target.pathfinding.set_target(target.get_nearest_enemy())
+    target.set_target_position(target.get_nearest_enemy().global_position)
     target.movement.set_velocity(target.pathfinding.get_velocity())
 
 

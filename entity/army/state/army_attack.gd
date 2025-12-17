@@ -19,14 +19,15 @@ func _exit() -> void:
 
 func _update(_delta: float) -> void:
     if not target.is_enemy_visible():
-        change_state(ArmyState.ArmyStateId.IDLE)
+        # change_state(ArmyState.ArmyStateId.IDLE)
+        change_state(ArmyState.ArmyStateId.FOLLOW)
         return
 
     if not target.is_enemy_attackable():
         change_state(ArmyState.ArmyStateId.CHASE)
         return
 
-    if target.global_position.distance_to(target.player.global_position) > follow_threshold:
+    if target.get_distance_to_player() > follow_threshold:
         change_state(ArmyState.ArmyStateId.FOLLOW)
         return
 

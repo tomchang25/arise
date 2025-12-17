@@ -8,8 +8,6 @@ extends Node2D
 @onready var navigation_agent: NavigationAgent2D = $NavigationAgent2D
 @onready var update_timer: Timer = $UpdateTimer
 
-var target_node: Node2D
-
 var _target_velocity: Vector2
 var _max_speed: float
 
@@ -22,11 +20,11 @@ func _ready():
         return
 
     navigation_agent.velocity_computed.connect(_on_velocity_computed)
-    update_timer.timeout.connect(_on_update_timer_timeout)
+    # update_timer.timeout.connect(_on_update_timer_timeout)
 
 
 func _physics_process(_delta):
-    if not enabled or not target_node:
+    if not enabled:
         return
 
     # 1. Pathfinding (Runs only when the target changes or the current path is invalidated)
@@ -53,12 +51,11 @@ func _on_velocity_computed(safe_velocity: Vector2):
     _target_velocity = safe_velocity
 
 
-func _on_update_timer_timeout():
-    if not enabled or not target_node:
-        return
+# func _on_update_timer_timeout():
+#     if not enabled:
+#         return
 
-    update_target_position()
-
+#     update_target_position()
 
 ## --- Public API for Setting Movement State ---
 
@@ -71,10 +68,6 @@ func get_velocity() -> Vector2:
     return _target_velocity
 
 
-func set_target(new_target_node: Node2D):
-    target_node = new_target_node
-
-
 func set_speed(new_speed: float):
     navigation_agent.max_speed = new_speed
     _max_speed = new_speed
@@ -84,5 +77,5 @@ func set_arrive_distance(new_distance: float):
     navigation_agent.target_desired_distance = new_distance
 
 
-func update_target_position():
-    navigation_agent.target_position = target_node.global_position
+func set_target_position(new_target_pos: Vector2):
+    navigation_agent.target_position = new_target_pos

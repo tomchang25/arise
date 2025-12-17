@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://dbhtrssgng58f" path="res://entity/player/player.tscn" id="2_54ftc"]
 [ext_resource type="PackedScene" uid="uid://dccho5kdagt0e" path="res://entity/environment/bush/bush.tscn" id="3_eeu4c"]
 [ext_resource type="PackedScene" uid="uid://csanq2hkw7h68" path="res://entity/enemy/enemy.tscn" id="4_54ftc"]
-[ext_resource type="Script" uid="uid://btrkbmf3s0pww" path="res://entity/army/army_handler/army_handler.gd" id="5_que0v"]
+[ext_resource type="PackedScene" uid="uid://bfxutmk72t3gc" path="res://entity/army/army_handler/army_handler.tscn" id="4_fu4i5"]
 [ext_resource type="PackedScene" uid="uid://12rdjr3aafmv" path="res://entity/spawner/arise_box/arise_box.tscn" id="6_fu4i5"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_eeu4c"]
@@ -48,15 +48,18 @@ position = Vector2(93, 80)
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
 
+[node name="ArmyHandler" parent="." instance=ExtResource("4_fu4i5")]
+
 [node name="EnemyHandler" type="Node2D" parent="."]
 y_sort_enabled = true
 position = Vector2(93, 80)
 
 [node name="Enemy" parent="EnemyHandler" instance=ExtResource("4_54ftc")]
-position = Vector2(37, 41)
+position = Vector2(-96, -8)
+health = 100000
 
 [node name="Enemy2" parent="EnemyHandler" instance=ExtResource("4_54ftc")]
-position = Vector2(-92, -6)
+position = Vector2(38, 38)
 
 [node name="Enemy3" parent="EnemyHandler" instance=ExtResource("4_54ftc")]
 position = Vector2(56, 52)
@@ -70,22 +73,19 @@ position = Vector2(-28, 71)
 [node name="Enemy6" parent="EnemyHandler" instance=ExtResource("4_54ftc")]
 position = Vector2(-16, 76)
 
-[node name="ArmyHandler" type="Node2D" parent="." groups=["army_handler"]]
-y_sort_enabled = true
-script = ExtResource("5_que0v")
-
 [node name="Spawner" type="Node2D" parent="."]
 
 [node name="AriseBox" parent="Spawner" instance=ExtResource("6_fu4i5")]
 position = Vector2(212, 76)
-spawn_time = 1.0
+spawn_time = 0.1
+spawn_number = 10
 
 [node name="AriseBox2" parent="Spawner" instance=ExtResource("6_fu4i5")]
 position = Vector2(188, 132)
 spawn_time = 1.0
-spawn_number = 2
+spawn_number = 20
 
 [node name="AriseBox3" parent="Spawner" instance=ExtResource("6_fu4i5")]
 position = Vector2(225, 111)
 spawn_time = 1.0
-spawn_number = 4
+spawn_number = 30

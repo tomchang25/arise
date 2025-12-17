@@ -6,6 +6,7 @@ signal damaged(attack: Attack)
 @export var detection_radius := 100.0
 @export var chase_radius := 200.0
 @export var follow_radius := 25.0
+@export var health := 10
 
 @onready var sprite := $AnimatedSprite2D
 @onready var hitbox: Hitbox = $Hitbox
@@ -14,6 +15,9 @@ signal damaged(attack: Attack)
 
 
 func _ready() -> void:
+    health_component.max_health = health
+    health_component.reset()
+
     hitbox.damaged.connect(_on_damaged)
 
     health_component.health_changed.connect(_on_health_changed)
@@ -26,8 +30,8 @@ func _on_damaged(attack: Attack) -> void:
     damaged.emit(attack)
 
 
-func _on_health_changed(health: float) -> void:
-    var overlay_ratio = (1 - (health / health_component.max_health)) * 0.5
+func _on_health_changed(new_health: float) -> void:
+    var overlay_ratio = (1 - (new_health / health_component.max_health)) * 0.5
     sprite.material.set_shader_parameter("overlay_amount", overlay_ratio)
     health_label.text = "HP: " + str(health_component.health)
 

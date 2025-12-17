@@ -49,28 +49,27 @@ func _on_area_entered(body: Node2D) -> void:
 
     if not entities_in_range.has(body):
         entities_in_range.append(body)
+        body.tree_exited.connect(remove_node.bind(body))
 
 
 func _on_area_exited(body: Node2D) -> void:
-    var index = entities_in_range.find(body)
-    if index != -1:
-        entities_in_range.remove_at(index)
+    remove_node(body)
 
-        if entities_in_range.is_empty():
-            detected.emit([])
-            scan_timer.stop()
+    if entities_in_range.is_empty():
+        detected.emit([])
+        scan_timer.stop()
 
 
 # --- Periodic Scan Logic ---
 func _on_scan_timer_timeout() -> void:
-    # Iterate in reverse to safely remove elements
-    for i in range(entities_in_range.size() - 1, -1, -1):
-        var entity = entities_in_range[i]
-
-        if not is_instance_valid(entity):
-            entities_in_range.remove_at(i)
-
     detected.emit(entities_in_range)
 
     if entities_in_range.is_empty():
         scan_timer.stop()
+
+
+func remove_node(body: Node2D) -> void:
+    var index = entities_in_range.find(body)
+    if index != -1:
+        entities_in_range.remove_at(index)
+        body.tree_exited.disconnect(remove_node.bind(body))
