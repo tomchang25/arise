@@ -1,9 +1,8 @@
-[gd_scene load_steps=40 format=3 uid="uid://dbhtrssgng58f"]
+[gd_scene load_steps=38 format=3 uid="uid://dbhtrssgng58f"]
 
 [ext_resource type="Script" uid="uid://bwkkatjpy72kv" path="res://entity/player/player.gd" id="1_b15sj"]
 [ext_resource type="Texture2D" uid="uid://e7rr31b6fwkg" path="res://entity/player/art/player.png" id="2_e6ar1"]
 [ext_resource type="Script" uid="uid://cbkom3y372wt7" path="res://common/component/melee_attack/melee_attack.gd" id="3_5afgs"]
-[ext_resource type="PackedScene" uid="uid://b1ju0utxkl773" path="res://common/component/soft_collision/soft_collision.tscn" id="3_b15sj"]
 [ext_resource type="PackedScene" uid="uid://do052sqt3wjdp" path="res://common/component/detectbox/detectbox.tscn" id="3_n81ss"]
 [ext_resource type="AnimationNodeBlendTree" uid="uid://bam4152vw8gtf" path="res://entity/player/data/player_animation_tree.tres" id="3_qa8rf"]
 [ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/component/hurtbox/hurtbox.gd" id="3_wltfy"]
@@ -20,9 +19,6 @@
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_nqnt1"]
 radius = 3.0
 height = 16.0
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_mx88g"]
-radius = 20.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_n81ss"]
 radius = 25.0
@@ -361,16 +357,6 @@ hframes = 60
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 rotation = 1.5708
 shape = SubResource("CapsuleShape2D_nqnt1")
-
-[node name="SoftCollision" parent="." instance=ExtResource("3_b15sj")]
-collision_layer = 512
-push_force = 50000.0
-push_distance = 500.0
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="SoftCollision"]
-position = Vector2(0, -5)
-shape = SubResource("CircleShape2D_mx88g")
-debug_color = Color(0, 0.631373, 0.478431, 0.235294)
 
 [node name="AutoAttackDetectbox" parent="." instance=ExtResource("3_n81ss")]
 position = Vector2(0, -5)
