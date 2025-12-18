@@ -8,7 +8,7 @@ func _init() -> void:
 
 
 func _enter() -> void:
-    target.soft_collision.enabled = false
+    # target.soft_collision.enabled = false
     target.pathfinding.set_arrive_distance(target.attack_range / 2)
     target.set_target_position(target.get_nearest_enemy().global_position)
 

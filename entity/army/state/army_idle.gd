@@ -8,7 +8,7 @@ func _init() -> void:
 
 
 func _enter() -> void:
-    target.soft_collision.enabled = true
+    # target.soft_collision.enabled = true
     target.movement.stop()
 
     target.animation.travel_to_state(self.animation_state)

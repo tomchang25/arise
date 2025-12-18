@@ -11,6 +11,12 @@ func _enter() -> void:
 
     player.animation.set_as_prev_animation_direction(self.animation_state)
 
+    player.navigation_agent_2d.avoidance_enabled = false
+
+
+func _exit() -> void:
+    player.navigation_agent_2d.avoidance_enabled = true
+
 
 func _update(_delta: float) -> void:
     if player.player_input.get_movement_direction().length() > 0:

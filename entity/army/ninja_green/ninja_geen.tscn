@@ -1,9 +1,8 @@
-[gd_scene load_steps=47 format=3 uid="uid://dybnb2lmsq7s0"]
+[gd_scene load_steps=45 format=3 uid="uid://dybnb2lmsq7s0"]
 
 [ext_resource type="Script" uid="uid://be5rffb7rwigg" path="res://entity/army/army.gd" id="1_13omc"]
 [ext_resource type="Texture2D" uid="uid://dcefsfe6uvtoj" path="res://entity/army/ninja_green/art/SpriteSheet.png" id="2_tn28i"]
 [ext_resource type="PackedScene" uid="uid://do052sqt3wjdp" path="res://common/component/detectbox/detectbox.tscn" id="3_lqaih"]
-[ext_resource type="Script" uid="uid://clio077y7ei1t" path="res://common/component/soft_collision/soft_collision.gd" id="3_m0xvt"]
 [ext_resource type="PackedScene" uid="uid://dagjfgo7sjdn0" path="res://entity/projectile/arrow/arrow.tscn" id="5_bahv0"]
 [ext_resource type="Script" uid="uid://ekkn4dbt30hh" path="res://common/component/projectile_attack/projectile_attack.gd" id="7_i87wb"]
 [ext_resource type="PackedScene" uid="uid://bhgm1iqut1i6s" path="res://common/component/pathfinding/pathfinding.tscn" id="7_iga26"]
@@ -15,11 +14,9 @@
 [ext_resource type="Script" uid="uid://d257mq3pbe3mk" path="res://entity/army/state/army_chase.gd" id="11_6k810"]
 [ext_resource type="Script" uid="uid://4ryn1wepqme5" path="res://entity/army/state/army_attack.gd" id="12_4aipm"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_m0xvt"]
-
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ocq7q"]
 radius = 1.0
-height = 6.0
+height = 4.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_tn28i"]
 radius = 100.0
@@ -350,22 +347,10 @@ texture = ExtResource("2_tn28i")
 hframes = 4
 vframes = 7
 
-[node name="SoftCollision" type="Area2D" parent="."]
-position = Vector2(0, -5)
-collision_layer = 512
-collision_mask = 512
-script = ExtResource("3_m0xvt")
-push_force = 1000.0
-overlapping_max_count = 20
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="SoftCollision"]
-shape = SubResource("CircleShape2D_m0xvt")
-debug_color = Color(0.776471, 0.431373, 0.2, 0.109804)
-
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 rotation = 1.5708
 shape = SubResource("CapsuleShape2D_ocq7q")
-disabled = true
+debug_color = Color(0.961248, 0, 0.511433, 0.42)
 
 [node name="EnemyCheckDetectbox" parent="." instance=ExtResource("3_lqaih")]
 position = Vector2(0, -5)

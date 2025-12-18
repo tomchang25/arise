@@ -4,11 +4,12 @@ extends Node2D
 signal unit_grid_changed
 
 @export var size := 100
-@export var grid_size := 16
+@export var grid_size := 12
 
 @onready var debug_timer: Timer = $DebugTimer
 
 var units: Array[Node]
+
 ## --- GDScript Lifecycle ---
 
 

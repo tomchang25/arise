@@ -13,7 +13,7 @@ func _init() -> void:
 
 
 func _enter() -> void:
-    target.soft_collision.enabled = false
+    # target.soft_collision.enabled = false
     target.pathfinding.set_arrive_distance(5)
     target.pathfinding.set_speed(move_speed)
     # target.set_target_position(target.player.global_position)

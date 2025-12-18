@@ -6,6 +6,7 @@ extends CharacterBody2D
 
 @onready var melee_attack: MeleeAttack = $MeleeAttack
 @onready var auto_attack_detectbox: Detectbox = $AutoAttackDetectbox
+@onready var navigation_agent_2d: NavigationAgent2D = $NavigationAgent2D
 
 @onready var state_machine := $PlayerStateMachine
 
