@@ -1,10 +1,10 @@
 [gd_scene load_steps=8 format=3 uid="uid://bn13d02jyg5d7"]
 
 [ext_resource type="Texture2D" uid="uid://bylg7d5anp8c7" path="res://stage/test/playground/art/grass_background.png" id="1_avbqp"]
-[ext_resource type="PackedScene" uid="uid://dbhtrssgng58f" path="res://entity/player/player.tscn" id="2_54ftc"]
+[ext_resource type="PackedScene" uid="uid://dbhtrssgng58f" path="res://entity/actor/player/player.tscn" id="2_54ftc"]
 [ext_resource type="PackedScene" uid="uid://dccho5kdagt0e" path="res://entity/environment/bush/bush.tscn" id="3_eeu4c"]
-[ext_resource type="PackedScene" uid="uid://csanq2hkw7h68" path="res://entity/enemy/enemy.tscn" id="4_54ftc"]
-[ext_resource type="PackedScene" uid="uid://bfxutmk72t3gc" path="res://entity/army/army_handler/army_handler.tscn" id="4_fu4i5"]
+[ext_resource type="PackedScene" uid="uid://csanq2hkw7h68" path="res://entity/actor/npc/enemy/enemy.tscn" id="4_54ftc"]
+[ext_resource type="PackedScene" uid="uid://bfxutmk72t3gc" path="res://entity/actor/npc/army/army_handler/army_handler.tscn" id="4_fu4i5"]
 [ext_resource type="PackedScene" uid="uid://12rdjr3aafmv" path="res://entity/spawner/arise_box/arise_box.tscn" id="6_fu4i5"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_eeu4c"]
@@ -59,7 +59,8 @@ position = Vector2(-96, -8)
 health = 100000
 
 [node name="Enemy2" parent="EnemyHandler" instance=ExtResource("4_54ftc")]
-position = Vector2(38, 38)
+position = Vector2(-105, -12)
+health = 100000
 
 [node name="Enemy3" parent="EnemyHandler" instance=ExtResource("4_54ftc")]
 position = Vector2(56, 52)

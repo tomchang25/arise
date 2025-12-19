@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bfxutmk72t3gc"]
 
-[ext_resource type="Script" uid="uid://btrkbmf3s0pww" path="res://entity/army/army_handler/army_handler.gd" id="1_01v57"]
+[ext_resource type="Script" uid="uid://btrkbmf3s0pww" path="res://entity/actor/npc/army/army_handler/army_handler.gd" id="1_01v57"]
 
 [node name="ArmyHandler" type="Node2D" groups=["army_handler"]]
 y_sort_enabled = true

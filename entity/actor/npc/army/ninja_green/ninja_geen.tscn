@@ -1,7 +1,7 @@
 [gd_scene load_steps=45 format=3 uid="uid://dybnb2lmsq7s0"]
 
-[ext_resource type="Script" uid="uid://be5rffb7rwigg" path="res://entity/army/army.gd" id="1_13omc"]
-[ext_resource type="Texture2D" uid="uid://dcefsfe6uvtoj" path="res://entity/army/ninja_green/art/SpriteSheet.png" id="2_tn28i"]
+[ext_resource type="Script" uid="uid://be5rffb7rwigg" path="res://entity/actor/npc/army/army.gd" id="1_13omc"]
+[ext_resource type="Texture2D" uid="uid://dcefsfe6uvtoj" path="res://entity/actor/npc/army/ninja_green/art/SpriteSheet.png" id="2_tn28i"]
 [ext_resource type="PackedScene" uid="uid://do052sqt3wjdp" path="res://common/component/detectbox/detectbox.tscn" id="3_lqaih"]
 [ext_resource type="PackedScene" uid="uid://dagjfgo7sjdn0" path="res://entity/projectile/arrow/arrow.tscn" id="5_bahv0"]
 [ext_resource type="PackedScene" uid="uid://l45622b15oap" path="res://common/component/attack/projectile_attack/projectile_attack.tscn" id="6_i87wb"]
@@ -9,10 +9,10 @@
 [ext_resource type="Script" uid="uid://bu436ru5hhd66" path="res://common/component/animation/base_animation.gd" id="8_4aipm"]
 [ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/state_machinie/state_machine.gd" id="8_13omc"]
 [ext_resource type="Script" uid="uid://lnjp761bf75g" path="res://common/component/movement/base_movement.gd" id="8_i87wb"]
-[ext_resource type="Script" uid="uid://dplrsortb8ufa" path="res://entity/army/state/army_idle.gd" id="8_lqaih"]
-[ext_resource type="Script" uid="uid://d0008vj2c0w5u" path="res://entity/army/state/army_follow.gd" id="9_6k810"]
-[ext_resource type="Script" uid="uid://d257mq3pbe3mk" path="res://entity/army/state/army_chase.gd" id="11_6k810"]
-[ext_resource type="Script" uid="uid://4ryn1wepqme5" path="res://entity/army/state/army_attack.gd" id="12_4aipm"]
+[ext_resource type="Script" uid="uid://dplrsortb8ufa" path="res://entity/actor/npc/army/state/army_idle.gd" id="8_lqaih"]
+[ext_resource type="Script" uid="uid://d0008vj2c0w5u" path="res://entity/actor/npc/army/state/army_follow.gd" id="9_6k810"]
+[ext_resource type="Script" uid="uid://d257mq3pbe3mk" path="res://entity/actor/npc/army/state/army_chase.gd" id="11_6k810"]
+[ext_resource type="Script" uid="uid://4ryn1wepqme5" path="res://entity/actor/npc/army/state/army_attack.gd" id="12_4aipm"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ocq7q"]
 radius = 1.0
@@ -367,6 +367,7 @@ debug_color = Color(0, 0.129412, 0.701961, 0.0784314)
 position = Vector2(0, -5)
 projectile_scene = ExtResource("5_bahv0")
 attack_range = 25.0
+max_targets = 2
 
 [node name="Pathfinding" parent="." node_paths=PackedStringArray("movement") instance=ExtResource("7_iga26")]
 movement = NodePath("../Movement")

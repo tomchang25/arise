@@ -10,10 +10,11 @@ func _execute_attack_logic(target_position: Vector2) -> void:
         locked = false  # Unlock if out of range, or handle differently
         return
 
-    var spawned_projectile = projectile_scene.instantiate()
+    var spawned_projectile: Projectile = projectile_scene.instantiate()
     get_tree().root.add_child(spawned_projectile)
 
     spawned_projectile.global_position = global_position
+    spawned_projectile.max_pierce = max_targets
 
     # Reuse the base aim logic for the projectile direction
     var aim_direction := (target_position - global_position).angle()
