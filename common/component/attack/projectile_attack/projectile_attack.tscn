@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3 uid="uid://l45622b15oap"]
+
+[ext_resource type="PackedScene" uid="uid://c3u1j2s2a5se0" path="res://common/component/attack/base_attack.tscn" id="1_6kww0"]
+[ext_resource type="Script" uid="uid://ekkn4dbt30hh" path="res://common/component/attack/projectile_attack/projectile_attack.gd" id="2_gpbei"]
+
+[node name="ProjectileAttack" instance=ExtResource("1_6kww0")]
+script = ExtResource("2_gpbei")
+projectile_scene = null

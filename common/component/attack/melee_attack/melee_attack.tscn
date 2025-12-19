@@ -1,0 +1,7 @@
+[gd_scene load_steps=3 format=3 uid="uid://c2224wrm4mfcx"]
+
+[ext_resource type="Script" uid="uid://cbkom3y372wt7" path="res://common/component/attack/melee_attack/melee_attack.gd" id="1_p568x"]
+[ext_resource type="PackedScene" uid="uid://c3u1j2s2a5se0" path="res://common/component/attack/base_attack.tscn" id="1_ydbwj"]
+
+[node name="MeleeAttack" instance=ExtResource("1_ydbwj")]
+script = ExtResource("1_p568x")

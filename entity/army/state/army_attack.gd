@@ -35,5 +35,5 @@ func _update(_delta: float) -> void:
         var enemy_position: Vector2 = target.get_nearest_enemy().global_position
 
         if target.attack_handler.is_in_range(enemy_position):
-            target.attack_handler.attack(enemy_position)
+            target.attack_handler.start_attack(enemy_position)
             target.animation.set_animation_direction(target.global_position.direction_to(enemy_position), self.animation_state)

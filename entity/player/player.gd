@@ -49,4 +49,4 @@ func _on_enemies_detected(nodes_in_range: Array) -> void:
 
 func attack(target_position: Vector2) -> void:
     melee_attack.aim_at(target_position)
-    melee_attack.start_attack()
+    melee_attack.start_attack(target_position)
