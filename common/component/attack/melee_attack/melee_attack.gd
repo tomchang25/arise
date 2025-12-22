@@ -24,6 +24,7 @@ func _execute_attack_logic(_target_position: Vector2) -> void:
 
 
 func _on_enemy_hit() -> void:
+    print("TEST")
     _on_hit_confirmed()
 
 
