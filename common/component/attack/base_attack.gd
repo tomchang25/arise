@@ -2,7 +2,7 @@ class_name BaseAttack
 extends Node2D
 
 @export var attack_cooldown: float = 0.5
-@export var attack_range: float = -1
+# @export var attack_range: float = -1
 
 @export var max_targets: int = 1
 
@@ -68,10 +68,6 @@ func start_attack(target_position: Vector2) -> void:
     if locked:
         return
 
-    if not is_in_range(target_position):
-        push_warning("Target out of range")
-        return
-
     targets_hit_count = 0
     locked = true
     _execute_attack_logic(target_position)
@@ -79,10 +75,3 @@ func start_attack(target_position: Vector2) -> void:
 
 func end_attack() -> void:
     cooldown_timer.start()
-
-
-func is_in_range(target_position: Vector2) -> bool:
-    if attack_range < 0:
-        return true
-
-    return global_position.distance_to(target_position) <= attack_range

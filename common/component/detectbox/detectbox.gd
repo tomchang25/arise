@@ -2,35 +2,48 @@
 class_name Detectbox
 extends Area2D
 
-signal detected(nodes_in_range: Array)
-# signal last_node_left
+signal targets_changed(current_targets: Array[Node])
 
-@export var scan_interval: float = 0.2
-@export var radius: float = 50.0:  # NEW CODE: Exported radius variable
+@export var radius: float = 50.0:
     set(value):
         radius = value
         if is_node_ready():
             set_collision_radius(radius)
 
-@onready var collision_shape_2d: CollisionShape2D = $CollisionShape2D
-
-var scan_timer: Timer
+var collision_shape_2d: CollisionShape2D
 
 var entities_in_range: Array[Node] = []
+
+# --- GDScript Lifecycle ---
 
 
 func _ready() -> void:
     area_entered.connect(_on_area_entered)
     area_exited.connect(_on_area_exited)
 
-    scan_timer = Timer.new()
-    scan_timer.wait_time = scan_interval
-    scan_timer.autostart = true
-    scan_timer.one_shot = false
-    scan_timer.timeout.connect(_on_scan_timer_timeout)
-    add_child(scan_timer)
+    # set_collision_radius(radius)
+    _setup_collision_shape()
+
+
+func _setup_collision_shape() -> void:
+    for child in get_children():
+        if child is CollisionShape2D:
+            collision_shape_2d = child
+            break
 
     set_collision_radius(radius)
+
+
+# --- Signal Handlers for Array Management ---
+func _on_area_entered(body: Node2D) -> void:
+    add_node(body)
+
+
+func _on_area_exited(body: Node2D) -> void:
+    remove_node(body)
+
+
+# --- Utility Functions ---
 
 
 func set_collision_radius(new_radius: float) -> void:
@@ -42,34 +55,20 @@ func set_collision_radius(new_radius: float) -> void:
             print_debug("Detectbox requires a CircleShape2D resource to set the radius property.")
 
 
-# --- Signal Handlers for Array Management ---
-func _on_area_entered(body: Node2D) -> void:
-    if scan_timer.is_stopped():
-        scan_timer.start()
-
+func add_node(body: Node2D) -> void:
     if not entities_in_range.has(body):
         entities_in_range.append(body)
-        body.tree_exited.connect(remove_node.bind(body))
 
+        if not body.tree_exited.is_connected(remove_node):
+            body.tree_exited.connect(remove_node.bind(body))
 
-func _on_area_exited(body: Node2D) -> void:
-    remove_node(body)
-
-    if entities_in_range.is_empty():
-        detected.emit([])
-        scan_timer.stop()
-
-
-# --- Periodic Scan Logic ---
-func _on_scan_timer_timeout() -> void:
-    detected.emit(entities_in_range)
-
-    if entities_in_range.is_empty():
-        scan_timer.stop()
+        targets_changed.emit(entities_in_range)
 
 
 func remove_node(body: Node2D) -> void:
     var index = entities_in_range.find(body)
     if index != -1:
         entities_in_range.remove_at(index)
-        body.tree_exited.disconnect(remove_node.bind(body))
+        if body.tree_exited.is_connected(remove_node):
+            body.tree_exited.disconnect(remove_node.bind(body))
+        targets_changed.emit(entities_in_range)

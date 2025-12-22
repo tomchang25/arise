@@ -18,12 +18,12 @@ func _exit() -> void:
 
 
 func _update(_delta: float) -> void:
-    if not target.is_enemy_visible():
+    if not target.enemy_scanner.is_enemy_visible():
         # change_state(ArmyState.ArmyStateId.IDLE)
         change_state(ArmyState.ArmyStateId.FOLLOW)
         return
 
-    if not target.is_enemy_attackable():
+    if not target.enemy_scanner.is_enemy_attackable():
         change_state(ArmyState.ArmyStateId.CHASE)
         return
 
@@ -32,8 +32,10 @@ func _update(_delta: float) -> void:
         return
 
     if target.attack_handler.can_attack():
-        var enemy_position: Vector2 = target.get_nearest_enemy().global_position
+        var nearest_enemy: Node2D = target.enemy_scanner.get_nearest_attackable_enemy()
 
-        if target.attack_handler.is_in_range(enemy_position):
+        if nearest_enemy:
+            var enemy_position: Vector2 = nearest_enemy.global_position
+
             target.attack_handler.start_attack(enemy_position)
             target.animation.set_animation_direction(target.global_position.direction_to(enemy_position), self.animation_state)

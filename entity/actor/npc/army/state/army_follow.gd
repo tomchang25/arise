@@ -13,10 +13,9 @@ func _init() -> void:
 
 
 func _enter() -> void:
-    # target.soft_collision.enabled = false
     target.pathfinding.set_arrive_distance(5)
     target.pathfinding.set_speed(move_speed)
-    # target.set_target_position(target.player.global_position)
+
     target.update_grid_position()
 
     target.animation.travel_to_state(self.animation_state)
@@ -31,11 +30,7 @@ func _update(delta: float) -> void:
     target.animation.set_animation_direction(movement_vector, self.animation_state)
 
     if target.get_distance_to_player() < min_distance_to_player:
-        # if movement_vector == Vector2.ZERO:
-        #     change_state(ArmyState.ArmyStateId.IDLE)
-        #     return
-
-        if target.is_enemy_visible():
+        if target.enemy_scanner.is_enemy_visible():
             change_state(ArmyState.ArmyStateId.CHASE)
             return
 

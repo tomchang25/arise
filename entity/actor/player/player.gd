@@ -8,7 +8,7 @@ extends CharacterBody2D
 
 # ------ Components ------
 
-@onready var enemy_detectbox: Detectbox = $AutoAttackDetectbox
+@onready var enemy_detectbox: Detectbox = $EnemyDetectbox
 @onready var melee_attack: MeleeAttack = $MeleeAttack
 
 @onready var movement: BaseMovement = $PlayerMovement
@@ -25,7 +25,7 @@ var nearest_enemy: Enemy = null
 
 
 func _ready() -> void:
-    enemy_detectbox.detected.connect(_on_enemies_detected)
+    enemy_detectbox.targets_changed.connect(_on_enemies_detected)
     # animation.animation_finished.connect(_on_animation_finished)
 
 

@@ -19,7 +19,7 @@ func _update(_delta: float) -> void:
         change_state(ArmyState.ArmyStateId.FOLLOW)
         return
 
-    if target.is_enemy_visible():
+    if target.enemy_scanner.is_enemy_visible():
         change_state(ArmyState.ArmyStateId.CHASE)
         return
 

@@ -6,10 +6,6 @@ extends BaseAttack
 
 
 func _execute_attack_logic(target_position: Vector2) -> void:
-    if global_position.distance_to(target_position) > attack_range:
-        locked = false  # Unlock if out of range, or handle differently
-        return
-
     var spawned_projectile: Projectile = projectile_scene.instantiate()
     get_tree().root.add_child(spawned_projectile)
 

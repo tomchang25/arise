@@ -1,8 +1,9 @@
-[gd_scene load_steps=45 format=3 uid="uid://dybnb2lmsq7s0"]
+[gd_scene load_steps=46 format=3 uid="uid://dybnb2lmsq7s0"]
 
 [ext_resource type="Script" uid="uid://be5rffb7rwigg" path="res://entity/actor/npc/army/army.gd" id="1_13omc"]
 [ext_resource type="Texture2D" uid="uid://dcefsfe6uvtoj" path="res://entity/actor/npc/army/ninja_green/art/SpriteSheet.png" id="2_tn28i"]
 [ext_resource type="PackedScene" uid="uid://do052sqt3wjdp" path="res://common/component/detectbox/detectbox.tscn" id="3_lqaih"]
+[ext_resource type="PackedScene" uid="uid://d3g8jgprf7bfw" path="res://common/component/enemy_scanner/enemy_scanner.tscn" id="3_v4ucm"]
 [ext_resource type="PackedScene" uid="uid://dagjfgo7sjdn0" path="res://entity/projectile/arrow/arrow.tscn" id="5_bahv0"]
 [ext_resource type="PackedScene" uid="uid://l45622b15oap" path="res://common/component/attack/projectile_attack/projectile_attack.tscn" id="6_i87wb"]
 [ext_resource type="PackedScene" uid="uid://bhgm1iqut1i6s" path="res://common/component/pathfinding/pathfinding.tscn" id="7_iga26"]
@@ -340,7 +341,7 @@ collision_layer = 256
 collision_mask = 4
 motion_mode = 1
 script = ExtResource("1_13omc")
-attack_range = 25.0
+attack_range = 75.0
 
 [node name="Skin" type="Sprite2D" parent="."]
 position = Vector2(0, -6)
@@ -353,20 +354,23 @@ rotation = 1.5708
 shape = SubResource("CapsuleShape2D_ocq7q")
 debug_color = Color(0.961248, 0, 0.511433, 0.42)
 
-[node name="EnemyCheckDetectbox" parent="." instance=ExtResource("3_lqaih")]
+[node name="EnemyScanner" parent="." instance=ExtResource("3_v4ucm")]
 position = Vector2(0, -5)
+detectbox_radius = 100.0
+attack_range = 75.0
+
+[node name="Detectbox" parent="EnemyScanner" instance=ExtResource("3_lqaih")]
 collision_layer = 0
 collision_mask = 2
 radius = 100.0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyCheckDetectbox"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyScanner/Detectbox"]
 shape = SubResource("CircleShape2D_tn28i")
 debug_color = Color(0, 0.129412, 0.701961, 0.0784314)
 
 [node name="ProjectileAttack" parent="." instance=ExtResource("6_i87wb")]
 position = Vector2(0, -5)
 projectile_scene = ExtResource("5_bahv0")
-attack_range = 25.0
 max_targets = 2
 
 [node name="Pathfinding" parent="." node_paths=PackedStringArray("movement") instance=ExtResource("7_iga26")]
