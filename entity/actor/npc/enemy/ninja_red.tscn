@@ -1,30 +1,33 @@
-[gd_scene load_steps=48 format=3 uid="uid://dybnb2lmsq7s0"]
+[gd_scene load_steps=52 format=3 uid="uid://31x7n43mme6c"]
 
-[ext_resource type="Script" uid="uid://be5rffb7rwigg" path="res://entity/actor/npc/army/army.gd" id="1_13omc"]
-[ext_resource type="Texture2D" uid="uid://dcefsfe6uvtoj" path="res://entity/actor/npc/army/ninja_green/art/SpriteSheet.png" id="2_tn28i"]
-[ext_resource type="PackedScene" uid="uid://bphvl1tkicrfo" path="res://common/component/hitbox/hitbox.tscn" id="3_igrur"]
-[ext_resource type="PackedScene" uid="uid://do052sqt3wjdp" path="res://common/component/detectbox/detectbox.tscn" id="3_lqaih"]
-[ext_resource type="PackedScene" uid="uid://d3g8jgprf7bfw" path="res://common/component/enemy_scanner/enemy_scanner.tscn" id="3_v4ucm"]
-[ext_resource type="PackedScene" uid="uid://dagjfgo7sjdn0" path="res://entity/projectile/arrow/arrow.tscn" id="5_bahv0"]
-[ext_resource type="PackedScene" uid="uid://l45622b15oap" path="res://common/component/attack/projectile_attack/projectile_attack.tscn" id="6_i87wb"]
-[ext_resource type="PackedScene" uid="uid://bhgm1iqut1i6s" path="res://common/component/pathfinding/pathfinding.tscn" id="7_iga26"]
-[ext_resource type="Script" uid="uid://bu436ru5hhd66" path="res://common/component/animation/base_animation.gd" id="8_4aipm"]
-[ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/state_machinie/state_machine.gd" id="8_13omc"]
-[ext_resource type="Script" uid="uid://lnjp761bf75g" path="res://common/component/movement/base_movement.gd" id="8_i87wb"]
-[ext_resource type="Script" uid="uid://dplrsortb8ufa" path="res://entity/actor/npc/army/state/army_idle.gd" id="8_lqaih"]
-[ext_resource type="Script" uid="uid://d0008vj2c0w5u" path="res://entity/actor/npc/army/state/army_follow.gd" id="9_6k810"]
-[ext_resource type="Script" uid="uid://d257mq3pbe3mk" path="res://entity/actor/npc/army/state/army_chase.gd" id="11_6k810"]
-[ext_resource type="Script" uid="uid://4ryn1wepqme5" path="res://entity/actor/npc/army/state/army_attack.gd" id="12_4aipm"]
+[ext_resource type="Script" uid="uid://bmdh4vf3luco6" path="res://entity/actor/npc/enemy/enemy.gd" id="1_onpov"]
+[ext_resource type="Material" uid="uid://4sxc1efucw5k" path="res://common/shader/dynamic_color_overlay.tres" id="2_ryg7q"]
+[ext_resource type="Texture2D" uid="uid://c7rvngvjpf2nr" path="res://entity/actor/npc/enemy/art/ninja_red.png" id="2_vjnwt"]
+[ext_resource type="PackedScene" uid="uid://d3g8jgprf7bfw" path="res://common/component/enemy_scanner/enemy_scanner.tscn" id="2_wj0qn"]
+[ext_resource type="PackedScene" uid="uid://do052sqt3wjdp" path="res://common/component/detectbox/detectbox.tscn" id="3_vjnwt"]
+[ext_resource type="PackedScene" uid="uid://bphvl1tkicrfo" path="res://common/component/hitbox/hitbox.tscn" id="4_pilld"]
+[ext_resource type="Script" uid="uid://bu6qty8wweb6r" path="res://common/component/health/health.gd" id="5_4568d"]
+[ext_resource type="PackedScene" uid="uid://l45622b15oap" path="res://common/component/attack/projectile_attack/projectile_attack.tscn" id="5_xmn1q"]
+[ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/state_machinie/state_machine.gd" id="6_lx6jr"]
+[ext_resource type="Script" uid="uid://lnjp761bf75g" path="res://common/component/movement/base_movement.gd" id="6_pilld"]
+[ext_resource type="PackedScene" uid="uid://bhgm1iqut1i6s" path="res://common/component/pathfinding/pathfinding.tscn" id="6_ryg7q"]
+[ext_resource type="PackedScene" uid="uid://dagjfgo7sjdn0" path="res://entity/projectile/arrow/arrow.tscn" id="6_ump6o"]
+[ext_resource type="Script" uid="uid://bu436ru5hhd66" path="res://common/component/animation/base_animation.gd" id="6_vjnwt"]
+[ext_resource type="Script" uid="uid://ixpqntb22d76" path="res://entity/actor/npc/enemy/state/enemy_idle.gd" id="7_ryg7q"]
+[ext_resource type="Script" uid="uid://v0ips7afnj6" path="res://entity/actor/npc/enemy/state/enemy_wander.gd" id="11_4568d"]
+[ext_resource type="Script" uid="uid://btduv83t3tnr" path="res://entity/actor/npc/enemy/state/enemy_chase.gd" id="14_1l3k7"]
+[ext_resource type="Script" uid="uid://dq7gm11wvwn6m" path="res://entity/actor/npc/enemy/state/enemy_attack.gd" id="15_tgdcv"]
+[ext_resource type="Script" uid="uid://og75stne3wma" path="res://entity/actor/npc/enemy/state/enemy_back.gd" id="16_xmn1q"]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ocq7q"]
-radius = 1.0
-height = 4.0
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_lvn57"]
+radius = 2.0
+height = 8.0
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_igrur"]
-radius = 5.0
-height = 12.0
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_wj0qn"]
+radius = 6.0
+height = 16.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_tn28i"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_66pe8"]
 radius = 100.0
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_pilld"]
@@ -97,8 +100,8 @@ states/Move/position = Vector2(576, 100)
 transitions = ["Start", "Idle", SubResource("AnimationNodeStateMachineTransition_i87wb"), "Idle", "Move", SubResource("AnimationNodeStateMachineTransition_iga26"), "Move", "Idle", SubResource("AnimationNodeStateMachineTransition_ocq7q"), "Idle", "Attack", SubResource("AnimationNodeStateMachineTransition_hww7n"), "Attack", "Idle", SubResource("AnimationNodeStateMachineTransition_mvkfs")]
 graph_offset = Vector2(-111, -129)
 
-[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_ocq7q"]
-graph_offset = Vector2(-70, -3)
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_xmn1q"]
+graph_offset = Vector2(-214, -8)
 nodes/StateMachine/node = SubResource("AnimationNodeStateMachine_iga26")
 nodes/StateMachine/position = Vector2(-80, 120)
 node_connections = [&"output", 0, &"StateMachine"]
@@ -341,70 +344,71 @@ _data = {
 &"RESET": SubResource("Animation_i87wb")
 }
 
-[node name="NinjaGeen" type="CharacterBody2D"]
-collision_layer = 256
-collision_mask = 4
-motion_mode = 1
-script = ExtResource("1_13omc")
-attack_range = 75.0
+[sub_resource type="LabelSettings" id="LabelSettings_0p2mk"]
+font_size = 4
+
+[node name="Ninja_red" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 2
+script = ExtResource("1_onpov")
 
 [node name="Sprite" type="Sprite2D" parent="."]
+material = ExtResource("2_ryg7q")
 position = Vector2(0, -6)
-texture = ExtResource("2_tn28i")
+texture = ExtResource("2_vjnwt")
 hframes = 4
 vframes = 7
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 rotation = 1.5708
-shape = SubResource("CapsuleShape2D_ocq7q")
-debug_color = Color(0.961248, 0, 0.511433, 0.42)
+shape = SubResource("CapsuleShape2D_lvn57")
 
-[node name="Hitbox" parent="." instance=ExtResource("3_igrur")]
-position = Vector2(0, -5)
-collision_layer = 256
+[node name="Hitbox" parent="." instance=ExtResource("4_pilld")]
+position = Vector2(0, -6)
+collision_layer = 2
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
-shape = SubResource("CapsuleShape2D_igrur")
-debug_color = Color(0.849634, 0.358302, 0.287232, 0.42)
+shape = SubResource("CapsuleShape2D_wj0qn")
+debug_color = Color(0.639216, 0.529412, 0, 0.329412)
 
-[node name="EnemyScanner" parent="." instance=ExtResource("3_v4ucm")]
+[node name="ProjectileAttack" parent="." instance=ExtResource("5_xmn1q")]
 position = Vector2(0, -5)
-detectbox_radius = 100.0
-attack_range = 75.0
+projectile_scene = ExtResource("6_ump6o")
+damage = null
+attack_cooldown = 1.0
+target_groups = Array[StringName]([&"player", &"army"])
 
-[node name="Detectbox" parent="EnemyScanner" instance=ExtResource("3_lqaih")]
-collision_mask = 2
+[node name="EnemyScanner" parent="." instance=ExtResource("2_wj0qn")]
+position = Vector2(0, -15)
+detectbox_radius = 100.0
+
+[node name="Detectbox" parent="EnemyScanner" instance=ExtResource("3_vjnwt")]
+collision_mask = 257
 radius = 100.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyScanner/Detectbox"]
-shape = SubResource("CircleShape2D_tn28i")
-debug_color = Color(0, 0.129412, 0.701961, 0.0784314)
+shape = SubResource("CircleShape2D_66pe8")
+debug_color = Color(0.933333, 0.141176, 0.533333, 0.164706)
 
-[node name="ProjectileAttack" parent="." instance=ExtResource("6_i87wb")]
-position = Vector2(0, -5)
-projectile_scene = ExtResource("5_bahv0")
-damage = 100
-max_targets = 2
-target_groups = Array[StringName]([&"enemy"])
-
-[node name="Pathfinding" parent="." instance=ExtResource("7_iga26")]
+[node name="Pathfinding" parent="." instance=ExtResource("6_ryg7q")]
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="Pathfinding"]
 avoidance_enabled = true
 radius = 1.0
-debug_use_custom = true
-debug_path_custom_color = Color(1, 0, 1, 1)
+avoidance_layers = 256
+avoidance_mask = 256
+debug_enabled = true
 
 [node name="Movement" type="Node" parent="."]
-script = ExtResource("8_i87wb")
+script = ExtResource("6_pilld")
 
 [node name="Animation" type="Node" parent="." node_paths=PackedStringArray("animation_tree")]
-script = ExtResource("8_4aipm")
+script = ExtResource("6_vjnwt")
 animation_tree = NodePath("AnimationTree")
 
 [node name="AnimationTree" type="AnimationTree" parent="Animation"]
-tree_root = SubResource("AnimationNodeBlendTree_ocq7q")
+tree_root = SubResource("AnimationNodeBlendTree_xmn1q")
 anim_player = NodePath("../AnimationPlayer")
 parameters/StateMachine/Attack/blend_position = Vector2(0.00197494, 0.905405)
 parameters/StateMachine/Move/blend_position = Vector2(-0.162607, -0.756701)
@@ -414,24 +418,41 @@ libraries = {
 &"": SubResource("AnimationLibrary_i87wb")
 }
 
-[node name="ArmyStateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
-script = ExtResource("8_13omc")
+[node name="HealthLabel" type="Label" parent="."]
+anchors_preset = -1
+anchor_bottom = 6.0
+offset_left = -8.0
+offset_top = -29.4167
+offset_right = 8.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "HP: 666"
+label_settings = SubResource("LabelSettings_0p2mk")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Health" type="Node" parent="." node_paths=PackedStringArray("hitbox")]
+script = ExtResource("5_4568d")
+hitbox = NodePath("../Hitbox")
+
+[node name="WaitTimer" type="Timer" parent="."]
+
+[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
+script = ExtResource("6_lx6jr")
 initial_state = NodePath("Idle")
 
-[node name="Idle" type="Node" parent="ArmyStateMachine"]
-script = ExtResource("8_lqaih")
-follow_threshold = 16.0
-animation_state = "Idle"
+[node name="Idle" type="Node" parent="StateMachine"]
+script = ExtResource("7_ryg7q")
 
-[node name="Follow" type="Node" parent="ArmyStateMachine"]
-script = ExtResource("9_6k810")
-move_speed = 50.0
-animation_state = "Move"
+[node name="Wander" type="Node" parent="StateMachine"]
+script = ExtResource("11_4568d")
 
-[node name="Chase" type="Node" parent="ArmyStateMachine"]
-script = ExtResource("11_6k810")
-animation_state = "Move"
+[node name="Chase" type="Node" parent="StateMachine"]
+script = ExtResource("14_1l3k7")
 
-[node name="Attack" type="Node" parent="ArmyStateMachine"]
-script = ExtResource("12_4aipm")
-animation_state = "Attack"
+[node name="Attack" type="Node" parent="StateMachine"]
+script = ExtResource("15_tgdcv")
+
+[node name="Back" type="Node" parent="StateMachine"]
+script = ExtResource("16_xmn1q")

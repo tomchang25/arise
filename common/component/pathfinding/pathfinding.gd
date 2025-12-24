@@ -2,7 +2,6 @@ class_name Pathfinding
 extends Node2D
 
 @export var enabled := true
-@export var movement: BaseMovement
 # @export var target_update_interval: float = 5.0
 
 @onready var navigation_agent: NavigationAgent2D = $NavigationAgent2D
@@ -20,7 +19,6 @@ func _ready():
         return
 
     navigation_agent.velocity_computed.connect(_on_velocity_computed)
-    # update_timer.timeout.connect(_on_update_timer_timeout)
 
 
 func _physics_process(_delta):
@@ -43,25 +41,10 @@ func _physics_process(_delta):
 
 
 func _on_velocity_computed(safe_velocity: Vector2):
-    # var remaining_time = target_update_interval - target_update_timer
-    # var ratio = max(0.0, remaining_time / target_update_interval)
-
-    # movement_vector = safe_velocity * ratio
-
     _target_velocity = safe_velocity
 
 
-# func _on_update_timer_timeout():
-#     if not enabled:
-#         return
-
-#     update_target_position()
-
 ## --- Public API for Setting Movement State ---
-
-# func set_target(new_target_pos: Vector2):
-#     navigation_agent.target_position = new_target_pos
-#     target_update_timer = 0
 
 
 func get_velocity() -> Vector2:

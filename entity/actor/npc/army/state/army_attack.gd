@@ -19,7 +19,6 @@ func _exit() -> void:
 
 func _update(_delta: float) -> void:
     if not target.enemy_scanner.is_enemy_visible():
-        # change_state(ArmyState.ArmyStateId.IDLE)
         change_state(ArmyState.ArmyStateId.FOLLOW)
         return
 

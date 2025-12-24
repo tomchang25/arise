@@ -6,3 +6,4 @@
 [node name="ProjectileAttack" instance=ExtResource("1_6kww0")]
 script = ExtResource("2_gpbei")
 projectile_scene = null
+damage = null

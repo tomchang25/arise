@@ -52,9 +52,6 @@ func _physics_process(_delta: float) -> void:
     move_and_slide()
 
 
-# func _on_enemies_detected(nodes_in_range: Array) -> void:
-#     enemies_in_range = nodes_in_range.filter(func(node): return node.get_owner() is Enemy)
-
 ## --- Public API ---
 
 

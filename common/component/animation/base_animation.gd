@@ -18,17 +18,9 @@ func _ready():
 
 # --- Core Animation Control Functions ---
 
-# Function to be called by the derived class to set its specific animation states
-# func set_animation_states(states: Array[String]):
-#     _animation_states = states
-
 
 # Travels to a new state in the AnimationTree StateMachine
 func travel_to_state(state_name: String):
-    # if state_name in _animation_states:
-    #     animation_state_machine.travel(state_name)
-    # else:
-    #     push_warning("Attempted to travel to undefined animation state: %s" % state_name)
     animation_state_machine.travel(state_name)
 
 

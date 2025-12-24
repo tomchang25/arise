@@ -35,12 +35,15 @@ func _setup_collision_shape() -> void:
 
 
 # --- Signal Handlers for Array Management ---
-func _on_area_entered(body: Node2D) -> void:
-    add_node(body)
+func _on_area_entered(area: Area2D) -> void:
+    if area.owner == null:
+        return
+
+    add_node(area.owner)
 
 
-func _on_area_exited(body: Node2D) -> void:
-    remove_node(body)
+func _on_area_exited(area: Area2D) -> void:
+    remove_node(area.owner)
 
 
 # --- Utility Functions ---

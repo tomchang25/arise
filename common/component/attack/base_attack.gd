@@ -5,6 +5,7 @@ extends Node2D
 # @export var attack_range: float = -1
 
 @export var max_targets: int = 1
+@export var target_groups: Array[StringName] = []
 
 var cooldown_timer: Timer
 var locked := false

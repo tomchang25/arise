@@ -14,6 +14,7 @@ extends CharacterBody2D
 @onready var movement: BaseMovement = $PlayerMovement
 @onready var animation: BaseAnimation = $PlayerAnimation
 @onready var player_input: PlayerInput = $PlayerInput
+@onready var hitbox: Hitbox = $Hitbox
 
 @onready var state_machine := $PlayerStateMachine
 
@@ -28,25 +29,29 @@ func _ready() -> void:
     enemy_detectbox.targets_changed.connect(_on_enemies_detected)
     # animation.animation_finished.connect(_on_animation_finished)
 
+    hitbox.damaged.connect(_on_damaged)
+
 
 func _on_enemies_detected(nodes_in_range: Array) -> void:
     if nodes_in_range.is_empty():
         nearest_enemy = null
 
     for node in nodes_in_range:
-        if node.get_owner() is not Enemy:
+        if node is not Enemy:
             continue
 
-        var enemy: Enemy = node.get_owner()
+        var enemy: Enemy = node
         var distance: float = enemy.global_position.distance_to(self.global_position)
 
         if nearest_enemy == null or distance < nearest_enemy.global_position.distance_to(self.global_position):
             nearest_enemy = enemy
 
 
+func _on_damaged(attack_info: Attack) -> void:
+    print("Player damaged by attack: ", attack_info.damage)
+
 ## --- Public API ---
 
-
-func attack(target_position: Vector2) -> void:
-    melee_attack.aim_at(target_position)
-    melee_attack.start_attack(target_position)
+# func attack(target_position: Vector2) -> void:
+#     melee_attack.aim_at(target_position)
+#     melee_attack.start_attack(target_position)

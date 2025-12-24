@@ -3,16 +3,10 @@
 [ext_resource type="PackedScene" uid="uid://bphvl1tkicrfo" path="res://common/component/hitbox/hitbox.tscn" id="1_8vdsg"]
 [ext_resource type="Texture2D" uid="uid://dhjwl04036bsq" path="res://entity/actor/npc/enemy/art/bat.png" id="1_lvn57"]
 [ext_resource type="Script" uid="uid://bmdh4vf3luco6" path="res://entity/actor/npc/enemy/enemy.gd" id="1_pmu85"]
-[ext_resource type="Shader" uid="uid://c4tcr87bgvjy" path="res://common/shader/dynamic_color_overlay.gdshader" id="2_7mx5f"]
+[ext_resource type="Material" uid="uid://4sxc1efucw5k" path="res://common/shader/dynamic_color_overlay.tres" id="2_psiqg"]
 [ext_resource type="Script" uid="uid://bu6qty8wweb6r" path="res://common/component/health/health.gd" id="4_0p2mk"]
-[ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/state_machinie/state_machine.gd" id="6_gevl6"]
-[ext_resource type="Script" uid="uid://ixpqntb22d76" path="res://entity/actor/npc/enemy/state/enemy_idle.gd" id="7_cti5q"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_7mx5f"]
-resource_local_to_scene = true
-shader = ExtResource("2_7mx5f")
-shader_parameter/overlay_amount = 0.0
-shader_parameter/overlay_color = Color(1, 0, 0, 1)
+[ext_resource type="PackedScene" uid="uid://d3g8jgprf7bfw" path="res://common/component/enemy_scanner/enemy_scanner.tscn" id="4_66pe8"]
+[ext_resource type="PackedScene" uid="uid://do052sqt3wjdp" path="res://common/component/detectbox/detectbox.tscn" id="5_jfm6d"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7mx5f"]
 atlas = ExtResource("1_lvn57")
@@ -61,6 +55,9 @@ animations = [{
 radius = 2.0
 height = 8.0
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_66pe8"]
+radius = 100.0
+
 [sub_resource type="CircleShape2D" id="CircleShape2D_pmu85"]
 radius = 5.0
 
@@ -71,9 +68,10 @@ font_size = 4
 collision_layer = 2
 collision_mask = 2
 script = ExtResource("1_pmu85")
+wander_range = null
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-material = SubResource("ShaderMaterial_7mx5f")
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+material = ExtResource("2_psiqg")
 sprite_frames = SubResource("SpriteFrames_506ku")
 autoplay = "default"
 frame_progress = 0.627763
@@ -82,6 +80,17 @@ offset = Vector2(0, -12)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 rotation = 1.5708
 shape = SubResource("CapsuleShape2D_lvn57")
+
+[node name="EnemyScanner" parent="." instance=ExtResource("4_66pe8")]
+position = Vector2(0, -15)
+detectbox_radius = 100.0
+
+[node name="Detectbox" parent="EnemyScanner" instance=ExtResource("5_jfm6d")]
+radius = 100.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyScanner/Detectbox"]
+shape = SubResource("CircleShape2D_66pe8")
+debug_color = Color(0.933333, 0.141176, 0.533333, 0.164706)
 
 [node name="Hitbox" parent="." instance=ExtResource("1_8vdsg")]
 position = Vector2(0, -15)
@@ -105,16 +114,3 @@ vertical_alignment = 1
 [node name="Health" type="Node" parent="." node_paths=PackedStringArray("hitbox")]
 script = ExtResource("4_0p2mk")
 hitbox = NodePath("../Hitbox")
-
-[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
-script = ExtResource("6_gevl6")
-initial_state = NodePath("Idle")
-
-[node name="Idle" type="Node" parent="StateMachine"]
-script = ExtResource("7_cti5q")
-
-[node name="Wander" type="Node" parent="StateMachine"]
-
-[node name="Chase" type="Node" parent="StateMachine"]
-
-[node name="Attack" type="Node" parent="StateMachine"]

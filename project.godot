@@ -18,13 +18,14 @@ config/icon="res://icon.svg"
 [autoload]
 
 AudioManager="*res://global/autoload/audio_manager/audio_manager.tscn"
+Global="*res://global/autoload/global.gd"
 
 [display]
 
 window/size/viewport_width=320
 window/size/viewport_height=180
-window/size/window_width_override=1920
-window/size/window_height_override=1080
+window/size/window_width_override=1280
+window/size/window_height_override=720
 window/stretch/mode="canvas_items"
 window/vsync/vsync_mode=0
 
@@ -96,6 +97,7 @@ spawn={
 2d_physics/layer_9="Army"
 2d_physics/layer_10="Army Soft Collision"
 2d_physics/layer_26="Wall"
+avoidance/layer_9="Enemy"
 
 [rendering]
 

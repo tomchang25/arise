@@ -1,22 +1,38 @@
 extends EnemyState
 
-# func _init() -> void:
-#     state_id = ArmyState.ArmyStateId.IDLE
+@export var animation_state: String = "Idle"
 
-# func _enter() -> void:
-#     target.soft_collision.enabled = true
-#     target.velocity = Vector2.ZERO
+@export var min_wait_time: float = 3.0
+@export var max_wait_time: float = 10.0
 
-# func _update(_delta: float) -> void:
-#     if target.is_too_far_from_player():
-#         change_state(ArmyState.ArmyStateId.FOLLOW)
-#         return
 
-#     if target.is_enemy_visible():
-#         change_state(ArmyState.ArmyStateId.CHASE)
-#         return
+func _init() -> void:
+    state_id = EnemyStateId.IDLE
 
-#     target.velocity = target.soft_collision.soft_push_velocity
 
-# func _exit() -> void:
-#     pass
+func _enter() -> void:
+    enemy.movement.stop()
+
+    enemy.animation.travel_to_state(animation_state)
+
+    _setup_wait_timer()
+
+
+func _update(_delta: float) -> void:
+    if enemy.enemy_scanner.is_enemy_visible():
+        change_state(EnemyStateId.CHASE)
+        return
+
+
+func _exit() -> void:
+    pass
+
+
+func _setup_wait_timer() -> void:
+    enemy.wait_timer.wait_time = randf_range(min_wait_time, max_wait_time)
+    enemy.wait_timer.start()
+
+
+func _on_wait_timer_timeout() -> void:
+    change_state(EnemyStateId.WANDER)
+    return

@@ -10,12 +10,17 @@ func _initialize_attack() -> void:
     for child in get_children():
         if child is Hurtbox:
             hurtbox = child
+            _setup_hurtbox()
             break
 
     if hurtbox:
         hurtbox.hit_enemy.connect(_on_enemy_hit)
     else:
         push_error("MeleeAttack must have a Hurtbox child")
+
+
+func _setup_hurtbox():
+    hurtbox.collision_mask = Global.get_combined_mask(target_groups)
 
 
 func _execute_attack_logic(_target_position: Vector2) -> void:

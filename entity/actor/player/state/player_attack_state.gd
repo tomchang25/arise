@@ -22,7 +22,8 @@ func _enter() -> void:
     else:
         target_position = player.get_global_mouse_position()
 
-    player.attack(target_position)
+    player.melee_attack.aim_at(target_position)
+    player.melee_attack.start_attack(target_position)
 
 
 func _update(_delta: float) -> void:

@@ -30,7 +30,8 @@ func _setup_detectbox() -> void:
 
 
 func _on_targets_changed(nodes: Array) -> void:
-    _all_enemies = nodes.filter(func(node): return node.get_owner() is Enemy)
+    # _all_enemies = nodes.filter(func(node): return node is Enemy)
+    _all_enemies = nodes
 
 
 # --- Visibility Methods ---

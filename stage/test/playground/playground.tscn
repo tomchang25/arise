@@ -1,11 +1,12 @@
-[gd_scene load_steps=8 format=3 uid="uid://bn13d02jyg5d7"]
+[gd_scene load_steps=9 format=3 uid="uid://bn13d02jyg5d7"]
 
 [ext_resource type="Texture2D" uid="uid://bylg7d5anp8c7" path="res://stage/test/playground/art/grass_background.png" id="1_avbqp"]
 [ext_resource type="PackedScene" uid="uid://dbhtrssgng58f" path="res://entity/actor/player/player.tscn" id="2_54ftc"]
 [ext_resource type="PackedScene" uid="uid://dccho5kdagt0e" path="res://entity/environment/bush/bush.tscn" id="3_eeu4c"]
-[ext_resource type="PackedScene" uid="uid://csanq2hkw7h68" path="res://entity/actor/npc/enemy/enemy.tscn" id="4_54ftc"]
 [ext_resource type="PackedScene" uid="uid://bfxutmk72t3gc" path="res://entity/actor/npc/army/army_handler/army_handler.tscn" id="4_fu4i5"]
+[ext_resource type="Script" uid="uid://bbnuk476f2gu5" path="res://common/component/camera/camera.gd" id="4_que0v"]
 [ext_resource type="PackedScene" uid="uid://12rdjr3aafmv" path="res://entity/spawner/arise_box/arise_box.tscn" id="6_fu4i5"]
+[ext_resource type="PackedScene" uid="uid://31x7n43mme6c" path="res://entity/actor/npc/enemy/ninja_red.tscn" id="7_que0v"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_eeu4c"]
 vertices = PackedVector2Array(628.047, -73.0234, 630.938, 406.117, -223.727, 416.859, -211.242, -74.9688)
@@ -47,6 +48,8 @@ position = Vector2(153, 86)
 position = Vector2(93, 80)
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
+zoom = Vector2(0.2, 0.2)
+script = ExtResource("4_que0v")
 
 [node name="ArmyHandler" parent="." instance=ExtResource("4_fu4i5")]
 
@@ -54,25 +57,10 @@ position = Vector2(93, 80)
 y_sort_enabled = true
 position = Vector2(93, 80)
 
-[node name="Enemy" parent="EnemyHandler" instance=ExtResource("4_54ftc")]
-position = Vector2(-96, -8)
-health = 100000
-
-[node name="Enemy2" parent="EnemyHandler" instance=ExtResource("4_54ftc")]
-position = Vector2(-105, -12)
-health = 100000
-
-[node name="Enemy3" parent="EnemyHandler" instance=ExtResource("4_54ftc")]
-position = Vector2(56, 52)
-
-[node name="Enemy4" parent="EnemyHandler" instance=ExtResource("4_54ftc")]
-position = Vector2(38, 54)
-
-[node name="Enemy5" parent="EnemyHandler" instance=ExtResource("4_54ftc")]
-position = Vector2(-28, 71)
-
-[node name="Enemy6" parent="EnemyHandler" instance=ExtResource("4_54ftc")]
-position = Vector2(-16, 76)
+[node name="Ninja_red" parent="EnemyHandler" instance=ExtResource("7_que0v")]
+position = Vector2(284, -23)
+wander_range = null
+health = 6666666
 
 [node name="Spawner" type="Node2D" parent="."]
 

@@ -1,20 +1,17 @@
 class_name EnemyState
 extends State
 
-enum ArmyStateId { NULL = -1, IDLE = 0, FOLLOW = 1, CHASE = 2, RETREAT = 3, ATTACK = 4 }
+enum EnemyStateId { NULL = -1, IDLE = 0, WANDER = 1, CHASE = 2, ATTACK = 3, BACK = 4 }
 
-var target: Army
+var enemy: Enemy
 
-# func _ready() -> void:
-#     if owner == null:
-#         push_error("ArmyState must have an owner")
-#         return
 
-#     if not owner.is_node_ready():
-#         await owner.ready
+func _ready() -> void:
+    await owner.ready
+    enemy = owner
 
-#     if owner is not Army:
-#         push_error("ArmyState owner must be an Army")
-#         return
+    enemy.wait_timer.timeout.connect(_on_wait_timer_timeout)
 
-#     target = owner
+
+func _on_wait_timer_timeout() -> void:
+    pass
