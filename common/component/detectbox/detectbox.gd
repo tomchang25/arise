@@ -7,7 +7,7 @@ signal targets_changed(current_targets: Array[Node])
 @export var radius: float = 50.0:
     set(value):
         radius = value
-        if is_node_ready():
+        if is_node_ready() and collision_shape_2d:
             set_collision_radius(radius)
 
 var collision_shape_2d: CollisionShape2D
@@ -26,9 +26,16 @@ func _ready() -> void:
 
 
 func _setup_collision_shape() -> void:
+    # for child in get_children():
+    #     if child is CollisionShape2D:
+    #         collision_shape_2d = child
+    #         break
     for child in get_children():
         if child is CollisionShape2D:
             collision_shape_2d = child
+            # Duplicate the shape so this instance has its own unique resource
+            if collision_shape_2d.shape:
+                collision_shape_2d.shape = collision_shape_2d.shape.duplicate()
             break
 
     set_collision_radius(radius)
@@ -56,6 +63,8 @@ func set_collision_radius(new_radius: float) -> void:
             (shape_resource as CircleShape2D).radius = new_radius
         else:
             print_debug("Detectbox requires a CircleShape2D resource to set the radius property.")
+    else:
+        print_debug("Fuck.")
 
 
 func add_node(body: Node2D) -> void:

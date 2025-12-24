@@ -2,18 +2,26 @@
 class_name EnemyScanner
 extends Node2D
 
-@export var detectbox_radius: float = 150.0:
-    set(value):
-        detectbox_radius = value
-        if is_node_ready() and detectbox:
-            detectbox.radius = detectbox_radius
+# @export var detectbox_radius: float = 150.0:
+#     set(value):
+#         detectbox_radius = value
+#         if is_node_ready() and detectbox:
+#             detectbox.radius = detectbox_radius
 
-@export var visible_range: float = 100.0
+@export var visible_range: float = 100.0:
+    set(value):
+        visible_range = value
+        if is_node_ready() and detectbox:
+            detectbox.radius = value
+
 @export var attack_range: float = 50.0
+
+@export var use_external: bool = false
 
 var detectbox: Detectbox
 
-var _all_enemies: Array = []
+var _internal_enemies: Array = []
+var _external_enemies: Array = []
 
 
 func _ready() -> void:
@@ -25,20 +33,55 @@ func _setup_detectbox() -> void:
         if child is Detectbox:
             detectbox = child
 
-    detectbox.radius = detectbox_radius
+    detectbox.radius = visible_range
     detectbox.targets_changed.connect(_on_targets_changed)
 
 
 func _on_targets_changed(nodes: Array) -> void:
-    # _all_enemies = nodes.filter(func(node): return node is Enemy)
-    _all_enemies = nodes
+    _internal_enemies = nodes
+
+
+# --- Technical ---
+
+
+func set_external_enemies(enemies: Array) -> void:
+    _external_enemies = enemies
+    use_external = true
+
+
+func get_internal_enemies() -> Array:
+    return _internal_enemies
+
+
+# func get_enemies() -> Array:
+#     if use_external:
+#         return _external_enemies
+
+#     return _internal_enemies
+
+# --- Tracked Methods ---
+
+
+func get_enemies_tracked() -> Array:
+    if use_external:
+        return _external_enemies
+
+    return get_enemies_visible()
+
+
+func is_enemy_tracked() -> bool:
+    return not get_enemies_tracked().is_empty()
+
+
+func get_nearest_tracked_enemy() -> Node2D:
+    return _get_closest(get_enemies_tracked())
 
 
 # --- Visibility Methods ---
 
 
 func get_enemies_visible() -> Array:
-    return _all_enemies.filter(func(e): return global_position.distance_to(e.global_position) <= visible_range)
+    return get_internal_enemies().filter(func(e): return global_position.distance_to(e.global_position) <= visible_range)
 
 
 func is_enemy_visible() -> bool:
@@ -53,7 +96,7 @@ func get_nearest_visible_enemy() -> Node2D:
 
 
 func get_enemies_attackable() -> Array:
-    return _all_enemies.filter(func(e): return global_position.distance_to(e.global_position) <= attack_range)
+    return get_internal_enemies().filter(func(e): return global_position.distance_to(e.global_position) <= attack_range)
 
 
 func is_enemy_attackable() -> bool:

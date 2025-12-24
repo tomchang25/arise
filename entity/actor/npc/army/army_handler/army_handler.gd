@@ -5,6 +5,7 @@ signal unit_grid_changed
 
 @export var size := 100
 @export var grid_size := 12
+@export var share_vision: bool = true
 
 @onready var debug_timer: Timer = $DebugTimer
 
@@ -51,6 +52,28 @@ func _on_check_timer_timeout():
     print(armies_state)
 
 
+func _physics_process(_delta):
+    if share_vision:
+        _update_shared_vision()
+
+
+func _update_shared_vision() -> void:
+    var all_units = get_all_units()
+    var collective_enemies = []
+
+    # 1. Collect all enemies seen by every unit's local detectbox
+    for unit in all_units:
+        if unit.enemy_scanner:
+            for enemy in unit.enemy_scanner.get_internal_enemies():
+                if not collective_enemies.has(enemy):
+                    collective_enemies.append(enemy)
+
+    # 2. Distribute the collective list back to every scanner
+    for unit in all_units:
+        if unit.enemy_scanner:
+            unit.enemy_scanner.set_external_enemies(collective_enemies)
+
+
 ## --- Public API ---
 
 
@@ -59,6 +82,9 @@ func add_unit(unit: Node) -> bool:
 
     if index == -1:
         return false
+
+    if index == 0:
+        unit.visible_range = 200
 
     var grid = _convert_index_to_grid(index)
     var grid_position = grid * grid_size
@@ -102,7 +128,6 @@ func get_first_empty_slot() -> int:
 
 func get_all_units() -> Array[Node]:
     var temp = units.filter(func(unit): return unit != null)
-
     return temp
 
 

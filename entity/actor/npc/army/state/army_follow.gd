@@ -30,7 +30,7 @@ func _update(delta: float) -> void:
     target.animation.set_animation_direction(movement_vector, self.animation_state)
 
     if target.get_distance_to_player() < min_distance_to_player:
-        if target.enemy_scanner.is_enemy_visible():
+        if target.enemy_scanner.is_enemy_tracked():
             change_state(ArmyState.ArmyStateId.CHASE)
             return
 

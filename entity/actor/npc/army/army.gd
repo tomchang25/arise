@@ -43,7 +43,6 @@ func _ready() -> void:
 
 
 func _setup_enemy_scanner() -> void:
-    enemy_scanner.detectbox_radius = visible_range
     enemy_scanner.visible_range = visible_range
     enemy_scanner.attack_range = attack_range
 

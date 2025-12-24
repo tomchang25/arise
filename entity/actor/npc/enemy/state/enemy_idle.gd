@@ -19,7 +19,7 @@ func _enter() -> void:
 
 
 func _update(_delta: float) -> void:
-    if enemy.enemy_scanner.is_enemy_visible():
+    if enemy.enemy_scanner.is_enemy_tracked():
         change_state(EnemyStateId.CHASE)
         return
 

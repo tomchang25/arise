@@ -27,7 +27,7 @@ height = 8.0
 radius = 6.0
 height = 16.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_66pe8"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_xmn1q"]
 radius = 100.0
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_pilld"]
@@ -375,20 +375,19 @@ debug_color = Color(0.639216, 0.529412, 0, 0.329412)
 [node name="ProjectileAttack" parent="." instance=ExtResource("5_xmn1q")]
 position = Vector2(0, -5)
 projectile_scene = ExtResource("6_ump6o")
-damage = null
+damage = 10
 attack_cooldown = 1.0
 target_groups = Array[StringName]([&"player", &"army"])
 
 [node name="EnemyScanner" parent="." instance=ExtResource("2_wj0qn")]
 position = Vector2(0, -15)
-detectbox_radius = 100.0
 
 [node name="Detectbox" parent="EnemyScanner" instance=ExtResource("3_vjnwt")]
 collision_mask = 257
 radius = 100.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyScanner/Detectbox"]
-shape = SubResource("CircleShape2D_66pe8")
+shape = SubResource("CircleShape2D_xmn1q")
 debug_color = Color(0.933333, 0.141176, 0.533333, 0.164706)
 
 [node name="Pathfinding" parent="." instance=ExtResource("6_ryg7q")]

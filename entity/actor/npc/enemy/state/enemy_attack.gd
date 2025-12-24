@@ -35,7 +35,7 @@ func _exit() -> void:
 
 
 func _update(_delta: float) -> void:
-    if not enemy.enemy_scanner.is_enemy_visible():
+    if not enemy.enemy_scanner.is_enemy_tracked():
         change_state(EnemyStateId.BACK)
         return
 

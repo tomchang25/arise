@@ -16,7 +16,7 @@ func _enter() -> void:
 
 
 func _update(_delta: float) -> void:
-    if not enemy.enemy_scanner.is_enemy_visible():
+    if not enemy.enemy_scanner.is_enemy_tracked():
         change_state(EnemyStateId.BACK)
         return
 
@@ -28,7 +28,7 @@ func _update(_delta: float) -> void:
         change_state(EnemyStateId.ATTACK)
         return
 
-    var nearest_enemy: Node2D = enemy.enemy_scanner.get_nearest_visible_enemy()
+    var nearest_enemy: Node2D = enemy.enemy_scanner.get_nearest_tracked_enemy()
     if nearest_enemy:
         var enemy_position: Vector2 = nearest_enemy.global_position
 

@@ -24,8 +24,8 @@ height = 4.0
 radius = 5.0
 height = 12.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_tn28i"]
-radius = 100.0
+[sub_resource type="CircleShape2D" id="CircleShape2D_igrur"]
+radius = 50.0
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_pilld"]
 animation = &"AttackDown"
@@ -346,7 +346,7 @@ collision_layer = 256
 collision_mask = 4
 motion_mode = 1
 script = ExtResource("1_13omc")
-attack_range = 75.0
+visible_range = 50.0
 
 [node name="Sprite" type="Sprite2D" parent="."]
 position = Vector2(0, -6)
@@ -370,15 +370,14 @@ debug_color = Color(0.849634, 0.358302, 0.287232, 0.42)
 
 [node name="EnemyScanner" parent="." instance=ExtResource("3_v4ucm")]
 position = Vector2(0, -5)
-detectbox_radius = 100.0
-attack_range = 75.0
+visible_range = 50.0
+use_external = true
 
 [node name="Detectbox" parent="EnemyScanner" instance=ExtResource("3_lqaih")]
 collision_mask = 2
-radius = 100.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyScanner/Detectbox"]
-shape = SubResource("CircleShape2D_tn28i")
+shape = SubResource("CircleShape2D_igrur")
 debug_color = Color(0, 0.129412, 0.701961, 0.0784314)
 
 [node name="ProjectileAttack" parent="." instance=ExtResource("6_i87wb")]
@@ -430,8 +429,10 @@ animation_state = "Move"
 
 [node name="Chase" type="Node" parent="ArmyStateMachine"]
 script = ExtResource("11_6k810")
+follow_threshold = 250.0
 animation_state = "Move"
 
 [node name="Attack" type="Node" parent="ArmyStateMachine"]
 script = ExtResource("12_4aipm")
+follow_threshold = 250.0
 animation_state = "Attack"

@@ -42,7 +42,6 @@ var next_position: Vector2
 
 
 func _ready() -> void:
-    enemy_scanner.detectbox_radius = visible_range
     enemy_scanner.visible_range = visible_range
     enemy_scanner.attack_range = attack_range
 
