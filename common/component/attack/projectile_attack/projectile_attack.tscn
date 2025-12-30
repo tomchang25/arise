@@ -7,3 +7,4 @@
 script = ExtResource("2_gpbei")
 projectile_scene = null
 damage = 10
+max_targets = 1

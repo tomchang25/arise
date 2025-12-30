@@ -10,6 +10,7 @@ func _init() -> void:
 
 
 func _enter() -> void:
+    enemy.pathfinding.set_target_position(enemy.next_position)
     enemy.pathfinding.set_arrive_distance(enemy.attack_range / 2)
     enemy.pathfinding.set_speed(chase_speed)
     enemy.animation.travel_to_state(animation_state)

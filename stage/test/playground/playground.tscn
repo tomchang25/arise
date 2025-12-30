@@ -10,18 +10,18 @@
 [ext_resource type="PackedScene" uid="uid://31x7n43mme6c" path="res://entity/actor/npc/enemy/ninja_red.tscn" id="7_que0v"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_eeu4c"]
-vertices = PackedVector2Array(628.047, -73.0234, 630.938, 406.117, -223.727, 416.859, -211.242, -74.9688)
+vertices = PackedVector2Array(904, -364.039, 904, 521, -699.023, 521, -700.969, -370.953)
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(-221, -85, 638, -83, 641, 416, -234, 427)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-711, -381, 914, -374, 914, 531, -709, 531)])
 
 [node name="Playground" type="Node2D"]
 y_sort_enabled = true
 
 [node name="Background" type="TextureRect" parent="."]
-offset_left = -210.0
-offset_top = -75.0
-offset_right = 627.0
-offset_bottom = 408.0
+offset_left = -712.0
+offset_top = -378.0
+offset_right = 911.0
+offset_bottom = 528.0
 texture = ExtResource("1_avbqp")
 stretch_mode = 1
 metadata/_edit_lock_ = true
@@ -60,9 +60,7 @@ position = Vector2(93, 80)
 
 [node name="EnemyGroup" parent="EnemyHandler" instance=ExtResource("6_xkwl0")]
 position = Vector2(366, 57)
-share_vision = false
-min_wait_time = 1.0
-max_wait_time = 4.0
+spawn_range = Vector2(20, 20)
 
 [node name="Ninja_red" parent="EnemyHandler/EnemyGroup" instance=ExtResource("7_que0v")]
 health = 6666666

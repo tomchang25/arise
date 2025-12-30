@@ -373,6 +373,7 @@ debug_color = Color(0.639216, 0.529412, 0, 0.329412)
 position = Vector2(0, -5)
 projectile_scene = ExtResource("6_ump6o")
 attack_cooldown = 1.0
+max_targets = 1
 target_groups = Array[StringName]([&"player", &"army"])
 
 [node name="EnemyScanner" parent="." instance=ExtResource("2_wj0qn")]

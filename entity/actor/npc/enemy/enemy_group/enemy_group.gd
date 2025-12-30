@@ -33,13 +33,13 @@ func _ready():
             add_unit(child)
 
 
-func _on_child_entered_tree(child: Enemy):
-    if child is CharacterBody2D:
+func _on_child_entered_tree(child: Node):
+    if child is Enemy:
         add_unit(child)
 
 
-func _on_child_exiting_tree(child: Enemy):
-    if child is CharacterBody2D:
+func _on_child_exiting_tree(child: Node):
+    if child is Enemy:
         remove_unit(child)
 
 
@@ -68,8 +68,7 @@ func _update_shared_vision() -> void:
 func _on_wait_timer_timeout():
     var new_wander_position = generate_random_wander_position()
     for unit in get_all_units():
-        var offset = unit.global_position - global_position
-        unit.set_next_position(new_wander_position + offset)
+        unit.next_position = new_wander_position + unit.offset
 
     print("Group, new wander position: ", new_wander_position)
 
@@ -98,6 +97,8 @@ func add_unit(unit: Enemy) -> bool:
 
     if index == -1:
         return false
+
+    unit.offset = unit.global_position - global_position
 
     units[index] = unit
 

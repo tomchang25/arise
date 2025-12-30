@@ -2,7 +2,7 @@
 class_name Enemy
 extends CharacterBody2D
 
-signal updated_next_position(position: Vector2)
+# signal updated_next_position(position: Vector2)
 signal damaged(attack: Attack)
 
 @export_category("Scanner")
@@ -43,6 +43,8 @@ signal damaged(attack: Attack)
 var start_position: Vector2
 var next_position: Vector2
 
+var offset: Vector2
+
 
 func _ready() -> void:
     _setup_enemy_scanner()
@@ -62,7 +64,6 @@ func _ready() -> void:
 
 
 func _on_damaged(attack: Attack) -> void:
-    print("Enemy damaged by attack: ", attack.damage)
     health_component.health -= attack.damage
 
     damaged.emit(attack)
@@ -87,13 +88,6 @@ func _setup_enemy_scanner() -> void:
 
 func get_distance_to_start() -> float:
     return global_position.distance_to(start_position)
-
-
-func set_next_position(new_position: Vector2) -> void:
-    next_position = new_position
-
-    print("TEST")
-    updated_next_position.emit(new_position)
 
 # func generate_random_wander_position(wander_range: float = 250) -> void:
 #     var random_angle = randf() * TAU

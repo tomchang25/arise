@@ -11,7 +11,7 @@ func _init() -> void:
 func _enter() -> void:
     enemy.pathfinding.set_arrive_distance(5)
     enemy.pathfinding.set_speed(move_speed)
-    enemy.pathfinding.set_target_position(enemy.next_position)
+    enemy.pathfinding.set_target_position(enemy.start_position)
 
     enemy.animation.travel_to_state(animation_state)
 

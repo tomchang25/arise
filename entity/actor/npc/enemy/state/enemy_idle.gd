@@ -23,20 +23,16 @@ func _update(_delta: float) -> void:
         change_state(EnemyStateId.CHASE)
         return
 
+    if enemy.next_position.distance_to(enemy.global_position) > 10:
+        change_state(EnemyStateId.WANDER)
+        return
 
-func _on_updated_next_position(_position: Vector2) -> void:
-    print(enemy.next_position)
-    change_state(EnemyStateId.WANDER)
-    return
+
+# func _on_updated_next_position(_position: Vector2) -> void:
+#     print(enemy.next_position)
+#     change_state(EnemyStateId.WANDER)
+#     return
 
 
 func _exit() -> void:
     pass
-
-# func _setup_wait_timer() -> void:
-#     enemy.wait_timer.wait_time = randf_range(min_wait_time, max_wait_time)
-#     enemy.wait_timer.start()
-
-# func _on_wait_timer_timeout() -> void:
-#     change_state(EnemyStateId.WANDER)
-#     return

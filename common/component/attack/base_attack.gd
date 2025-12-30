@@ -4,7 +4,7 @@ extends Node2D
 @export var attack_cooldown: float = 0.5
 # @export var attack_range: float = -1
 
-@export var max_targets: int = 1
+@export var max_targets: int = -1
 @export var target_groups: Array[StringName] = []
 
 var cooldown_timer: Timer
@@ -29,7 +29,7 @@ func _setup_timer() -> void:
 
 func _on_hit_confirmed() -> void:
     targets_hit_count += 1
-    if targets_hit_count >= max_targets:
+    if max_targets > 0 and targets_hit_count >= max_targets:
         _on_max_targets_reached()
 
 
