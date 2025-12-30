@@ -1,4 +1,4 @@
-[gd_scene load_steps=52 format=3 uid="uid://31x7n43mme6c"]
+[gd_scene load_steps=51 format=3 uid="uid://31x7n43mme6c"]
 
 [ext_resource type="Script" uid="uid://bmdh4vf3luco6" path="res://entity/actor/npc/enemy/enemy.gd" id="1_onpov"]
 [ext_resource type="Material" uid="uid://4sxc1efucw5k" path="res://common/shader/dynamic_color_overlay.tres" id="2_ryg7q"]
@@ -6,7 +6,6 @@
 [ext_resource type="PackedScene" uid="uid://d3g8jgprf7bfw" path="res://common/component/enemy_scanner/enemy_scanner.tscn" id="2_wj0qn"]
 [ext_resource type="PackedScene" uid="uid://do052sqt3wjdp" path="res://common/component/detectbox/detectbox.tscn" id="3_vjnwt"]
 [ext_resource type="PackedScene" uid="uid://bphvl1tkicrfo" path="res://common/component/hitbox/hitbox.tscn" id="4_pilld"]
-[ext_resource type="Script" uid="uid://bu6qty8wweb6r" path="res://common/component/health/health.gd" id="5_4568d"]
 [ext_resource type="PackedScene" uid="uid://l45622b15oap" path="res://common/component/attack/projectile_attack/projectile_attack.tscn" id="5_xmn1q"]
 [ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/state_machinie/state_machine.gd" id="6_lx6jr"]
 [ext_resource type="Script" uid="uid://lnjp761bf75g" path="res://common/component/movement/base_movement.gd" id="6_pilld"]
@@ -15,6 +14,7 @@
 [ext_resource type="Script" uid="uid://bu436ru5hhd66" path="res://common/component/animation/base_animation.gd" id="6_vjnwt"]
 [ext_resource type="Script" uid="uid://ixpqntb22d76" path="res://entity/actor/npc/enemy/state/enemy_idle.gd" id="7_ryg7q"]
 [ext_resource type="Script" uid="uid://v0ips7afnj6" path="res://entity/actor/npc/enemy/state/enemy_wander.gd" id="11_4568d"]
+[ext_resource type="PackedScene" uid="uid://d0tswwb1d3smv" path="res://common/component/health/health_component.tscn" id="12_xmn1q"]
 [ext_resource type="Script" uid="uid://btduv83t3tnr" path="res://entity/actor/npc/enemy/state/enemy_chase.gd" id="14_1l3k7"]
 [ext_resource type="Script" uid="uid://dq7gm11wvwn6m" path="res://entity/actor/npc/enemy/state/enemy_attack.gd" id="15_tgdcv"]
 [ext_resource type="Script" uid="uid://og75stne3wma" path="res://entity/actor/npc/enemy/state/enemy_back.gd" id="16_xmn1q"]
@@ -344,9 +344,6 @@ _data = {
 &"RESET": SubResource("Animation_i87wb")
 }
 
-[sub_resource type="LabelSettings" id="LabelSettings_0p2mk"]
-font_size = 4
-
 [node name="Ninja_red" type="CharacterBody2D"]
 collision_layer = 2
 collision_mask = 2
@@ -375,7 +372,6 @@ debug_color = Color(0.639216, 0.529412, 0, 0.329412)
 [node name="ProjectileAttack" parent="." instance=ExtResource("5_xmn1q")]
 position = Vector2(0, -5)
 projectile_scene = ExtResource("6_ump6o")
-damage = 10
 attack_cooldown = 1.0
 target_groups = Array[StringName]([&"player", &"army"])
 
@@ -417,23 +413,8 @@ libraries = {
 &"": SubResource("AnimationLibrary_i87wb")
 }
 
-[node name="HealthLabel" type="Label" parent="."]
-anchors_preset = -1
-anchor_bottom = 6.0
-offset_left = -8.0
-offset_top = -29.4167
-offset_right = 8.0
-offset_bottom = -24.0
-grow_horizontal = 2
-grow_vertical = 0
-text = "HP: 666"
-label_settings = SubResource("LabelSettings_0p2mk")
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Health" type="Node" parent="." node_paths=PackedStringArray("hitbox")]
-script = ExtResource("5_4568d")
-hitbox = NodePath("../Hitbox")
+[node name="HealthComponent" parent="." instance=ExtResource("12_xmn1q")]
+enable_health_label = true
 
 [node name="WaitTimer" type="Timer" parent="."]
 

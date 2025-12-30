@@ -47,10 +47,6 @@ func _update_player_position(delta: float) -> void:
     if check_player_timer > check_player_timer_interval:
         check_player_timer = 0
 
-        # if prev_player_position.distance_to(target.player.global_position) > 10:
-        # prev_player_position = target.player.global_position
-        # target.set_target_position(target.player.global_position)
-
         target.update_grid_position()
 
     check_player_timer += delta

@@ -1,0 +1,24 @@
+[gd_scene load_steps=3 format=3 uid="uid://d0tswwb1d3smv"]
+
+[ext_resource type="Script" uid="uid://bu6qty8wweb6r" path="res://common/component/health/health.gd" id="1_lut52"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_lut52"]
+font_size = 4
+
+[node name="HealthComponent" type="Node2D"]
+script = ExtResource("1_lut52")
+enable_health_label = true
+
+[node name="DebugHealthLabel" type="Label" parent="."]
+anchors_preset = -1
+anchor_bottom = 6.0
+offset_left = -8.0
+offset_top = 4.0
+offset_right = 8.0
+offset_bottom = 9.4167
+grow_horizontal = 2
+grow_vertical = 0
+text = "HP: 10.0"
+label_settings = SubResource("LabelSettings_lut52")
+horizontal_alignment = 1
+vertical_alignment = 1
