@@ -10,8 +10,12 @@ func _ready() -> void:
     await owner.ready
     enemy = owner
 
-    enemy.wait_timer.timeout.connect(_on_wait_timer_timeout)
+    # enemy.wait_timer.timeout.connect(_on_wait_timer_timeout)
+    enemy.updated_next_position.connect(_on_updated_next_position)
 
 
-func _on_wait_timer_timeout() -> void:
+func _on_updated_next_position(_position: Vector2) -> void:
     pass
+
+# func _on_wait_timer_timeout() -> void:
+#     pass

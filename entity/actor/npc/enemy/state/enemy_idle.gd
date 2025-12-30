@@ -15,7 +15,7 @@ func _enter() -> void:
 
     enemy.animation.travel_to_state(animation_state)
 
-    _setup_wait_timer()
+    # _setup_wait_timer()
 
 
 func _update(_delta: float) -> void:
@@ -24,15 +24,19 @@ func _update(_delta: float) -> void:
         return
 
 
+func _on_updated_next_position(_position: Vector2) -> void:
+    print(enemy.next_position)
+    change_state(EnemyStateId.WANDER)
+    return
+
+
 func _exit() -> void:
     pass
 
+# func _setup_wait_timer() -> void:
+#     enemy.wait_timer.wait_time = randf_range(min_wait_time, max_wait_time)
+#     enemy.wait_timer.start()
 
-func _setup_wait_timer() -> void:
-    enemy.wait_timer.wait_time = randf_range(min_wait_time, max_wait_time)
-    enemy.wait_timer.start()
-
-
-func _on_wait_timer_timeout() -> void:
-    change_state(EnemyStateId.WANDER)
-    return
+# func _on_wait_timer_timeout() -> void:
+#     change_state(EnemyStateId.WANDER)
+#     return

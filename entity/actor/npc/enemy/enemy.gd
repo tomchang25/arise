@@ -2,6 +2,7 @@
 class_name Enemy
 extends CharacterBody2D
 
+signal updated_next_position(position: Vector2)
 signal damaged(attack: Attack)
 
 @export_category("Scanner")
@@ -37,7 +38,7 @@ signal damaged(attack: Attack)
 # ------ Utilities ------
 @onready var wait_timer: Timer = $WaitTimer
 
-var leader: Enemy
+# var leader: Enemy
 
 var start_position: Vector2
 var next_position: Vector2
@@ -54,8 +55,10 @@ func _ready() -> void:
     health_component.health_changed.connect(_on_health_changed)
     health_component.health_depleted.connect(_on_health_depleted)
 
-    if start_position == Vector2.ZERO:
-        start_position = global_position
+    start_position = global_position
+    next_position = start_position
+    # if start_position == Vector2.ZERO:
+    #     start_position = global_position
 
 
 func _on_damaged(attack: Attack) -> void:
@@ -86,11 +89,17 @@ func get_distance_to_start() -> float:
     return global_position.distance_to(start_position)
 
 
-func generate_random_wander_position(wander_range: float = 250) -> void:
-    var random_angle = randf() * TAU
-    var random_dist = randf_range(0, wander_range)
+func set_next_position(new_position: Vector2) -> void:
+    next_position = new_position
 
-    var travel_vector = Vector2.UP.rotated(random_angle) * random_dist
-    var candidate_position = start_position + travel_vector
+    print("TEST")
+    updated_next_position.emit(new_position)
 
-    next_position = candidate_position
+# func generate_random_wander_position(wander_range: float = 250) -> void:
+#     var random_angle = randf() * TAU
+#     var random_dist = randf_range(0, wander_range)
+
+#     var travel_vector = Vector2.UP.rotated(random_angle) * random_dist
+#     var candidate_position = start_position + travel_vector
+
+#     next_position = candidate_position

@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://bn13d02jyg5d7"]
+[gd_scene load_steps=10 format=3 uid="uid://bn13d02jyg5d7"]
 
 [ext_resource type="Texture2D" uid="uid://bylg7d5anp8c7" path="res://stage/test/playground/art/grass_background.png" id="1_avbqp"]
 [ext_resource type="PackedScene" uid="uid://dbhtrssgng58f" path="res://entity/actor/player/player.tscn" id="2_54ftc"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://bfxutmk72t3gc" path="res://entity/actor/npc/army/army_handler/army_handler.tscn" id="4_fu4i5"]
 [ext_resource type="Script" uid="uid://bbnuk476f2gu5" path="res://common/component/camera/camera.gd" id="4_que0v"]
 [ext_resource type="PackedScene" uid="uid://12rdjr3aafmv" path="res://entity/spawner/arise_box/arise_box.tscn" id="6_fu4i5"]
+[ext_resource type="PackedScene" uid="uid://cssols6rmii6m" path="res://entity/actor/npc/enemy/enemy_group/enemy_group.tscn" id="6_xkwl0"]
 [ext_resource type="PackedScene" uid="uid://31x7n43mme6c" path="res://entity/actor/npc/enemy/ninja_red.tscn" id="7_que0v"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_eeu4c"]
@@ -57,8 +58,28 @@ script = ExtResource("4_que0v")
 y_sort_enabled = true
 position = Vector2(93, 80)
 
-[node name="Ninja_red" parent="EnemyHandler" instance=ExtResource("7_que0v")]
-position = Vector2(284, -23)
+[node name="EnemyGroup" parent="EnemyHandler" instance=ExtResource("6_xkwl0")]
+position = Vector2(366, 57)
+share_vision = false
+min_wait_time = 1.0
+max_wait_time = 4.0
+
+[node name="Ninja_red" parent="EnemyHandler/EnemyGroup" instance=ExtResource("7_que0v")]
+health = 6666666
+
+[node name="Ninja_red2" parent="EnemyHandler/EnemyGroup" instance=ExtResource("7_que0v")]
+position = Vector2(-19, -15)
+visible_range = 50.0
+health = 6666666
+
+[node name="Ninja_red3" parent="EnemyHandler/EnemyGroup" instance=ExtResource("7_que0v")]
+position = Vector2(17, -16)
+visible_range = 50.0
+health = 6666666
+
+[node name="Ninja_red4" parent="EnemyHandler/EnemyGroup" instance=ExtResource("7_que0v")]
+position = Vector2(0, 25)
+visible_range = 50.0
 health = 6666666
 
 [node name="Spawner" type="Node2D" parent="."]

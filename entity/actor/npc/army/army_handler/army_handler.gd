@@ -49,7 +49,7 @@ func _on_check_timer_timeout():
         else:
             armies_state[army_current_state.name] += 1
 
-    print(armies_state)
+    # print(armies_state)
 
 
 func _physics_process(_delta):

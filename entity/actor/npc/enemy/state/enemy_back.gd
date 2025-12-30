@@ -11,7 +11,7 @@ func _init() -> void:
 func _enter() -> void:
     enemy.pathfinding.set_arrive_distance(5)
     enemy.pathfinding.set_speed(move_speed)
-    enemy.pathfinding.set_target_position(enemy.start_position)
+    enemy.pathfinding.set_target_position(enemy.next_position)
 
     enemy.animation.travel_to_state(animation_state)
 
@@ -19,7 +19,7 @@ func _enter() -> void:
 func _update(_delta: float) -> void:
     enemy.movement.set_velocity(enemy.pathfinding.get_velocity())
 
-    enemy.animation.set_animation_direction(enemy.global_position.direction_to(enemy.start_position), animation_state)
+    enemy.animation.set_animation_direction(enemy.pathfinding.get_velocity(), animation_state)
 
     if enemy.pathfinding.navigation_agent.is_navigation_finished():
         change_state(EnemyStateId.IDLE)

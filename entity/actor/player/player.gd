@@ -20,31 +20,30 @@ extends CharacterBody2D
 
 # ------ Properties ------
 
-# var nearest_enemy: Enemy = null
+var nearest_enemy: Enemy = null
 
 ## --- GDScript Lifecycle ---
 
 
 func _ready() -> void:
-    # enemy_detectbox.targets_changed.connect(_on_enemies_detected)
-    # animation.animation_finished.connect(_on_animation_finished)
+    enemy_detectbox.targets_changed.connect(_on_enemies_detected)
 
     hitbox.damaged.connect(_on_damaged)
 
 
-# func _on_enemies_detected(nodes_in_range: Array) -> void:
-#     if nodes_in_range.is_empty():
-#         nearest_enemy = null
+func _on_enemies_detected(nodes_in_range: Array) -> void:
+    if nodes_in_range.is_empty():
+        nearest_enemy = null
 
-#     for node in nodes_in_range:
-#         if node is not Enemy:
-#             continue
+    for node in nodes_in_range:
+        if node is not Enemy:
+            continue
 
-#         var enemy: Enemy = node
-#         var distance: float = enemy.global_position.distance_to(self.global_position)
+        var enemy: Enemy = node
+        var distance: float = enemy.global_position.distance_to(self.global_position)
 
-#         if nearest_enemy == null or distance < nearest_enemy.global_position.distance_to(self.global_position):
-#             nearest_enemy = enemy
+        if nearest_enemy == null or distance < nearest_enemy.global_position.distance_to(self.global_position):
+            nearest_enemy = enemy
 
 
 func _on_damaged(attack_info: Attack) -> void:

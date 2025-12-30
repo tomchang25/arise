@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://cssols6rmii6m"]
+
+[ext_resource type="Script" uid="uid://cscr8c257tepu" path="res://entity/actor/npc/enemy/enemy_group/enemy_group.gd" id="1_mb4my"]
+
+[node name="EnemyGroup" type="Node2D"]
+script = ExtResource("1_mb4my")
+
+[node name="WaitTimer" type="Timer" parent="."]
+autostart = true

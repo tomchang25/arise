@@ -414,7 +414,6 @@ libraries = {
 }
 
 [node name="HealthComponent" parent="." instance=ExtResource("12_xmn1q")]
-enable_health_label = true
 
 [node name="WaitTimer" type="Timer" parent="."]
 

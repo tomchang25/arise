@@ -11,7 +11,9 @@ signal health_depleted
 @export var enable_health_label := false:
     set(value):
         enable_health_label = value
-        _update_health_label()
+
+        if is_node_ready() and debug_health_label:
+            _update_health_label()
 
 @export var max_health := 10.0
 

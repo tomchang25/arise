@@ -9,8 +9,6 @@ func _init() -> void:
 
 
 func _enter() -> void:
-    enemy.generate_random_wander_position()
-
     enemy.pathfinding.set_arrive_distance(5)
     enemy.pathfinding.set_speed(wander_speed)
     enemy.pathfinding.set_target_position(enemy.next_position)
