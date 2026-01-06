@@ -30,12 +30,12 @@ func set_time_scale(time_scale: float):
 
 
 # Sets the blend position for states that use a BlendSpace2D (like movement)
-func set_animation_direction(new_direction: Vector2, anim_name: StringName = get_current_animation_state()):
+func set_animation_direction(new_direction: Vector2, anim_name: StringName = get_current_state()):
     animation_tree.set("parameters/StateMachine/" + anim_name + "/blend_position", new_direction)
     _prev_animation_direction = new_direction
 
 
-func set_as_prev_animation_direction(anim_name: StringName = get_current_animation_state()):
+func set_as_prev_animation_direction(anim_name: StringName = get_current_state()):
     animation_tree.set("parameters/StateMachine/" + anim_name + "/blend_position", _prev_animation_direction)
 
 
@@ -43,5 +43,5 @@ func set_as_prev_animation_direction(anim_name: StringName = get_current_animati
 
 
 # Check if the last animation that finished matches the specified state named
-func get_current_animation_state() -> StringName:
+func get_current_state() -> StringName:
     return animation_state_machine.get_current_node()

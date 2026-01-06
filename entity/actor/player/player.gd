@@ -107,11 +107,12 @@ func _on_health_changed(new_health: float) -> void:
 
 
 func _on_health_depleted() -> void:
-    queue_free()
+    # queue_free()
+    print("DIED: player health depleted")
 
 
 func _on_damaged(attack_info: Attack) -> void:
-    health_component.health -= attack_info.damage
+    health_component.apply_damage(attack_info)
 
     damaged.emit(attack_info)
 
@@ -119,6 +120,7 @@ func _on_damaged(attack_info: Attack) -> void:
 # ------ General ------
 
 
+## --- Public API ---
 func get_last_direction() -> Vector2:
     return movement.get_last_direction()
 
@@ -138,10 +140,10 @@ func get_attack_target_direction() -> Vector2:
 func set_facing_direction(direction: Vector2) -> void:
     if direction == Vector2.ZERO:
         return
+
     # Force the animation direction for all states (or specifically the Attack state)
-    if direction != Vector2.ZERO:
-        for state in animation_states:
-            animation.set_animation_direction(direction, state)
+    for state in animation_states:
+        animation.set_animation_direction(direction, state)
 
 
 func play_animation(state_name: String, time_scale: float = 1.0) -> void:
@@ -155,9 +157,6 @@ func start_attack_logic(target_pos: Vector2) -> void:
 
 func end_attack_logic() -> void:
     attack_handler.end_attack()
-
-
-## --- Public API ---
 
 
 func get_attackable_enemies() -> Array:

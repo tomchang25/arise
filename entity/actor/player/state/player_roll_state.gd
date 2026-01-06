@@ -11,7 +11,7 @@ func _enter() -> void:
         input_direction = player.get_last_direction()
 
     player.perform_movement(input_direction, player.roll_speed, false)
-    player.play_animation(Player.AnimationState.ROLL, 2.0)
+    player.play_animation(Player.AnimationState.ROLL, 1.5)
 
     player.roll_finished.connect(_on_finished)
 

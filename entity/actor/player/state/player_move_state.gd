@@ -13,7 +13,7 @@ func _update(delta: float) -> void:
     var input = player.get_movement_input()
 
     # Handle Speed & Animation Speed
-    var is_running = Input.is_action_pressed("run")
+    var is_running = player.is_run_pressed()
     var current_speed = player.run_speed if is_running else player.walk_speed
     var anim_speed = 2.0 if is_running else 1.0
 
@@ -30,7 +30,7 @@ func _update(delta: float) -> void:
         _idle_timer = 0.0
 
     # Transitions: Action
-    if Input.is_action_pressed("roll"):
+    if player.is_roll_pressed():
         change_state(PlayerStateId.ROLL)
     elif player.is_attack_triggered():
         change_state(PlayerStateId.ATTACK)

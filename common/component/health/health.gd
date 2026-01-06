@@ -26,9 +26,6 @@ signal health_depleted
 
 
 func _ready():
-    # if hitbox:
-    #     hitbox.damaged.connect(on_damaged)
-
     _update_health_label()
 
     health_changed.connect(_on_health_changed)
@@ -38,17 +35,16 @@ func reset():
     health = max_health
 
 
-func on_damaged(attack: Attack):
-    health -= attack.damage
+func apply_damage(attack: Attack):
+    health = clamp(health - attack.damage, 0, max_health)
     health_changed.emit(health)
 
     if health <= 0:
-        health = 0
         health_depleted.emit()
 
 
 func _on_health_changed(_new_health: float) -> void:
-    print("Health changed to ", health)
+    # print("Health changed to ", health)
     _update_health_label()
 
 
