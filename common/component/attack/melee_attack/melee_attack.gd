@@ -23,7 +23,8 @@ func _setup_hurtbox():
     hurtbox.collision_mask = Global.get_combined_mask(target_groups)
 
 
-func _execute_attack_logic(_target_position: Vector2) -> void:
+func _execute_attack_logic(target_position: Vector2) -> void:
+    aim_at(target_position)
     if hurtbox:
         hurtbox.enabled = true
 

@@ -1,43 +1,33 @@
 extends PlayerState
 
-@export var attack_speed: float = 50
-var target_position: Vector2
-
 
 func _init() -> void:
     state_id = PlayerState.PlayerStateId.ATTACK
 
 
 func _enter() -> void:
-    if not player.melee_attack.can_attack():
-        self.change_state(PlayerState.PlayerStateId.IDLE)
-        return
+    player.play_animation(Player.AnimationState.ATTACK)
 
-    player.movement.set_speed(attack_speed)
+    var face_dir = player.get_attack_target_direction()
+    player.set_facing_direction(face_dir)
 
-    player.animation.travel_to_state(self.animation_state)
+    var target = player.get_nearest_attackable_enemy()
+    var target_pos = target.global_position if target else player.get_global_mouse_position()
+    player.start_attack_logic(target_pos)
 
-    if player.nearest_enemy != null:
-        target_position = player.nearest_enemy.global_position
-    else:
-        target_position = player.get_global_mouse_position()
-
-    player.melee_attack.aim_at(target_position)
-    player.melee_attack.start_attack(target_position)
+    player.attack_finished.connect(_on_finished)
 
 
 func _update(_delta: float) -> void:
-    player.melee_attack.aim_at(target_position)
-
-    var attack_direction: Vector2 = player.melee_attack.global_position.direction_to(target_position)
-    player.animation.set_animation_direction(attack_direction, self.animation_state)
-
-    var movement_direction: Vector2 = player.player_input.get_movement_direction()
-    player.movement.set_direction(movement_direction)
+    var movement_input = player.get_movement_input()
+    player.perform_movement(movement_input, player.attack_speed, false)
 
 
-func _on_animation_finished(anim_name: StringName) -> void:
-    if self.animation_state in anim_name:
-        player.melee_attack.end_attack()
-        self.change_state(PlayerState.PlayerStateId.IDLE)
-        return
+func _exit() -> void:
+    if player.attack_finished.is_connected(_on_finished):
+        player.attack_finished.disconnect(_on_finished)
+    player.end_attack_logic()
+
+
+func _on_finished() -> void:
+    change_state(PlayerStateId.IDLE)

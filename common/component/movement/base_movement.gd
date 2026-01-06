@@ -12,6 +12,7 @@ var velocity: Vector2:
     get:
         return current_direction * current_speed
 
+var _last_direction: Vector2
 ## --- Physics Processing (CORE MOVEMENT LOGIC) ---
 
 
@@ -36,6 +37,9 @@ func set_direction(new_direction: Vector2) -> void:
     # Ensure the direction is normalized if it's not already
     current_direction = new_direction.normalized()
 
+    if current_direction != Vector2.ZERO:
+        _last_direction = current_direction
+
 
 func set_speed(new_speed: float) -> void:
     current_speed = new_speed
@@ -43,6 +47,10 @@ func set_speed(new_speed: float) -> void:
 
 func get_speed() -> float:
     return current_speed
+
+
+func get_last_direction() -> Vector2:
+    return _last_direction
 
 
 func stop() -> void:

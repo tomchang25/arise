@@ -28,11 +28,5 @@ func _update(_delta: float) -> void:
         return
 
 
-# func _on_updated_next_position(_position: Vector2) -> void:
-#     print(enemy.next_position)
-#     change_state(EnemyStateId.WANDER)
-#     return
-
-
 func _exit() -> void:
     pass

@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3 uid="uid://dbhtrssgng58f"]
+[gd_scene load_steps=41 format=3 uid="uid://dbhtrssgng58f"]
 
 [ext_resource type="Script" uid="uid://bwkkatjpy72kv" path="res://entity/actor/player/player.gd" id="1_b15sj"]
 [ext_resource type="Texture2D" uid="uid://e7rr31b6fwkg" path="res://entity/actor/player/art/player.png" id="2_e6ar1"]
@@ -9,10 +9,11 @@
 [ext_resource type="PackedScene" uid="uid://bphvl1tkicrfo" path="res://common/component/hitbox/hitbox.tscn" id="4_fc0j5"]
 [ext_resource type="Script" uid="uid://3lp7jvr6ovc2" path="res://common/resource/attack/attack_data.gd" id="4_ivlxb"]
 [ext_resource type="Script" uid="uid://b6r7vut6vta3w" path="res://entity/actor/player/state/player_idle_state.gd" id="6_2iqu4"]
+[ext_resource type="PackedScene" uid="uid://d0tswwb1d3smv" path="res://common/component/health/health_component.tscn" id="8_8wcyo"]
 [ext_resource type="Script" uid="uid://lnjp761bf75g" path="res://common/component/movement/base_movement.gd" id="8_mx88g"]
 [ext_resource type="Script" uid="uid://bu436ru5hhd66" path="res://common/component/animation/base_animation.gd" id="9_b15sj"]
-[ext_resource type="Script" uid="uid://b2efdribe7jd0" path="res://entity/actor/player/player_input.gd" id="9_mx88g"]
 [ext_resource type="Script" uid="uid://jtqne3plv0gg" path="res://entity/actor/player/state/player_roll_state.gd" id="9_t2ln0"]
+[ext_resource type="PackedScene" uid="uid://d3g8jgprf7bfw" path="res://common/component/enemy_scanner/enemy_scanner.tscn" id="9_vb105"]
 [ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/state_machinie/state_machine.gd" id="11_b15sj"]
 [ext_resource type="Script" uid="uid://chearh86c82uf" path="res://entity/actor/player/state/player_attack_state.gd" id="11_klmji"]
 [ext_resource type="Script" uid="uid://csp44dwfwcqu0" path="res://entity/actor/player/state/player_move_state.gd" id="14_b15sj"]
@@ -20,9 +21,6 @@
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_nqnt1"]
 radius = 2.0
 height = 12.0
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_fc0j5"]
-radius = 25.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_8eddv"]
 radius = 6.0
@@ -37,6 +35,9 @@ metadata/_custom_type_script = "uid://3lp7jvr6ovc2"
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_klmji"]
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_8eddv"]
+radius = 100.0
+
 [sub_resource type="Animation" id="Animation_mx88g"]
 resource_name = "AttackDown"
 length = 0.5
@@ -44,7 +45,7 @@ step = 0.15
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Skin:frame")
+tracks/0/path = NodePath("Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -61,7 +62,7 @@ step = 0.15
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Skin:frame")
+tracks/0/path = NodePath("Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -78,7 +79,7 @@ step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Skin:frame")
+tracks/0/path = NodePath("Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -95,7 +96,7 @@ step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Skin:frame")
+tracks/0/path = NodePath("Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -112,7 +113,7 @@ step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Skin:frame")
+tracks/0/path = NodePath("Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -129,7 +130,7 @@ step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Skin:frame")
+tracks/0/path = NodePath("Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -146,7 +147,7 @@ step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Skin:frame")
+tracks/0/path = NodePath("Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -163,7 +164,7 @@ step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Skin:frame")
+tracks/0/path = NodePath("Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -181,7 +182,7 @@ step = 0.15
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Skin:frame")
+tracks/0/path = NodePath("Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -199,7 +200,7 @@ step = 0.15
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Skin:frame")
+tracks/0/path = NodePath("Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -217,7 +218,7 @@ step = 0.15
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Skin:frame")
+tracks/0/path = NodePath("Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -235,7 +236,7 @@ step = 0.15
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Skin:frame")
+tracks/0/path = NodePath("Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -250,7 +251,7 @@ length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Skin:frame")
+tracks/0/path = NodePath("Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -267,7 +268,7 @@ step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Skin:frame")
+tracks/0/path = NodePath("Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -284,7 +285,7 @@ step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Skin:frame")
+tracks/0/path = NodePath("Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -301,7 +302,7 @@ step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Skin:frame")
+tracks/0/path = NodePath("Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -318,7 +319,7 @@ step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Skin:frame")
+tracks/0/path = NodePath("Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -354,7 +355,7 @@ collision_mask = 4
 motion_mode = 1
 script = ExtResource("1_b15sj")
 
-[node name="Skin" type="Sprite2D" parent="."]
+[node name="Sprite" type="Sprite2D" parent="."]
 texture = ExtResource("2_e6ar1")
 offset = Vector2(0, -10)
 hframes = 60
@@ -362,15 +363,6 @@ hframes = 60
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 rotation = 1.5708
 shape = SubResource("CapsuleShape2D_nqnt1")
-
-[node name="EnemyDetectbox" parent="." instance=ExtResource("3_n81ss")]
-position = Vector2(0, -5)
-collision_mask = 2
-radius = 25.0
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyDetectbox"]
-shape = SubResource("CircleShape2D_fc0j5")
-debug_color = Color(0.631373, 0.517647, 0.301961, 0.235294)
 
 [node name="Hitbox" parent="." instance=ExtResource("4_fc0j5")]
 position = Vector2(0, -8)
@@ -403,6 +395,20 @@ radius = 12.0
 debug_use_custom = true
 debug_path_custom_color = Color(1, 0, 1, 1)
 
+[node name="HealthComponent" parent="." instance=ExtResource("8_8wcyo")]
+max_health = 500.0
+
+[node name="EnemyScanner" parent="." instance=ExtResource("9_vb105")]
+
+[node name="Detectbox" parent="EnemyScanner" instance=ExtResource("3_n81ss")]
+position = Vector2(0, -5)
+collision_mask = 2
+radius = 100.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyScanner/Detectbox"]
+shape = SubResource("CircleShape2D_8eddv")
+debug_color = Color(0.631373, 0.517647, 0.301961, 0.235294)
+
 [node name="PlayerMovement" type="Node" parent="."]
 script = ExtResource("8_mx88g")
 
@@ -426,27 +432,20 @@ parameters/StateMachine/Move/blend_position = Vector2(0, 0)
 parameters/StateMachine/Roll/blend_position = Vector2(0, 0)
 parameters/TimeScale/scale = 1.0
 
-[node name="PlayerInput" type="Node" parent="."]
-script = ExtResource("9_mx88g")
-
 [node name="PlayerStateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
 script = ExtResource("11_b15sj")
 initial_state = NodePath("Idle")
 
 [node name="Idle" type="Node" parent="PlayerStateMachine"]
 script = ExtResource("6_2iqu4")
-animation_state = "Idle"
 
 [node name="Move" type="Node" parent="PlayerStateMachine"]
 script = ExtResource("14_b15sj")
-animation_state = "Move"
 
 [node name="Roll" type="Node" parent="PlayerStateMachine"]
 script = ExtResource("9_t2ln0")
-animation_state = "Roll"
 
 [node name="Attack" type="Node" parent="PlayerStateMachine"]
 script = ExtResource("11_klmji")
-animation_state = "Attack"
 
 [editable path="MeleeAttack"]

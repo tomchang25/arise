@@ -1,31 +1,25 @@
 extends PlayerState
 
-@export var roll_speed: float = 300
-
 
 func _init() -> void:
-    state_id = PlayerState.PlayerStateId.ROLL
+    state_id = PlayerStateId.ROLL
 
 
 func _enter() -> void:
-    var direction: Vector2 = player.player_input.get_movement_direction()
+    var input_direction: Vector2 = player.get_movement_input()
+    if input_direction == Vector2.ZERO:
+        input_direction = player.get_last_direction()
 
-    player.movement.set_speed(roll_speed)
-    player.movement.set_direction(direction)
+    player.perform_movement(input_direction, player.roll_speed, false)
+    player.play_animation(Player.AnimationState.ROLL, 2.0)
 
-    player.animation.travel_to_state(self.animation_state)
-    player.animation.set_animation_direction(direction, self.animation_state)
-    player.animation.set_time_scale(2.0)
+    player.roll_finished.connect(_on_finished)
 
 
 func _exit() -> void:
-    player.animation.set_time_scale(1.0)
+    if player.roll_finished.is_connected(_on_finished):
+        player.roll_finished.disconnect(_on_finished)
 
 
-func _update(_delta: float) -> void:
-    pass
-
-
-func _on_animation_finished(anim_name: StringName) -> void:
-    if self.animation_state in anim_name:
-        self.change_state(PlayerState.PlayerStateId.IDLE)
+func _on_finished() -> void:
+    change_state(PlayerStateId.IDLE)

@@ -372,7 +372,6 @@ debug_color = Color(0.849634, 0.358302, 0.287232, 0.42)
 [node name="EnemyScanner" parent="." instance=ExtResource("3_v4ucm")]
 position = Vector2(0, -5)
 visible_range = 50.0
-use_external = true
 
 [node name="Detectbox" parent="EnemyScanner" instance=ExtResource("3_lqaih")]
 collision_mask = 2
@@ -427,7 +426,6 @@ animation_state = "Idle"
 
 [node name="Follow" type="Node" parent="ArmyStateMachine"]
 script = ExtResource("9_6k810")
-move_speed = 50.0
 animation_state = "Move"
 
 [node name="Chase" type="Node" parent="ArmyStateMachine"]

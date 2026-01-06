@@ -3,6 +3,7 @@ extends State
 
 enum PlayerStateId { NULL = -1, IDLE = 0, MOVE = 1, ROLL = 2, ATTACK = 3 }
 
+# TODO DELETE
 @export var animation_state: String
 
 var player: Player
@@ -16,9 +17,3 @@ func _ready() -> void:
 
     if not player.is_node_ready():
         await player.ready
-
-    player.animation.animation_finished.connect(_on_animation_finished)
-
-
-func _on_animation_finished(_anim_name: StringName) -> void:
-    pass

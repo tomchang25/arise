@@ -2,7 +2,6 @@
 class_name Enemy
 extends CharacterBody2D
 
-# signal updated_next_position(position: Vector2)
 signal damaged(attack: Attack)
 
 @export_category("Scanner")
@@ -21,7 +20,12 @@ signal damaged(attack: Attack)
             _setup_enemy_scanner()
 
 @export_category("Actor Properties")
-@export var health := 10
+@export var health := 10:
+    set(value):
+        health = value
+
+        if is_node_ready() and health_component:
+            health_component.max_health = value
 
 # ------ Core ------
 @onready var sprite := $Sprite
@@ -35,8 +39,8 @@ signal damaged(attack: Attack)
 @onready var pathfinding: Pathfinding = $Pathfinding
 @onready var enemy_scanner: EnemyScanner = $EnemyScanner
 
-# ------ Utilities ------
-@onready var wait_timer: Timer = $WaitTimer
+# # ------ Utilities ------
+# @onready var wait_timer: Timer = $WaitTimer
 
 # var leader: Enemy
 
@@ -53,7 +57,6 @@ func _ready() -> void:
 
     health_component.max_health = health
     health_component.reset()
-
     health_component.health_changed.connect(_on_health_changed)
     health_component.health_depleted.connect(_on_health_depleted)
 
@@ -63,10 +66,10 @@ func _ready() -> void:
     #     start_position = global_position
 
 
-func _on_damaged(attack: Attack) -> void:
-    health_component.health -= attack.damage
+func _on_damaged(attack_info: Attack) -> void:
+    health_component.health -= attack_info.damage
 
-    damaged.emit(attack)
+    damaged.emit(attack_info)
 
 
 func _on_health_changed(new_health: float) -> void:

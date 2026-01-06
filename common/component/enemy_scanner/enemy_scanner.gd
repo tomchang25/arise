@@ -2,19 +2,17 @@
 class_name EnemyScanner
 extends Node2D
 
-# @export var detectbox_radius: float = 150.0:
-#     set(value):
-#         detectbox_radius = value
-#         if is_node_ready() and detectbox:
-#             detectbox.radius = detectbox_radius
-
 @export var visible_range: float = 100.0:
     set(value):
         visible_range = value
         if is_node_ready() and detectbox:
-            detectbox.radius = value
+            update_detectbox()
 
-@export var attack_range: float = 50.0
+@export var attack_range: float = 50.0:
+    set(value):
+        attack_range = value
+        if is_node_ready() and detectbox:
+            update_detectbox()
 
 @export var use_external: bool = false
 
@@ -33,8 +31,8 @@ func _setup_detectbox() -> void:
         if child is Detectbox:
             detectbox = child
 
-    detectbox.radius = visible_range
     detectbox.targets_changed.connect(_on_targets_changed)
+    update_detectbox()
 
 
 func _on_targets_changed(nodes: Array) -> void:
@@ -42,6 +40,12 @@ func _on_targets_changed(nodes: Array) -> void:
 
 
 # --- Technical ---
+
+
+func update_detectbox() -> void:
+    var max_range = max(visible_range, attack_range)
+
+    detectbox.radius = max_range
 
 
 func set_external_enemies(enemies: Array) -> void:
@@ -53,11 +57,16 @@ func get_internal_enemies() -> Array:
     return _internal_enemies
 
 
-# func get_enemies() -> Array:
-#     if use_external:
-#         return _external_enemies
+# --- Generic Range Detection ---
 
-#     return _internal_enemies
+
+func get_enemies_in_range(range_distance: float) -> Array:
+    return get_internal_enemies().filter(func(e): return global_position.distance_to(e.global_position) <= range_distance)
+
+
+func get_nearest_in_range(range_distance: float) -> Node2D:
+    return _get_closest(get_enemies_in_range(range_distance))
+
 
 # --- Tracked Methods ---
 
@@ -77,6 +86,7 @@ func get_nearest_tracked_enemy() -> Node2D:
     return _get_closest(get_enemies_tracked())
 
 
+# TODO: REOVE ALL OF THIS EXCEPT _get_closest
 # --- Visibility Methods ---
 
 
