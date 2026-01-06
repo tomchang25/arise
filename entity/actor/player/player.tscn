@@ -399,6 +399,8 @@ debug_path_custom_color = Color(1, 0, 1, 1)
 max_health = 500.0
 
 [node name="EnemyScanner" parent="." instance=ExtResource("9_vb105")]
+position = Vector2(0, -5)
+attack_range = 25.0
 
 [node name="Detectbox" parent="EnemyScanner" instance=ExtResource("3_n81ss")]
 position = Vector2(0, -5)

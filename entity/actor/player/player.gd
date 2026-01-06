@@ -15,7 +15,7 @@ signal attack_finished
         if is_node_ready() and enemy_scanner:
             _setup_enemy_scanner()
 
-@export var attack_range: float = 50:
+@export var attack_range: float = 25:
     set(value):
         attack_range = value
 

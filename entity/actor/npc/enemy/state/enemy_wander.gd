@@ -1,7 +1,6 @@
 extends EnemyState
 
-@export var animation_state: String = "Move"
-@export var wander_speed: float = 50
+var animation_state: String = Enemy.AnimationState.MOVE
 
 
 func _init() -> void:
@@ -9,26 +8,19 @@ func _init() -> void:
 
 
 func _enter() -> void:
-    enemy.pathfinding.set_arrive_distance(5)
-    enemy.pathfinding.set_speed(wander_speed)
-    enemy.pathfinding.set_target_position(enemy.next_position)
-
-    enemy.animation.travel_to_state(animation_state)
+    enemy.play_animation(animation_state)
 
 
 func _update(_delta: float) -> void:
-    var movement_vector: Vector2 = enemy.pathfinding.get_velocity()
-    enemy.movement.set_velocity(movement_vector)
-    enemy.animation.set_animation_direction(movement_vector, animation_state)
+    enemy.move_to_position(enemy.next_position, enemy.wander_speed, 5.0)
 
-    if enemy.pathfinding.navigation_agent.is_navigation_finished():
+    var movement_vector = enemy.get_velocity()
+    enemy.set_facing_direction(movement_vector, animation_state)
+
+    if enemy.is_navigation_finished():
         change_state(EnemyStateId.IDLE)
         return
 
-    if enemy.enemy_scanner.is_enemy_tracked():
+    if enemy.is_target_tracked():
         change_state(EnemyStateId.CHASE)
         return
-
-
-func _exit() -> void:
-    pass

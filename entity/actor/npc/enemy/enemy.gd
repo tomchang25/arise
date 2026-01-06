@@ -27,12 +27,10 @@ signal damaged(attack: Attack)
         if is_node_ready() and health_component:
             health_component.max_health = value
 
-# ------ Core ------
+# ------ Core / Components ------
 @onready var sprite := $Sprite
 @onready var hitbox: Hitbox = $Hitbox
 @onready var health_component: Health = $HealthComponent
-
-# ------ Components ------
 @onready var movement: BaseMovement = $Movement
 @onready var animation: BaseAnimation = $Animation
 @onready var attack_handler: BaseAttack = $ProjectileAttack
@@ -40,7 +38,20 @@ signal damaged(attack: Attack)
 @onready var enemy_scanner: EnemyScanner = $EnemyScanner
 
 # # ------ Utilities ------
-# @onready var wait_timer: Timer = $WaitTimer
+
+
+class AnimationState:
+    const IDLE = "Idle"
+    const MOVE = "Move"
+    const ATTACK = "Attack"
+
+
+var animation_states := [AnimationState.IDLE, AnimationState.MOVE, AnimationState.ATTACK]
+
+var attack_speed: float = 10
+var wander_speed: float = 50
+var back_speed: float = 50
+var chase_speed: float = 100
 
 # var leader: Enemy
 
@@ -86,17 +97,59 @@ func _setup_enemy_scanner() -> void:
     enemy_scanner.attack_range = attack_range
 
 
-## --- Public API ---
+# ------ High-Level Public API (Refactored) ------
+
+
+## Moves the enemy toward a global position using pathfinding
+func move_to_position(target_pos: Vector2, speed: float, arrive_dist: float = 5.0) -> void:
+    pathfinding.set_target_position(target_pos)
+    pathfinding.set_speed(speed)
+    pathfinding.set_arrive_distance(arrive_dist)
+
+    var velocity_output = pathfinding.get_velocity()
+    movement.set_velocity(velocity_output)
+
+
+## Sets the animation direction based on a vector
+func set_facing_direction(direction: Vector2, state_name: String) -> void:
+    animation.set_animation_direction(direction, state_name)
+
+
+## Plays a specific animation state
+func play_animation(state_name: String, time_scale: float = 1.0) -> void:
+    animation.travel_to_state(state_name)
+    animation.set_time_scale(time_scale)
+
+
+## Stops all movement
+func stop_movement() -> void:
+    movement.stop()
+
+
+## Attack Logic
+func perform_attack(target_pos: Vector2, state_name: String) -> void:
+    if attack_handler.can_attack():
+        attack_handler.start_attack(target_pos)
+        set_facing_direction(global_position.direction_to(target_pos), state_name)
+
+
+## Pathfinding Status
+func is_navigation_finished() -> bool:
+    return pathfinding.navigation_agent.is_navigation_finished()
+
+
+## Scanner Proxies
+func is_target_tracked() -> bool:
+    return enemy_scanner.is_enemy_tracked()
+
+
+func is_target_attackable() -> bool:
+    return enemy_scanner.is_enemy_attackable()
+
+
+func get_nearest_target() -> Node2D:
+    return enemy_scanner.get_nearest_tracked_enemy()
 
 
 func get_distance_to_start() -> float:
     return global_position.distance_to(start_position)
-
-# func generate_random_wander_position(wander_range: float = 250) -> void:
-#     var random_angle = randf() * TAU
-#     var random_dist = randf_range(0, wander_range)
-
-#     var travel_vector = Vector2.UP.rotated(random_angle) * random_dist
-#     var candidate_position = start_position + travel_vector
-
-#     next_position = candidate_position

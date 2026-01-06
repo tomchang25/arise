@@ -1,20 +1,7 @@
 extends EnemyState
 
-# func _init() -> void:
-#     state_id = EnemyStateId.ATTACK
-
-# func _enter() -> void:
-#     print("attack")
-
-# func _update(_delta: float) -> void:
-#     change_state(EnemyStateId.IDLE)
-
-# func _exit() -> void:
-#     pass
-
 @export var follow_threshold: float = 250
-@export var attack_speed: float = 50
-@export var animation_state: String = "Attack"
+@export var animation_state: String = Enemy.AnimationState.ATTACK
 
 
 func _init() -> void:
@@ -22,41 +9,22 @@ func _init() -> void:
 
 
 func _enter() -> void:
-    enemy.animation.travel_to_state(animation_state)
-    # enemy.pathfinding.enabled = false
-    # enemy.movement.stop()
-
-    enemy.pathfinding.set_arrive_distance(enemy.attack_range / 2)
-    enemy.pathfinding.set_speed(attack_speed)
-
-
-func _exit() -> void:
-    pass
+    enemy.play_animation(animation_state)
 
 
 func _update(_delta: float) -> void:
-    if not enemy.enemy_scanner.is_enemy_tracked():
+    if not enemy.is_target_tracked() or enemy.get_distance_to_start() > follow_threshold:
         change_state(EnemyStateId.BACK)
         return
 
-    if enemy.get_distance_to_start() > follow_threshold:
-        change_state(EnemyStateId.BACK)
-        return
-
-    if not enemy.enemy_scanner.is_enemy_attackable():
+    if not enemy.is_target_attackable():
         change_state(EnemyStateId.CHASE)
         return
 
-    var nearest_enemy: Node2D = enemy.enemy_scanner.get_nearest_attackable_enemy()
-    var enemy_position: Vector2 = nearest_enemy.global_position
+    var target = enemy.get_nearest_target()
+    if target:
+        enemy.perform_attack(target.global_position, animation_state)
 
-    if enemy.attack_handler.can_attack():
-        if nearest_enemy:
-            enemy.attack_handler.start_attack(enemy_position)
-            enemy.animation.set_animation_direction(enemy.global_position.direction_to(enemy_position), self.animation_state)
-
-    # if enemy.pathfinding.navigation_agent.is_navigation_finished():
-    #     enemy.movement.stop()
-    # else:
-    enemy.pathfinding.set_target_position(enemy_position)
-    enemy.movement.set_velocity(enemy.pathfinding.get_velocity())
+        # Continue moving/adjusting while attacking
+        enemy.move_to_position(target.global_position, enemy.attack_speed, enemy.attack_range / 2)
+        enemy.set_facing_direction(enemy.global_position.direction_to(target.global_position), animation_state)

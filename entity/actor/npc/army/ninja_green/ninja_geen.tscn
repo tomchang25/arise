@@ -1,4 +1,4 @@
-[gd_scene load_steps=49 format=3 uid="uid://dybnb2lmsq7s0"]
+[gd_scene load_steps=50 format=3 uid="uid://dybnb2lmsq7s0"]
 
 [ext_resource type="Script" uid="uid://be5rffb7rwigg" path="res://entity/actor/npc/army/army.gd" id="1_13omc"]
 [ext_resource type="Texture2D" uid="uid://dcefsfe6uvtoj" path="res://entity/actor/npc/army/ninja_green/art/SpriteSheet.png" id="2_tn28i"]
@@ -98,11 +98,15 @@ states/Move/position = Vector2(576, 100)
 transitions = ["Start", "Idle", SubResource("AnimationNodeStateMachineTransition_i87wb"), "Idle", "Move", SubResource("AnimationNodeStateMachineTransition_iga26"), "Move", "Idle", SubResource("AnimationNodeStateMachineTransition_ocq7q"), "Idle", "Attack", SubResource("AnimationNodeStateMachineTransition_hww7n"), "Attack", "Idle", SubResource("AnimationNodeStateMachineTransition_mvkfs")]
 graph_offset = Vector2(-111, -129)
 
+[sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_y5i28"]
+
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_ocq7q"]
-graph_offset = Vector2(-70, -3)
+graph_offset = Vector2(-260, 64)
 nodes/StateMachine/node = SubResource("AnimationNodeStateMachine_iga26")
-nodes/StateMachine/position = Vector2(-80, 120)
-node_connections = [&"output", 0, &"StateMachine"]
+nodes/StateMachine/position = Vector2(-280, 120)
+nodes/TimeScale/node = SubResource("AnimationNodeTimeScale_y5i28")
+nodes/TimeScale/position = Vector2(60, 120)
+node_connections = [&"TimeScale", 0, &"StateMachine", &"output", 0, &"TimeScale"]
 
 [sub_resource type="Animation" id="Animation_oas31"]
 resource_name = "AttackDown"
@@ -407,6 +411,7 @@ tree_root = SubResource("AnimationNodeBlendTree_ocq7q")
 anim_player = NodePath("../AnimationPlayer")
 parameters/StateMachine/Attack/blend_position = Vector2(0.00197494, 0.905405)
 parameters/StateMachine/Move/blend_position = Vector2(-0.162607, -0.756701)
+parameters/TimeScale/scale = 1.0
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Animation"]
 libraries = {

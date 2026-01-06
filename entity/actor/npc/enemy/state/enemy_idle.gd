@@ -1,25 +1,17 @@
 extends EnemyState
 
-@export var animation_state: String = "Idle"
-
-@export var min_wait_time: float = 3.0
-@export var max_wait_time: float = 10.0
-
 
 func _init() -> void:
     state_id = EnemyStateId.IDLE
 
 
 func _enter() -> void:
-    enemy.movement.stop()
-
-    enemy.animation.travel_to_state(animation_state)
-
-    # _setup_wait_timer()
+    enemy.stop_movement()
+    enemy.play_animation(Enemy.AnimationState.IDLE)
 
 
 func _update(_delta: float) -> void:
-    if enemy.enemy_scanner.is_enemy_tracked():
+    if enemy.is_target_tracked():
         change_state(EnemyStateId.CHASE)
         return
 

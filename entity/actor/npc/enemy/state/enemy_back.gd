@@ -1,7 +1,6 @@
 extends EnemyState
 
-@export var move_speed: float = 50
-@export var animation_state: String = "Move"
+@export var animation_state: String = Enemy.AnimationState.MOVE
 
 
 func _init() -> void:
@@ -9,26 +8,26 @@ func _init() -> void:
 
 
 func _enter() -> void:
-    enemy.pathfinding.set_arrive_distance(5)
-    enemy.pathfinding.set_speed(move_speed)
-    enemy.pathfinding.set_target_position(enemy.start_position)
-
-    enemy.animation.travel_to_state(animation_state)
+    enemy.play_animation(animation_state)
+    enemy.move_to_position(enemy.start_position, enemy.back_speed, 5.0)
 
 
 func _update(_delta: float) -> void:
-    enemy.movement.set_velocity(enemy.pathfinding.get_velocity())
+    # Update movement and direction via the Enemy API
+    enemy.move_to_position(enemy.start_position, enemy.back_speed, 5.0)
 
-    enemy.animation.set_animation_direction(enemy.pathfinding.get_velocity(), animation_state)
+    var current_velocity = enemy.get_velocity()
+    enemy.set_facing_direction(current_velocity, animation_state)
 
-    if enemy.pathfinding.navigation_agent.is_navigation_finished():
+    # Transition: Return to Idle once the start position is reached
+    if enemy.is_navigation_finished():
         change_state(EnemyStateId.IDLE)
         return
 
-    # TODO: This might make enemy stuck in Chase and Back state in border
-    # if enemy.enemy_scanner.is_enemy_visible():
-    #     change_state(EnemyStateId.CHASE)
-    #     return
+    # Optional: Re-engage if player is tracked (commented out in source) [cite: 25]
+    if enemy.is_target_tracked():
+        change_state(EnemyStateId.CHASE)
+        return
 
 
 func _exit() -> void:
