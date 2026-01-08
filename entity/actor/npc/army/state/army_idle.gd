@@ -1,17 +1,16 @@
 extends ArmyState
 
 @export var follow_threshold: float = 50
+@export var animation_state: String = Army.AnimationState.IDLE
 
 
 func _init() -> void:
-    state_id = ArmyState.ArmyStateId.IDLE
+    state_id = ArmyStateId.IDLE
 
 
 func _enter() -> void:
-    # target.soft_collision.enabled = true
-    target.movement.stop()
-
-    target.animation.travel_to_state(self.animation_state)
+    target.stop_movement()
+    target.play_animation(animation_state)
 
 
 func _update(_delta: float) -> void:
@@ -19,10 +18,6 @@ func _update(_delta: float) -> void:
         change_state(ArmyState.ArmyStateId.FOLLOW)
         return
 
-    if target.enemy_scanner.is_enemy_tracked():
+    if target.is_target_tracked():
         change_state(ArmyState.ArmyStateId.CHASE)
         return
-
-
-func _exit() -> void:
-    pass

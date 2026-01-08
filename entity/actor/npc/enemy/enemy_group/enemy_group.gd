@@ -143,34 +143,3 @@ func get_all_units() -> Array[Enemy]:
 
 func is_grid_full() -> bool:
     return get_first_empty_slot() == -1
-
-## --- Private ---
-
-# func _convert_index_to_grid(index: int) -> Vector2:
-#     index += 1
-#     if index <= 0:
-#         return Vector2.ZERO
-
-#     # Determine ring (layer)
-#     var k = int(ceil((sqrt(index + 1) - 1) / 2))
-#     var side_len = 2 * k
-#     var max_index = (2 * k + 1) * (2 * k + 1) - 1
-#     var offset = max_index - index
-
-#     # Right side (going down)
-#     if offset < side_len:
-#         return Vector2(k, -k + offset)
-
-#     offset -= side_len
-#     # Bottom side (going left)
-#     if offset < side_len:
-#         return Vector2(k - offset, k)
-
-#     offset -= side_len
-#     # Left side (going up)
-#     if offset < side_len:
-#         return Vector2(-k, k - offset)
-
-#     offset -= side_len
-#     # Top side (going right)
-#     return Vector2(-k + offset, -k)

@@ -25,6 +25,13 @@ signal damaged(attack: Attack)
         health = value
 
         if is_node_ready() and health_component:
+            health_component.health = value
+
+@export var max_health := 10:
+    set(value):
+        health = value
+
+        if is_node_ready() and health_component:
             health_component.max_health = value
 
 # ------ Core / Components ------
@@ -36,6 +43,7 @@ signal damaged(attack: Attack)
 @onready var attack_handler: BaseAttack = $ProjectileAttack
 @onready var pathfinding: Pathfinding = $Pathfinding
 @onready var enemy_scanner: EnemyScanner = $EnemyScanner
+@onready var state_machine: StateMachine = $StateMachine
 
 # # ------ Utilities ------
 
@@ -63,18 +71,29 @@ var offset: Vector2
 
 func _ready() -> void:
     _setup_enemy_scanner()
-
-    hitbox.damaged.connect(_on_damaged)
-
-    health_component.max_health = health
-    health_component.reset()
-    health_component.health_changed.connect(_on_health_changed)
-    health_component.health_depleted.connect(_on_health_depleted)
+    _setup_health_component()
+    _setup_hitbox()
 
     start_position = global_position
     next_position = start_position
-    # if start_position == Vector2.ZERO:
-    #     start_position = global_position
+
+
+func _setup_enemy_scanner() -> void:
+    enemy_scanner.visible_range = visible_range
+    enemy_scanner.attack_range = attack_range
+
+
+func _setup_health_component() -> void:
+    health_component.max_health = health
+    health_component.health = health
+    health_component.reset()
+
+    health_component.health_changed.connect(_on_health_changed)
+    health_component.health_depleted.connect(_on_health_depleted)
+
+
+func _setup_hitbox() -> void:
+    hitbox.damaged.connect(_on_damaged)
 
 
 func _on_damaged(attack_info: Attack) -> void:
@@ -90,11 +109,6 @@ func _on_health_changed(new_health: float) -> void:
 
 func _on_health_depleted() -> void:
     queue_free()
-
-
-func _setup_enemy_scanner() -> void:
-    enemy_scanner.visible_range = visible_range
-    enemy_scanner.attack_range = attack_range
 
 
 # ------ High-Level Public API (Refactored) ------
@@ -140,16 +154,30 @@ func is_navigation_finished() -> bool:
 
 ## Scanner Proxies
 func is_target_tracked() -> bool:
-    return enemy_scanner.is_enemy_tracked()
+    return get_tracked_targets().size() > 0
 
 
 func is_target_attackable() -> bool:
-    return enemy_scanner.is_enemy_attackable()
+    return get_attackable_targets().size() > 0
+
+
+func get_tracked_targets() -> Array:
+    return enemy_scanner.get_enemies_in_range(visible_range)
+
+
+func get_attackable_targets() -> Array:
+    return enemy_scanner.get_enemies_in_range(attack_range)
 
 
 func get_nearest_target() -> Node2D:
     return enemy_scanner.get_nearest_tracked_enemy()
 
 
+## State Machine
+func get_current_state() -> ArmyState:
+    return state_machine.current_state
+
+
+## --- Unique Functions ---
 func get_distance_to_start() -> float:
     return global_position.distance_to(start_position)

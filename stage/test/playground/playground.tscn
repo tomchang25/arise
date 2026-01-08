@@ -64,21 +64,25 @@ spawn_range = Vector2(20, 20)
 
 [node name="Ninja_red" parent="EnemyHandler/EnemyGroup" instance=ExtResource("7_que0v")]
 health = 6666666
+max_health = null
 
 [node name="Ninja_red2" parent="EnemyHandler/EnemyGroup" instance=ExtResource("7_que0v")]
 position = Vector2(-19, -15)
 visible_range = 50.0
 health = 6666666
+max_health = null
 
 [node name="Ninja_red3" parent="EnemyHandler/EnemyGroup" instance=ExtResource("7_que0v")]
 position = Vector2(17, -16)
 visible_range = 50.0
 health = 6666666
+max_health = null
 
 [node name="Ninja_red4" parent="EnemyHandler/EnemyGroup" instance=ExtResource("7_que0v")]
 position = Vector2(0, 25)
 visible_range = 50.0
 health = 6666666
+max_health = null
 
 [node name="Spawner" type="Node2D" parent="."]
 

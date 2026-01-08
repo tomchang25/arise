@@ -18,7 +18,3 @@ func _update(_delta: float) -> void:
     if enemy.next_position.distance_to(enemy.global_position) > 10:
         change_state(EnemyStateId.WANDER)
         return
-
-
-func _exit() -> void:
-    pass

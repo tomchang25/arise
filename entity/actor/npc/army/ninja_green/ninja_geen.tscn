@@ -101,7 +101,7 @@ graph_offset = Vector2(-111, -129)
 [sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_y5i28"]
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_ocq7q"]
-graph_offset = Vector2(-260, 64)
+graph_offset = Vector2(-278, 153)
 nodes/StateMachine/node = SubResource("AnimationNodeStateMachine_iga26")
 nodes/StateMachine/position = Vector2(-280, 120)
 nodes/TimeScale/node = SubResource("AnimationNodeTimeScale_y5i28")
@@ -420,25 +420,21 @@ libraries = {
 
 [node name="HealthComponent" parent="." instance=ExtResource("16_v6u25")]
 
-[node name="ArmyStateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
+[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
 script = ExtResource("8_13omc")
 initial_state = NodePath("Idle")
 
-[node name="Idle" type="Node" parent="ArmyStateMachine"]
+[node name="Idle" type="Node" parent="StateMachine"]
 script = ExtResource("8_lqaih")
 follow_threshold = 16.0
-animation_state = "Idle"
 
-[node name="Follow" type="Node" parent="ArmyStateMachine"]
+[node name="Follow" type="Node" parent="StateMachine"]
 script = ExtResource("9_6k810")
-animation_state = "Move"
 
-[node name="Chase" type="Node" parent="ArmyStateMachine"]
+[node name="Chase" type="Node" parent="StateMachine"]
 script = ExtResource("11_6k810")
 follow_threshold = 250.0
-animation_state = "Move"
 
-[node name="Attack" type="Node" parent="ArmyStateMachine"]
+[node name="Attack" type="Node" parent="StateMachine"]
 script = ExtResource("12_4aipm")
 follow_threshold = 250.0
-animation_state = "Attack"

@@ -4,6 +4,7 @@ extends CharacterBody2D
 
 signal damaged(attack: Attack)
 
+@export_category("Scanner")
 @export var visible_range: float = 100:
     set(value):
         visible_range = value
@@ -18,36 +19,57 @@ signal damaged(attack: Attack)
         if is_node_ready() and enemy_scanner:
             _setup_enemy_scanner()
 
-@export var health := 10
+@export_category("Actor Properties")
+@export var health := 10:
+    set(value):
+        health = value
 
-# ------ Core ------
-@onready var sprite: Sprite2D = $Sprite
+        if is_node_ready() and health_component:
+            health_component.health = value
+
+@export var max_health := 10:
+    set(value):
+        health = value
+
+        if is_node_ready() and health_component:
+            health_component.max_health = value
+
+# ------ Core / Components ------
+@onready var sprite := $Sprite
 @onready var hitbox: Hitbox = $Hitbox
 @onready var health_component: Health = $HealthComponent
-
-# ------ Common Components ------
 @onready var movement: BaseMovement = $Movement
 @onready var animation: BaseAnimation = $Animation
 @onready var attack_handler: BaseAttack = $ProjectileAttack
 @onready var pathfinding: Pathfinding = $Pathfinding
 @onready var enemy_scanner: EnemyScanner = $EnemyScanner
+@onready var state_machine: StateMachine = $StateMachine
 
-# ------ State Machine ------
-var state_machine: StateMachine
+# # ------ Utilities ------
+
+
+class AnimationState:
+    const IDLE = "Idle"
+    const MOVE = "Move"
+    const ATTACK = "Attack"
+
+
+var animation_states := [AnimationState.IDLE, AnimationState.MOVE, AnimationState.ATTACK]
+
+var attack_speed: float = 25
+var follow_speed: float = 100
+var chase_speed: float = 100
 
 # ------ Properties ------
 
 var player: Player
 var grid_position: Vector2 = Vector2.ZERO
 
-## --- GDScript Lifecycle ---
-
 
 func _ready() -> void:
     _setup_enemy_scanner()
     _setup_health_component()
     _setup_hitbox()
-    _setup_state_machine()
 
     player = get_tree().get_first_node_in_group("player")
 
@@ -70,15 +92,6 @@ func _setup_hitbox() -> void:
     hitbox.damaged.connect(_on_damaged)
 
 
-func _setup_state_machine() -> void:
-    for child in get_children():
-        if child is StateMachine:
-            state_machine = child
-            return
-
-    push_error("Actor must have a StateMachine child")
-
-
 func _on_damaged(_attack: Attack) -> void:
     pass
 
@@ -93,20 +106,83 @@ func _on_health_depleted() -> void:
 
 ## --- Public API ---
 
+# ------ High-Level Public API (Refactored) ------
 
+
+## Moves the enemy toward a global position using pathfinding
+func move_to_position(target_pos: Vector2, speed: float, arrive_dist: float = 5.0) -> void:
+    pathfinding.set_target_position(target_pos)
+    pathfinding.set_speed(speed)
+    pathfinding.set_arrive_distance(arrive_dist)
+
+    var velocity_output = pathfinding.get_velocity()
+    movement.set_velocity(velocity_output)
+
+
+## Sets the animation direction based on a vector
+func set_facing_direction(direction: Vector2, state_name: String) -> void:
+    animation.set_animation_direction(direction, state_name)
+
+
+## Plays a specific animation state
+func play_animation(state_name: String, time_scale: float = 1.0) -> void:
+    animation.travel_to_state(state_name)
+    animation.set_time_scale(time_scale)
+
+    print(state_name)
+
+
+## Stops all movement
+func stop_movement() -> void:
+    movement.stop()
+
+
+## Attack Logic
+func perform_attack(target_pos: Vector2, state_name: String) -> void:
+    if attack_handler.can_attack():
+        attack_handler.start_attack(target_pos)
+        set_facing_direction(global_position.direction_to(target_pos), state_name)
+
+
+## Pathfinding Status
+func is_navigation_finished() -> bool:
+    return pathfinding.navigation_agent.is_navigation_finished()
+
+
+## Scanner Proxies
+func is_target_tracked() -> bool:
+    return get_tracked_targets().size() > 0
+
+
+func is_target_attackable() -> bool:
+    return get_attackable_targets().size() > 0
+
+
+func get_tracked_targets() -> Array:
+    return enemy_scanner.get_enemies_in_range(visible_range)
+
+
+func get_attackable_targets() -> Array:
+    return enemy_scanner.get_enemies_in_range(attack_range)
+
+
+func get_nearest_target() -> Node2D:
+    return enemy_scanner.get_nearest_tracked_enemy()
+
+
+## State Machine
+func get_current_state() -> ArmyState:
+    return state_machine.current_state
+
+
+## --- Unique Functions ---
 func get_distance_to_player() -> float:
     var start_point = player.global_position + grid_position
 
     return start_point.distance_to(self.global_position)
 
 
-func get_current_state() -> ArmyState:
-    return state_machine.current_state
-
-
 func update_grid_position() -> void:
     var new_position = player.global_position + grid_position
 
     pathfinding.set_target_position(new_position)
-
-## --- Private ---
