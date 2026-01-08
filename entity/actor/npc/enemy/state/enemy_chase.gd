@@ -21,7 +21,7 @@ func _update(_delta: float) -> void:
         change_state(EnemyStateId.ATTACK)
         return
 
-    var target = enemy.get_nearest_target()
+    var target = enemy.get_nearest_tracked_target()
     if target:
         enemy.move_to_position(target.global_position, enemy.chase_speed, enemy.attack_range / 2)
         enemy.set_facing_direction(enemy.global_position.direction_to(target.global_position), animation_state)

@@ -129,8 +129,6 @@ func play_animation(state_name: String, time_scale: float = 1.0) -> void:
     animation.travel_to_state(state_name)
     animation.set_time_scale(time_scale)
 
-    print(state_name)
-
 
 ## Stops all movement
 func stop_movement() -> void:
@@ -138,10 +136,9 @@ func stop_movement() -> void:
 
 
 ## Attack Logic
-func perform_attack(target_pos: Vector2, state_name: String) -> void:
+func perform_attack(target_pos: Vector2) -> void:
     if attack_handler.can_attack():
         attack_handler.start_attack(target_pos)
-        set_facing_direction(global_position.direction_to(target_pos), state_name)
 
 
 ## Pathfinding Status
@@ -166,8 +163,12 @@ func get_attackable_targets() -> Array:
     return enemy_scanner.get_enemies_in_range(attack_range)
 
 
-func get_nearest_target() -> Node2D:
-    return enemy_scanner.get_nearest_tracked_enemy()
+func get_nearest_attackable_target() -> Node2D:
+    return enemy_scanner.get_nearest_in_range(attack_range)
+
+
+func get_nearest_tracked_target() -> Node2D:
+    return enemy_scanner.get_nearest_in_range(visible_range)
 
 
 ## State Machine
@@ -181,8 +182,7 @@ func get_distance_to_player() -> float:
 
     return start_point.distance_to(self.global_position)
 
+# func update_grid_position() -> void:
+#     var new_position = player.global_position + grid_position
 
-func update_grid_position() -> void:
-    var new_position = player.global_position + grid_position
-
-    pathfinding.set_target_position(new_position)
+#     pathfinding.set_target_position(new_position)

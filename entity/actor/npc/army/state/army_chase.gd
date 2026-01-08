@@ -18,11 +18,11 @@ func _update(_delta: float) -> void:
         change_state(ArmyStateId.FOLLOW)
         return
 
-    if target.enemy_scanner.is_enemy_attackable():
+    if target.is_target_attackable():
         change_state(ArmyStateId.ATTACK)
         return
 
-    var nearest_enemy = target.get_nearest_target()
+    var nearest_enemy = target.get_nearest_tracked_target()
     if nearest_enemy:
         target.move_to_position(nearest_enemy.global_position, chase_speed, target.attack_range / 2)
         target.set_facing_direction(target.global_position.direction_to(nearest_enemy.global_position), animation_state)

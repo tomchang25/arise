@@ -68,54 +68,42 @@ func get_nearest_in_range(range_distance: float) -> Node2D:
     return _get_closest(get_enemies_in_range(range_distance))
 
 
-# --- Tracked Methods ---
+# # --- Tracked Methods ---
 
+# func get_enemies_tracked() -> Array:
+#     if use_external:
+#         return _external_enemies
 
-func get_enemies_tracked() -> Array:
-    if use_external:
-        return _external_enemies
+#     return get_enemies_visible()
 
-    return get_enemies_visible()
+# func is_enemy_tracked() -> bool:
+#     return not get_enemies_tracked().is_empty()
 
+# func get_nearest_tracked_enemy() -> Node2D:
+#     return _get_closest(get_enemies_tracked())
 
-func is_enemy_tracked() -> bool:
-    return not get_enemies_tracked().is_empty()
+# # TODO: REOVE ALL OF THIS EXCEPT _get_closest
+# # --- Visibility Methods ---
 
+# func get_enemies_visible() -> Array:
+#     return get_internal_enemies().filter(func(e): return global_position.distance_to(e.global_position) <= visible_range)
 
-func get_nearest_tracked_enemy() -> Node2D:
-    return _get_closest(get_enemies_tracked())
+# func is_enemy_visible() -> bool:
+#     return not get_enemies_visible().is_empty()
 
+# func get_nearest_visible_enemy() -> Node2D:
+#     return _get_closest(get_enemies_visible())
 
-# TODO: REOVE ALL OF THIS EXCEPT _get_closest
-# --- Visibility Methods ---
+# # --- Attackable Methods ---
 
+# func get_enemies_attackable() -> Array:
+#     return get_internal_enemies().filter(func(e): return global_position.distance_to(e.global_position) <= attack_range)
 
-func get_enemies_visible() -> Array:
-    return get_internal_enemies().filter(func(e): return global_position.distance_to(e.global_position) <= visible_range)
+# func is_enemy_attackable() -> bool:
+#     return not get_enemies_attackable().is_empty()
 
-
-func is_enemy_visible() -> bool:
-    return not get_enemies_visible().is_empty()
-
-
-func get_nearest_visible_enemy() -> Node2D:
-    return _get_closest(get_enemies_visible())
-
-
-# --- Attackable Methods ---
-
-
-func get_enemies_attackable() -> Array:
-    return get_internal_enemies().filter(func(e): return global_position.distance_to(e.global_position) <= attack_range)
-
-
-func is_enemy_attackable() -> bool:
-    return not get_enemies_attackable().is_empty()
-
-
-func get_nearest_attackable_enemy() -> Node2D:
-    return _get_closest(get_enemies_attackable())
-
+# func get_nearest_attackable_enemy() -> Node2D:
+#     return _get_closest(get_enemies_attackable())
 
 # --- Private Helper ---
 

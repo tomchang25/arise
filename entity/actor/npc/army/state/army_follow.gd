@@ -28,7 +28,7 @@ func _update(_delta: float) -> void:
 
     # Check for nearby enemies while following
     if target.get_distance_to_player() < min_distance_to_player:
-        if target.enemy_scanner.is_enemy_tracked():
+        if target.is_target_tracked():
             change_state(ArmyState.ArmyStateId.CHASE)
             return
 

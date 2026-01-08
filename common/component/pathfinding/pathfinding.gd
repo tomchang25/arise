@@ -5,7 +5,6 @@ extends Node2D
 # @export var target_update_interval: float = 5.0
 
 @onready var navigation_agent: NavigationAgent2D = $NavigationAgent2D
-@onready var update_timer: Timer = $UpdateTimer
 
 var _target_velocity: Vector2
 var _max_speed: float
@@ -41,6 +40,9 @@ func _physics_process(_delta):
 
 
 func _on_velocity_computed(safe_velocity: Vector2):
+    if not enabled:
+        _target_velocity = Vector2.ZERO
+
     _target_velocity = safe_velocity
 
 
@@ -48,6 +50,9 @@ func _on_velocity_computed(safe_velocity: Vector2):
 
 
 func get_velocity() -> Vector2:
+    if not enabled:
+        push_warning("Pathfinding is disabled")
+
     return _target_velocity
 
 

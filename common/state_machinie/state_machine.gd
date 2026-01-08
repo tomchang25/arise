@@ -14,7 +14,6 @@ func _ready() -> void:
 
     for child in get_children():
         if child is State:
-            # print(child.state_id, child.name)
             states[child.state_id] = child
             child.transition_requested.connect(_on_transition_requested)
 
@@ -35,8 +34,6 @@ func _on_transition_requested(from: State, to: int) -> void:
     if from != current_state:
         push_error("transition requested from ", from.name, " to ", states[to].name, " but current state is ", current_state.name)
         return
-
-    # print("transitioning from ", from.name, " to ", states[to].name)
 
     var new_state: State = states[to]
     if not new_state:

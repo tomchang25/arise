@@ -169,8 +169,12 @@ func get_attackable_targets() -> Array:
     return enemy_scanner.get_enemies_in_range(attack_range)
 
 
-func get_nearest_target() -> Node2D:
-    return enemy_scanner.get_nearest_tracked_enemy()
+func get_nearest_attackable_target() -> Node2D:
+    return enemy_scanner.get_nearest_in_range(attack_range)
+
+
+func get_nearest_tracked_target() -> Node2D:
+    return enemy_scanner.get_nearest_in_range(visible_range)
 
 
 ## State Machine

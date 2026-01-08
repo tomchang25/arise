@@ -396,6 +396,9 @@ target_groups = Array[StringName]([&"enemy"])
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="Pathfinding"]
 avoidance_enabled = true
 radius = 1.0
+avoidance_layers = 65536
+avoidance_mask = 65536
+debug_enabled = true
 debug_use_custom = true
 debug_path_custom_color = Color(1, 0, 1, 1)
 

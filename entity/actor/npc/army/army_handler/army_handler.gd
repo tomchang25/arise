@@ -16,7 +16,6 @@ var units: Array[Node]
 
 func _ready():
     debug_timer.timeout.connect(_on_check_timer_timeout)
-    debug_timer.timeout.connect(_on_wait_timer_timeout)
 
     child_entered_tree.connect(_on_child_entered_tree)
     child_exiting_tree.connect(_on_child_exiting_tree)
@@ -51,11 +50,6 @@ func _on_check_timer_timeout():
             armies_state[army_current_state.name] += 1
 
     # print(armies_state)
-
-
-func _on_wait_timer_timeout():
-    for unit: Army in get_all_units():
-        unit.update_grid_position()
 
 
 func _physics_process(_delta):
@@ -95,7 +89,6 @@ func add_unit(unit: Node) -> bool:
     var grid = _convert_index_to_grid(index)
     var grid_position = grid * grid_size
     unit.grid_position = grid_position
-    # print(unit.grid_position)
 
     units[index] = unit
     unit_grid_changed.emit()

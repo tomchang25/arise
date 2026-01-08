@@ -21,7 +21,7 @@ func _update(_delta: float) -> void:
         change_state(EnemyStateId.CHASE)
         return
 
-    var target = enemy.get_nearest_target()
+    var target = enemy.get_nearest_attackable_target()
     if target:
         enemy.perform_attack(target.global_position, animation_state)
 
