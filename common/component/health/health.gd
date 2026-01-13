@@ -19,8 +19,10 @@ signal health_depleted
 
 @onready var health := max_health:
     set(value):
-        health = value
+        health = clamp(value, 0, max_health)
         health_changed.emit(health)
+        if health <= 0:
+            health_depleted.emit()
 
 @onready var debug_health_label: Label = $DebugHealthLabel
 

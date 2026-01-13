@@ -35,11 +35,3 @@ func _update(_delta: float) -> void:
     if target.is_navigation_finished():
         change_state(ArmyState.ArmyStateId.IDLE)
         return
-
-# func _update_player_position(delta: float) -> void:
-#     if check_player_timer > check_player_timer_interval:
-#         check_player_timer = 0
-
-#         target.update_grid_position()
-
-#     check_player_timer += delta

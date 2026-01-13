@@ -92,16 +92,23 @@ func _setup_hitbox() -> void:
     hitbox.damaged.connect(_on_damaged)
 
 
-func _on_damaged(_attack: Attack) -> void:
-    pass
+func _on_damaged(attack_info: Attack) -> void:
+    health_component.apply_damage(attack_info)
+
+    damaged.emit(attack_info)
 
 
-func _on_health_changed(_new_health: float) -> void:
-    pass
+func _on_health_changed(new_health: float) -> void:
+    if new_health <= 0:
+        return
+
+    if sprite.material:
+        var overlay_ratio = (1 - (new_health / health_component.max_health)) * 0.5
+        sprite.material.set_shader_parameter("overlay_amount", overlay_ratio)
 
 
 func _on_health_depleted() -> void:
-    pass
+    queue_free()
 
 
 ## --- Public API ---

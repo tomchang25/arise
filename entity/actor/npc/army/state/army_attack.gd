@@ -9,12 +9,8 @@ func _init() -> void:
 
 
 func _enter() -> void:
-    target.animation.travel_to_state(self.animation_state)
-    target.movement.stop()
-
-
-func _exit() -> void:
     target.play_animation(animation_state)
+    target.stop_movement()
 
 
 func _update(_delta: float) -> void:

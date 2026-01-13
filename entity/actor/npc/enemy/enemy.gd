@@ -56,7 +56,7 @@ class AnimationState:
 
 var animation_states := [AnimationState.IDLE, AnimationState.MOVE, AnimationState.ATTACK]
 
-var attack_speed: float = 10
+# var attack_speed: float = 10
 var wander_speed: float = 50
 var back_speed: float = 50
 var chase_speed: float = 100
@@ -97,14 +97,18 @@ func _setup_hitbox() -> void:
 
 
 func _on_damaged(attack_info: Attack) -> void:
-    health_component.health -= attack_info.damage
+    health_component.apply_damage(attack_info)
 
     damaged.emit(attack_info)
 
 
 func _on_health_changed(new_health: float) -> void:
-    var overlay_ratio = (1 - (new_health / health_component.max_health)) * 0.5
-    sprite.material.set_shader_parameter("overlay_amount", overlay_ratio)
+    if new_health <= 0:
+        return
+
+    if sprite.material:
+        var overlay_ratio = (1 - (new_health / health_component.max_health)) * 0.5
+        sprite.material.set_shader_parameter("overlay_amount", overlay_ratio)
 
 
 func _on_health_depleted() -> void:
@@ -141,10 +145,9 @@ func stop_movement() -> void:
 
 
 ## Attack Logic
-func perform_attack(target_pos: Vector2, state_name: String) -> void:
+func perform_attack(target_pos: Vector2) -> void:
     if attack_handler.can_attack():
         attack_handler.start_attack(target_pos)
-        set_facing_direction(global_position.direction_to(target_pos), state_name)
 
 
 ## Pathfinding Status

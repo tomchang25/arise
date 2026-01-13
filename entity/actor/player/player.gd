@@ -101,7 +101,7 @@ func _on_health_changed(new_health: float) -> void:
     if new_health <= 0:
         return
 
-    if sprite.material != null:
+    if sprite.material:
         var overlay_ratio = (1 - (new_health / health_component.max_health)) * 0.5
         sprite.material.set_shader_parameter("overlay_amount", overlay_ratio)
 

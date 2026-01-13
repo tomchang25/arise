@@ -10,6 +10,7 @@ func _init() -> void:
 
 func _enter() -> void:
     enemy.play_animation(animation_state)
+    enemy.stop_movement()
 
 
 func _update(_delta: float) -> void:
@@ -23,8 +24,5 @@ func _update(_delta: float) -> void:
 
     var target = enemy.get_nearest_attackable_target()
     if target:
-        enemy.perform_attack(target.global_position, animation_state)
-
-        # Continue moving/adjusting while attacking
-        enemy.move_to_position(target.global_position, enemy.attack_speed, enemy.attack_range / 2)
+        enemy.perform_attack(target.global_position)
         enemy.set_facing_direction(enemy.global_position.direction_to(target.global_position), animation_state)

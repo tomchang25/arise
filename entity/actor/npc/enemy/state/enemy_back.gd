@@ -25,9 +25,9 @@ func _update(_delta: float) -> void:
         return
 
     # Optional: Re-engage if player is tracked (commented out in source) [cite: 25]
-    if enemy.is_target_tracked():
-        change_state(EnemyStateId.CHASE)
-        return
+    # if enemy.is_target_tracked():
+    #     change_state(EnemyStateId.CHASE)
+    #     return
 
 
 func _exit() -> void:
