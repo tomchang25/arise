@@ -11,7 +11,6 @@ func _init() -> void:
 func _enter() -> void:
     enemy.play_animation(animation_state, 1.5)
 
-
 func _update(_delta: float) -> void:
     if not enemy.is_target_tracked() or enemy.get_distance_to_start() > follow_threshold:
         change_state(EnemyStateId.BACK)

@@ -60,7 +60,6 @@ position = Vector2(93, 80)
 
 [node name="EnemyGroup" parent="EnemyHandler" instance=ExtResource("6_xkwl0")]
 position = Vector2(366, 57)
-spawn_range = Vector2(20, 20)
 
 [node name="Ninja_red" parent="EnemyHandler/EnemyGroup" instance=ExtResource("7_que0v")]
 health = 6666666
