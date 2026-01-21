@@ -31,7 +31,6 @@ func _ready():
 
     reset_units()
     reset_wait_timer()
-    spawn_group_members()
 
 
 func spawn_group_members():
@@ -43,9 +42,15 @@ func spawn_group_members():
         var mob_scene = spawn_table.get_random_mob()
         if mob_scene:
             var unit = mob_scene.instantiate()
-            var spawn_offset = Vector2.RIGHT.rotated(randf() * TAU) * randf_range(0, spawn_radius)
-            unit.global_position = global_position + spawn_offset
             add_child(unit)
+
+            var spawn_offset = Vector2.RIGHT.rotated(randf() * TAU) * randf_range(spawn_radius / 4, spawn_radius)
+            var spawn_position = global_position + spawn_offset
+            unit.offset = spawn_offset
+            unit.start_position = spawn_position
+            unit.next_position = spawn_position
+
+            unit.global_position = spawn_position
 
 
 func _on_child_entered_tree(child: Node):

@@ -8,7 +8,7 @@ func _init() -> void:
 func _enter() -> void:
     enemy.stop_movement()
     enemy.play_animation(Enemy.AnimationState.IDLE)
-    
+
 
 func _update(_delta: float) -> void:
     if enemy.is_target_tracked():

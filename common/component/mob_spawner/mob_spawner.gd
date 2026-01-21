@@ -61,6 +61,8 @@ func spawn_mob():
         # Now add it to the world; _ready() will run using the injected values
         get_parent().add_child(group)
         group.global_position = global_position
+        group.spawn_group_members()
+
         queue_free()
     elif profile is PackedScene:
         # Fallback for old behavior (direct scene spawning)

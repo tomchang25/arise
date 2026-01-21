@@ -6,6 +6,7 @@ enum TileType { EMPTY, FLOOR, WALL }
 const WIDTH = 80
 const HEIGHT = 80
 
+
 func generate() -> Dictionary:
     var grid = []
     for y in HEIGHT:
@@ -35,7 +36,7 @@ func generate() -> Dictionary:
             for iy in range(y, y + h):
                 for ix in range(x, x + w):
                     grid[iy][ix] = TileType.FLOOR
-            
+
             if rooms.size() > 1:
                 var prev = rooms[rooms.size() - 2].get_center()
                 var curr = room.get_center()
@@ -45,26 +46,32 @@ func generate() -> Dictionary:
     _add_walls(grid)
     return {"grid": grid, "rooms": rooms}
 
+
 func _carve_corridor(grid: Array, from: Vector2, to: Vector2):
     var width = 2
     var min_w = -width / 2
     var max_w = width / 2
-    
+
     var horizontal_first = randf() < 0.5
     if horizontal_first:
         for x in range(min(from.x, to.x), max(from.x, to.x) + 1):
             for offset in range(min_w, max_w + 1):
-                if _is_in_bounds(x, from.y + offset): grid[int(from.y + offset)][x] = TileType.FLOOR
+                if _is_in_bounds(x, from.y + offset):
+                    grid[int(from.y + offset)][x] = TileType.FLOOR
         for y in range(min(from.y, to.y), max(from.y, to.y) + 1):
             for offset in range(min_w, max_w + 1):
-                if _is_in_bounds(to.x + offset, y): grid[y][int(to.x + offset)] = TileType.FLOOR
+                if _is_in_bounds(to.x + offset, y):
+                    grid[y][int(to.x + offset)] = TileType.FLOOR
     else:
         for y in range(min(from.y, to.y), max(from.y, to.y) + 1):
             for offset in range(min_w, max_w + 1):
-                if _is_in_bounds(from.x + offset, y): grid[y][int(from.x + offset)] = TileType.FLOOR
+                if _is_in_bounds(from.x + offset, y):
+                    grid[y][int(from.x + offset)] = TileType.FLOOR
         for x in range(min(from.x, to.x), max(from.x, to.x) + 1):
             for offset in range(min_w, max_w + 1):
-                if _is_in_bounds(x, to.y + offset): grid[int(to.y + offset)][x] = TileType.FLOOR
+                if _is_in_bounds(x, to.y + offset):
+                    grid[int(to.y + offset)][x] = TileType.FLOOR
+
 
 func _add_walls(grid: Array):
     for y in range(HEIGHT):
@@ -76,6 +83,7 @@ func _add_walls(grid: Array):
                         var ny = y + dy
                         if _is_in_bounds(nx, ny) and grid[ny][nx] == TileType.EMPTY:
                             grid[ny][nx] = TileType.WALL
+
 
 func _is_in_bounds(x: int, y: int) -> bool:
     return x >= 0 and y >= 0 and x < WIDTH and y < HEIGHT

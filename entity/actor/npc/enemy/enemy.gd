@@ -74,9 +74,6 @@ func _ready() -> void:
     _setup_health_component()
     _setup_hitbox()
 
-    start_position = global_position
-    next_position = start_position
-
 
 func _setup_enemy_scanner() -> void:
     enemy_scanner.visible_range = visible_range

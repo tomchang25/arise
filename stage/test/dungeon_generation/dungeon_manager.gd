@@ -44,7 +44,7 @@ func _spawn_sequence(pos: Vector2):
     if not spawner_scene or not floor_spawn_table:
         return
 
-    var spawner = spawner_scene.instantiate()
+    var spawner := spawner_scene.instantiate()
     add_child(spawner)
     spawner.global_position = pos
     spawner.setup_spawner(floor_spawn_table)
