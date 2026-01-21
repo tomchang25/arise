@@ -3,6 +3,7 @@ class_name Enemy
 extends CharacterBody2D
 
 signal damaged(attack: Attack)
+signal navigation_finished
 
 @export_category("Scanner")
 @export var visible_range: float = 100:
@@ -74,6 +75,8 @@ func _ready() -> void:
     _setup_health_component()
     _setup_hitbox()
 
+    pathfinding.navigation_agent.navigation_finished.connect(_on_navigation_finished)
+
 
 func _setup_enemy_scanner() -> void:
     enemy_scanner.visible_range = visible_range
@@ -112,6 +115,10 @@ func _on_health_depleted() -> void:
     queue_free()
 
 
+func _on_navigation_finished() -> void:
+    navigation_finished.emit()
+
+
 # ------ High-Level Public API (Refactored) ------
 
 
@@ -148,8 +155,8 @@ func perform_attack(target_pos: Vector2) -> void:
 
 
 ## Pathfinding Status
-func is_navigation_finished() -> bool:
-    return pathfinding.navigation_agent.is_navigation_finished()
+# func is_navigation_finished() -> bool:
+#     return pathfinding.navigation_agent.is_navigation_finished()
 
 
 ## Scanner Proxies
