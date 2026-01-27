@@ -32,5 +32,5 @@ func _update(delta: float) -> void:
     # Transitions: Action
     if player.is_roll_pressed():
         change_state(PlayerStateId.ROLL)
-    elif player.is_attack_triggered():
+    elif player.is_attack_triggered() and not is_running:
         change_state(PlayerStateId.ATTACK)

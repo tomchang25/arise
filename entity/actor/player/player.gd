@@ -63,7 +63,7 @@ var animation_states := [AnimationState.IDLE, AnimationState.MOVE, AnimationStat
 var run_speed: float = 150
 var walk_speed: float = 100
 var roll_speed: float = 500
-var attack_speed: float = 50
+var attack_speed: float = 100
 # var nearest_enemy: Enemy = null
 
 ## --- GDScript Lifecycle ---

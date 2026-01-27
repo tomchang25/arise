@@ -1,7 +1,7 @@
 class_name DungeonGenerator
 extends Node
 
-enum TileType { EMPTY, FLOOR, WALL }
+enum TileType { EMPTY, FLOOR, WALL, CORRIDOR }
 
 # 1. & 2. Generalized Parameters
 @export var grid_width: int = 80
@@ -166,13 +166,13 @@ func _carve_line(grid: Array, x1: int, y1: int, x2: int, y2: int, half_w: int):
     for y in range(start_y - half_w, end_y + half_w + 1):
         for x in range(start_x - half_w, end_x + half_w + 1):
             if _is_in_bounds(x, y):
-                grid[y][x] = TileType.FLOOR
+                grid[y][x] = TileType.CORRIDOR
 
 
 func _add_walls(grid: Array):
     for y in range(grid_height):
         for x in range(grid_width):
-            if grid[y][x] == TileType.FLOOR:
+            if grid[y][x] == TileType.FLOOR or grid[y][x] == TileType.CORRIDOR:
                 for dy in range(-1, 2):
                     for dx in range(-1, 2):
                         var nx = x + dx
