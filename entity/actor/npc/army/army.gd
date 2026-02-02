@@ -176,7 +176,7 @@ func get_nearest_attackable_target() -> Node2D:
 
 func get_nearest_tracked_target() -> Node2D:
     return enemy_scanner.get_nearest_in_range(visible_range)
-
+    
 
 ## State Machine
 func get_current_state() -> ArmyState:

@@ -1,6 +1,8 @@
 **/.godot
 **/shader_cache
 **/asset
+**/addons
+**/script_templates
 
 **/*.uid
 **/*.tmp
