@@ -2,6 +2,9 @@ extends Node
 
 const GROUP_TO_LAYER = {&"player": 1, &"enemy": 2, &"army": 9}
 
+const PLAYER_HURTBOX = 1
+const ENEMY_HURTBOX = 2
+
 
 ## Returns the bitmask for a single layer name
 func get_mask_from_name(mask_name: String) -> int:

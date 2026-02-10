@@ -37,8 +37,8 @@ func reset():
     health = max_health
 
 
-func apply_damage(attack: Attack):
-    health = clamp(health - attack.damage, 0, max_health)
+func apply_damage(attack_info: AttackInfo):
+    health = clamp(health - attack_info.damage, 0, max_health)
     health_changed.emit(health)
 
     if health <= 0:

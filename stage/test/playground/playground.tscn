@@ -1,13 +1,13 @@
 [gd_scene load_steps=10 format=3 uid="uid://bn13d02jyg5d7"]
 
 [ext_resource type="Texture2D" uid="uid://bylg7d5anp8c7" path="res://stage/test/playground/art/grass_background.png" id="1_avbqp"]
-[ext_resource type="PackedScene" uid="uid://dbhtrssgng58f" path="res://entity/actor/player/player.tscn" id="2_54ftc"]
-[ext_resource type="PackedScene" uid="uid://dccho5kdagt0e" path="res://entity/environment/bush/bush.tscn" id="3_eeu4c"]
-[ext_resource type="PackedScene" uid="uid://bfxutmk72t3gc" path="res://entity/actor/npc/army/army_handler/army_handler.tscn" id="4_fu4i5"]
+[ext_resource type="PackedScene" uid="uid://dbhtrssgng58f" path="res://scene/actor/player/player.tscn" id="2_54ftc"]
+[ext_resource type="PackedScene" uid="uid://dccho5kdagt0e" path="res://scene/environment/bush/bush.tscn" id="3_eeu4c"]
+[ext_resource type="PackedScene" uid="uid://bfxutmk72t3gc" path="res://scene/actor/npc/army/army_handler/army_handler.tscn" id="4_fu4i5"]
 [ext_resource type="Script" uid="uid://bbnuk476f2gu5" path="res://common/component/camera/camera.gd" id="4_que0v"]
-[ext_resource type="PackedScene" uid="uid://12rdjr3aafmv" path="res://entity/spawner/arise_box/arise_box.tscn" id="6_fu4i5"]
-[ext_resource type="PackedScene" uid="uid://cssols6rmii6m" path="res://entity/actor/npc/enemy/enemy_group/enemy_group.tscn" id="6_xkwl0"]
-[ext_resource type="PackedScene" uid="uid://31x7n43mme6c" path="res://entity/actor/npc/enemy/ninja_red.tscn" id="7_que0v"]
+[ext_resource type="PackedScene" uid="uid://12rdjr3aafmv" path="res://scene/spawner/arise_box/arise_box.tscn" id="6_fu4i5"]
+[ext_resource type="PackedScene" uid="uid://cssols6rmii6m" path="res://scene/actor/npc/enemy/enemy_group/enemy_group.tscn" id="6_xkwl0"]
+[ext_resource type="PackedScene" uid="uid://31x7n43mme6c" path="res://scene/actor/npc/enemy/ninja_red.tscn" id="7_que0v"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_eeu4c"]
 vertices = PackedVector2Array(904, -364.039, 904, 521, -699.023, 521, -700.969, -370.953)

@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://jla2t1i1qafl"]
+
+[ext_resource type="Script" uid="uid://cg331ejtl5ts1" path="res://common/module/attack/attack_effect/slash_attack_effect.gd" id="1_weeud"]
+[ext_resource type="Script" uid="uid://co1s16xd7omkk" path="res://common/module/hitbox/hitbox.gd" id="3_weeud"]
+
+[sub_resource type="Curve" id="Curve_weeud"]
+_data = [Vector2(0, 0.1), 0.0, 0.0, 0, 0, Vector2(0.5, 0.5), 0.0, 0.0, 0, 0, Vector2(1, 0.1), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[node name="SlashAttackEffect" type="Node2D"]
+script = ExtResource("1_weeud")
+
+[node name="Line2D" type="Line2D" parent="."]
+points = PackedVector2Array(5, 23, 28, 13, 58, 12, 67, 29)
+width_curve = SubResource("Curve_weeud")
+joint_mode = 2
+
+[node name="Hitbox" type="Area2D" parent="."]
+script = ExtResource("3_weeud")
+metadata/_custom_type_script = "uid://co1s16xd7omkk"
