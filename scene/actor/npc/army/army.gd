@@ -2,6 +2,8 @@
 class_name Army
 extends CharacterBody2D
 
+#@export var attack_handler: AttackModule = $ProjectileAttack
+
 @export_category("Scanner")
 @export var visible_range: float = 100:
     set(value):
@@ -38,7 +40,6 @@ extends CharacterBody2D
 @onready var health_component: Health = $HealthComponent
 @onready var movement: BaseMovement = $Movement
 @onready var animation: BaseAnimation = $Animation
-@onready var attack_handler: BaseAttack = $ProjectileAttack
 @onready var pathfinding: Pathfinding = $Pathfinding
 @onready var enemy_scanner: EnemyScanner = $EnemyScanner
 @onready var state_machine: StateMachine = $StateMachine
@@ -67,7 +68,7 @@ var grid_position: Vector2 = Vector2.ZERO
 func _ready() -> void:
     _setup_enemy_scanner()
     _setup_health_component()
-    _setup_hitbox()
+    # _setup_hitbox()
 
     player = get_tree().get_first_node_in_group("player")
 
@@ -86,13 +87,12 @@ func _setup_health_component() -> void:
     health_component.health_depleted.connect(_on_health_depleted)
 
 
-func _setup_hitbox() -> void:
-    hitbox.damaged.connect(_on_damaged)
+# func _setup_hitbox() -> void:
+#     hitbox.damaged.connect(_on_damaged)
 
 
 func _on_damaged(attack_info: AttackInfo) -> void:
     health_component.apply_damage(attack_info)
-
 
 
 func _on_health_changed(new_health: float) -> void:
@@ -121,8 +121,6 @@ func move_to_position(target_pos: Vector2, speed: float, arrive_dist: float = 5.
 
     var velocity_output = pathfinding.get_velocity()
     movement.set_velocity(velocity_output)
-    
-
 
 
 ## Sets the animation direction based on a vector
@@ -142,9 +140,9 @@ func stop_movement() -> void:
 
 
 ## Attack Logic
-func perform_attack(target_pos: Vector2) -> void:
-    if attack_handler.can_attack():
-        attack_handler.start_attack(target_pos)
+# func perform_attack(target_pos: Vector2) -> void:
+#     if attack_handler.can_attack():
+#         attack_handler.start_attack(target_pos)
 
 
 ## Pathfinding Status
@@ -175,7 +173,7 @@ func get_nearest_attackable_target() -> Node2D:
 
 func get_nearest_tracked_target() -> Node2D:
     return enemy_scanner.get_nearest_in_range(visible_range)
-    
+
 
 ## State Machine
 func get_current_state() -> ArmyState:
@@ -187,8 +185,3 @@ func get_distance_to_player() -> float:
     var start_point = player.global_position + grid_position
 
     return start_point.distance_to(self.global_position)
-
-# func update_grid_position() -> void:
-#     var new_position = player.global_position + grid_position
-
-#     pathfinding.set_target_position(new_position)

@@ -1,22 +1,26 @@
 class_name ProjectileAttackModule
 extends AttackModule
 
-@export var projectile_scene: PackedScene
+@export var projectile_effect_scene: PackedScene
+@export var projectile_speed: float = 500.0
 
 
-func _execute_attack_logic(target_position: Vector2) -> void:
-    var proj = projectile_scene.instantiate()
-    # Always add projectiles to root or a dedicated manager to avoid player-transform inheritance
-    get_tree().root.add_child(proj)
+func _execute_attack_logic(target_position: Vector2, info: AttackInfo) -> void:
+    if not projectile_effect_scene:
+        end_attack()
+        return
 
-    proj.global_position = global_position
-    proj.rotation = (target_position - global_position).angle()
+    var dir = (target_position - global_position).normalized()
 
-    # Pass stats from Attributes
-    if proj.has_node("Hurtbox"):
-        var hb = proj.get_node("Hurtbox")
-        hb.collision_mask = Global.get_combined_mask(target_groups)
-        hb.damage = damage
-        hb.max_targets = max_targets
+    var effect = projectile_effect_scene.instantiate() as AttackEffect
+    # Add to current scene to avoid inheriting parent movement
+    get_tree().current_scene.add_child(effect)
 
-    end_attack()
+    effect.global_position = global_position
+    effect.rotation = dir.angle()
+
+    # Cast to specific effect type to set projectile-specific data
+    if effect is ProjectileAttackEffect:
+        effect.velocity = dir * projectile_speed
+
+    effect.setup(info)

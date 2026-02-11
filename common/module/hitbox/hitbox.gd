@@ -19,6 +19,7 @@ var shape: Shape2D:
         shape = value
         if is_inside_tree():
             _setup_collision_shape()
+            
 var enabled = true:
     set(value):
         enabled = value
@@ -31,10 +32,6 @@ var enabled = true:
 
 
 func _ready() -> void:
-    if attack_info == null:
-        push_error("Hitbox must have an AttackInfo")
-        return
-
     area_entered.connect(on_area_entered)
     monitorable = false
     monitoring = enabled

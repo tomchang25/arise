@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3 uid="uid://dbhtrssgng58f"]
+[gd_scene load_steps=42 format=3 uid="uid://dbhtrssgng58f"]
 
 [ext_resource type="Script" uid="uid://bwkkatjpy72kv" path="res://scene/actor/player/player.gd" id="1_b15sj"]
 [ext_resource type="Texture2D" uid="uid://e7rr31b6fwkg" path="res://scene/actor/player/art/player.png" id="2_e6ar1"]
@@ -7,8 +7,10 @@
 [ext_resource type="AnimationNodeBlendTree" uid="uid://bam4152vw8gtf" path="res://scene/actor/player/data/player_animation_tree.tres" id="3_qa8rf"]
 [ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/module/hurtbox/hurtbox.gd" id="3_wltfy"]
 [ext_resource type="Script" uid="uid://d1yimk3mk35ag" path="res://common/module/attack/melee_attack_module.gd" id="4_jq3dq"]
+[ext_resource type="Script" uid="uid://x10bxi1qicvw" path="res://common/module/attack/projectile_attack_module.gd" id="5_5unbj"]
 [ext_resource type="PackedScene" uid="uid://jla2t1i1qafl" path="res://common/module/attack/attack_effect/slash_attack_effect.tscn" id="5_g7ayv"]
 [ext_resource type="Script" uid="uid://b6r7vut6vta3w" path="res://scene/actor/player/state/player_idle_state.gd" id="6_2iqu4"]
+[ext_resource type="PackedScene" uid="uid://mo52nt0sxj4w" path="res://common/module/attack/attack_effect/projectile_attack_effect.tscn" id="6_hc0kq"]
 [ext_resource type="PackedScene" uid="uid://d0tswwb1d3smv" path="res://common/component/health/health_component.tscn" id="8_8wcyo"]
 [ext_resource type="Script" uid="uid://lnjp761bf75g" path="res://common/component/movement/base_movement.gd" id="8_mx88g"]
 [ext_resource type="Script" uid="uid://bu436ru5hhd66" path="res://common/component/animation/base_animation.gd" id="9_b15sj"]
@@ -20,6 +22,7 @@
 
 [sub_resource type="Resource" id="Resource_5unbj"]
 script = ExtResource("2_g7ayv")
+faction = 0
 base_max_health = 100.0
 base_damage = 20.0
 base_defense = 10.0
@@ -31,12 +34,12 @@ metadata/_custom_type_script = "uid://bkgf2cii3bfri"
 radius = 2.0
 height = 12.0
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_hc0kq"]
+radius = 100.0
+
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_8eddv"]
 radius = 6.0
 height = 22.0
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_g7ayv"]
-radius = 100.0
 
 [sub_resource type="Animation" id="Animation_mx88g"]
 resource_name = "AttackDown"
@@ -355,7 +358,7 @@ collision_mask = 4
 motion_mode = 1
 script = ExtResource("1_b15sj")
 stats = SubResource("Resource_5unbj")
-attack_module = NodePath("MeleeAttackModule")
+attack_module = NodePath("Module/ProjectileAttackModule")
 
 [node name="Sprite" type="Sprite2D" parent="."]
 texture = ExtResource("2_e6ar1")
@@ -365,21 +368,6 @@ hframes = 60
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 rotation = 1.5708
 shape = SubResource("CapsuleShape2D_nqnt1")
-
-[node name="Hurtbox" type="Area2D" parent="."]
-script = ExtResource("3_wltfy")
-metadata/_custom_type_script = "uid://dby4p11qhtin7"
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
-position = Vector2(0, -8)
-shape = SubResource("CapsuleShape2D_8eddv")
-debug_color = Color(0.976471, 0.156863, 0, 0.301961)
-
-[node name="MeleeAttackModule" type="Node2D" parent="."]
-script = ExtResource("4_jq3dq")
-melee_effect_scene = ExtResource("5_g7ayv")
-max_distance = 50.0
-metadata/_custom_type_script = "uid://d1yimk3mk35ag"
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 avoidance_enabled = true
@@ -400,8 +388,31 @@ collision_mask = 2
 radius = 100.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyScanner/Detectbox"]
-shape = SubResource("CircleShape2D_g7ayv")
+shape = SubResource("CircleShape2D_hc0kq")
 debug_color = Color(0.631373, 0.517647, 0.301961, 0.235294)
+
+[node name="Module" type="Node2D" parent="."]
+
+[node name="Hurtbox" type="Area2D" parent="Module"]
+script = ExtResource("3_wltfy")
+metadata/_custom_type_script = "uid://dby4p11qhtin7"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Module/Hurtbox"]
+position = Vector2(0, -8)
+shape = SubResource("CapsuleShape2D_8eddv")
+debug_color = Color(0.976471, 0.156863, 0, 0.301961)
+
+[node name="ProjectileAttackModule" type="Node2D" parent="Module"]
+script = ExtResource("5_5unbj")
+projectile_effect_scene = ExtResource("6_hc0kq")
+attack_lifetime = 5.0
+metadata/_custom_type_script = "uid://x10bxi1qicvw"
+
+[node name="MeleeAttackModule" type="Node2D" parent="Module"]
+script = ExtResource("4_jq3dq")
+melee_effect_scene = ExtResource("5_g7ayv")
+max_distance = 50.0
+metadata/_custom_type_script = "uid://d1yimk3mk35ag"
 
 [node name="PlayerMovement" type="Node" parent="."]
 script = ExtResource("8_mx88g")

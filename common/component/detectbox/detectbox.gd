@@ -26,10 +26,6 @@ func _ready() -> void:
 
 
 func _setup_collision_shape() -> void:
-    # for child in get_children():
-    #     if child is CollisionShape2D:
-    #         collision_shape_2d = child
-    #         break
     for child in get_children():
         if child is CollisionShape2D:
             collision_shape_2d = child

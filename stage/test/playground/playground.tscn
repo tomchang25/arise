@@ -60,6 +60,8 @@ position = Vector2(93, 80)
 
 [node name="EnemyGroup" parent="EnemyHandler" instance=ExtResource("6_xkwl0")]
 position = Vector2(366, 57)
+min_wait_time = 1.0
+max_wait_time = 4.0
 
 [node name="Ninja_red" parent="EnemyHandler/EnemyGroup" instance=ExtResource("7_que0v")]
 health = 6666666

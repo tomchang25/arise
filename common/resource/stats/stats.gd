@@ -10,6 +10,7 @@ enum Faction { PLAYER, ENEMY }
 const BASE_LEVEL_XP: float = 100.0
 const BASE_LEVEL_XP_INCREMENT_PER_LEVEL: float = 50.0
 
+@export var faction: Faction
 @export var base_max_health: float = 100.0
 @export var base_damage: float = 10.0
 @export var base_defense: float = 10.0
@@ -21,7 +22,6 @@ const BASE_LEVEL_XP_INCREMENT_PER_LEVEL: float = 50.0
 var health: float = 100.0:
     set = _on_health_set
 
-var faction: Faction
 
 var level: int:
     get:

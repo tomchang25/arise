@@ -4,7 +4,10 @@ extends CharacterBody2D
 
 signal navigation_finished
 
+@export var stats: Stats
+
 @export var hurtbox: Hurtbox
+@export var attack_module: AttackModule
 
 @export_category("Scanner")
 @export var visible_range: float = 100:
@@ -45,7 +48,6 @@ signal navigation_finished
 @onready var health_component: Health = $HealthComponent
 @onready var movement: BaseMovement = $Movement
 @onready var animation: BaseAnimation = $Animation
-@onready var attack_handler: BaseAttack = $ProjectileAttack
 @onready var pathfinding: Pathfinding = $Pathfinding
 @onready var enemy_scanner: EnemyScanner = $EnemyScanner
 @onready var state_machine: StateMachine = $StateMachine
@@ -80,6 +82,14 @@ func _ready() -> void:
     _setup_hurtbox()
 
     pathfinding.navigation_agent.navigation_finished.connect(_on_navigation_finished)
+    if attack_module:
+        attack_module.initialize(stats)
+
+    if next_position == Vector2.ZERO:
+        next_position = global_position
+
+    if start_position == Vector2.ZERO:
+        start_position = global_position
 
 
 func _setup_enemy_scanner() -> void:
@@ -152,13 +162,9 @@ func stop_movement() -> void:
 
 ## Attack Logic
 func perform_attack(target_pos: Vector2) -> void:
-    if attack_handler.can_attack():
-        attack_handler.start_attack(target_pos)
-
-
-## Pathfinding Status
-# func is_navigation_finished() -> bool:
-#     return pathfinding.navigation_agent.is_navigation_finished()
+    if attack_module.can_attack():
+        attack_module.start_attack(target_pos)
+        attack_module.end_attack()
 
 
 ## Scanner Proxies

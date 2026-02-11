@@ -37,7 +37,11 @@ func can_attack() -> bool:
 
 
 func start_attack(target_position: Vector2) -> void:
-    if locked or attacker_stats == null:
+    if locked:
+        return
+
+    if attacker_stats == null:
+        push_error("AttackModule: attacker_stats is not set")
         return
 
     locked = true
@@ -46,7 +50,7 @@ func start_attack(target_position: Vector2) -> void:
     info.damage = attacker_stats.current_damage
     info.max_targets = max_targets
     info.attack_lifetime = attack_lifetime
-    
+
     info.target_factions = []
     match attacker_stats.faction:
         Stats.Faction.PLAYER:

@@ -24,10 +24,6 @@ func _update(_delta: float) -> void:
     var movement_vector = enemy.get_velocity()
     enemy.set_facing_direction(movement_vector, animation_state)
 
-    # if enemy.is_navigation_finished():
-    #     change_state(EnemyStateId.IDLE)
-    #     return
-
     if enemy.is_target_tracked():
         change_state(EnemyStateId.CHASE)
         return

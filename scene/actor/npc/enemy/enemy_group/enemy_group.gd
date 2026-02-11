@@ -32,6 +32,10 @@ func _ready():
     reset_units()
     reset_wait_timer()
 
+    for child in get_children():
+        if child is Enemy:
+            add_unit(child)
+
 
 func spawn_group_members():
     if not spawn_table:

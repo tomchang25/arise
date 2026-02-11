@@ -1,12 +1,10 @@
-[gd_scene load_steps=50 format=3 uid="uid://dybnb2lmsq7s0"]
+[gd_scene load_steps=48 format=3 uid="uid://dybnb2lmsq7s0"]
 
 [ext_resource type="Script" uid="uid://be5rffb7rwigg" path="res://scene/actor/npc/army/army.gd" id="1_13omc"]
 [ext_resource type="Texture2D" uid="uid://dcefsfe6uvtoj" path="res://scene/actor/npc/army/ninja_green/art/SpriteSheet.png" id="2_tn28i"]
 [ext_resource type="PackedScene" uid="uid://bphvl1tkicrfo" path="res://common/module/hitbox/hitbox.tscn" id="3_igrur"]
 [ext_resource type="PackedScene" uid="uid://do052sqt3wjdp" path="res://common/component/detectbox/detectbox.tscn" id="3_lqaih"]
 [ext_resource type="PackedScene" uid="uid://d3g8jgprf7bfw" path="res://common/component/enemy_scanner/enemy_scanner.tscn" id="3_v4ucm"]
-[ext_resource type="PackedScene" uid="uid://dagjfgo7sjdn0" path="res://scene/projectile/arrow/arrow.tscn" id="5_bahv0"]
-[ext_resource type="PackedScene" uid="uid://l45622b15oap" path="res://common/component/attack/projectile_attack/projectile_attack.tscn" id="6_i87wb"]
 [ext_resource type="PackedScene" uid="uid://bhgm1iqut1i6s" path="res://common/component/pathfinding/pathfinding.tscn" id="7_iga26"]
 [ext_resource type="Script" uid="uid://bu436ru5hhd66" path="res://common/component/animation/base_animation.gd" id="8_4aipm"]
 [ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/state_machinie/state_machine.gd" id="8_13omc"]
@@ -25,7 +23,7 @@ height = 4.0
 radius = 5.0
 height = 12.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_ibxx5"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_4wr1v"]
 radius = 50.0
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_pilld"]
@@ -380,15 +378,8 @@ visible_range = 50.0
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyScanner/Detectbox"]
-shape = SubResource("CircleShape2D_ibxx5")
+shape = SubResource("CircleShape2D_4wr1v")
 debug_color = Color(0, 0.129412, 0.701961, 0.0784314)
-
-[node name="ProjectileAttack" parent="." instance=ExtResource("6_i87wb")]
-position = Vector2(0, -5)
-projectile_scene = ExtResource("5_bahv0")
-damage = 100
-max_targets = 2
-target_groups = Array[StringName]([&"enemy"])
 
 [node name="Pathfinding" parent="." instance=ExtResource("7_iga26")]
 

@@ -1,16 +1,17 @@
-[gd_scene load_steps=52 format=3 uid="uid://31x7n43mme6c"]
+[gd_scene load_steps=54 format=3 uid="uid://31x7n43mme6c"]
 
 [ext_resource type="Script" uid="uid://bmdh4vf3luco6" path="res://scene/actor/npc/enemy/enemy.gd" id="1_onpov"]
+[ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/resource/stats/stats.gd" id="2_0j5am"]
 [ext_resource type="Material" uid="uid://4sxc1efucw5k" path="res://common/shader/dynamic_color_overlay.tres" id="2_ryg7q"]
 [ext_resource type="Texture2D" uid="uid://c7rvngvjpf2nr" path="res://scene/actor/npc/enemy/art/ninja_red.png" id="2_vjnwt"]
 [ext_resource type="PackedScene" uid="uid://d3g8jgprf7bfw" path="res://common/component/enemy_scanner/enemy_scanner.tscn" id="2_wj0qn"]
 [ext_resource type="PackedScene" uid="uid://do052sqt3wjdp" path="res://common/component/detectbox/detectbox.tscn" id="3_vjnwt"]
 [ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/module/hurtbox/hurtbox.gd" id="4_2gb2i"]
-[ext_resource type="PackedScene" uid="uid://l45622b15oap" path="res://common/component/attack/projectile_attack/projectile_attack.tscn" id="5_xmn1q"]
+[ext_resource type="Script" uid="uid://x10bxi1qicvw" path="res://common/module/attack/projectile_attack_module.gd" id="5_0j5am"]
+[ext_resource type="PackedScene" uid="uid://mo52nt0sxj4w" path="res://common/module/attack/attack_effect/projectile_attack_effect.tscn" id="6_2gb2i"]
 [ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/state_machinie/state_machine.gd" id="6_lx6jr"]
 [ext_resource type="Script" uid="uid://lnjp761bf75g" path="res://common/component/movement/base_movement.gd" id="6_pilld"]
 [ext_resource type="PackedScene" uid="uid://bhgm1iqut1i6s" path="res://common/component/pathfinding/pathfinding.tscn" id="6_ryg7q"]
-[ext_resource type="PackedScene" uid="uid://dagjfgo7sjdn0" path="res://scene/projectile/arrow/arrow.tscn" id="6_ump6o"]
 [ext_resource type="Script" uid="uid://bu436ru5hhd66" path="res://common/component/animation/base_animation.gd" id="6_vjnwt"]
 [ext_resource type="Script" uid="uid://ixpqntb22d76" path="res://scene/actor/npc/enemy/state/enemy_idle.gd" id="7_ryg7q"]
 [ext_resource type="Script" uid="uid://v0ips7afnj6" path="res://scene/actor/npc/enemy/state/enemy_wander.gd" id="11_4568d"]
@@ -18,6 +19,16 @@
 [ext_resource type="Script" uid="uid://btduv83t3tnr" path="res://scene/actor/npc/enemy/state/enemy_chase.gd" id="14_1l3k7"]
 [ext_resource type="Script" uid="uid://dq7gm11wvwn6m" path="res://scene/actor/npc/enemy/state/enemy_attack.gd" id="15_tgdcv"]
 [ext_resource type="Script" uid="uid://og75stne3wma" path="res://scene/actor/npc/enemy/state/enemy_back.gd" id="16_xmn1q"]
+
+[sub_resource type="Resource" id="Resource_0j5am"]
+script = ExtResource("2_0j5am")
+faction = 1
+base_max_health = 100.0
+base_damage = 10.0
+base_defense = 10.0
+base_speed = 1.0
+experience = 0.0
+metadata/_custom_type_script = "uid://bkgf2cii3bfri"
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_lvn57"]
 radius = 2.0
@@ -27,7 +38,7 @@ height = 8.0
 radius = 6.0
 height = 16.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_2gb2i"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_0j5am"]
 radius = 100.0
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_pilld"]
@@ -348,11 +359,13 @@ _data = {
 &"RESET": SubResource("Animation_i87wb")
 }
 
-[node name="Ninja_red" type="CharacterBody2D" node_paths=PackedStringArray("hurtbox")]
+[node name="Ninja_red" type="CharacterBody2D" node_paths=PackedStringArray("hurtbox", "attack_module")]
 collision_layer = 2
 collision_mask = 2
 script = ExtResource("1_onpov")
+stats = SubResource("Resource_0j5am")
 hurtbox = NodePath("Hurtbox")
+attack_module = NodePath("ProjectileAttackModule")
 
 [node name="Sprite" type="Sprite2D" parent="."]
 material = ExtResource("2_ryg7q")
@@ -366,6 +379,8 @@ rotation = 1.5708
 shape = SubResource("CapsuleShape2D_lvn57")
 
 [node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 0
 script = ExtResource("4_2gb2i")
 metadata/_custom_type_script = "uid://dby4p11qhtin7"
 
@@ -374,11 +389,10 @@ position = Vector2(0, -6)
 shape = SubResource("CapsuleShape2D_wj0qn")
 debug_color = Color(0.639216, 0.529412, 0, 0.329412)
 
-[node name="ProjectileAttack" parent="." instance=ExtResource("5_xmn1q")]
-position = Vector2(0, -5)
-projectile_scene = ExtResource("6_ump6o")
-attack_cooldown = 1.0
-target_groups = Array[StringName]([&"player", &"army"])
+[node name="ProjectileAttackModule" type="Node2D" parent="."]
+script = ExtResource("5_0j5am")
+projectile_effect_scene = ExtResource("6_2gb2i")
+metadata/_custom_type_script = "uid://x10bxi1qicvw"
 
 [node name="EnemyScanner" parent="." instance=ExtResource("2_wj0qn")]
 position = Vector2(0, -15)
@@ -388,7 +402,7 @@ collision_mask = 257
 radius = 100.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyScanner/Detectbox"]
-shape = SubResource("CircleShape2D_2gb2i")
+shape = SubResource("CircleShape2D_0j5am")
 debug_color = Color(0.933333, 0.141176, 0.533333, 0.164706)
 
 [node name="Pathfinding" parent="." instance=ExtResource("6_ryg7q")]

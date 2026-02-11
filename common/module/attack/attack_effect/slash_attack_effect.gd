@@ -2,9 +2,9 @@ class_name SlashAttackEffect
 extends AttackEffect
 
 @export_group("Slash Settings")
-@export var radius: float = 45.0  # 弧線的彎曲半徑
-@export var arc_angle: float = 90.0  # 揮砍總角度
-@export var slash_width: float = 10.0  # 物理判定寬度
+@export var radius: float = 45.0
+@export var arc_angle: float = 90.0
+@export var slash_width: float = 10.0
 @export var segments: int = 20
 
 @onready var line_2d: Line2D = $Line2D
@@ -13,11 +13,9 @@ extends AttackEffect
 func setup(info: AttackInfo) -> void:
     super.setup(info)
 
-    # 1. 產生與弧線範圍匹配的物理形狀
     if hitbox:
         _generate_capsule_shape()
 
-    # 2. 啟動動畫
     _play_slash_vfx()
 
 
@@ -27,7 +25,6 @@ func _generate_capsule_shape() -> void:
 
     var capsule = CapsuleShape2D.new()
 
-    # 計算弦長 (弧線兩端的直線距離) 作為膠囊體的高度
     var theta = deg_to_rad(arc_angle)
     var chord_length = 2 * radius * sin(theta / 2.0)
 
