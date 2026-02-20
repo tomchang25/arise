@@ -361,7 +361,7 @@ _data = {
 &"RESET": SubResource("Animation_i87wb")
 }
 
-[node name="Ninja_red" type="CharacterBody2D" node_paths=PackedStringArray("hurtbox", "vision_detection_module", "reach_detection_module", "attack_module")]
+[node name="Ninja_red" type="CharacterBody2D" node_paths=PackedStringArray("hurtbox", "vision_detection_module", "reach_detection_module", "attack_module") groups=["enemies"]]
 collision_layer = 2
 collision_mask = 2
 script = ExtResource("1_onpov")

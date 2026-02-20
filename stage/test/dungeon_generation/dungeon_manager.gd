@@ -174,18 +174,30 @@ func _world_to_minimap(world_pos: Vector2) -> Vector2:
 
 ## Logic to track and move enemy groups
 func _update_enemy_icons():
-    for child in get_children():
-        if child is EnemyGroup:
-            if not enemy_icons.has(child):
-                # Create Enemy Icon via Code
-                var new_icon = ColorRect.new()
-                new_icon.color = Color.RED
-                new_icon.size = Vector2(1, 1)  # 1x1 pixel
-                minimap_icon_container.add_child(new_icon)
-                enemy_icons[child] = new_icon
+    # for child in get_children():
+    #     if child is EnemyGroup:
+    #         if not enemy_icons.has(child):
+    #             # Create Enemy Icon via Code
+    #             var new_icon = ColorRect.new()
+    #             new_icon.color = Color.RED
+    #             new_icon.size = Vector2(1, 1)  # 1x1 pixel
+    #             minimap_icon_container.add_child(new_icon)
+    #             enemy_icons[child] = new_icon
 
-            # Update position (using the conversion function from before)
-            enemy_icons[child].position = _world_to_minimap(child.global_position)
+    #         # Update position (using the conversion function from before)
+    #         enemy_icons[child].position = _world_to_minimap(child.global_position)
+
+    for enemy in get_tree().get_nodes_in_group("enemies"):
+        if not enemy_icons.has(enemy):
+            # Create Enemy Icon via Code
+            var new_icon = ColorRect.new()
+            new_icon.color = Color.RED
+            new_icon.size = Vector2(1, 1)  # 1x1 pixel
+            minimap_icon_container.add_child(new_icon)
+            enemy_icons[enemy] = new_icon
+
+        # Update position (using the conversion function from before)
+        enemy_icons[enemy].position = _world_to_minimap(enemy.global_position)
 
     # Cleanup dead groups
     for group in enemy_icons.keys():
