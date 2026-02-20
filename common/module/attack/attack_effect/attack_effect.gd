@@ -32,7 +32,7 @@ func _find_hitbox_child() -> Hitbox:
     return null
 
 
-func _on_enemy_hit(_area: Area2D) -> void:
+func _on_enemy_hit() -> void:
     targets_hit_count += 1
     if max_targets > 0 and targets_hit_count >= max_targets:
         queue_free()

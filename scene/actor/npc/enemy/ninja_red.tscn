@@ -37,10 +37,10 @@ height = 8.0
 radius = 6.0
 height = 16.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_nx3sm"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_2gb2i"]
 radius = 200.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_2k1ho"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_0j5am"]
 radius = 50.0
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_pilld"]
@@ -406,7 +406,7 @@ script = ExtResource("8_nx3sm")
 metadata/_custom_type_script = "uid://hyy86fs5b0fs"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="VisionDetectionModule"]
-shape = SubResource("CircleShape2D_nx3sm")
+shape = SubResource("CircleShape2D_2gb2i")
 debug_color = Color(2.93598e-06, 0.624543, 0.520406, 0.164706)
 
 [node name="ReachDetectionModule" type="Area2D" parent="."]
@@ -417,7 +417,7 @@ script = ExtResource("8_nx3sm")
 metadata/_custom_type_script = "uid://hyy86fs5b0fs"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ReachDetectionModule"]
-shape = SubResource("CircleShape2D_2k1ho")
+shape = SubResource("CircleShape2D_0j5am")
 debug_color = Color(0.933333, 0.141176, 0.533333, 0.164706)
 
 [node name="Pathfinding" parent="." instance=ExtResource("6_ryg7q")]

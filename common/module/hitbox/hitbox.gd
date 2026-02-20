@@ -6,6 +6,7 @@ signal hit_enemy
 
 @export var damage_interval: float = 0.0  # 0 = once, > 0 = repeat damage
 
+var collision_node: CollisionShape2D
 var interval_timer: Timer
 
 var attack_info: AttackInfo:
@@ -19,7 +20,7 @@ var shape: Shape2D:
         shape = value
         if is_inside_tree():
             _setup_collision_shape()
-            
+
 var enabled = true:
     set(value):
         enabled = value
@@ -42,18 +43,19 @@ func _ready() -> void:
 
 
 func _setup_collision_shape() -> void:
-    # Check if a CollisionShape2D already exists in children
-    var has_shape := false
-    for child in get_children():
-        if child is CollisionShape2D:
-            has_shape = true
-            break
+    if not collision_node:
+        # Check if one exists already (e.g., added in Editor)
+        for child in get_children():
+            if child is CollisionShape2D:
+                collision_node = child
+                break
 
-    # If no shape found but a resource is provided, create it
-    if not has_shape and shape:
-        var collision_shape = CollisionShape2D.new()
-        collision_shape.shape = shape
-        add_child(collision_shape)
+        # If still none, create it
+        if not collision_node:
+            collision_node = CollisionShape2D.new()
+            add_child(collision_node)
+
+    collision_node.shape = shape
 
 
 func _setup_collision_layers() -> void:

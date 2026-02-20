@@ -32,7 +32,6 @@ func _generate_capsule_shape() -> void:
     capsule.height = chord_length + (slash_width * 2)
 
     hitbox.shape = capsule
-    hitbox._setup_collision_shape()
 
 
 func _play_slash_vfx() -> void:

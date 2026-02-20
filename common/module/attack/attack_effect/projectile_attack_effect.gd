@@ -33,7 +33,6 @@ func _generate_projectile_shape() -> void:
     circle.radius = projectile_width / 2
 
     hitbox.shape = circle
-    hitbox._setup_collision_shape()
 
 
 func _play_projectile_vfx() -> void:
