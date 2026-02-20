@@ -370,6 +370,7 @@ hurtbox = NodePath("Hurtbox")
 vision_detection_module = NodePath("VisionDetectionModule")
 reach_detection_module = NodePath("ReachDetectionModule")
 attack_module = NodePath("ProjectileAttackModule")
+wander_range = null
 
 [node name="Sprite" type="Sprite2D" parent="."]
 material = ExtResource("2_ryg7q")

@@ -13,6 +13,12 @@ signal navigation_finished
 @export var communication_module: CommunicationModule
 @export var attack_module: AttackModule
 
+@export_group("Movement Settings")
+@export var wander_speed: float = 50.0
+@export var wander_range: float = 150.0
+@export var back_speed: float = 50
+@export var chase_speed: float = 100
+
 @export_category("Scanner Settings")
 @export var vision_range: float = 200.0:
     set(value):
@@ -27,21 +33,6 @@ signal navigation_finished
 
         if is_inside_tree():
             _setup_detection_radius()
-
-# @export_category("Scanner")
-# @export var visible_range: float = 100:
-#     set(value):
-#         visible_range = value
-
-#         if is_node_ready() and enemy_scanner:
-#             _setup_enemy_scanner()
-
-# @export var attack_range: float = 50:
-#     set(value):
-#         attack_range = value
-
-#         if is_node_ready() and enemy_scanner:
-#             _setup_enemy_scanner()
 
 @export_category("Actor Properties")
 @export var health := 10:
@@ -84,30 +75,31 @@ class AnimationState:
 var animation_states := [AnimationState.IDLE, AnimationState.MOVE, AnimationState.ATTACK]
 
 # var attack_speed: float = 10
-var wander_speed: float = 50
-var back_speed: float = 50
-var chase_speed: float = 100
 
 # var leader: Enemy
 
-var start_position: Vector2
-var next_position: Vector2
+# var start_position: Vector2
+# var next_position: Vector2
+# var offset: Vector2
 
-var offset: Vector2
+var home_position: Vector2
 
 
 func _ready() -> void:
     _setup_modules()
 
-    pathfinding.navigation_agent.navigation_finished.connect(_on_navigation_finished)
     if attack_module:
         attack_module.initialize(stats)
 
-    if next_position == Vector2.ZERO:
-        next_position = global_position
+    # if next_position == Vector2.ZERO:
+    #     next_position = global_position
 
-    if start_position == Vector2.ZERO:
-        start_position = global_position
+    # if start_position == Vector2.ZERO:
+    #     start_position = global_position
+    if home_position == Vector2.ZERO:
+        home_position = global_position
+
+    pathfinding.navigation_agent.navigation_finished.connect(_on_navigation_finished)
 
 
 func _setup_modules() -> void:
@@ -216,19 +208,6 @@ func get_nearest_attackable_target() -> Node2D:
     return reach_detection_module.get_closest_target(false)
 
 
-# func get_tracked_targets() -> Array:
-#     return enemy_scanner.get_enemies_in_range(visible_range)
-
-# func get_attackable_targets() -> Array:
-#     return enemy_scanner.get_enemies_in_range(attack_range)
-
-# func get_nearest_attackable_target() -> Node2D:
-#     return enemy_scanner.get_nearest_in_range(attack_range)
-
-# func get_nearest_tracked_target() -> Node2D:
-#     return enemy_scanner.get_nearest_in_range(visible_range)
-
-
 ## State Machine
 func get_current_state() -> ArmyState:
     return state_machine.current_state
@@ -236,4 +215,4 @@ func get_current_state() -> ArmyState:
 
 ## --- Unique Functions ---
 func get_distance_to_start() -> float:
-    return global_position.distance_to(start_position)
+    return global_position.distance_to(home_position)

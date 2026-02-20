@@ -9,7 +9,7 @@ func _init() -> void:
 
 func _enter() -> void:
     enemy.play_animation(animation_state)
-    enemy.move_to_position(enemy.start_position, enemy.back_speed, 5.0)
+    enemy.move_to_position(enemy.home_position, enemy.back_speed, 5.0)
 
     enemy.navigation_finished.connect(_on_navigation_finished)
 
@@ -21,7 +21,7 @@ func _exit() -> void:
 
 func _update(_delta: float) -> void:
     # Update movement and direction via the Enemy API
-    enemy.move_to_position(enemy.start_position, enemy.back_speed, 5.0)
+    enemy.move_to_position(enemy.home_position, enemy.back_speed, 5.0)
 
     var current_velocity = enemy.get_velocity()
     enemy.set_facing_direction(current_velocity, animation_state)

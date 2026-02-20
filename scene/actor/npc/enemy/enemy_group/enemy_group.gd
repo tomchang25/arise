@@ -17,7 +17,7 @@ signal group_depleted
 @export var spawn_table: WeightedSpawnTable
 @export var spawn_radius: float = 60.0
 
-@onready var wait_timer: Timer = $WaitTimer
+# @onready var wait_timer: Timer = $WaitTimer
 
 var units: Array[Enemy]
 
@@ -27,10 +27,10 @@ var units: Array[Enemy]
 func _ready():
     child_entered_tree.connect(_on_child_entered_tree)
     child_exiting_tree.connect(_on_child_exiting_tree)
-    wait_timer.timeout.connect(_on_wait_timer_timeout)
+    # wait_timer.timeout.connect(_on_wait_timer_timeout)
 
     reset_units()
-    reset_wait_timer()
+    # reset_wait_timer()
 
     for child in get_children():
         if child is Enemy:
@@ -50,11 +50,12 @@ func spawn_group_members():
 
             var spawn_offset = Vector2.RIGHT.rotated(randf() * TAU) * randf_range(spawn_radius / 4, spawn_radius)
             var spawn_position = global_position + spawn_offset
-            unit.offset = spawn_offset
-            unit.start_position = spawn_position
-            unit.next_position = spawn_position
+            # unit.offset = spawn_offset
+            # unit.start_position = spawn_position
+            # unit.next_position = spawn_position
 
             unit.global_position = spawn_position
+            unit.home_position = spawn_position
 
 
 func _on_child_entered_tree(child: Node):
@@ -85,34 +86,30 @@ func _on_child_exiting_tree(child: Node):
 #         if unit.enemy_scanner:
 #             unit.enemy_scanner.set_external_enemies(collective_enemies)
 
+# func _on_wait_timer_timeout():
+#     var new_wander_position = generate_random_wander_position(wander_range)
+#     for unit in get_all_units():
+#         unit.next_position = new_wander_position + unit.offset
 
-func _on_wait_timer_timeout():
-    var new_wander_position = generate_random_wander_position(wander_range)
-    for unit in get_all_units():
-        unit.next_position = new_wander_position + unit.offset
+#     reset_wait_timer()
 
-    reset_wait_timer()
-
-
-func generate_random_wander_position(range_val: float) -> Vector2:
-    var random_angle = randf() * TAU
-    var random_dist = randf_range(0, range_val)
-    return global_position + (Vector2.UP.rotated(random_angle) * random_dist)
-
+# func generate_random_wander_position(range_val: float) -> Vector2:
+#     var random_angle = randf() * TAU
+#     var random_dist = randf_range(0, range_val)
+#     return global_position + (Vector2.UP.rotated(random_angle) * random_dist)
 
 ## --- Public API ---
 
-
-func reset_wait_timer() -> void:
-    wait_timer.wait_time = randf_range(min_wait_time, max_wait_time)
-    wait_timer.start()
+# func reset_wait_timer() -> void:
+#     wait_timer.wait_time = randf_range(min_wait_time, max_wait_time)
+#     wait_timer.start()
 
 
 func add_unit(unit: Enemy) -> bool:
     var index = get_first_empty_slot()
     if index == -1:
         return false
-    unit.offset = unit.global_position - global_position
+    # unit.offset = unit.global_position - global_position
     units[index] = unit
     unit_grid_changed.emit()
     return true
