@@ -11,6 +11,7 @@ func _init() -> void:
 func _enter() -> void:
     enemy.play_animation(animation_state, 1.5)
 
+
 func _update(_delta: float) -> void:
     if not enemy.is_target_tracked() or enemy.get_distance_to_start() > follow_threshold:
         change_state(EnemyStateId.BACK)
@@ -21,6 +22,7 @@ func _update(_delta: float) -> void:
         return
 
     var target = enemy.get_nearest_tracked_target()
+
     if target:
-        enemy.move_to_position(target.global_position, enemy.chase_speed, enemy.attack_range / 2)
+        enemy.move_to_position(target.global_position, enemy.chase_speed, enemy.reach_range / 2)
         enemy.set_facing_direction(enemy.global_position.direction_to(target.global_position), animation_state)

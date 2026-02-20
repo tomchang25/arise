@@ -67,24 +67,23 @@ func _on_child_exiting_tree(child: Node):
         remove_unit(child)
 
 
-func _physics_process(_delta):
-    if share_vision:
-        _update_shared_vision()
+# func _physics_process(_delta):
+#     if share_vision:
+#         _update_shared_vision()
 
+# func _update_shared_vision() -> void:
+#     var all_units = get_all_units()
+#     var collective_enemies = []
 
-func _update_shared_vision() -> void:
-    var all_units = get_all_units()
-    var collective_enemies = []
+#     for unit in all_units:
+#         if unit.enemy_scanner:
+#             for enemy in unit.enemy_scanner.get_internal_enemies():
+#                 if not collective_enemies.has(enemy):
+#                     collective_enemies.append(enemy)
 
-    for unit in all_units:
-        if unit.enemy_scanner:
-            for enemy in unit.enemy_scanner.get_internal_enemies():
-                if not collective_enemies.has(enemy):
-                    collective_enemies.append(enemy)
-
-    for unit in all_units:
-        if unit.enemy_scanner:
-            unit.enemy_scanner.set_external_enemies(collective_enemies)
+#     for unit in all_units:
+#         if unit.enemy_scanner:
+#             unit.enemy_scanner.set_external_enemies(collective_enemies)
 
 
 func _on_wait_timer_timeout():

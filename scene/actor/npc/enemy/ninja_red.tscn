@@ -4,8 +4,6 @@
 [ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/resource/stats/stats.gd" id="2_0j5am"]
 [ext_resource type="Material" uid="uid://4sxc1efucw5k" path="res://common/shader/dynamic_color_overlay.tres" id="2_ryg7q"]
 [ext_resource type="Texture2D" uid="uid://c7rvngvjpf2nr" path="res://scene/actor/npc/enemy/art/ninja_red.png" id="2_vjnwt"]
-[ext_resource type="PackedScene" uid="uid://d3g8jgprf7bfw" path="res://common/component/enemy_scanner/enemy_scanner.tscn" id="2_wj0qn"]
-[ext_resource type="PackedScene" uid="uid://do052sqt3wjdp" path="res://common/component/detectbox/detectbox.tscn" id="3_vjnwt"]
 [ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/module/hurtbox/hurtbox.gd" id="4_2gb2i"]
 [ext_resource type="Script" uid="uid://x10bxi1qicvw" path="res://common/module/attack/projectile_attack_module.gd" id="5_0j5am"]
 [ext_resource type="PackedScene" uid="uid://mo52nt0sxj4w" path="res://common/module/attack/attack_effect/projectile_attack_effect.tscn" id="6_2gb2i"]
@@ -14,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://bhgm1iqut1i6s" path="res://common/component/pathfinding/pathfinding.tscn" id="6_ryg7q"]
 [ext_resource type="Script" uid="uid://bu436ru5hhd66" path="res://common/component/animation/base_animation.gd" id="6_vjnwt"]
 [ext_resource type="Script" uid="uid://ixpqntb22d76" path="res://scene/actor/npc/enemy/state/enemy_idle.gd" id="7_ryg7q"]
+[ext_resource type="Script" uid="uid://hyy86fs5b0fs" path="res://common/module/detection/detection_module.gd" id="8_nx3sm"]
 [ext_resource type="Script" uid="uid://v0ips7afnj6" path="res://scene/actor/npc/enemy/state/enemy_wander.gd" id="11_4568d"]
 [ext_resource type="PackedScene" uid="uid://d0tswwb1d3smv" path="res://common/component/health/health_component.tscn" id="12_xmn1q"]
 [ext_resource type="Script" uid="uid://btduv83t3tnr" path="res://scene/actor/npc/enemy/state/enemy_chase.gd" id="14_1l3k7"]
@@ -38,8 +37,11 @@ height = 8.0
 radius = 6.0
 height = 16.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_0j5am"]
-radius = 100.0
+[sub_resource type="CircleShape2D" id="CircleShape2D_nx3sm"]
+radius = 200.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_2k1ho"]
+radius = 50.0
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_pilld"]
 animation = &"AttackDown"
@@ -359,12 +361,14 @@ _data = {
 &"RESET": SubResource("Animation_i87wb")
 }
 
-[node name="Ninja_red" type="CharacterBody2D" node_paths=PackedStringArray("hurtbox", "attack_module")]
+[node name="Ninja_red" type="CharacterBody2D" node_paths=PackedStringArray("hurtbox", "vision_detection_module", "reach_detection_module", "attack_module")]
 collision_layer = 2
 collision_mask = 2
 script = ExtResource("1_onpov")
 stats = SubResource("Resource_0j5am")
 hurtbox = NodePath("Hurtbox")
+vision_detection_module = NodePath("VisionDetectionModule")
+reach_detection_module = NodePath("ReachDetectionModule")
 attack_module = NodePath("ProjectileAttackModule")
 
 [node name="Sprite" type="Sprite2D" parent="."]
@@ -394,15 +398,26 @@ script = ExtResource("5_0j5am")
 projectile_effect_scene = ExtResource("6_2gb2i")
 metadata/_custom_type_script = "uid://x10bxi1qicvw"
 
-[node name="EnemyScanner" parent="." instance=ExtResource("2_wj0qn")]
-position = Vector2(0, -15)
+[node name="VisionDetectionModule" type="Area2D" parent="."]
+position = Vector2(0, -5)
+collision_layer = 0
+monitorable = false
+script = ExtResource("8_nx3sm")
+metadata/_custom_type_script = "uid://hyy86fs5b0fs"
 
-[node name="Detectbox" parent="EnemyScanner" instance=ExtResource("3_vjnwt")]
-collision_mask = 257
-radius = 100.0
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisionDetectionModule"]
+shape = SubResource("CircleShape2D_nx3sm")
+debug_color = Color(2.93598e-06, 0.624543, 0.520406, 0.164706)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyScanner/Detectbox"]
-shape = SubResource("CircleShape2D_0j5am")
+[node name="ReachDetectionModule" type="Area2D" parent="."]
+position = Vector2(0, -5)
+collision_layer = 0
+monitorable = false
+script = ExtResource("8_nx3sm")
+metadata/_custom_type_script = "uid://hyy86fs5b0fs"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ReachDetectionModule"]
+shape = SubResource("CircleShape2D_2k1ho")
 debug_color = Color(0.933333, 0.141176, 0.533333, 0.164706)
 
 [node name="Pathfinding" parent="." instance=ExtResource("6_ryg7q")]

@@ -5,24 +5,43 @@ extends CharacterBody2D
 signal navigation_finished
 
 @export var stats: Stats
-
 @export var hurtbox: Hurtbox
+
+@export_category("Modules")
+@export var vision_detection_module: DetectionModule
+@export var reach_detection_module: DetectionModule
+@export var communication_module: CommunicationModule
 @export var attack_module: AttackModule
 
-@export_category("Scanner")
-@export var visible_range: float = 100:
+@export_category("Scanner Settings")
+@export var vision_range: float = 200.0:
     set(value):
-        visible_range = value
+        vision_range = value
 
-        if is_node_ready() and enemy_scanner:
-            _setup_enemy_scanner()
+        if is_inside_tree():
+            _setup_detection_radius()
 
-@export var attack_range: float = 50:
+@export var reach_range: float = 50.0:
     set(value):
-        attack_range = value
+        reach_range = value
 
-        if is_node_ready() and enemy_scanner:
-            _setup_enemy_scanner()
+        if is_inside_tree():
+            _setup_detection_radius()
+
+# @export_category("Scanner")
+# @export var visible_range: float = 100:
+#     set(value):
+#         visible_range = value
+
+#         if is_node_ready() and enemy_scanner:
+#             _setup_enemy_scanner()
+
+# @export var attack_range: float = 50:
+#     set(value):
+#         attack_range = value
+
+#         if is_node_ready() and enemy_scanner:
+#             _setup_enemy_scanner()
 
 @export_category("Actor Properties")
 @export var health := 10:
@@ -49,8 +68,9 @@ signal navigation_finished
 @onready var movement: BaseMovement = $Movement
 @onready var animation: BaseAnimation = $Animation
 @onready var pathfinding: Pathfinding = $Pathfinding
-@onready var enemy_scanner: EnemyScanner = $EnemyScanner
 @onready var state_machine: StateMachine = $StateMachine
+
+# @onready var enemy_scanner: EnemyScanner = $EnemyScanner
 
 # # ------ Utilities ------
 
@@ -77,9 +97,7 @@ var offset: Vector2
 
 
 func _ready() -> void:
-    _setup_enemy_scanner()
-    _setup_health_component()
-    _setup_hurtbox()
+    _setup_modules()
 
     pathfinding.navigation_agent.navigation_finished.connect(_on_navigation_finished)
     if attack_module:
@@ -92,9 +110,23 @@ func _ready() -> void:
         start_position = global_position
 
 
-func _setup_enemy_scanner() -> void:
-    enemy_scanner.visible_range = visible_range
-    enemy_scanner.attack_range = attack_range
+func _setup_modules() -> void:
+    _setup_detection_radius()
+    _setup_health_component()
+    _setup_hurtbox()
+
+
+func _setup_detection_radius() -> void:
+    if vision_detection_module:
+        vision_detection_module.set_collision_radius(vision_range)
+
+    if reach_detection_module:
+        reach_detection_module.set_collision_radius(reach_range)
+
+
+# func _setup_enemy_scanner() -> void:
+#     enemy_scanner.visible_range = visible_range
+#     enemy_scanner.attack_range = attack_range
 
 
 func _setup_health_component() -> void:
@@ -169,27 +201,32 @@ func perform_attack(target_pos: Vector2) -> void:
 
 ## Scanner Proxies
 func is_target_tracked() -> bool:
-    return get_tracked_targets().size() > 0
+    return vision_detection_module.get_target_count(true) > 0
 
 
 func is_target_attackable() -> bool:
-    return get_attackable_targets().size() > 0
-
-
-func get_tracked_targets() -> Array:
-    return enemy_scanner.get_enemies_in_range(visible_range)
-
-
-func get_attackable_targets() -> Array:
-    return enemy_scanner.get_enemies_in_range(attack_range)
-
-
-func get_nearest_attackable_target() -> Node2D:
-    return enemy_scanner.get_nearest_in_range(attack_range)
+    return reach_detection_module.get_target_count(false) > 0
 
 
 func get_nearest_tracked_target() -> Node2D:
-    return enemy_scanner.get_nearest_in_range(visible_range)
+    return vision_detection_module.get_closest_target(true)
+
+
+func get_nearest_attackable_target() -> Node2D:
+    return reach_detection_module.get_closest_target(false)
+
+
+# func get_tracked_targets() -> Array:
+#     return enemy_scanner.get_enemies_in_range(visible_range)
+
+# func get_attackable_targets() -> Array:
+#     return enemy_scanner.get_enemies_in_range(attack_range)
+
+# func get_nearest_attackable_target() -> Node2D:
+#     return enemy_scanner.get_nearest_in_range(attack_range)
+
+# func get_nearest_tracked_target() -> Node2D:
+#     return enemy_scanner.get_nearest_in_range(visible_range)
 
 
 ## State Machine

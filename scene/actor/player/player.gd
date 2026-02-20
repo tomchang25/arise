@@ -7,6 +7,7 @@ signal attack_finished
 
 @export var stats: Stats
 @export var attack_module: AttackModule
+@export var hurtbox: Hurtbox
 
 @export_category("Scanner")
 @export var visible_range: float = 100:
@@ -33,7 +34,6 @@ signal attack_finished
 
 # ------ Core ------
 @onready var sprite: Sprite2D = $Sprite
-@onready var hurtbox: Hurtbox = $Hurtbox
 # @onready var health_component: Health = $HealthComponent
 
 # ------ Components ------

@@ -31,15 +31,15 @@ experience = 0.0
 metadata/_custom_type_script = "uid://bkgf2cii3bfri"
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_nqnt1"]
-radius = 2.0
-height = 12.0
+radius = 1.0
+height = 8.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_hc0kq"]
 radius = 100.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_8eddv"]
-radius = 6.0
-height = 22.0
+radius = 4.0
+height = 16.0
 
 [sub_resource type="Animation" id="Animation_mx88g"]
 resource_name = "AttackDown"
@@ -353,12 +353,13 @@ _data = {
 &"RollUp": SubResource("Animation_ivlxb")
 }
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("attack_module") groups=["player"]]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("attack_module", "hurtbox") groups=["player"]]
 collision_mask = 4
 motion_mode = 1
 script = ExtResource("1_b15sj")
 stats = SubResource("Resource_5unbj")
-attack_module = NodePath("Module/ProjectileAttackModule")
+attack_module = NodePath("Module/MeleeAttackModule")
+hurtbox = NodePath("Module/Hurtbox")
 
 [node name="Sprite" type="Sprite2D" parent="."]
 texture = ExtResource("2_e6ar1")

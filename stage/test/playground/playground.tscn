@@ -45,6 +45,11 @@ position = Vector2(68, 126)
 [node name="Bush3" parent="Environment/BushGroup" instance=ExtResource("3_eeu4c")]
 position = Vector2(153, 86)
 
+[node name="Bush4" parent="Environment/BushGroup" instance=ExtResource("3_eeu4c")]
+position = Vector2(332, 99)
+scale = Vector2(10, 10)
+skew = -0.015708
+
 [node name="Player" parent="." instance=ExtResource("2_54ftc")]
 position = Vector2(93, 80)
 
@@ -68,17 +73,14 @@ health = 6666666
 
 [node name="Ninja_red2" parent="EnemyHandler/EnemyGroup" instance=ExtResource("7_que0v")]
 position = Vector2(-19, -15)
-visible_range = 50.0
 health = 6666666
 
 [node name="Ninja_red3" parent="EnemyHandler/EnemyGroup" instance=ExtResource("7_que0v")]
 position = Vector2(17, -16)
-visible_range = 50.0
 health = 6666666
 
 [node name="Ninja_red4" parent="EnemyHandler/EnemyGroup" instance=ExtResource("7_que0v")]
 position = Vector2(0, 25)
-visible_range = 50.0
 health = 6666666
 
 [node name="Spawner" type="Node2D" parent="."]

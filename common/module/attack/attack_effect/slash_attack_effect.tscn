@@ -9,6 +9,9 @@ point_count = 3
 
 [node name="SlashAttackEffect" type="Node2D"]
 script = ExtResource("1_weeud")
+radius = 120.0
+arc_angle = 30.0
+slash_width = 5.0
 
 [node name="Line2D" type="Line2D" parent="."]
 points = PackedVector2Array(5, 23, 28, 13, 58, 12, 67, 29)
