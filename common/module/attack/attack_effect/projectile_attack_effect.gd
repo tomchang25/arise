@@ -7,7 +7,7 @@ extends AttackEffect
 
 @onready var line_2d: Line2D = $Line2D
 
-var velocity: Vector2 = Vector2.ZERO
+# var velocity: Vector2 = Vector2.ZERO
 
 
 func setup(info: AttackInfo) -> void:
@@ -19,9 +19,9 @@ func setup(info: AttackInfo) -> void:
     _play_projectile_vfx()
 
 
-func _physics_process(delta: float) -> void:
-    # Handle the "movable object" logic
-    global_position += velocity * delta
+# func _physics_process(delta: float) -> void:
+#     # Handle the "movable object" logic
+#     global_position += velocity * delta
 
 
 func _generate_projectile_shape() -> void:

@@ -6,11 +6,11 @@
 [ext_resource type="Texture2D" uid="uid://c7rvngvjpf2nr" path="res://scene/actor/npc/enemy/art/ninja_red.png" id="2_vjnwt"]
 [ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/module/hurtbox/hurtbox.gd" id="4_2gb2i"]
 [ext_resource type="Script" uid="uid://x10bxi1qicvw" path="res://common/module/attack/projectile_attack_module.gd" id="5_0j5am"]
-[ext_resource type="PackedScene" uid="uid://mo52nt0sxj4w" path="res://common/module/attack/attack_effect/projectile_attack_effect.tscn" id="6_2gb2i"]
 [ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/state_machinie/state_machine.gd" id="6_lx6jr"]
 [ext_resource type="Script" uid="uid://lnjp761bf75g" path="res://common/component/movement/base_movement.gd" id="6_pilld"]
 [ext_resource type="PackedScene" uid="uid://bhgm1iqut1i6s" path="res://common/component/pathfinding/pathfinding.tscn" id="6_ryg7q"]
 [ext_resource type="Script" uid="uid://bu436ru5hhd66" path="res://common/component/animation/base_animation.gd" id="6_vjnwt"]
+[ext_resource type="PackedScene" uid="uid://vpxne6o7pihf" path="res://common/module/attack/projectile.tscn" id="7_2gb2i"]
 [ext_resource type="Script" uid="uid://ixpqntb22d76" path="res://scene/actor/npc/enemy/state/enemy_idle.gd" id="7_ryg7q"]
 [ext_resource type="Script" uid="uid://hyy86fs5b0fs" path="res://common/module/detection/detection_module.gd" id="8_nx3sm"]
 [ext_resource type="Script" uid="uid://v0ips7afnj6" path="res://scene/actor/npc/enemy/state/enemy_wander.gd" id="11_4568d"]
@@ -370,7 +370,6 @@ hurtbox = NodePath("Hurtbox")
 vision_detection_module = NodePath("VisionDetectionModule")
 reach_detection_module = NodePath("ReachDetectionModule")
 attack_module = NodePath("ProjectileAttackModule")
-wander_range = null
 
 [node name="Sprite" type="Sprite2D" parent="."]
 material = ExtResource("2_ryg7q")
@@ -396,7 +395,8 @@ debug_color = Color(0.639216, 0.529412, 0, 0.329412)
 
 [node name="ProjectileAttackModule" type="Node2D" parent="."]
 script = ExtResource("5_0j5am")
-projectile_effect_scene = ExtResource("6_2gb2i")
+projectile_scene = ExtResource("7_2gb2i")
+attack_lifetime = 3.0
 metadata/_custom_type_script = "uid://x10bxi1qicvw"
 
 [node name="VisionDetectionModule" type="Area2D" parent="."]
