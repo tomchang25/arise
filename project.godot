@@ -45,9 +45,9 @@ folder_colors={
 "res://asset/": "red",
 "res://common/": "orange",
 "res://config/": "yellow",
+"res://game/": "green",
 "res://global/": "teal",
 "res://localization/": "blue",
-"res://scene/": "green",
 "res://stage/": "purple",
 "res://ui/": "pink"
 }

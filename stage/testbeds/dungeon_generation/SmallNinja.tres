@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EnemyGroupProfile" load_steps=4 format=3 uid="uid://bchanemg7lkj6"]
+
+[ext_resource type="PackedScene" uid="uid://cssols6rmii6m" path="res://game/actors/enemies/enemy_group/enemy_group.tscn" id="1_8fw3c"]
+[ext_resource type="Script" uid="uid://34vgft7tpp37" path="res://stage/testbeds/dungeon_generation/EnemyGroupProfile.gd" id="2_85p8y"]
+[ext_resource type="Resource" uid="uid://dy5adbkbm81d4" path="res://stage/testbeds/dungeon_generation/NinjaTable.tres" id="3_85p8y"]
+
+[resource]
+script = ExtResource("2_85p8y")
+group_scene = ExtResource("1_8fw3c")
+unit_table = ExtResource("3_85p8y")
+min_size = 2
+max_size = 5
+metadata/_custom_type_script = "uid://34vgft7tpp37"
