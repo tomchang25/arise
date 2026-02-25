@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://12rdjr3aafmv"]
 
-[ext_resource type="Script" uid="uid://dwxb7wnycy3tx" path="res://common/components_legacy/spawner/spawner.gd" id="1_0auj6"]
+[ext_resource type="Script" uid="uid://dwxb7wnycy3tx" path="res://common/_legacy/spawner/spawner.gd" id="1_0auj6"]
 [ext_resource type="Texture2D" uid="uid://ds3evo5k4cm85" path="res://game/interactables/spawners/arise_box/BigTreasureChest.png" id="1_h1425"]
 [ext_resource type="PackedScene" uid="uid://dybnb2lmsq7s0" path="res://game/actors/summons/ninja_green/ninja_geen.tscn" id="2_cjsci"]
 [ext_resource type="AudioStream" uid="uid://c5wgm6vyfi3ax" path="res://asset/unmanaged/Ninja Adventure - Asset Pack/Audio/Sounds/Alert/Alert3.wav" id="3_qroud"]

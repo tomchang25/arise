@@ -138,17 +138,17 @@ func _spawn_sequence(pos: Vector2) -> void:
     spawner.setup_spawner(encounter_table, _run_rng)
 
     # Old-but-working: when spawner exits, search for spawned group near pos
-    spawner.tree_exited.connect(_on_spawner_spawned_group.bind(pos))
+    # spawner.tree_exited.connect(_on_spawner_spawned_group.bind(pos))
+    spawner.group_spawned.connect(_on_spawner_spawned_group)
     spawner.start_spawn_sequence()
 
 
-func _on_spawner_spawned_group(pos: Vector2) -> void:
-    await get_tree().process_frame
+func _on_spawner_spawned_group(group: Node) -> void:
+    if group == null:
+        return
 
-    for child in get_children():
-        if child is EnemyGroup and child.global_position.distance_to(pos) < 5.0:
-            if not child.group_depleted.is_connected(_on_group_died):
-                child.group_depleted.connect(_on_group_died.bind(pos))
+    group = group as EnemyGroup
+    group.group_depleted.connect(_on_group_died.bind(group.global_position))
 
 
 func _on_group_died(pos: Vector2) -> void:

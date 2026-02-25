@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://d0tswwb1d3smv"]
 
-[ext_resource type="Script" uid="uid://bu6qty8wweb6r" path="res://common/components_legacy/health/health.gd" id="1_lut52"]
+[ext_resource type="Script" uid="uid://bu6qty8wweb6r" path="res://common/_legacy/health/health.gd" id="1_lut52"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_lut52"]
 font_size = 4

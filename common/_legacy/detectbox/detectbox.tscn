@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://do052sqt3wjdp"]
 
-[ext_resource type="Script" uid="uid://d3c7jiqm6ov40" path="res://common/components_legacy/detectbox/detectbox.gd" id="1_nyt5h"]
+[ext_resource type="Script" uid="uid://d3c7jiqm6ov40" path="res://common/_legacy/detectbox/detectbox.gd" id="1_nyt5h"]
 
 [node name="Detectbox" type="Area2D"]
 collision_layer = 0

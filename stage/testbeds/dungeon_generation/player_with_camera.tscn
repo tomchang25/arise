@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://i0w72n7e6is8"]
 
 [ext_resource type="PackedScene" uid="uid://dbhtrssgng58f" path="res://game/actors/player/player.tscn" id="1_5xe3t"]
-[ext_resource type="Script" uid="uid://bbnuk476f2gu5" path="res://common/components_legacy/camera/camera.gd" id="2_q3mwe"]
+[ext_resource type="Script" uid="uid://bbnuk476f2gu5" path="res://common/_legacy/camera/camera.gd" id="2_q3mwe"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_5xe3t"]
 radius = 100.0

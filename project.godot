@@ -21,6 +21,7 @@ AudioManager="*res://global/autoload/audio_manager/audio_manager.tscn"
 Global="*res://global/autoload/global.gd"
 BeehaveGlobalMetrics="*res://addons/beehave/metrics/beehave_global_metrics.gd"
 BeehaveGlobalDebugger="*res://addons/beehave/debug/global_debugger.gd"
+EventBus="*res://global/autoload/event_bus.gd"
 
 [debug]
 
@@ -48,8 +49,7 @@ folder_colors={
 "res://game/": "green",
 "res://global/": "teal",
 "res://localization/": "blue",
-"res://stage/": "purple",
-"res://ui/": "pink"
+"res://stage/": "purple"
 }
 
 [gui]

@@ -1,7 +1,0 @@
-[gd_scene format=3 uid="uid://cwv31gws7s6py"]
-
-[node name="EnemyIcon" type="ColorRect"]
-custom_minimum_size = Vector2(4, 4)
-offset_right = 4.0
-offset_bottom = 4.0
-color = Color(1, 0, 0, 1)

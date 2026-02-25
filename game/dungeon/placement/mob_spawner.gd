@@ -1,6 +1,8 @@
 class_name MobSpawner
 extends Node2D
 
+signal group_spawned(group: Node)
+
 @export var warning_duration: float = 2.5
 @export var enemy_group_scene: PackedScene  # set to your EnemyGroup.tscn
 
@@ -11,11 +13,13 @@ extends Node2D
 
 var encounter_table: WeightedEncounterTable
 var rng: RandomNumberGenerator
+var spawn_root: Node
 
 
-func setup_spawner(table: WeightedEncounterTable, _rng: RandomNumberGenerator = null) -> void:
+func setup_spawner(table: WeightedEncounterTable, _rng: RandomNumberGenerator = null, _spawn_root := get_parent()) -> void:
     encounter_table = table
     rng = _rng
+    spawn_root = _spawn_root
 
 
 func start_spawn_sequence() -> void:
@@ -57,7 +61,8 @@ func _spawn_group() -> void:
     group.global_position = global_position
     group.encounter_profile = profile
 
-    get_parent().add_child(group)
+    spawn_root.add_child(group)
+    group_spawned.emit(group)
 
 # func _spawn_group() -> void:
 #     if spawn_table == null:

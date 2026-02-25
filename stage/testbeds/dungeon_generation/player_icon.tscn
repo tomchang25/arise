@@ -1,7 +1,0 @@
-[gd_scene format=3 uid="uid://ha3w2t8b3gnf"]
-
-[node name="PlayerIcon" type="ColorRect"]
-custom_minimum_size = Vector2(4, 4)
-offset_right = 4.0
-offset_bottom = 4.0
-color = Color(0.501961, 1, 0, 1)

@@ -5,12 +5,12 @@
 [ext_resource type="PackedScene" uid="uid://i0w72n7e6is8" path="res://stage/testbeds/dungeon_generation/player_with_camera.tscn" id="2_slkuc"]
 [ext_resource type="Script" uid="uid://hcjudwk5lhyr" path="res://game/dungeon/runtime/dungeon_builder.gd" id="2_vumvy"]
 [ext_resource type="PackedScene" uid="uid://du280a8a0o5vc" path="res://game/dungeon/placement/mob_spawner.tscn" id="3_r61lq"]
-[ext_resource type="Script" uid="uid://cw41kmidn3k8s" path="res://common/resources/spawn/weighted_encounter_table.gd" id="7_boif0"]
-[ext_resource type="Script" uid="uid://cvq56uwcrrn64" path="res://common/resources/spawn/enemy_encounter_profile.gd" id="7_plica"]
+[ext_resource type="Script" uid="uid://cw41kmidn3k8s" path="res://common/resources/placement/tables/weighted_encounter_table.gd" id="7_boif0"]
+[ext_resource type="Script" uid="uid://cvq56uwcrrn64" path="res://common/resources/placement/tables/enemy_encounter_profile.gd" id="7_plica"]
 [ext_resource type="Texture2D" uid="uid://du701y6uyh67q" path="res://stage/testbeds/dungeon_generation/2D Pixel Dungeon Asset Pack/character and tileset/Dungeon_Tileset.png" id="7_t1yfp"]
-[ext_resource type="Script" uid="uid://ctqqj3qhmiuyc" path="res://common/resources/spawn/weighted_scene_entry.gd" id="8_2fqss"]
+[ext_resource type="Script" uid="uid://ctqqj3qhmiuyc" path="res://common/resources/placement/tables/weighted_scene_entry.gd" id="8_2fqss"]
 [ext_resource type="PackedScene" uid="uid://31x7n43mme6c" path="res://game/actors/enemies/ninja_red.tscn" id="9_t1yfp"]
-[ext_resource type="Script" uid="uid://dj6711ko5fxis" path="res://common/resources/spawn/weighted_encounter_entry.gd" id="10_i75gb"]
+[ext_resource type="Script" uid="uid://dj6711ko5fxis" path="res://common/resources/placement/tables/weighted_encounter_entry.gd" id="10_i75gb"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_15jr8"]
 
@@ -206,7 +206,7 @@ metadata/_custom_type_script = "uid://dj6711ko5fxis"
 
 [sub_resource type="Resource" id="Resource_ykn46"]
 script = ExtResource("7_boif0")
-entries = Array[Resource]([SubResource("Resource_4kxrq")])
+entries = Array[ExtResource("10_i75gb")]([SubResource("Resource_4kxrq")])
 metadata/_custom_type_script = "uid://cw41kmidn3k8s"
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_7hd15"]
