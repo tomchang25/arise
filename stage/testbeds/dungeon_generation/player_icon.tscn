@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://7ksi8itilm8x"]
+[gd_scene format=3 uid="uid://ha3w2t8b3gnf"]
 
 [node name="PlayerIcon" type="ColorRect"]
 custom_minimum_size = Vector2(4, 4)

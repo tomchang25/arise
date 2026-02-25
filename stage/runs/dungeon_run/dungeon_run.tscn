@@ -1,23 +1,16 @@
-[gd_scene load_steps=17 format=3 uid="uid://ceycbig0prdwp"]
+[gd_scene load_steps=23 format=3 uid="uid://ceycbig0prdwp"]
 
-[ext_resource type="Script" uid="uid://cov55tu74xu51" path="res://stage/testbeds/dungeon_generation/dungeon_manager.gd" id="1_xcip1"]
-[ext_resource type="Texture2D" uid="uid://du701y6uyh67q" path="res://stage/testbeds/dungeon_generation/2D Pixel Dungeon Asset Pack/character and tileset/Dungeon_Tileset.png" id="2_4pa00"]
-[ext_resource type="PackedScene" uid="uid://i0w72n7e6is8" path="res://stage/testbeds/dungeon_generation/player_with_camera.tscn" id="2_f5qua"]
-[ext_resource type="PackedScene" uid="uid://du280a8a0o5vc" path="res://common/components_legacy/mob_spawner/mob_spawner.tscn" id="4_f5qua"]
-[ext_resource type="Resource" uid="uid://bchanemg7lkj6" path="res://stage/testbeds/dungeon_generation/SmallNinja.tres" id="5_7hd15"]
-[ext_resource type="Script" uid="uid://bnvevjfpjgutt" path="res://common/resources/spawn/spawn_entry.gd" id="5_15jr8"]
-[ext_resource type="Script" uid="uid://cw41kmidn3k8s" path="res://common/resources/spawn/weighted_spawn_table.gd" id="7_oqgqn"]
-
-[sub_resource type="Resource" id="Resource_15jr8"]
-script = ExtResource("5_15jr8")
-mob_scene = ExtResource("5_7hd15")
-weight = 10
-metadata/_custom_type_script = "uid://bnvevjfpjgutt"
-
-[sub_resource type="Resource" id="Resource_nw6ca"]
-script = ExtResource("7_oqgqn")
-entries = Array[ExtResource("5_15jr8")]([SubResource("Resource_15jr8")])
-metadata/_custom_type_script = "uid://cw41kmidn3k8s"
+[ext_resource type="Script" uid="uid://cov55tu74xu51" path="res://game/dungeon/runtime/dungeon_manager.gd" id="1_boif0"]
+[ext_resource type="Script" uid="uid://dr1grapgwr1kp" path="res://stage/runs/dungeon_run/dungeon_run.gd" id="1_u05mf"]
+[ext_resource type="PackedScene" uid="uid://i0w72n7e6is8" path="res://stage/testbeds/dungeon_generation/player_with_camera.tscn" id="2_slkuc"]
+[ext_resource type="Script" uid="uid://hcjudwk5lhyr" path="res://game/dungeon/runtime/dungeon_builder.gd" id="2_vumvy"]
+[ext_resource type="PackedScene" uid="uid://du280a8a0o5vc" path="res://game/dungeon/placement/mob_spawner.tscn" id="3_r61lq"]
+[ext_resource type="Script" uid="uid://cw41kmidn3k8s" path="res://common/resources/spawn/weighted_encounter_table.gd" id="7_boif0"]
+[ext_resource type="Script" uid="uid://cvq56uwcrrn64" path="res://common/resources/spawn/enemy_encounter_profile.gd" id="7_plica"]
+[ext_resource type="Texture2D" uid="uid://du701y6uyh67q" path="res://stage/testbeds/dungeon_generation/2D Pixel Dungeon Asset Pack/character and tileset/Dungeon_Tileset.png" id="7_t1yfp"]
+[ext_resource type="Script" uid="uid://ctqqj3qhmiuyc" path="res://common/resources/spawn/weighted_scene_entry.gd" id="8_2fqss"]
+[ext_resource type="PackedScene" uid="uid://31x7n43mme6c" path="res://game/actors/enemies/ninja_red.tscn" id="9_t1yfp"]
+[ext_resource type="Script" uid="uid://dj6711ko5fxis" path="res://common/resources/spawn/weighted_encounter_entry.gd" id="10_i75gb"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_15jr8"]
 
@@ -40,7 +33,7 @@ outlines = Array[PackedVector2Array]([PackedVector2Array(-8, -8, 8, -8, 8, 8, -8
 agent_radius = 0.0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_f5qua"]
-texture = ExtResource("2_4pa00")
+texture = ExtResource("7_t1yfp")
 0:0/0 = 0
 0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(0, -8, 8, -8, 8, 8, 0, 8)
 0:0/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_15jr8")
@@ -191,20 +184,58 @@ physics_layer_0/collision_mask = 4
 navigation_layer_0/layers = 1
 sources/0 = SubResource("TileSetAtlasSource_f5qua")
 
+[sub_resource type="Resource" id="Resource_o3722"]
+script = ExtResource("8_2fqss")
+scene = ExtResource("9_t1yfp")
+weight = 10
+metadata/_custom_type_script = "uid://ctqqj3qhmiuyc"
+
+[sub_resource type="Resource" id="Resource_28y1w"]
+script = ExtResource("7_plica")
+min_size = 1
+max_size = 5
+spawn_radius = 60.0
+unit_entries = Array[ExtResource("8_2fqss")]([SubResource("Resource_o3722")])
+metadata/_custom_type_script = "uid://cvq56uwcrrn64"
+
+[sub_resource type="Resource" id="Resource_4kxrq"]
+script = ExtResource("10_i75gb")
+encounter = SubResource("Resource_28y1w")
+weight = 10
+metadata/_custom_type_script = "uid://dj6711ko5fxis"
+
+[sub_resource type="Resource" id="Resource_ykn46"]
+script = ExtResource("7_boif0")
+entries = Array[Resource]([SubResource("Resource_4kxrq")])
+metadata/_custom_type_script = "uid://cw41kmidn3k8s"
+
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_7hd15"]
 
-[node name="Dungeon" type="Node2D" node_paths=PackedStringArray("minimap_display", "minimap_icon_container", "tilemap")]
-script = ExtResource("1_xcip1")
-minimap_display = NodePath("UI/Minimap")
-minimap_icon_container = NodePath("UI/IconContainer")
-tilemap = NodePath("TileMapLayer")
-player_scene = ExtResource("2_f5qua")
-spawner_scene = ExtResource("4_f5qua")
-floor_spawn_table = SubResource("Resource_nw6ca")
-respawn_delay = 5.0
+[node name="DungeonRun" type="Node" node_paths=PackedStringArray("dungeon_manager")]
+script = ExtResource("1_u05mf")
+dungeon_manager = NodePath("World/Dungeon/DungeonManager")
 
-[node name="TileMapLayer" type="TileMapLayer" parent="."]
+[node name="World" type="Node2D" parent="."]
+
+[node name="Dungeon" type="Node2D" parent="World"]
+
+[node name="TileMap" type="TileMapLayer" parent="World/Dungeon"]
 tile_set = SubResource("TileSet_jbmsb")
+
+[node name="DungeonBuilder" type="Node" parent="World/Dungeon"]
+script = ExtResource("2_vumvy")
+metadata/_custom_type_script = "uid://hcjudwk5lhyr"
+
+[node name="DungeonManager" type="Node2D" parent="World/Dungeon" node_paths=PackedStringArray("minimap_display", "minimap_icon_container", "dungeon_builder", "tilemap")]
+script = ExtResource("1_boif0")
+minimap_display = NodePath("../../../UI/Minimap")
+minimap_icon_container = NodePath("../../../UI/IconContainer")
+dungeon_builder = NodePath("../DungeonBuilder")
+tilemap = NodePath("../TileMap")
+player_scene = ExtResource("2_slkuc")
+spawner_scene = ExtResource("3_r61lq")
+encounter_table = SubResource("Resource_ykn46")
+metadata/_custom_type_script = "uid://cov55tu74xu51"
 
 [node name="UI" type="CanvasLayer" parent="."]
 

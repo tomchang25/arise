@@ -5,7 +5,6 @@ signal unit_grid_changed
 signal group_depleted
 
 @export_group("Group Settings")
-@export var size := 10
 @export var share_vision: bool = true
 
 @export_group("Wander Settings")
@@ -14,54 +13,149 @@ signal group_depleted
 @export var wander_range: float = 100.0
 
 @export_group("Spawning Logic")
-@export var spawn_table: WeightedSpawnTable
-@export var spawn_radius: float = 60.0
+@export var encounter_profile: EnemyEncounterProfile:
+    set(value):
+        encounter_profile = value
+        # if already in tree, schedule spawn
+        if is_inside_tree() and encounter_profile != null:
+            _schedule_spawn()
+
+# @export var spawn_table: WeightedSpawnTable
+# @export var spawn_radius: float = 60.0
+# @export var size := 10
 
 var units: Array[Enemy]
-
-## --- GDScript Lifecycle ---
+var _rng: RandomNumberGenerator = null
+var _spawned := false
+var _target_size := 0
 
 
 func _ready():
     child_entered_tree.connect(_on_child_entered_tree)
     child_exiting_tree.connect(_on_child_exiting_tree)
 
-    reset_units()
+    _rng = RandomNumberGenerator.new()
+    _rng.randomize()
 
-    for child in get_children():
-        if child is Enemy:
-            add_unit(child)
+    # If placed in editor with an encounter_profile assigned:
+    if encounter_profile != null:
+        _schedule_spawn()
+    else:
+        # Still initialize internal storage
+        _reset_units(0)
+
+    # reset_units()
+    # for child in get_children():
+    #     if child is Enemy:
+    #         add_unit(child)
 
 
-func spawn_group_members():
-    if not spawn_table:
-        push_warning("EnemyGroup has no spawn table")
+# ---------------------------
+# Spawning
+# ---------------------------
+func _schedule_spawn() -> void:
+    # Prevent double spawn if profile is set twice
+    if _spawned:
+        return
+    _spawned = true
+
+    # Defer so global_position is already correct (spawner can set it before add_child)
+    call_deferred("_spawn_members_from_profile")
+
+
+func _spawn_members_from_profile() -> void:
+    if encounter_profile == null:
+        push_warning("EnemyGroup: encounter_profile is null")
         return
 
-    for i in range(size):
-        var mob_scene = spawn_table.get_random_mob()
-        if mob_scene:
-            var unit = mob_scene.instantiate()
-            add_child(unit)
+    _target_size = _rng.randi_range(encounter_profile.min_size, encounter_profile.max_size)
+    _reset_units(_target_size)
 
-            var spawn_offset = Vector2.RIGHT.rotated(randf() * TAU) * randf_range(spawn_radius / 4, spawn_radius)
-            var spawn_position = global_position + spawn_offset
-            # unit.offset = spawn_offset
-            # unit.start_position = spawn_position
-            # unit.next_position = spawn_position
+    var entries := encounter_profile.unit_entries
+    if entries.is_empty():
+        push_warning("EnemyGroup: encounter_profile.unit_entries is empty")
+        return
 
-            unit.global_position = spawn_position
-            unit.home_position = spawn_position
+    for i in range(_target_size):
+        var scene := _pick_unit_scene(entries)
+        if scene == null:
+            continue
+
+        var ang := _rng.randf_range(0.0, TAU)
+        var dist := _rng.randf_range(encounter_profile.spawn_radius * 0.25, encounter_profile.spawn_radius)
+        var spawn_pos := global_position + Vector2.RIGHT.rotated(ang) * dist
+
+        var unit := scene.instantiate() as Enemy
+        unit.home_position = spawn_pos
+        add_child(unit)
+
+        # # Robust spawn init (prevents home_position=0,0)
+        # if unit.has_method("setup_spawn"):
+        #     unit.call("setup_spawn", spawn_pos)
+        # else:
+        #     unit.global_position = spawn_pos
+        #     if "home_position" in unit:
+        #         unit.home_position = spawn_pos
+
+
+func _pick_unit_scene(entries: Array[WeightedSceneEntry]) -> PackedScene:
+    var total := 0
+    for e in entries:
+        total += max(0, e.weight)
+    if total <= 0:
+        return null
+
+    var roll := _rng.randi_range(1, total)
+    var acc := 0
+    for e in entries:
+        acc += max(0, e.weight)
+        if roll <= acc:
+            return e.scene
+
+    return null
+
+
+# func spawn_group_members(rng: RandomNumberGenerator = null) -> void:
+#     if not spawn_table:
+#         push_warning("EnemyGroup has no spawn table")
+#         return
+
+#     var local_rng := rng if rng else _rng
+#     if local_rng == null:
+#         local_rng = RandomNumberGenerator.new()
+#         local_rng.randomize()
+
+#     # Reset so we don't mix previous references if re-used
+#     reset_units()
+
+#     for i in range(size):
+#         var mob_scene := spawn_table.get_random_mob(local_rng)
+#         if mob_scene == null:
+#             continue
+#         if not (mob_scene is PackedScene):
+#             push_warning("EnemyGroup.spawn_table returned non-PackedScene: %s" % [mob_scene])
+#             continue
+
+#         var unit := (mob_scene as PackedScene).instantiate() as Enemy
+#         add_child(unit)
+
+#         var ang := local_rng.randf_range(0.0, TAU)
+#         var dist := local_rng.randf_range(spawn_radius / 4.0, spawn_radius)
+#         var spawn_offset := Vector2.RIGHT.rotated(ang) * dist
+#         var spawn_position := global_position + spawn_offset
+
+#         # Important: avoid home_position becoming (0,0)
+#         unit.setup_spawn(spawn_position)
 
 
 func _on_child_entered_tree(child: Node):
     if child is Enemy:
-        add_unit(child)
+        _add_unit(child)
 
 
 func _on_child_exiting_tree(child: Node):
     if child is Enemy:
-        remove_unit(child)
+        _remove_unit(child)
 
 
 # func _physics_process(_delta):
@@ -85,47 +179,34 @@ func _on_child_exiting_tree(child: Node):
 ## --- Public API ---
 
 
-func add_unit(unit: Enemy) -> bool:
-    var index = get_first_empty_slot()
-    if index == -1:
-        return false
-    # unit.offset = unit.global_position - global_position
-    units[index] = unit
-    unit_grid_changed.emit()
-    return true
-
-
-func remove_unit(unit: Enemy) -> bool:
-    var index = units.find(unit)
-    if index == -1:
-        return false
-
-    units[index] = null
-    unit_grid_changed.emit()
-
-    if get_all_units().is_empty():
-        group_depleted.emit()
-        queue_free()
-
-    return true
-
-
-func reset_units():
+func _reset_units(size: int) -> void:
     units.clear()
     for i in range(size):
         units.append(null)
     unit_grid_changed.emit()
 
 
-func get_first_empty_slot() -> int:
-    for i in range(size):
+func _add_unit(unit: Enemy) -> void:
+    for i in range(units.size()):
         if units[i] == null:
-            return i
-    return -1
+            units[i] = unit
+            unit_grid_changed.emit()
+            return
 
 
-func get_all_units() -> Array[Enemy]:
-    return units.filter(func(unit): return unit != null)
+func _remove_unit(unit: Enemy) -> void:
+    var idx := units.find(unit)
+    if idx != -1:
+        units[idx] = null
+        unit_grid_changed.emit()
 
-# func is_grid_full() -> bool:
-#     return get_first_empty_slot() == -1
+    # Group depleted check
+    var any_alive := false
+    for u in units:
+        if u != null:
+            any_alive = true
+            break
+
+    if not any_alive:
+        group_depleted.emit()
+        queue_free()

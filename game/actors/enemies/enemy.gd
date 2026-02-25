@@ -7,6 +7,8 @@ signal navigation_finished
 @export var stats: Stats
 @export var hurtbox: Hurtbox
 
+@export var home_position: Vector2
+
 @export_category("Modules")
 @export var vision_detection_module: DetectionModule
 @export var reach_detection_module: DetectionModule
@@ -82,8 +84,6 @@ var animation_states := [AnimationState.IDLE, AnimationState.MOVE, AnimationStat
 # var next_position: Vector2
 # var offset: Vector2
 
-var home_position: Vector2
-
 
 func _ready() -> void:
     _setup_modules()
@@ -91,13 +91,10 @@ func _ready() -> void:
     if attack_module:
         attack_module.initialize(stats)
 
-    # if next_position == Vector2.ZERO:
-    #     next_position = global_position
-
-    # if start_position == Vector2.ZERO:
-    #     start_position = global_position
     if home_position == Vector2.ZERO:
-        home_position = global_position
+        push_error("Enemy: home_position not assigned. Did you forget to use setup_spawn()?")
+    else:
+        global_position = home_position
 
     pathfinding.navigation_agent.navigation_finished.connect(_on_navigation_finished)
 
@@ -156,6 +153,9 @@ func _on_navigation_finished() -> void:
 
 
 # ------ High-Level Public API (Refactored) ------
+# func setup_spawn(spawn_pos: Vector2) -> void:
+#     global_position = spawn_pos
+#     home_position = spawn_pos
 
 
 ## Moves the enemy toward a global position using pathfinding
