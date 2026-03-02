@@ -1,4 +1,3 @@
-# res://game/dungeon/runtime/dungeon_builder.gd
 class_name DungeonBuilder
 extends Node
 

@@ -44,5 +44,5 @@ func get_random_floor_world(room_id: int, width: int, rng: RandomNumberGenerator
 
     var idx := indices[rng.randi_range(0, indices.size() - 1)]
     var x := idx % width
-    var y := idx as float / width
+    var y := int(idx as float / width)
     return Vector2(x, y) * float(tile_size)

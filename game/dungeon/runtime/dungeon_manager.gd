@@ -35,6 +35,9 @@ const DOWNSAMPLE_FACTOR := 4.0
 @export var encounter_table: WeightedEncounterTable
 @export var respawn_delay: float = 10.0
 
+@export_group("Placement")
+@export var dungeon_placement_pass: DungeonPlacementPass
+
 # runtime refs
 var player_ref: Node2D
 var player_icon: ColorRect
@@ -81,7 +84,8 @@ func _ready() -> void:
     _generate_minimap(_layout.grid)
 
     dungeon_built.emit(_layout, _registry)
-
+    dungeon_placement_pass.bind(self, _registry, _run_rng.seed, 0)
+    dungeon_placement_pass.execute_static()
 
 func _process(_delta: float) -> void:
     if player_ref and is_instance_valid(player_ref):

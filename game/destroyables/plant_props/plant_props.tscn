@@ -1,0 +1,32 @@
+[gd_scene load_steps=7 format=3 uid="uid://dhjvr7458gxu0"]
+
+[ext_resource type="Shader" uid="uid://dsqsptna4hqxl" path="res://common/shaders/plant_shake.gdshader" id="1_nqoqf"]
+[ext_resource type="Texture2D" uid="uid://bbkknh4s2h6mf" path="res://game/destroyables/plant_props/art/Basic Grass Biom things 1.png" id="2_j7w5l"]
+[ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/modules/hurtbox/hurtbox.gd" id="3_j7w5l"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dvjh2"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_nqoqf"]
+shader = ExtResource("1_nqoqf")
+shader_parameter/shake_intensity = 1.0
+shader_parameter/shake_speed = 2.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_dvjh2"]
+radius = 7.0
+
+[node name="PlantProps" type="Node2D"]
+material = SubResource("ShaderMaterial_dvjh2")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_nqoqf")
+texture = ExtResource("2_j7w5l")
+region_enabled = true
+region_rect = Rect2(80, 0, 16, 16)
+
+[node name="Hurtbox" type="Area2D" parent="."]
+script = ExtResource("3_j7w5l")
+metadata/_custom_type_script = "uid://dby4p11qhtin7"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+shape = SubResource("CircleShape2D_dvjh2")
+debug_color = Color(0.980392, 0, 0.388235, 0.0862745)
