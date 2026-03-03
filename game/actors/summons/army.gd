@@ -37,7 +37,7 @@ extends CharacterBody2D
 # ------ Core / Components ------
 @onready var sprite := $Sprite
 @onready var hitbox: Hitbox = $Hitbox
-@onready var health_component: Health = $HealthComponent
+@onready var health_component: HealthBarModule = $HealthComponent
 @onready var movement: BaseMovement = $Movement
 @onready var animation: BaseAnimation = $Animation
 @onready var pathfinding: Pathfinding = $Pathfinding

@@ -3,6 +3,7 @@ extends Resource
 
 signal health_changed(health: float)
 signal health_depleted
+signal stats_recalculated
 
 enum BuffableStat { MAX_HEALTH, DAMAGE, DEFENSE, SPEED }
 enum Faction { PLAYER, ENEMY }
@@ -19,13 +20,13 @@ const BASE_LEVEL_XP_INCREMENT_PER_LEVEL: float = 50.0
 @export var experience: float = 0.0:
     set = _on_experience_set
 
-var health: float = 100.0:
+@export var health: float = 100.0:
     set = _on_health_set
-
 
 var level: int:
     get:
         return _get_level_from_xp(experience)
+
 var current_max_health: float = 100.0
 var current_damage: float = 10.0
 var current_defense: float = 10.0
@@ -39,6 +40,7 @@ func _init():
 func setup_stats():
     recalculate_stats()
     health = current_max_health
+    print_debug("Stats: health %s, current_max_health %s" % [health, current_max_health])
 
 
 func recalculate_stats():
@@ -46,6 +48,8 @@ func recalculate_stats():
     current_damage = base_damage + (level * 2)
     current_defense = base_defense + (level * 2)
     current_speed = base_speed + (level * 0.1)
+
+    health = clamp(health, 0.0, current_max_health)
 
 
 func take_damage(damage: float):
@@ -55,7 +59,7 @@ func take_damage(damage: float):
 func get_xp_required_for_level(lvl: int) -> float:
     if lvl <= 1:
         return 0.0
-    # Quadratic scaling: makes the gap wider at higher levels
+
     return BASE_LEVEL_XP + (BASE_LEVEL_XP_INCREMENT_PER_LEVEL * pow(lvl - 1, 2))
 
 

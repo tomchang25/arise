@@ -11,7 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://jla2t1i1qafl" path="res://common/modules/attack/attack_effect/slash_attack_effect.tscn" id="5_g7ayv"]
 [ext_resource type="Script" uid="uid://b6r7vut6vta3w" path="res://game/actors/player/state/player_idle_state.gd" id="6_2iqu4"]
 [ext_resource type="PackedScene" uid="uid://mo52nt0sxj4w" path="res://common/modules/attack/attack_effect/projectile_attack_effect.tscn" id="6_hc0kq"]
-[ext_resource type="PackedScene" uid="uid://d0tswwb1d3smv" path="res://common/_legacy/health/health_component.tscn" id="8_8wcyo"]
+[ext_resource type="PackedScene" uid="uid://d0tswwb1d3smv" path="res://common/modules/health_bar/health_bar.tscn" id="8_8wcyo"]
 [ext_resource type="Script" uid="uid://lnjp761bf75g" path="res://common/_legacy/movement/base_movement.gd" id="8_mx88g"]
 [ext_resource type="Script" uid="uid://bu436ru5hhd66" path="res://common/_legacy/animation/base_animation.gd" id="9_b15sj"]
 [ext_resource type="Script" uid="uid://jtqne3plv0gg" path="res://game/actors/player/state/player_roll_state.gd" id="9_t2ln0"]

@@ -1,7 +1,12 @@
 class_name Hurtbox
 extends Area2D
 
-signal get_hit(attacker_stats: Stats)
+signal get_hit(attack_info: AttackInfo)
+
+@export var enabled = true:
+    set(value):
+        enabled = value
+        set_deferred("monitorable", value)
 
 var owner_stats: Stats:
     set(value):
@@ -9,21 +14,15 @@ var owner_stats: Stats:
         if is_inside_tree():
             _setup_collision_layers()
 
-var enabled = true:
-    set(value):
-        enabled = value
-        set_deferred("monitoring", value)
-
 
 func _ready() -> void:
     if not owner_stats and owner.get("stats"):
         owner_stats = owner.stats
 
-    monitoring = false
-    if enabled:
-        set_deferred("monitoring", true)
-    else:
-        set_deferred("monitoring", false)
+    monitorable = false
+    set_deferred("monitorable", enabled)
+    _setup_collision_layers()
+
     _setup_collision_layers()
 
 

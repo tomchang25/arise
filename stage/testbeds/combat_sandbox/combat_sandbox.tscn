@@ -1,0 +1,44 @@
+[gd_scene load_steps=7 format=3 uid="uid://b7ms3y32vrt4m"]
+
+[ext_resource type="PackedScene" uid="uid://bmlww50h5ia4c" path="res://game/actors/dummies/dummy.tscn" id="1_gwppr"]
+[ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/resources/stats/stats.gd" id="2_e6476"]
+[ext_resource type="Script" uid="uid://d1yimk3mk35ag" path="res://common/modules/attack/melee_attack_module.gd" id="3_lq0vo"]
+[ext_resource type="Script" uid="uid://clpk26ghev2ij" path="res://stage/testbeds/combat_sandbox/tester_attacker.gd" id="3_rbd4g"]
+[ext_resource type="PackedScene" uid="uid://jla2t1i1qafl" path="res://common/modules/attack/attack_effect/slash_attack_effect.tscn" id="4_4r8qm"]
+
+[sub_resource type="Resource" id="Resource_lq0vo"]
+resource_local_to_scene = true
+script = ExtResource("2_e6476")
+faction = 1
+base_max_health = 1000.0
+base_damage = 0.0
+base_defense = 2.5
+base_speed = 0.0
+experience = 0.0
+health = 100.0
+metadata/_custom_type_script = "uid://bkgf2cii3bfri"
+
+[node name="CombatSandbox" type="Node2D"]
+
+[node name="Dummies" type="Node2D" parent="."]
+
+[node name="Dummy" parent="Dummies" instance=ExtResource("1_gwppr")]
+position = Vector2(69, 94)
+stats = SubResource("Resource_lq0vo")
+
+[node name="Dummy2" parent="Dummies" instance=ExtResource("1_gwppr")]
+position = Vector2(235, 86)
+stats = SubResource("Resource_lq0vo")
+
+[node name="MeleeAttackModule" type="Node2D" parent="."]
+position = Vector2(160, 90)
+script = ExtResource("3_lq0vo")
+melee_effect_scene = ExtResource("4_4r8qm")
+max_distance = 9999.0
+metadata/_custom_type_script = "uid://d1yimk3mk35ag"
+
+[node name="TesterAttacker" type="Node2D" parent="." node_paths=PackedStringArray("attack", "dummy_container")]
+script = ExtResource("3_rbd4g")
+attack = NodePath("../MeleeAttackModule")
+dummy_container = NodePath("../Dummies")
+metadata/_custom_type_script = "uid://clpk26ghev2ij"

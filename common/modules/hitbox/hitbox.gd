@@ -2,7 +2,16 @@ class_name Hitbox
 extends Area2D
 
 signal hit_enemy
-# signal max_targets_reached
+
+@export var enabled = true:
+    set(value):
+        enabled = value
+        set_deferred("monitoring", value)
+        if interval_timer:
+            if value and damage_interval > 0:
+                interval_timer.start()
+            else:
+                interval_timer.stop()
 
 @export var damage_interval: float = 0.0  # 0 = once, > 0 = repeat damage
 
@@ -20,16 +29,6 @@ var shape: Shape2D:
         shape = value
         if is_inside_tree():
             _setup_collision_shape()
-
-var enabled = true:
-    set(value):
-        enabled = value
-        set_deferred("monitoring", value)
-        if interval_timer:
-            if value and damage_interval > 0:
-                interval_timer.start()
-            else:
-                interval_timer.stop()
 
 
 func _ready() -> void:

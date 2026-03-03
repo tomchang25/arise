@@ -62,7 +62,8 @@ func start_attack(target_position: Vector2) -> void:
 
 
 func end_attack() -> void:
-    cooldown_timer.start()
+    if cooldown_timer.is_stopped():
+        cooldown_timer.start()
 
 
 ## Virtual methods

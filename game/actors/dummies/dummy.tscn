@@ -1,30 +1,20 @@
-[gd_scene load_steps=48 format=3 uid="uid://dybnb2lmsq7s0"]
+[gd_scene load_steps=40 format=3 uid="uid://bmlww50h5ia4c"]
 
-[ext_resource type="Script" uid="uid://be5rffb7rwigg" path="res://game/actors/summons/army.gd" id="1_13omc"]
-[ext_resource type="Texture2D" uid="uid://dcefsfe6uvtoj" path="res://game/actors/summons/ninja_green/art/SpriteSheet.png" id="2_tn28i"]
-[ext_resource type="PackedScene" uid="uid://bphvl1tkicrfo" path="res://common/modules/hitbox/hitbox.tscn" id="3_igrur"]
-[ext_resource type="PackedScene" uid="uid://do052sqt3wjdp" path="res://common/_legacy/detectbox/detectbox.tscn" id="3_lqaih"]
-[ext_resource type="PackedScene" uid="uid://d3g8jgprf7bfw" path="res://common/_legacy/enemy_scanner/enemy_scanner.tscn" id="3_v4ucm"]
-[ext_resource type="PackedScene" uid="uid://bhgm1iqut1i6s" path="res://common/_legacy/pathfinding/pathfinding.tscn" id="7_iga26"]
-[ext_resource type="Script" uid="uid://bu436ru5hhd66" path="res://common/_legacy/animation/base_animation.gd" id="8_4aipm"]
-[ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/state_machine/state_machine.gd" id="8_13omc"]
-[ext_resource type="Script" uid="uid://lnjp761bf75g" path="res://common/_legacy/movement/base_movement.gd" id="8_i87wb"]
-[ext_resource type="Script" uid="uid://dplrsortb8ufa" path="res://game/actors/summons/state/army_idle.gd" id="8_lqaih"]
-[ext_resource type="Script" uid="uid://d0008vj2c0w5u" path="res://game/actors/summons/state/army_follow.gd" id="9_6k810"]
-[ext_resource type="Script" uid="uid://d257mq3pbe3mk" path="res://game/actors/summons/state/army_chase.gd" id="11_6k810"]
-[ext_resource type="Script" uid="uid://4ryn1wepqme5" path="res://game/actors/summons/state/army_attack.gd" id="12_4aipm"]
-[ext_resource type="PackedScene" uid="uid://d0tswwb1d3smv" path="res://common/modules/health_bar/health_bar.tscn" id="16_v6u25"]
+[ext_resource type="Script" uid="uid://lmen7iji0h2q" path="res://game/actors/dummies/dummy.gd" id="1_ef5gh"]
+[ext_resource type="Texture2D" uid="uid://cfybygt5rk5cf" path="res://game/actors/dummies/art/noble.png" id="2_ee1ma"]
+[ext_resource type="Material" uid="uid://4sxc1efucw5k" path="res://common/shaders/dynamic_color_overlay.tres" id="3_6s4ru"]
+[ext_resource type="Script" uid="uid://dpi3inldik0ho" path="res://common/modules/damage_receiver/damage_receiver_module.gd" id="4_ee1ma"]
+[ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/modules/hurtbox/hurtbox.gd" id="5_gllc2"]
+[ext_resource type="Script" uid="uid://bu436ru5hhd66" path="res://common/_legacy/animation/base_animation.gd" id="11_1ubwe"]
+[ext_resource type="PackedScene" uid="uid://d0tswwb1d3smv" path="res://common/modules/health_bar/health_bar.tscn" id="12_6tvbp"]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ocq7q"]
-radius = 1.0
-height = 4.0
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_lvn57"]
+radius = 2.0
+height = 8.0
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_igrur"]
-radius = 5.0
-height = 12.0
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_4wr1v"]
-radius = 50.0
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_wj0qn"]
+radius = 6.0
+height = 16.0
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_pilld"]
 animation = &"AttackDown"
@@ -96,12 +86,13 @@ states/Move/position = Vector2(576, 100)
 transitions = ["Start", "Idle", SubResource("AnimationNodeStateMachineTransition_i87wb"), "Idle", "Move", SubResource("AnimationNodeStateMachineTransition_iga26"), "Move", "Idle", SubResource("AnimationNodeStateMachineTransition_ocq7q"), "Idle", "Attack", SubResource("AnimationNodeStateMachineTransition_hww7n"), "Attack", "Idle", SubResource("AnimationNodeStateMachineTransition_mvkfs")]
 graph_offset = Vector2(-111, -129)
 
-[sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_y5i28"]
+[sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_ump6o"]
 
-[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_ocq7q"]
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_xmn1q"]
+graph_offset = Vector2(-383, 54)
 nodes/StateMachine/node = SubResource("AnimationNodeStateMachine_iga26")
-nodes/StateMachine/position = Vector2(-280, 120)
-nodes/TimeScale/node = SubResource("AnimationNodeTimeScale_y5i28")
+nodes/StateMachine/position = Vector2(-300, 120)
+nodes/TimeScale/node = SubResource("AnimationNodeTimeScale_ump6o")
 nodes/TimeScale/position = Vector2(60, 120)
 node_connections = [&"TimeScale", 0, &"StateMachine", &"output", 0, &"TimeScale"]
 
@@ -343,64 +334,57 @@ _data = {
 &"RESET": SubResource("Animation_i87wb")
 }
 
-[node name="NinjaGeen" type="CharacterBody2D"]
-collision_layer = 256
-collision_mask = 4
-motion_mode = 1
-script = ExtResource("1_13omc")
-visible_range = 50.0
+[node name="Dummy" type="CharacterBody2D" node_paths=PackedStringArray("hurtbox", "damage_receiver", "health_bar") groups=["dummies"]]
+collision_layer = 2
+collision_mask = 2
+script = ExtResource("1_ef5gh")
+hurtbox = NodePath("Hurtbox")
+damage_receiver = NodePath("DamageReceiverModule")
+health_bar = NodePath("HealthBar")
 
 [node name="Sprite" type="Sprite2D" parent="."]
+material = ExtResource("3_6s4ru")
 position = Vector2(0, -6)
-texture = ExtResource("2_tn28i")
+texture = ExtResource("2_ee1ma")
 hframes = 4
 vframes = 7
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 rotation = 1.5708
-shape = SubResource("CapsuleShape2D_ocq7q")
-debug_color = Color(0.961248, 0, 0.511433, 0.42)
+shape = SubResource("CapsuleShape2D_lvn57")
 
-[node name="Hitbox" parent="." instance=ExtResource("3_igrur")]
-position = Vector2(0, -5)
-collision_layer = 256
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 2
 collision_mask = 0
+script = ExtResource("5_gllc2")
+metadata/_custom_type_script = "uid://dby4p11qhtin7"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
-shape = SubResource("CapsuleShape2D_igrur")
-debug_color = Color(0.849634, 0.358302, 0.287232, 0.42)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(0, -6)
+shape = SubResource("CapsuleShape2D_wj0qn")
+debug_color = Color(0.639216, 0.529412, 0, 0.329412)
 
-[node name="EnemyScanner" parent="." instance=ExtResource("3_v4ucm")]
-position = Vector2(0, -5)
-visible_range = 50.0
+[node name="DamageReceiverModule" type="Node" parent="." node_paths=PackedStringArray("hurtbox")]
+script = ExtResource("4_ee1ma")
+hurtbox = NodePath("../Hurtbox")
+metadata/_custom_type_script = "uid://dpi3inldik0ho"
 
-[node name="Detectbox" parent="EnemyScanner" instance=ExtResource("3_lqaih")]
-collision_mask = 2
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyScanner/Detectbox"]
-shape = SubResource("CircleShape2D_4wr1v")
-debug_color = Color(0, 0.129412, 0.701961, 0.0784314)
-
-[node name="Pathfinding" parent="." instance=ExtResource("7_iga26")]
-
-[node name="NavigationAgent2D" type="NavigationAgent2D" parent="Pathfinding"]
-avoidance_enabled = true
-radius = 1.0
-avoidance_layers = 65536
-avoidance_mask = 65536
-debug_enabled = true
-debug_use_custom = true
-debug_path_custom_color = Color(1, 0, 1, 1)
-
-[node name="Movement" type="Node" parent="."]
-script = ExtResource("8_i87wb")
+[node name="HealthBar" parent="." instance=ExtResource("12_6tvbp")]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -12.0
+offset_top = 4.0
+offset_right = 12.0
+offset_bottom = 8.0
+grow_horizontal = 2
 
 [node name="Animation" type="Node" parent="." node_paths=PackedStringArray("animation_tree")]
-script = ExtResource("8_4aipm")
+script = ExtResource("11_1ubwe")
 animation_tree = NodePath("AnimationTree")
 
 [node name="AnimationTree" type="AnimationTree" parent="Animation"]
-tree_root = SubResource("AnimationNodeBlendTree_ocq7q")
+tree_root = SubResource("AnimationNodeBlendTree_xmn1q")
 anim_player = NodePath("../AnimationPlayer")
 parameters/StateMachine/Attack/blend_position = Vector2(0.00197494, 0.905405)
 parameters/StateMachine/Move/blend_position = Vector2(-0.162607, -0.756701)
@@ -410,24 +394,3 @@ parameters/TimeScale/scale = 1.0
 libraries = {
 &"": SubResource("AnimationLibrary_i87wb")
 }
-
-[node name="HealthComponent" parent="." instance=ExtResource("16_v6u25")]
-
-[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
-script = ExtResource("8_13omc")
-initial_state = NodePath("Idle")
-
-[node name="Idle" type="Node" parent="StateMachine"]
-script = ExtResource("8_lqaih")
-follow_threshold = 16.0
-
-[node name="Follow" type="Node" parent="StateMachine"]
-script = ExtResource("9_6k810")
-
-[node name="Chase" type="Node" parent="StateMachine"]
-script = ExtResource("11_6k810")
-follow_threshold = 250.0
-
-[node name="Attack" type="Node" parent="StateMachine"]
-script = ExtResource("12_4aipm")
-follow_threshold = 250.0

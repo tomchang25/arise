@@ -14,7 +14,7 @@
 [ext_resource type="Script" uid="uid://ixpqntb22d76" path="res://game/actors/enemies/state/enemy_idle.gd" id="7_ryg7q"]
 [ext_resource type="Script" uid="uid://hyy86fs5b0fs" path="res://common/modules/detection/detection_module.gd" id="8_nx3sm"]
 [ext_resource type="Script" uid="uid://v0ips7afnj6" path="res://game/actors/enemies/state/enemy_wander.gd" id="11_4568d"]
-[ext_resource type="PackedScene" uid="uid://d0tswwb1d3smv" path="res://common/_legacy/health/health_component.tscn" id="12_xmn1q"]
+[ext_resource type="PackedScene" uid="uid://d0tswwb1d3smv" path="res://common/modules/health_bar/health_bar.tscn" id="12_xmn1q"]
 [ext_resource type="Script" uid="uid://btduv83t3tnr" path="res://game/actors/enemies/state/enemy_chase.gd" id="14_1l3k7"]
 [ext_resource type="Script" uid="uid://dq7gm11wvwn6m" path="res://game/actors/enemies/state/enemy_attack.gd" id="15_tgdcv"]
 [ext_resource type="Script" uid="uid://og75stne3wma" path="res://game/actors/enemies/state/enemy_back.gd" id="16_xmn1q"]
@@ -27,6 +27,7 @@ base_damage = 10.0
 base_defense = 10.0
 base_speed = 1.0
 experience = 0.0
+health = 100.0
 metadata/_custom_type_script = "uid://bkgf2cii3bfri"
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_lvn57"]
