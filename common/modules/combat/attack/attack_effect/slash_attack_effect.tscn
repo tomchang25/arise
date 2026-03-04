@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://jla2t1i1qafl"]
+[gd_scene load_steps=5 format=3 uid="uid://jla2t1i1qafl"]
 
 [ext_resource type="Script" uid="uid://cg331ejtl5ts1" path="res://common/modules/combat/attack/attack_effect/slash_attack_effect.gd" id="1_weeud"]
+[ext_resource type="AudioStream" uid="uid://hb0mh1gswei4" path="res://common/modules/combat/attack/attack_effect/art/slash.wav" id="2_211y4"]
 [ext_resource type="Script" uid="uid://co1s16xd7omkk" path="res://common/modules/hitbox/hitbox.gd" id="3_weeud"]
 
 [sub_resource type="Curve" id="Curve_weeud"]
@@ -12,6 +13,7 @@ script = ExtResource("1_weeud")
 radius = 120.0
 arc_angle = 30.0
 slash_width = 5.0
+swing_sfx_stream = ExtResource("2_211y4")
 
 [node name="Line2D" type="Line2D" parent="."]
 points = PackedVector2Array(5, 23, 28, 13, 58, 12, 67, 29)

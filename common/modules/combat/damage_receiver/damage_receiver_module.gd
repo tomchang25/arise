@@ -39,7 +39,7 @@ func _on_hurtbox_hit(info: AttackInfo) -> void:
 
     # 0) health check
     if stats.health <= 0.0:
-        blocked.emit(info)
+        print_debug("DamageReceiverModule: _on_hurtbox_hit: %s is already dead" % owner.name)
         return
 
     # 0) invuln gate
@@ -58,16 +58,17 @@ func _on_hurtbox_hit(info: AttackInfo) -> void:
     var final_damage := raw - (stats.current_defense * defense_scaling)
     final_damage = max(final_damage, clamp_min_damage)
 
-    if final_damage != 0.0:
+    if final_damage > 0.0:
+        print_debug("DamageReceiverModule: _on_hurtbox_hit: %s took %s damage, remaining: %s" % [owner.name, final_damage, stats.health])
+
         stats.take_damage(final_damage)
+        set_invulnerable_for(stats.invuln_time)
+        damaged.emit(final_damage, stats.health, info)
 
-    print_debug("DamageReceiverModule: _on_hurtbox_hit: %s took %s damage, remaining: %s" % [owner.name, final_damage, stats.health])
-
-    set_invulnerable_for(stats.invuln_time)
-    damaged.emit(final_damage, stats.health, info)
-
-    if stats.health <= 0.0:
-        died.emit(info)
+        if stats.health <= 0.0:
+            died.emit(info)
+    else:
+        blocked.emit(info)
 
 
 func is_invulnerable() -> bool:

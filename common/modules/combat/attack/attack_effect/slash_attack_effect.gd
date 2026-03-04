@@ -9,6 +9,15 @@ extends AttackEffect
 
 @onready var line_2d: Line2D = $Line2D
 
+@export_group("SFX")
+@export var enabled_swing_sfx := true
+@export var swing_sfx_key: StringName = &"swing"
+@export var swing_sfx_stream: AudioStream
+@export var swing_sfx_volume_db: float = 0.0
+@export var swing_sfx_limited := true
+@export var swing_sfx_max_per_window := 4
+@export var swing_sfx_window_sec := 0.05
+
 
 func setup(info: AttackInfo) -> void:
     super.setup(info)
@@ -17,6 +26,7 @@ func setup(info: AttackInfo) -> void:
         _generate_capsule_shape()
 
     _play_slash_vfx()
+    _play_slash_sfx()
 
 
 func _generate_capsule_shape() -> void:
@@ -42,6 +52,14 @@ func _play_slash_vfx() -> void:
     tween.tween_method(_update_slash_points, 0.0, 1.0, attack_lifetime * 0.4).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 
     tween.parallel().tween_property(line_2d, "width", 0.0, attack_lifetime * 0.6).set_delay(attack_lifetime * 0.4).set_trans(Tween.TRANS_SINE)
+
+
+func _play_slash_sfx() -> void:
+    if enabled_swing_sfx and swing_sfx_stream != null:
+        if swing_sfx_limited:
+            AudioManager.play_sfx_limited(swing_sfx_stream, swing_sfx_key, global_position, swing_sfx_max_per_window, swing_sfx_window_sec, swing_sfx_volume_db)
+        else:
+            AudioManager.play_sfx_2d(swing_sfx_stream, global_position, swing_sfx_volume_db)
 
 
 func _update_slash_points(progress: float) -> void:
