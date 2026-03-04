@@ -1,3 +1,4 @@
+@tool
 class_name Stats
 extends Resource
 
@@ -23,14 +24,17 @@ const BASE_LEVEL_XP_INCREMENT_PER_LEVEL: float = 50.0
 @export var health: float = 100.0:
     set = _on_health_set
 
+@export_group("Combat")
+@export var invuln_time: float = 0.08
+
 var level: int:
     get:
         return _get_level_from_xp(experience)
 
-var current_max_health: float = 100.0
-var current_damage: float = 10.0
-var current_defense: float = 10.0
-var current_speed: float = 1.0
+var current_max_health: float = 0.0
+var current_damage: float = 0.0
+var current_defense: float = 0.0
+var current_speed: float = 0.0
 
 
 func _init():
@@ -40,16 +44,18 @@ func _init():
 func setup_stats():
     recalculate_stats()
     health = current_max_health
-    print_debug("Stats: health %s, current_max_health %s" % [health, current_max_health])
+    # print_debug("Stats: health %s, current_max_health %s" % [health, current_max_health])
 
 
 func recalculate_stats():
-    current_max_health = base_max_health + (level * 10)
-    current_damage = base_damage + (level * 2)
-    current_defense = base_defense + (level * 2)
-    current_speed = base_speed + (level * 0.1)
+    current_max_health = base_max_health + ((level - 1) * 10)
+    current_damage = base_damage + ((level - 1) * 2)
+    current_defense = base_defense + ((level - 1) * 2)
+    current_speed = base_speed + ((level - 1) * 0.1)
 
     health = clamp(health, 0.0, current_max_health)
+
+    stats_recalculated.emit()
 
 
 func take_damage(damage: float):

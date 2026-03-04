@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://b7ms3y32vrt4m"]
+[gd_scene load_steps=8 format=3 uid="uid://b7ms3y32vrt4m"]
 
 [ext_resource type="PackedScene" uid="uid://bmlww50h5ia4c" path="res://game/actors/dummies/dummy.tscn" id="1_gwppr"]
 [ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/resources/stats/stats.gd" id="2_e6476"]
@@ -12,11 +12,23 @@ script = ExtResource("2_e6476")
 faction = 1
 base_max_health = 1000.0
 base_damage = 0.0
-base_defense = 2.5
-base_speed = 0.0
+base_defense = 25.0
+base_speed = 1.0
 experience = 0.0
-health = 100.0
-metadata/_custom_type_script = "uid://bkgf2cii3bfri"
+health = 1000.0
+invuln_time = 0.5
+
+[sub_resource type="Resource" id="Resource_4r8qm"]
+resource_local_to_scene = true
+script = ExtResource("2_e6476")
+faction = 1
+base_max_health = 1000.0
+base_damage = 0.0
+base_defense = 25.0
+base_speed = 1.0
+experience = 0.0
+health = 1000.0
+invuln_time = 0.5
 
 [node name="CombatSandbox" type="Node2D"]
 
@@ -28,13 +40,14 @@ stats = SubResource("Resource_lq0vo")
 
 [node name="Dummy2" parent="Dummies" instance=ExtResource("1_gwppr")]
 position = Vector2(235, 86)
-stats = SubResource("Resource_lq0vo")
+stats = SubResource("Resource_4r8qm")
 
 [node name="MeleeAttackModule" type="Node2D" parent="."]
 position = Vector2(160, 90)
 script = ExtResource("3_lq0vo")
 melee_effect_scene = ExtResource("4_4r8qm")
 max_distance = 9999.0
+attack_cooldown = 0.01
 metadata/_custom_type_script = "uid://d1yimk3mk35ag"
 
 [node name="TesterAttacker" type="Node2D" parent="." node_paths=PackedStringArray("attack", "dummy_container")]

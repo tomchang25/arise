@@ -1,12 +1,25 @@
-[gd_scene load_steps=40 format=3 uid="uid://bmlww50h5ia4c"]
+[gd_scene load_steps=42 format=3 uid="uid://bmlww50h5ia4c"]
 
 [ext_resource type="Script" uid="uid://lmen7iji0h2q" path="res://game/actors/dummies/dummy.gd" id="1_ef5gh"]
 [ext_resource type="Texture2D" uid="uid://cfybygt5rk5cf" path="res://game/actors/dummies/art/noble.png" id="2_ee1ma"]
-[ext_resource type="Material" uid="uid://4sxc1efucw5k" path="res://common/shaders/dynamic_color_overlay.tres" id="3_6s4ru"]
+[ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/resources/stats/stats.gd" id="2_ef5gh"]
 [ext_resource type="Script" uid="uid://dpi3inldik0ho" path="res://common/modules/damage_receiver/damage_receiver_module.gd" id="4_ee1ma"]
 [ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/modules/hurtbox/hurtbox.gd" id="5_gllc2"]
+[ext_resource type="Script" uid="uid://duxq84e027el0" path="res://common/modules/combat/hit_feedback_module.gd" id="7_ef5gh"]
 [ext_resource type="Script" uid="uid://bu436ru5hhd66" path="res://common/_legacy/animation/base_animation.gd" id="11_1ubwe"]
 [ext_resource type="PackedScene" uid="uid://d0tswwb1d3smv" path="res://common/modules/health_bar/health_bar.tscn" id="12_6tvbp"]
+
+[sub_resource type="Resource" id="Resource_3o05k"]
+resource_local_to_scene = true
+script = ExtResource("2_ef5gh")
+faction = 1
+base_max_health = 1000.0
+base_damage = 0.0
+base_defense = 25.0
+base_speed = 1.0
+experience = 0.0
+health = 1000.0
+invuln_time = 0.5
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_lvn57"]
 radius = 2.0
@@ -104,7 +117,7 @@ step = 0.0416667
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("../Sprite:frame_coords")
+tracks/0/path = NodePath("../Visuals/Sprite:frame_coords")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -122,7 +135,7 @@ step = 0.0416667
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("../Sprite:frame_coords")
+tracks/0/path = NodePath("../Visuals/Sprite:frame_coords")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -140,7 +153,7 @@ step = 0.0416667
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("../Sprite:frame_coords")
+tracks/0/path = NodePath("../Visuals/Sprite:frame_coords")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -158,7 +171,7 @@ step = 0.0416667
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("../Sprite:frame_coords")
+tracks/0/path = NodePath("../Visuals/Sprite:frame_coords")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -175,7 +188,7 @@ step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("../Sprite:scale")
+tracks/0/path = NodePath("../Visuals/Sprite:scale")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -187,7 +200,7 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("../Sprite:position")
+tracks/1/path = NodePath("../Visuals/Sprite:position")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
@@ -199,7 +212,7 @@ tracks/1/keys = {
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("../Sprite:frame_coords")
+tracks/2/path = NodePath("../Visuals/Sprite:frame_coords")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
@@ -217,7 +230,7 @@ step = 0.166667
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("../Sprite:frame_coords")
+tracks/0/path = NodePath("../Visuals/Sprite:frame_coords")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -235,7 +248,7 @@ step = 0.166667
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("../Sprite:frame_coords")
+tracks/0/path = NodePath("../Visuals/Sprite:frame_coords")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -253,7 +266,7 @@ step = 0.166667
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("../Sprite:frame_coords")
+tracks/0/path = NodePath("../Visuals/Sprite:frame_coords")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -271,7 +284,7 @@ step = 0.166667
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("../Sprite:frame_coords")
+tracks/0/path = NodePath("../Visuals/Sprite:frame_coords")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -286,7 +299,7 @@ length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("../Sprite:scale")
+tracks/0/path = NodePath("../Visuals/Sprite:scale")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -298,7 +311,7 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("../Sprite:position")
+tracks/1/path = NodePath("../Visuals/Sprite:position")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
@@ -310,7 +323,7 @@ tracks/1/keys = {
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("../Sprite:frame_coords")
+tracks/2/path = NodePath("../Visuals/Sprite:frame_coords")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
@@ -338,12 +351,14 @@ _data = {
 collision_layer = 2
 collision_mask = 2
 script = ExtResource("1_ef5gh")
+stats = SubResource("Resource_3o05k")
 hurtbox = NodePath("Hurtbox")
 damage_receiver = NodePath("DamageReceiverModule")
 health_bar = NodePath("HealthBar")
 
-[node name="Sprite" type="Sprite2D" parent="."]
-material = ExtResource("3_6s4ru")
+[node name="Visuals" type="Node2D" parent="."]
+
+[node name="Sprite" type="Sprite2D" parent="Visuals"]
 position = Vector2(0, -6)
 texture = ExtResource("2_ee1ma")
 hframes = 4
@@ -368,6 +383,12 @@ debug_color = Color(0.639216, 0.529412, 0, 0.329412)
 script = ExtResource("4_ee1ma")
 hurtbox = NodePath("../Hurtbox")
 metadata/_custom_type_script = "uid://dpi3inldik0ho"
+
+[node name="HitFeedbackModule" type="Node" parent="." node_paths=PackedStringArray("damage_receiver")]
+script = ExtResource("7_ef5gh")
+damage_receiver = NodePath("../DamageReceiverModule")
+enabled_knockback = false
+metadata/_custom_type_script = "uid://duxq84e027el0"
 
 [node name="HealthBar" parent="." instance=ExtResource("12_6tvbp")]
 anchors_preset = 5

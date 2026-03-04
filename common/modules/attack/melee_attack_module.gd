@@ -21,4 +21,7 @@ func _execute_attack_logic(target_position: Vector2, info: AttackInfo) -> void:
     effect.global_position = effect_position
     effect.rotation = dir.angle()
 
+    info.knockback_force = info.damage * 4.0
+    info.knockback_dir = dir
+
     effect.setup(info)

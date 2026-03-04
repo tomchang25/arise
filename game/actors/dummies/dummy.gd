@@ -22,6 +22,10 @@ func _ready() -> void:
     _bind_modules()
 
 
+func _physics_process(_delta: float) -> void:
+    move_and_slide()
+
+
 func _auto_wire_nodes() -> void:
     if not hurtbox:
         hurtbox = find_child("Hurtbox", true, false) as Hurtbox

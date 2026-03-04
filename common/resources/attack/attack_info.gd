@@ -5,3 +5,12 @@ var damage: float = 0.0
 var max_targets: int = -1
 var attack_lifetime: float = 0.2
 var target_factions: Array = []
+
+# Knockback
+var source_position: Vector2 = Vector2.ZERO
+var knockback_dir: Vector2 = Vector2.ZERO  # if ZERO -> receiver infers from source_position
+var knockback_force: float = 0.0
+
+# Optional SFX routing
+var hit_sfx_key: StringName = &""
+var hit_sfx_stream: AudioStream = null

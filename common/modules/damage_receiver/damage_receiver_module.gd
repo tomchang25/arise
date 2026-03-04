@@ -2,6 +2,7 @@ class_name DamageReceiverModule
 extends Node
 
 signal damaged(amount: float, new_health: float, info: AttackInfo)
+signal blocked(info: AttackInfo)
 signal died(info: AttackInfo)
 
 @export var enabled: bool = true
@@ -11,6 +12,8 @@ signal died(info: AttackInfo)
 @export_group("Rules")
 @export var defense_scaling: float = 1.0
 @export var clamp_min_damage: float = 0.0
+
+var _invuln_until_msec: int = 0
 
 
 func _ready() -> void:
@@ -31,12 +34,23 @@ func _auto_wire() -> void:
 
 func _on_hurtbox_hit(info: AttackInfo) -> void:
     if not enabled or not stats or not info:
-        print_debug("DamageReceiverModule: _on_hurtbox_hit: invalid arguments")
+        push_warning("DamageReceiverModule: _on_hurtbox_hit: invalid arguments")
+        return
+
+    # 0) health check
+    if stats.health <= 0.0:
+        blocked.emit(info)
+        return
+
+    # 0) invuln gate
+    if is_invulnerable():
+        blocked.emit(info)
+        # print_debug("DamageReceiverModule: _on_hurtbox_hit: %s is invulnerable, remaining: %s" % [owner.name, Time.get_ticks_msec() - _invuln_until_msec])
         return
 
     # 1) faction filter
     if info.target_factions.size() > 0 and not info.target_factions.has(stats.faction):
-        print_debug("DamageReceiverModule: _on_hurtbox_hit: invalid target factions")
+        push_warning("DamageReceiverModule: _on_hurtbox_hit: invalid target factions")
         return
 
     # 2) compute damage (snapshot damage from AttackInfo)
@@ -46,9 +60,22 @@ func _on_hurtbox_hit(info: AttackInfo) -> void:
 
     if final_damage != 0.0:
         stats.take_damage(final_damage)
-        print_debug("DamageReceiverModule: _on_hurtbox_hit: %s took %s damage, remaining: %s" % [owner.name, final_damage, stats.health])
 
+    print_debug("DamageReceiverModule: _on_hurtbox_hit: %s took %s damage, remaining: %s" % [owner.name, final_damage, stats.health])
+
+    set_invulnerable_for(stats.invuln_time)
     damaged.emit(final_damage, stats.health, info)
 
     if stats.health <= 0.0:
         died.emit(info)
+
+
+func is_invulnerable() -> bool:
+    return Time.get_ticks_msec() < _invuln_until_msec
+
+
+func set_invulnerable_for(seconds: float) -> void:
+    if seconds <= 0.0:
+        return
+
+    _invuln_until_msec = max(_invuln_until_msec, Time.get_ticks_msec() + int(seconds * 1000.0))
