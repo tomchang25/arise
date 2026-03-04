@@ -5,12 +5,12 @@
 [ext_resource type="Material" uid="uid://4sxc1efucw5k" path="res://common/shaders/dynamic_color_overlay.tres" id="2_ryg7q"]
 [ext_resource type="Texture2D" uid="uid://c7rvngvjpf2nr" path="res://game/actors/enemies/art/ninja_red.png" id="2_vjnwt"]
 [ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/modules/hurtbox/hurtbox.gd" id="4_2gb2i"]
-[ext_resource type="Script" uid="uid://x10bxi1qicvw" path="res://common/modules/attack/projectile_attack_module.gd" id="5_0j5am"]
+[ext_resource type="Script" uid="uid://x10bxi1qicvw" path="res://common/modules/combat/attack/projectile_attack_module.gd" id="5_0j5am"]
 [ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/state_machine/state_machine.gd" id="6_lx6jr"]
 [ext_resource type="Script" uid="uid://lnjp761bf75g" path="res://common/_legacy/movement/base_movement.gd" id="6_pilld"]
 [ext_resource type="PackedScene" uid="uid://bhgm1iqut1i6s" path="res://common/_legacy/pathfinding/pathfinding.tscn" id="6_ryg7q"]
 [ext_resource type="Script" uid="uid://bu436ru5hhd66" path="res://common/_legacy/animation/base_animation.gd" id="6_vjnwt"]
-[ext_resource type="PackedScene" uid="uid://vpxne6o7pihf" path="res://common/modules/attack/projectile.tscn" id="7_2gb2i"]
+[ext_resource type="PackedScene" uid="uid://vpxne6o7pihf" path="res://common/modules/combat/projectiles/projectile.tscn" id="7_2gb2i"]
 [ext_resource type="Script" uid="uid://ixpqntb22d76" path="res://game/actors/enemies/state/enemy_idle.gd" id="7_ryg7q"]
 [ext_resource type="Script" uid="uid://hyy86fs5b0fs" path="res://common/modules/detection/detection_module.gd" id="8_nx3sm"]
 [ext_resource type="Script" uid="uid://v0ips7afnj6" path="res://game/actors/enemies/state/enemy_wander.gd" id="11_4568d"]
@@ -28,6 +28,7 @@ base_defense = 10.0
 base_speed = 1.0
 experience = 0.0
 health = 100.0
+invuln_time = 0.08
 metadata/_custom_type_script = "uid://bkgf2cii3bfri"
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_lvn57"]

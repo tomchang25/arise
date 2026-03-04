@@ -3,9 +3,9 @@
 [ext_resource type="Script" uid="uid://lmen7iji0h2q" path="res://game/actors/dummies/dummy.gd" id="1_ef5gh"]
 [ext_resource type="Texture2D" uid="uid://cfybygt5rk5cf" path="res://game/actors/dummies/art/noble.png" id="2_ee1ma"]
 [ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/resources/stats/stats.gd" id="2_ef5gh"]
-[ext_resource type="Script" uid="uid://dpi3inldik0ho" path="res://common/modules/damage_receiver/damage_receiver_module.gd" id="4_ee1ma"]
+[ext_resource type="Script" uid="uid://dpi3inldik0ho" path="res://common/modules/combat/damage_receiver/damage_receiver_module.gd" id="4_ee1ma"]
 [ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/modules/hurtbox/hurtbox.gd" id="5_gllc2"]
-[ext_resource type="Script" uid="uid://duxq84e027el0" path="res://common/modules/combat/hit_feedback_module.gd" id="7_ef5gh"]
+[ext_resource type="Script" uid="uid://duxq84e027el0" path="res://common/modules/combat/hit_feedback/hit_feedback_module.gd" id="7_ef5gh"]
 [ext_resource type="Script" uid="uid://bu436ru5hhd66" path="res://common/_legacy/animation/base_animation.gd" id="11_1ubwe"]
 [ext_resource type="PackedScene" uid="uid://d0tswwb1d3smv" path="res://common/modules/health_bar/health_bar.tscn" id="12_6tvbp"]
 

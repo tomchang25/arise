@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://mo52nt0sxj4w"]
 
-[ext_resource type="Script" uid="uid://b2nujsk0u866t" path="res://common/modules/attack/attack_effect/projectile_attack_effect.gd" id="1_iakvv"]
+[ext_resource type="Script" uid="uid://b2nujsk0u866t" path="res://common/modules/combat/attack/attack_effect/projectile_attack_effect.gd" id="1_iakvv"]
 [ext_resource type="Script" uid="uid://co1s16xd7omkk" path="res://common/modules/hitbox/hitbox.gd" id="2_lycvi"]
 
 [sub_resource type="Curve" id="Curve_iakvv"]
