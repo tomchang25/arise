@@ -47,6 +47,7 @@ position = Vector2(160, 90)
 script = ExtResource("3_lq0vo")
 melee_effect_scene = ExtResource("4_4r8qm")
 max_distance = 9999.0
+attack_cooldown = 0.05
 metadata/_custom_type_script = "uid://d1yimk3mk35ag"
 
 [node name="TesterAttacker" type="Node2D" parent="." node_paths=PackedStringArray("attack", "dummy_container")]

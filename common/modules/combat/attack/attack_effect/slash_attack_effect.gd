@@ -10,13 +10,14 @@ extends AttackEffect
 @onready var line_2d: Line2D = $Line2D
 
 @export_group("SFX")
-@export var enabled_swing_sfx := true
-@export var swing_sfx_key: StringName = &"swing"
-@export var swing_sfx_stream: AudioStream
-@export var swing_sfx_volume_db: float = 0.0
-@export var swing_sfx_limited := true
-@export var swing_sfx_max_per_window := 4
-@export var swing_sfx_window_sec := 0.05
+@export var slash_audio: AudioEvent = null
+
+# @export var swing_sfx_key: StringName = &"swing"
+# @export var swing_sfx_stream: AudioStream
+# @export var swing_sfx_volume_db: float = 0.0
+# @export var swing_sfx_limited := true
+# @export var swing_sfx_max_per_window := 4
+# @export var swing_sfx_window_sec := 0.05
 
 
 func setup(info: AttackInfo) -> void:
@@ -55,11 +56,7 @@ func _play_slash_vfx() -> void:
 
 
 func _play_slash_sfx() -> void:
-    if enabled_swing_sfx and swing_sfx_stream != null:
-        if swing_sfx_limited:
-            AudioManager.play_sfx_limited(swing_sfx_stream, swing_sfx_key, global_position, swing_sfx_max_per_window, swing_sfx_window_sec, swing_sfx_volume_db)
-        else:
-            AudioManager.play_sfx_2d(swing_sfx_stream, global_position, swing_sfx_volume_db)
+    AudioManager.play_event(slash_audio, global_position)
 
 
 func _update_slash_points(progress: float) -> void:

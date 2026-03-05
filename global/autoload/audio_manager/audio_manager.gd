@@ -99,12 +99,27 @@ func play_sfx_2d(stream: AudioStream, world_pos: Vector2, volume_db: float = 0.0
 func play_sfx_limited(
     stream: AudioStream, key: StringName, world_pos: Vector2, max_per_window: int = 4, window_sec: float = 0.05, volume_db: float = 0.0, pitch: float = -1.0
 ) -> void:
-    print("TEST")
     if stream == null:
         return
     if _is_rate_limited(key, max_per_window, window_sec):
         return
     play_sfx_2d(stream, world_pos, volume_db, pitch)
+
+
+func play_event(event: AudioEvent, world_pos: Vector2 = Vector2.ZERO) -> void:
+    if event == null:
+        return
+
+    var stream := event.pick_stream()
+    if stream == null:
+        return
+
+    var pitch := randf_range(event.pitch_min, event.pitch_max)
+
+    if event.limiter_key != &"":
+        play_sfx_limited(stream, event.limiter_key, world_pos, event.max_per_window, event.window_sec, event.volume_db, pitch)
+    else:
+        play_sfx_2d(stream, world_pos, event.volume_db, pitch)
 
 
 # -------------------------

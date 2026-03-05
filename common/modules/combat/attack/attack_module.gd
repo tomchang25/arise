@@ -59,7 +59,7 @@ func start_attack(target_position: Vector2) -> void:
             info.target_factions = [Stats.Faction.PLAYER]
 
     info.source_position = global_position
-    info.hit_sfx_key = &"hit"
+    # info.hit_sfx_key = &"hit"
 
     _execute_attack_logic(target_position, info)
 

@@ -11,6 +11,6 @@ var source_position: Vector2 = Vector2.ZERO
 var knockback_dir: Vector2 = Vector2.ZERO  # if ZERO -> receiver infers from source_position
 var knockback_force: float = 0.0
 
-# Optional SFX routing
-var hit_sfx_key: StringName = &""
-var hit_sfx_stream: AudioStream = null
+# # Optional SFX routing
+# var hit_sfx_key: StringName = &""
+# var hit_sfx_stream: AudioStream = null
