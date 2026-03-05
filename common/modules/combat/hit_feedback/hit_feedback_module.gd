@@ -19,17 +19,10 @@ extends Node
 @export var visuals_path: NodePath = ^"Visuals"
 @export var hit_shader: Shader = preload("res://common/shaders/hit_overlay_flash.gdshader")
 
-@export_group("SFX")
+@export_group("Audio")
 @export var enabled_sfx := true
-
-@export var sfx_max_per_window := 4
-@export var sfx_window_sec := 0.05
-
-@export var damaged_sfx_key: StringName = &"damaged"
-@export var damaged_sfx_stream: AudioStream
-@export var blocked_sfx_key: StringName = &"blocked"
-@export var blocked_sfx_stream: AudioStream
-@export var sfx_volume_db: float = 0.0
+@export var damaged_audio: SpatialAudioEvent
+@export var blocked_audio: SpatialAudioEvent
 
 var _flash_tween: Tween
 var _cached_targets: Array[CanvasItem] = []
@@ -66,13 +59,13 @@ func _on_damaged(_amount: float, _new_hp: float, info: AttackInfo) -> void:
         _play_flash(_get_flash_time_from_invuln())
 
     if enabled_sfx:
-        _play_damaged_sfx(info)
+        _play_audio_event(damaged_audio)
 
 
-func _on_blocked(info: AttackInfo) -> void:
+func _on_blocked(_info: AttackInfo) -> void:
     if not enabled_sfx:
         return
-    _play_block_sfx(info)
+    _play_audio_event(blocked_audio)
 
 
 # -------------------------
@@ -209,15 +202,21 @@ func _ensure_hit_shader_material(ci: CanvasItem) -> void:
 # -------------------------
 # SFX
 # -------------------------
-func _play_damaged_sfx(_info: AttackInfo) -> void:
-    var stream := damaged_sfx_stream
-    if stream == null:
-        return
-    AudioManager.play_sfx_limited(stream, damaged_sfx_key, owner.global_position, sfx_max_per_window, sfx_window_sec, sfx_volume_db)
+# func _play_damaged_sfx(_info: AttackInfo) -> void:
+#     var stream := damaged_sfx_stream
+#     if stream == null:
+#         return
+#     AudioManager.play_sfx_limited(stream, damaged_sfx_key, owner.global_position, sfx_max_per_window, sfx_window_sec, sfx_volume_db)
+
+# func _play_block_sfx(_info: AttackInfo) -> void:
+#     var stream := blocked_sfx_stream
+#     if stream == null:
+#         return
+#     AudioManager.play_sfx_limited(stream, blocked_sfx_key, owner.global_position, sfx_max_per_window, sfx_window_sec, sfx_volume_db)
 
 
-func _play_block_sfx(_info: AttackInfo) -> void:
-    var stream := blocked_sfx_stream
-    if stream == null:
+func _play_audio_event(ev: AudioEvent) -> void:
+    if ev == null:
         return
-    AudioManager.play_sfx_limited(stream, blocked_sfx_key, owner.global_position, sfx_max_per_window, sfx_window_sec, sfx_volume_db)
+
+    AudioManager.play_event(ev, owner.global_position)
