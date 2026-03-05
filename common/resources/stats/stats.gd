@@ -7,22 +7,38 @@ signal health_depleted
 signal stats_recalculated
 
 enum BuffableStat { MAX_HEALTH, DAMAGE, DEFENSE, SPEED }
-enum Faction { PLAYER, ENEMY }
+enum Faction { PLAYER, ENEMY, NEUTRAL }
 
 const BASE_LEVEL_XP: float = 100.0
 const BASE_LEVEL_XP_INCREMENT_PER_LEVEL: float = 50.0
 
 @export var faction: Faction
-@export var base_max_health: float = 100.0
-@export var base_damage: float = 10.0
-@export var base_defense: float = 10.0
-@export var base_speed: float = 1.0
+@export var health: float = 100.0:
+    set = _on_health_set
+
+@export_group("Base Stats")
+@export var base_max_health: float = 100.0:
+    set(value):
+        base_max_health = value
+        recalculate_stats()
+
+@export var base_damage: float = 10.0:
+    set(value):
+        base_damage = value
+        recalculate_stats()
+
+@export var base_defense: float = 10.0:
+    set(value):
+        base_defense = value
+        recalculate_stats()
+
+@export var base_speed: float = 1.0:
+    set(value):
+        base_speed = value
+        recalculate_stats()
 
 @export var experience: float = 0.0:
     set = _on_experience_set
-
-@export var health: float = 100.0:
-    set = _on_health_set
 
 @export_group("Combat")
 @export var invuln_time: float = 0.08

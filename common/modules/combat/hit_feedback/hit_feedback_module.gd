@@ -110,13 +110,11 @@ func _spawn_hit_particles(info: AttackInfo) -> void:
 
 
 func _spawn_death_particles(info: AttackInfo) -> void:
-    _spawn_particles(death_particles_scene, death_particles_color, death_particles_scale, info)
+    _spawn_particles(death_particles_scene, death_particles_color, death_particles_scale, info, true)
 
 
-func _spawn_particles(scene: PackedScene, color: Color, scale_amount: float, info: AttackInfo) -> void:
+func _spawn_particles(scene: PackedScene, color: Color, scale_amount: float, info: AttackInfo, force_world: bool = false) -> void:
     if scene == null:
-        return
-    if owner == null:
         return
 
     var node := scene.instantiate()
@@ -129,9 +127,19 @@ func _spawn_particles(scene: PackedScene, color: Color, scale_amount: float, inf
     var particles := node as CPUParticles2D
 
     # Attach
-    var parent: Node = owner if particles_attach_to_owner else get_tree().current_scene
+    var parent: Node = null
+    if force_world:
+        parent = get_tree().current_scene
+    else:
+        parent = owner if particles_attach_to_owner else get_tree().current_scene
+
     if parent == null:
-        parent = owner
+        # last resort fallback
+        parent = get_tree().current_scene
+    if parent == null:
+        # ultra fallback: can't spawn anywhere
+        particles.queue_free()
+        return
 
     parent.add_child(particles)
 

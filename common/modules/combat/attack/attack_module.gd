@@ -54,9 +54,13 @@ func start_attack(target_position: Vector2) -> void:
     info.target_factions = []
     match attacker_stats.faction:
         Stats.Faction.PLAYER:
-            info.target_factions = [Stats.Faction.ENEMY]
+            info.target_factions = [Stats.Faction.ENEMY, Stats.Faction.NEUTRAL]
         Stats.Faction.ENEMY:
             info.target_factions = [Stats.Faction.PLAYER]
+        Stats.Faction.NEUTRAL:
+            info.target_factions = []  # or pick something if neutral attackers exist
+        _:
+            info.target_factions = []
 
     info.source_position = global_position
     # info.hit_sfx_key = &"hit"

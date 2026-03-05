@@ -1,32 +1,83 @@
-[gd_scene load_steps=7 format=3 uid="uid://dhjvr7458gxu0"]
+[gd_scene format=3 uid="uid://dhjvr7458gxu0"]
 
+[ext_resource type="Script" uid="uid://bhlmagkmgviu5" path="res://game/destroyables/destroyable.gd" id="1_f0jku"]
 [ext_resource type="Shader" uid="uid://dsqsptna4hqxl" path="res://common/shaders/plant_shake.gdshader" id="1_nqoqf"]
-[ext_resource type="Texture2D" uid="uid://bbkknh4s2h6mf" path="res://game/destroyables/plant_props/art/Basic Grass Biom things 1.png" id="2_j7w5l"]
+[ext_resource type="Texture2D" uid="uid://bbkknh4s2h6mf" path="res://game/destroyables/plant_props/asset/Basic Grass Biom things 1.png" id="2_j7w5l"]
 [ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/modules/hurtbox/hurtbox.gd" id="3_j7w5l"]
+[ext_resource type="Script" uid="uid://dpi3inldik0ho" path="res://common/modules/combat/damage_receiver/damage_receiver_module.gd" id="4_wu8cn"]
+[ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/resources/stats/stats.gd" id="5_op2ie"]
+[ext_resource type="Script" uid="uid://duxq84e027el0" path="res://common/modules/combat/hit_feedback/hit_feedback_module.gd" id="6_kxwfk"]
+[ext_resource type="PackedScene" uid="uid://c5uu71l3jwxu6" path="res://common/vfx/one_shot_hit_particles.tscn" id="7_0ab2y"]
+[ext_resource type="Resource" uid="uid://dtounutdyy0jl" path="res://game/destroyables/plant_props/plant_died_audio.tres" id="9_5dmro"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_dvjh2"]
+
+[sub_resource type="Resource" id="Resource_wo60b"]
+script = ExtResource("5_op2ie")
+faction = 2
+health = 1.0
+base_max_health = 1.0
+base_damage = 0.0
+base_defense = 0.0
+base_speed = 0.0
+metadata/_custom_type_script = "uid://bkgf2cii3bfri"
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_nqoqf"]
 shader = ExtResource("1_nqoqf")
 shader_parameter/shake_intensity = 1.0
 shader_parameter/shake_speed = 2.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_dvjh2"]
-radius = 7.0
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_qpcxg"]
+radius = 6.0
+height = 14.0
 
-[node name="PlantProps" type="Node2D"]
+[sub_resource type="Resource" id="Resource_qvs1l"]
+resource_local_to_scene = true
+script = ExtResource("5_op2ie")
+faction = 1
+health = 1.0
+base_max_health = 1.0
+base_damage = 0.0
+base_defense = 0.0
+invuln_time = 0.5
+
+[node name="PlantProps" type="Node2D" unique_id=117392384 node_paths=PackedStringArray("hurtbox", "damage_receiver")]
 material = SubResource("ShaderMaterial_dvjh2")
+script = ExtResource("1_f0jku")
+stats = SubResource("Resource_wo60b")
+hurtbox = NodePath("Hurtbox")
+damage_receiver = NodePath("DamageReceiverModule")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Visuals" type="Node2D" parent="." unique_id=1202792443]
+
+[node name="Sprite" type="Sprite2D" parent="Visuals" unique_id=85581586]
 material = SubResource("ShaderMaterial_nqoqf")
+position = Vector2(0, -7)
 texture = ExtResource("2_j7w5l")
 region_enabled = true
 region_rect = Rect2(80, 0, 16, 16)
 
-[node name="Hurtbox" type="Area2D" parent="."]
+[node name="Hurtbox" type="Area2D" parent="." unique_id=1421707497]
+collision_layer = 2
+collision_mask = 0
 script = ExtResource("3_j7w5l")
 metadata/_custom_type_script = "uid://dby4p11qhtin7"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
-shape = SubResource("CircleShape2D_dvjh2")
-debug_color = Color(0.980392, 0, 0.388235, 0.0862745)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=1645878871]
+position = Vector2(0, -6)
+shape = SubResource("CapsuleShape2D_qpcxg")
+debug_color = Color(0.6392157, 0.5294118, 0, 0.105882354)
+
+[node name="DamageReceiverModule" type="Node" parent="." unique_id=671905773 node_paths=PackedStringArray("hurtbox")]
+script = ExtResource("4_wu8cn")
+stats = SubResource("Resource_qvs1l")
+hurtbox = NodePath("../Hurtbox")
+metadata/_custom_type_script = "uid://dpi3inldik0ho"
+
+[node name="HitFeedbackModule" type="Node" parent="." unique_id=1352019298]
+script = ExtResource("6_kxwfk")
+enabled_knockback = false
+death_particles_scene = ExtResource("7_0ab2y")
+death_particles_color = Color(0.8, 1, 0, 1)
+died_audio = ExtResource("9_5dmro")
+metadata/_custom_type_script = "uid://duxq84e027el0"

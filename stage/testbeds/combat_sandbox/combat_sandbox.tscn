@@ -2,28 +2,29 @@
 
 [ext_resource type="PackedScene" uid="uid://bmlww50h5ia4c" path="res://game/actors/dummies/dummy.tscn" id="1_gwppr"]
 [ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/resources/stats/stats.gd" id="2_e6476"]
+[ext_resource type="PackedScene" uid="uid://dhjvr7458gxu0" path="res://game/destroyables/plant_props/plant_props.tscn" id="3_4r8qm"]
 [ext_resource type="Script" uid="uid://d1yimk3mk35ag" path="res://common/modules/combat/attack/melee_attack_module.gd" id="3_lq0vo"]
 [ext_resource type="Script" uid="uid://clpk26ghev2ij" path="res://stage/testbeds/combat_sandbox/tester_attacker.gd" id="3_rbd4g"]
 [ext_resource type="PackedScene" uid="uid://jla2t1i1qafl" path="res://common/modules/combat/attack/attack_effect/slash_attack_effect.tscn" id="4_4r8qm"]
-
-[sub_resource type="Resource" id="Resource_lq0vo"]
-resource_local_to_scene = true
-script = ExtResource("2_e6476")
-faction = 1
-base_max_health = 1000.0
-base_damage = 0.0
-base_defense = 25.0
-health = 1000.0
-invuln_time = 0.5
 
 [sub_resource type="Resource" id="Resource_4r8qm"]
 resource_local_to_scene = true
 script = ExtResource("2_e6476")
 faction = 1
+health = 1000.0
 base_max_health = 1000.0
 base_damage = 0.0
 base_defense = 25.0
+invuln_time = 0.5
+
+[sub_resource type="Resource" id="Resource_qohqq"]
+resource_local_to_scene = true
+script = ExtResource("2_e6476")
+faction = 1
 health = 1000.0
+base_max_health = 1000.0
+base_damage = 0.0
+base_defense = 25.0
 invuln_time = 0.5
 
 [node name="CombatSandbox" type="Node2D" unique_id=1694751769]
@@ -32,11 +33,14 @@ invuln_time = 0.5
 
 [node name="Dummy" parent="Dummies" unique_id=325473665 instance=ExtResource("1_gwppr")]
 position = Vector2(69, 94)
-stats = SubResource("Resource_lq0vo")
+stats = SubResource("Resource_4r8qm")
 
 [node name="Dummy2" parent="Dummies" unique_id=1726157216 instance=ExtResource("1_gwppr")]
 position = Vector2(235, 86)
-stats = SubResource("Resource_4r8qm")
+stats = SubResource("Resource_qohqq")
+
+[node name="PlantProps" parent="Dummies" unique_id=117392384 instance=ExtResource("3_4r8qm")]
+position = Vector2(121, 51)
 
 [node name="MeleeAttackModule" type="Node2D" parent="." unique_id=933468971]
 position = Vector2(160, 90)
