@@ -1,4 +1,4 @@
-[gd_scene load_steps=47 format=3 uid="uid://bmlww50h5ia4c"]
+[gd_scene format=3 uid="uid://bmlww50h5ia4c"]
 
 [ext_resource type="Script" uid="uid://lmen7iji0h2q" path="res://game/actors/dummies/dummy.gd" id="1_ef5gh"]
 [ext_resource type="Texture2D" uid="uid://cfybygt5rk5cf" path="res://game/actors/dummies/art/noble.png" id="2_ee1ma"]
@@ -21,8 +21,6 @@ faction = 1
 base_max_health = 1000.0
 base_damage = 0.0
 base_defense = 25.0
-base_speed = 1.0
-experience = 0.0
 health = 1000.0
 invuln_time = 0.5
 
@@ -112,7 +110,7 @@ nodes/StateMachine/node = SubResource("AnimationNodeStateMachine_iga26")
 nodes/StateMachine/position = Vector2(-300, 120)
 nodes/TimeScale/node = SubResource("AnimationNodeTimeScale_ump6o")
 nodes/TimeScale/position = Vector2(60, 120)
-node_connections = [&"TimeScale", 0, &"StateMachine", &"output", 0, &"TimeScale"]
+node_connections = [&"output", 0, &"TimeScale", &"TimeScale", 0, &"StateMachine"]
 
 [sub_resource type="Animation" id="Animation_oas31"]
 resource_name = "AttackDown"
@@ -352,7 +350,7 @@ _data = {
 &"RESET": SubResource("Animation_i87wb")
 }
 
-[node name="Dummy" type="CharacterBody2D" node_paths=PackedStringArray("hurtbox", "damage_receiver", "health_bar") groups=["dummies"]]
+[node name="Dummy" type="CharacterBody2D" unique_id=306738905 node_paths=PackedStringArray("hurtbox", "damage_receiver", "health_bar") groups=["dummies"]]
 collision_layer = 2
 collision_mask = 2
 script = ExtResource("1_ef5gh")
@@ -361,36 +359,36 @@ hurtbox = NodePath("Hurtbox")
 damage_receiver = NodePath("DamageReceiverModule")
 health_bar = NodePath("HealthBar")
 
-[node name="Visuals" type="Node2D" parent="."]
+[node name="Visuals" type="Node2D" parent="." unique_id=160001298]
 
-[node name="Sprite" type="Sprite2D" parent="Visuals"]
+[node name="Sprite" type="Sprite2D" parent="Visuals" unique_id=1554092608]
 position = Vector2(0, -6)
 texture = ExtResource("2_ee1ma")
 hframes = 4
 vframes = 7
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1579223532]
 rotation = 1.5708
 shape = SubResource("CapsuleShape2D_lvn57")
 
-[node name="Hurtbox" type="Area2D" parent="."]
+[node name="Hurtbox" type="Area2D" parent="." unique_id=294026411]
 collision_layer = 2
 collision_mask = 0
 script = ExtResource("5_gllc2")
 metadata/_custom_type_script = "uid://dby4p11qhtin7"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=1206509079]
 position = Vector2(0, -6)
 shape = SubResource("CapsuleShape2D_wj0qn")
 debug_color = Color(0.639216, 0.529412, 0, 0.329412)
 
-[node name="DamageReceiverModule" type="Node" parent="." node_paths=PackedStringArray("hurtbox")]
+[node name="DamageReceiverModule" type="Node" parent="." unique_id=1125537514 node_paths=PackedStringArray("hurtbox")]
 script = ExtResource("4_ee1ma")
 stats = SubResource("Resource_3o05k")
 hurtbox = NodePath("../Hurtbox")
 metadata/_custom_type_script = "uid://dpi3inldik0ho"
 
-[node name="HitFeedbackModule" type="Node" parent="." node_paths=PackedStringArray("damage_receiver")]
+[node name="HitFeedbackModule" type="Node" parent="." unique_id=1318286615 node_paths=PackedStringArray("damage_receiver")]
 script = ExtResource("7_ef5gh")
 damage_receiver = NodePath("../DamageReceiverModule")
 enabled_knockback = false
@@ -401,7 +399,7 @@ blocked_audio = ExtResource("8_elycs")
 died_audio = ExtResource("11_he760")
 metadata/_custom_type_script = "uid://duxq84e027el0"
 
-[node name="HealthBar" parent="." instance=ExtResource("12_6tvbp")]
+[node name="HealthBar" parent="." unique_id=1663793119 instance=ExtResource("12_6tvbp")]
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
@@ -411,18 +409,16 @@ offset_right = 12.0
 offset_bottom = 8.0
 grow_horizontal = 2
 
-[node name="Animation" type="Node" parent="." node_paths=PackedStringArray("animation_tree")]
+[node name="Animation" type="Node" parent="." unique_id=76671534 node_paths=PackedStringArray("animation_tree")]
 script = ExtResource("11_1ubwe")
 animation_tree = NodePath("AnimationTree")
 
-[node name="AnimationTree" type="AnimationTree" parent="Animation"]
+[node name="AnimationTree" type="AnimationTree" parent="Animation" unique_id=202309910]
 tree_root = SubResource("AnimationNodeBlendTree_xmn1q")
 anim_player = NodePath("../AnimationPlayer")
 parameters/StateMachine/Attack/blend_position = Vector2(0.00197494, 0.905405)
 parameters/StateMachine/Move/blend_position = Vector2(-0.162607, -0.756701)
 parameters/TimeScale/scale = 1.0
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Animation"]
-libraries = {
-&"": SubResource("AnimationLibrary_i87wb")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Animation" unique_id=246592332]
+libraries/ = SubResource("AnimationLibrary_i87wb")
