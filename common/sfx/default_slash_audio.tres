@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="SpatialAudioEvent" load_steps=3 format=3 uid="uid://d2s4krk5m4bxe"]
 
 [ext_resource type="Script" uid="uid://dk6ul5gi57s2y" path="res://common/resources/audio/spatial_audio_event.gd" id="1_aklg6"]
-[ext_resource type="AudioStream" uid="uid://bp2vn13qul27f" path="res://common/modules/combat/sfx/asset/film-special-effects-sword-slash-315218.wav" id="2_he2pq"]
+[ext_resource type="AudioStream" uid="uid://bp2vn13qul27f" path="res://common/sfx/asset/film-special-effects-sword-slash-315218.wav" id="2_he2pq"]
 
 [resource]
 script = ExtResource("1_aklg6")

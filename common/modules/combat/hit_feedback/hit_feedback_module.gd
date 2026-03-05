@@ -19,10 +19,32 @@ extends Node
 @export var visuals_path: NodePath = ^"Visuals"
 @export var hit_shader: Shader = preload("res://common/shaders/hit_overlay_flash.gdshader")
 
+@export_group("Particles")
+@export var enabled_particles := true
+
+## Assign a PackedScene that is a GPUParticles2D or CPUParticles2D (one-shot style).
+@export var hit_particles_scene: PackedScene
+@export var death_particles_scene: PackedScene
+
+## Colors (blood / dirt / pottery etc.)
+@export var hit_particles_color: Color = Color(0.8, 0.0, 0.0, 1.0)
+@export var death_particles_color: Color = Color(0.8, 0.0, 0.0, 1.0)
+
+## “Size” control: scales the whole particles node (easy + reliable)
+@export var hit_particles_scale := 1.0
+@export var death_particles_scale := 2.0
+
+## Optional offset if you want it to spawn slightly above feet, etc.
+@export var particles_offset: Vector2 = Vector2.ZERO
+
+## Where to attach particles (owner is usually fine). If you want them above everything, set to current_scene.
+@export var particles_attach_to_owner := true
+
 @export_group("Audio")
 @export var enabled_sfx := true
 @export var damaged_audio: SpatialAudioEvent
 @export var blocked_audio: SpatialAudioEvent
+@export var died_audio: SpatialAudioEvent
 
 var _flash_tween: Tween
 var _cached_targets: Array[CanvasItem] = []
@@ -39,6 +61,8 @@ func _ready() -> void:
             damage_receiver.damaged.connect(_on_damaged)
         if not damage_receiver.blocked.is_connected(_on_blocked):
             damage_receiver.blocked.connect(_on_blocked)
+        if not damage_receiver.died.is_connected(_on_died):
+            damage_receiver.died.connect(_on_died)
 
 
 func _get_flash_time_from_invuln() -> float:
@@ -58,14 +82,79 @@ func _on_damaged(_amount: float, _new_hp: float, info: AttackInfo) -> void:
         # print_debug("DamageReceiverModule: playing flash for %s seconds" % [_get_flash_time_from_invuln()])
         _play_flash(_get_flash_time_from_invuln())
 
-    if enabled_sfx:
+    if enabled_particles:
+        _spawn_hit_particles(info)
+
+    if enabled_sfx and damaged_audio:
         _play_audio_event(damaged_audio)
 
 
 func _on_blocked(_info: AttackInfo) -> void:
-    if not enabled_sfx:
+    if enabled_sfx and blocked_audio:
+        _play_audio_event(blocked_audio)
+
+
+func _on_died(info: AttackInfo) -> void:
+    if enabled_particles:
+        _spawn_death_particles(info)
+
+    if enabled_sfx and died_audio:
+        _play_audio_event(died_audio)
+
+
+# -------------------------
+# Particles
+# -------------------------
+func _spawn_hit_particles(info: AttackInfo) -> void:
+    _spawn_particles(hit_particles_scene, hit_particles_color, hit_particles_scale, info)
+
+
+func _spawn_death_particles(info: AttackInfo) -> void:
+    _spawn_particles(death_particles_scene, death_particles_color, death_particles_scale, info)
+
+
+func _spawn_particles(scene: PackedScene, color: Color, scale_amount: float, info: AttackInfo) -> void:
+    if scene == null:
         return
-    _play_audio_event(blocked_audio)
+    if owner == null:
+        return
+
+    var node := scene.instantiate()
+
+    if not node is CPUParticles2D:
+        push_warning("HitFeedbackModule: particle scene must be CPUParticles2D")
+        node.queue_free()
+        return
+
+    var particles := node as CPUParticles2D
+
+    # Attach
+    var parent: Node = owner if particles_attach_to_owner else get_tree().current_scene
+    if parent == null:
+        parent = owner
+
+    parent.add_child(particles)
+
+    # Position
+    if owner is Node2D:
+        particles.global_position = owner.global_position + particles_offset
+
+    # Size + color
+    particles.scale = Vector2.ONE * max(scale_amount, 0.01)
+    particles.color = color
+
+    # Rotate by attack direction (so emission points “forward”)
+    var dir := _attack_dir(info)
+    particles.direction = Vector2.RIGHT  # keep a stable local emission axis
+    particles.global_rotation = dir.angle()  # rotate the whole system
+
+    # Emit once
+    particles.one_shot = true
+    particles.emitting = true
+
+    # Auto free
+    if not particles.finished.is_connected(particles.queue_free):
+        particles.finished.connect(particles.queue_free)
 
 
 # -------------------------
@@ -202,21 +291,25 @@ func _ensure_hit_shader_material(ci: CanvasItem) -> void:
 # -------------------------
 # SFX
 # -------------------------
-# func _play_damaged_sfx(_info: AttackInfo) -> void:
-#     var stream := damaged_sfx_stream
-#     if stream == null:
-#         return
-#     AudioManager.play_sfx_limited(stream, damaged_sfx_key, owner.global_position, sfx_max_per_window, sfx_window_sec, sfx_volume_db)
-
-# func _play_block_sfx(_info: AttackInfo) -> void:
-#     var stream := blocked_sfx_stream
-#     if stream == null:
-#         return
-#     AudioManager.play_sfx_limited(stream, blocked_sfx_key, owner.global_position, sfx_max_per_window, sfx_window_sec, sfx_volume_db)
-
-
 func _play_audio_event(ev: AudioEvent) -> void:
     if ev == null:
         return
 
     AudioManager.play_event(ev, owner.global_position)
+
+
+# -------------------------
+# Internal
+# -------------------------
+func _attack_dir(info: AttackInfo) -> Vector2:
+    if info == null:
+        return Vector2.RIGHT
+
+    var dir := info.knockback_dir
+    if dir == Vector2.ZERO and owner is Node2D:
+        dir = ((owner as Node2D).global_position - info.source_position).normalized()
+
+    if dir == Vector2.ZERO:
+        dir = Vector2.RIGHT
+
+    return dir

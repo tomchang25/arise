@@ -1,13 +1,17 @@
-[gd_scene load_steps=43 format=3 uid="uid://bmlww50h5ia4c"]
+[gd_scene load_steps=47 format=3 uid="uid://bmlww50h5ia4c"]
 
 [ext_resource type="Script" uid="uid://lmen7iji0h2q" path="res://game/actors/dummies/dummy.gd" id="1_ef5gh"]
 [ext_resource type="Texture2D" uid="uid://cfybygt5rk5cf" path="res://game/actors/dummies/art/noble.png" id="2_ee1ma"]
 [ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/resources/stats/stats.gd" id="2_ef5gh"]
 [ext_resource type="Script" uid="uid://dpi3inldik0ho" path="res://common/modules/combat/damage_receiver/damage_receiver_module.gd" id="4_ee1ma"]
 [ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/modules/hurtbox/hurtbox.gd" id="5_gllc2"]
+[ext_resource type="Resource" uid="uid://vp7463hsmyw0" path="res://common/sfx/default_damaged_audio.tres" id="7_3o05k"]
 [ext_resource type="Script" uid="uid://duxq84e027el0" path="res://common/modules/combat/hit_feedback/hit_feedback_module.gd" id="7_ef5gh"]
-[ext_resource type="Resource" uid="uid://xsccf58mw7d5" path="res://common/modules/combat/sfx/default_blocked_audio.tres" id="8_elycs"]
+[ext_resource type="PackedScene" uid="uid://c5uu71l3jwxu6" path="res://common/vfx/one_shot_hit_particles.tscn" id="7_elycs"]
+[ext_resource type="PackedScene" uid="uid://duohq0xpsyv1" path="res://common/vfx/explosion.tscn" id="8_brnip"]
+[ext_resource type="Resource" uid="uid://xsccf58mw7d5" path="res://common/sfx/default_blocked_audio.tres" id="8_elycs"]
 [ext_resource type="Script" uid="uid://bu436ru5hhd66" path="res://common/_legacy/animation/base_animation.gd" id="11_1ubwe"]
+[ext_resource type="Resource" uid="uid://csppceje2neh5" path="res://common/sfx/default_died_audio.tres" id="11_he760"]
 [ext_resource type="PackedScene" uid="uid://d0tswwb1d3smv" path="res://common/modules/health_bar/health_bar.tscn" id="12_6tvbp"]
 
 [sub_resource type="Resource" id="Resource_3o05k"]
@@ -382,6 +386,7 @@ debug_color = Color(0.639216, 0.529412, 0, 0.329412)
 
 [node name="DamageReceiverModule" type="Node" parent="." node_paths=PackedStringArray("hurtbox")]
 script = ExtResource("4_ee1ma")
+stats = SubResource("Resource_3o05k")
 hurtbox = NodePath("../Hurtbox")
 metadata/_custom_type_script = "uid://dpi3inldik0ho"
 
@@ -389,7 +394,11 @@ metadata/_custom_type_script = "uid://dpi3inldik0ho"
 script = ExtResource("7_ef5gh")
 damage_receiver = NodePath("../DamageReceiverModule")
 enabled_knockback = false
+hit_particles_scene = ExtResource("7_elycs")
+death_particles_scene = ExtResource("8_brnip")
+damaged_audio = ExtResource("7_3o05k")
 blocked_audio = ExtResource("8_elycs")
+died_audio = ExtResource("11_he760")
 metadata/_custom_type_script = "uid://duxq84e027el0"
 
 [node name="HealthBar" parent="." instance=ExtResource("12_6tvbp")]

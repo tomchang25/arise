@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3 uid="uid://c5uu71l3jwxu6"]
+
+[sub_resource type="Curve" id="Curve_v78cs"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[node name="OneShotHitParticles" type="CPUParticles2D"]
+amount = 10
+lifetime = 0.5
+explosiveness = 1.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 25.0
+initial_velocity_max = 50.0
+scale_amount_min = 2.0
+scale_amount_max = 2.0
+scale_amount_curve = SubResource("Curve_v78cs")
