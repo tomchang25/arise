@@ -1,17 +1,11 @@
-[gd_resource type="Resource" script_class="SpatialAudioEvent" load_steps=3 format=3 uid="uid://vp7463hsmyw0"]
+[gd_resource type="Resource" script_class="SpatialAudioEvent" format=3 uid="uid://vp7463hsmyw0"]
 
 [ext_resource type="Script" uid="uid://dk6ul5gi57s2y" path="res://common/resources/audio/spatial_audio_event.gd" id="1_87o2f"]
 [ext_resource type="AudioStream" uid="uid://i0bu7fodbyy0" path="res://common/sfx/asset/hit.wav" id="2_f1vy3"]
 
 [resource]
 script = ExtResource("1_87o2f")
-pitch_min = 0.95
-pitch_max = 1.05
-limiter_key = &""
-max_per_window = 4
-window_sec = 0.05
-volume_db = 0.0
+volume_db = -10.0
 bus_id = 1
-bus_override = &""
 streams = Array[AudioStream]([ExtResource("2_f1vy3")])
 metadata/_custom_type_script = "uid://dk6ul5gi57s2y"

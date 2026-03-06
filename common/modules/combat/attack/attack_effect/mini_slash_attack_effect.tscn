@@ -1,0 +1,25 @@
+[gd_scene format=3 uid="uid://327801cur3pj"]
+
+[ext_resource type="Script" uid="uid://cg331ejtl5ts1" path="res://common/modules/combat/attack/attack_effect/slash_attack_effect.gd" id="1_bj6wr"]
+[ext_resource type="Resource" uid="uid://d2s4krk5m4bxe" path="res://common/sfx/default_slash_audio.tres" id="2_i2uyk"]
+[ext_resource type="Script" uid="uid://co1s16xd7omkk" path="res://common/modules/hitbox/hitbox.gd" id="3_fwmkr"]
+
+[sub_resource type="Curve" id="Curve_weeud"]
+_data = [Vector2(0, 0.1), 0.0, 0.0, 0, 0, Vector2(0.4, 0.5), 0.0, 0.0, 0, 0, Vector2(0.6, 0.5), 0.0, 0.0, 0, 0, Vector2(1, 0.1), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[node name="MiniSlashAttackEffect" type="Node2D" unique_id=946117241]
+script = ExtResource("1_bj6wr")
+radius = 120.0
+arc_angle = 10.0
+slash_width = 4.0
+slash_audio = ExtResource("2_i2uyk")
+
+[node name="Line2D" type="Line2D" parent="." unique_id=874783785]
+points = PackedVector2Array(5, 23, 28, 13, 58, 12, 67, 29)
+width_curve = SubResource("Curve_weeud")
+joint_mode = 2
+
+[node name="Hitbox" type="Area2D" parent="." unique_id=1437983651]
+script = ExtResource("3_fwmkr")
+metadata/_custom_type_script = "uid://co1s16xd7omkk"

@@ -54,7 +54,7 @@ func _on_hurtbox_hit(info: AttackInfo) -> void:
         return
 
     # 2) compute damage (snapshot damage from AttackInfo)
-    var raw := info.damage
+    var raw := info.final_damage
     var final_damage := raw - (stats.current_defense * defense_scaling)
     final_damage = max(final_damage, clamp_min_damage)
 
