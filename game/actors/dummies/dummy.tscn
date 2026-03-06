@@ -8,8 +8,10 @@
 [ext_resource type="Resource" uid="uid://vp7463hsmyw0" path="res://common/sfx/default_damaged_audio.tres" id="7_3o05k"]
 [ext_resource type="Script" uid="uid://duxq84e027el0" path="res://common/modules/combat/hit_feedback/hit_feedback_module.gd" id="7_ef5gh"]
 [ext_resource type="PackedScene" uid="uid://c5uu71l3jwxu6" path="res://common/vfx/one_shot_hit_particles.tscn" id="7_elycs"]
+[ext_resource type="Script" uid="uid://6jeesy7iltw" path="res://common/modules/combat/damage_numbers/damage_numbers_module.gd" id="8_1y3fw"]
 [ext_resource type="PackedScene" uid="uid://duohq0xpsyv1" path="res://common/vfx/explosion.tscn" id="8_brnip"]
 [ext_resource type="Resource" uid="uid://xsccf58mw7d5" path="res://common/sfx/default_blocked_audio.tres" id="8_elycs"]
+[ext_resource type="PackedScene" uid="uid://qhqm7usjk4s4" path="res://common/modules/combat/damage_numbers/damage_number.tscn" id="9_ko0iv"]
 [ext_resource type="Script" uid="uid://bu436ru5hhd66" path="res://common/_legacy/animation/base_animation.gd" id="11_1ubwe"]
 [ext_resource type="Resource" uid="uid://csppceje2neh5" path="res://common/sfx/default_died_audio.tres" id="11_he760"]
 [ext_resource type="PackedScene" uid="uid://d0tswwb1d3smv" path="res://common/modules/health_bar/health_bar.tscn" id="12_6tvbp"]
@@ -18,19 +20,11 @@
 resource_local_to_scene = true
 script = ExtResource("2_ef5gh")
 faction = 1
+health = 1000.0
 base_max_health = 1000.0
 base_damage = 0.0
 base_defense = 25.0
-health = 1000.0
 invuln_time = 0.5
-
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_lvn57"]
-radius = 2.0
-height = 8.0
-
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_wj0qn"]
-radius = 6.0
-height = 16.0
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_pilld"]
 animation = &"AttackDown"
@@ -350,14 +344,36 @@ _data = {
 &"RESET": SubResource("Animation_i87wb")
 }
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_lvn57"]
+radius = 2.0
+height = 8.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_wj0qn"]
+radius = 6.0
+height = 16.0
+
 [node name="Dummy" type="CharacterBody2D" unique_id=306738905 node_paths=PackedStringArray("hurtbox", "damage_receiver", "health_bar") groups=["dummies"]]
 collision_layer = 2
 collision_mask = 2
 script = ExtResource("1_ef5gh")
 stats = SubResource("Resource_3o05k")
 hurtbox = NodePath("Hurtbox")
-damage_receiver = NodePath("DamageReceiverModule")
-health_bar = NodePath("HealthBar")
+damage_receiver = NodePath("Module/DamageReceiverModule")
+health_bar = NodePath("Module/HealthBar")
+
+[node name="Animation" type="Node" parent="." unique_id=76671534 node_paths=PackedStringArray("animation_tree")]
+script = ExtResource("11_1ubwe")
+animation_tree = NodePath("AnimationTree")
+
+[node name="AnimationTree" type="AnimationTree" parent="Animation" unique_id=202309910]
+tree_root = SubResource("AnimationNodeBlendTree_xmn1q")
+anim_player = NodePath("../AnimationPlayer")
+parameters/StateMachine/Attack/blend_position = Vector2(0.00197494, 0.905405)
+parameters/StateMachine/Move/blend_position = Vector2(-0.162607, -0.756701)
+parameters/TimeScale/scale = 1.0
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Animation" unique_id=246592332]
+libraries/ = SubResource("AnimationLibrary_i87wb")
 
 [node name="Visuals" type="Node2D" parent="." unique_id=160001298]
 
@@ -382,24 +398,9 @@ position = Vector2(0, -6)
 shape = SubResource("CapsuleShape2D_wj0qn")
 debug_color = Color(0.639216, 0.529412, 0, 0.329412)
 
-[node name="DamageReceiverModule" type="Node" parent="." unique_id=1125537514 node_paths=PackedStringArray("hurtbox")]
-script = ExtResource("4_ee1ma")
-stats = SubResource("Resource_3o05k")
-hurtbox = NodePath("../Hurtbox")
-metadata/_custom_type_script = "uid://dpi3inldik0ho"
+[node name="Module" type="Node2D" parent="." unique_id=1491366823]
 
-[node name="HitFeedbackModule" type="Node" parent="." unique_id=1318286615 node_paths=PackedStringArray("damage_receiver")]
-script = ExtResource("7_ef5gh")
-damage_receiver = NodePath("../DamageReceiverModule")
-enabled_knockback = false
-hit_particles_scene = ExtResource("7_elycs")
-death_particles_scene = ExtResource("8_brnip")
-damaged_audio = ExtResource("7_3o05k")
-blocked_audio = ExtResource("8_elycs")
-died_audio = ExtResource("11_he760")
-metadata/_custom_type_script = "uid://duxq84e027el0"
-
-[node name="HealthBar" parent="." unique_id=1663793119 instance=ExtResource("12_6tvbp")]
+[node name="HealthBar" parent="Module" unique_id=1663793119 instance=ExtResource("12_6tvbp")]
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
@@ -409,16 +410,25 @@ offset_right = 12.0
 offset_bottom = 8.0
 grow_horizontal = 2
 
-[node name="Animation" type="Node" parent="." unique_id=76671534 node_paths=PackedStringArray("animation_tree")]
-script = ExtResource("11_1ubwe")
-animation_tree = NodePath("AnimationTree")
+[node name="DamageReceiverModule" type="Node" parent="Module" unique_id=1125537514 node_paths=PackedStringArray("hurtbox")]
+script = ExtResource("4_ee1ma")
+stats = SubResource("Resource_3o05k")
+hurtbox = NodePath("../../Hurtbox")
+metadata/_custom_type_script = "uid://dpi3inldik0ho"
 
-[node name="AnimationTree" type="AnimationTree" parent="Animation" unique_id=202309910]
-tree_root = SubResource("AnimationNodeBlendTree_xmn1q")
-anim_player = NodePath("../AnimationPlayer")
-parameters/StateMachine/Attack/blend_position = Vector2(0.00197494, 0.905405)
-parameters/StateMachine/Move/blend_position = Vector2(-0.162607, -0.756701)
-parameters/TimeScale/scale = 1.0
+[node name="DamageNumbersModule" type="Node" parent="Module" unique_id=2029211950 node_paths=PackedStringArray("damage_receiver")]
+script = ExtResource("8_1y3fw")
+damage_receiver = NodePath("../DamageReceiverModule")
+damage_number_scene = ExtResource("9_ko0iv")
+metadata/_custom_type_script = "uid://6jeesy7iltw"
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Animation" unique_id=246592332]
-libraries/ = SubResource("AnimationLibrary_i87wb")
+[node name="HitFeedbackModule" type="Node" parent="Module" unique_id=1318286615 node_paths=PackedStringArray("damage_receiver")]
+script = ExtResource("7_ef5gh")
+damage_receiver = NodePath("../DamageReceiverModule")
+enabled_knockback = false
+hit_particles_scene = ExtResource("7_elycs")
+death_particles_scene = ExtResource("8_brnip")
+damaged_audio = ExtResource("7_3o05k")
+blocked_audio = ExtResource("8_elycs")
+died_audio = ExtResource("11_he760")
+metadata/_custom_type_script = "uid://duxq84e027el0"
