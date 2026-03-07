@@ -1,4 +1,4 @@
-[gd_resource type="AnimationNodeBlendTree" load_steps=32 format=3 uid="uid://bam4152vw8gtf"]
+[gd_resource type="AnimationNodeBlendTree" format=3 uid="uid://bam4152vw8gtf"]
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_frpq2"]
 animation = &"AttackLeft"
@@ -130,9 +130,9 @@ graph_offset = Vector2(-163, 10)
 [sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_482rp"]
 
 [resource]
-graph_offset = Vector2(-468.122, 95.084)
+graph_offset = Vector2(-649.31934, 51.65889)
 nodes/StateMachine/node = SubResource("AnimationNodeStateMachine_bgq54")
 nodes/StateMachine/position = Vector2(-340, 120)
 nodes/TimeScale/node = SubResource("AnimationNodeTimeScale_482rp")
 nodes/TimeScale/position = Vector2(-40, 120)
-node_connections = [&"TimeScale", 0, &"StateMachine", &"output", 0, &"TimeScale"]
+node_connections = [&"output", 0, &"TimeScale", &"TimeScale", 0, &"StateMachine"]

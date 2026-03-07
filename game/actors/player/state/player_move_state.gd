@@ -1,36 +1,63 @@
 class_name PlayerMoveState
-extends PlayerState
+extends State
 
-const INPUT_GRACE_TIME = 0.2
-var _idle_timer: float = 0.0
+@export var actor: Player
+@export var walk_speed: float = 100.0
+@export var run_speed: float = 180.0
+@export var idle_grace_time: float = 0.08
+
+var _idle_timer := 0.0
 
 
-func _init() -> void:
-    state_id = PlayerStateId.MOVE
+func _ready() -> void:
+    state_id = Player.StateId.MOVE
 
 
-func _update(delta: float) -> void:
-    var input = player.get_movement_input()
+func _enter() -> void:
+    _idle_timer = 0.0
 
-    # Handle Speed & Animation Speed
-    var is_running = player.is_run_pressed()
-    var current_speed = player.run_speed if is_running else player.walk_speed
-    var anim_speed = 2.0 if is_running else 1.0
+    if not actor:
+        return
 
-    player.perform_movement(input, current_speed, true)
-    player.set_facing_direction(input)
-    player.play_animation(Player.AnimationState.MOVE, anim_speed)
+    actor.play_actor_animation(Player.AnimationState.Move, actor.animation_module.get_last_direction() if actor.animation_module else Vector2.DOWN)
 
-    # Transition: Idle with Grace Period
-    if input.length() == 0:
-        _idle_timer += delta
-        if _idle_timer >= INPUT_GRACE_TIME:
-            change_state(PlayerStateId.IDLE)
-    else:
+
+func _physics_update(delta: float) -> void:
+    if not actor:
+        return
+
+    var input_dir := actor.get_move_input()
+    var speed := run_speed if actor.is_run_pressed() else walk_speed
+
+    if actor.movement_module:
+        actor.movement_module.set_manual_mode()
+        actor.movement_module.set_manual_velocity(input_dir.normalized() * speed)
+
+    if input_dir != Vector2.ZERO:
+        if actor.animation_module:
+            actor.animation_module.face_direction(input_dir)
+            actor.animation_module.set_blend_position(input_dir, Player.AnimationState.Move)
         _idle_timer = 0.0
+    else:
+        _idle_timer += delta
 
-    # Transitions: Action
-    if player.is_roll_pressed():
-        change_state(PlayerStateId.ROLL)
-    elif player.is_attack_triggered() and not is_running:
-        change_state(PlayerStateId.ATTACK)
+
+func _update(_delta: float) -> void:
+    if not actor:
+        return
+
+    if actor.consume_dodge_request():
+        change_state(Player.StateId.ROLL)
+        return
+
+    if actor.consume_attack_request() and not actor.is_run_pressed():
+        change_state(Player.StateId.ATTACK)
+        return
+
+    if _idle_timer >= idle_grace_time:
+        change_state(Player.StateId.IDLE)
+
+
+func _exit() -> void:
+    if actor and actor.movement_module:
+        actor.movement_module.stop_manual_motion()

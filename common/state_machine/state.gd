@@ -3,12 +3,11 @@ extends Node
 
 signal transition_requested(from: State, to: int)
 
-var state_id: int = -1
+@export var state_id: int = -1
 
 var _locked := false
 
 
-# --- Virtual Methods (To be Overridden by Subclasses) ---
 func _enter() -> void:
     pass
 
@@ -21,23 +20,36 @@ func _update(_delta: float) -> void:
     pass
 
 
-# --- Public API Methods ---
+func _physics_update(_delta: float) -> void:
+    pass
+
+
 func enter() -> void:
-    _enter()
     _locked = false
+    _enter()
 
 
 func exit() -> void:
-    _exit()
     _locked = true
+    _exit()
 
 
 func update(delta: float) -> void:
+    if _locked:
+        return
     _update(delta)
+
+
+func physics_update(delta: float) -> void:
+    if _locked:
+        return
+    _physics_update(delta)
 
 
 func change_state(to: int) -> void:
     if _locked:
+        return
+    if to == state_id:
         return
 
     _locked = true

@@ -1,45 +1,22 @@
-[gd_scene load_steps=42 format=3 uid="uid://dbhtrssgng58f"]
+[gd_scene format=3 uid="uid://dbhtrssgng58f"]
 
-[ext_resource type="Script" uid="uid://bwkkatjpy72kv" path="res://game/actors/player/player.gd" id="1_b15sj"]
+[ext_resource type="Script" uid="uid://4veuxq1h5upn" path="res://game/actors/player/player.gd" id="1_b15sj"]
+[ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/resources/stats/stats.gd" id="2_1bvv4"]
 [ext_resource type="Texture2D" uid="uid://e7rr31b6fwkg" path="res://game/actors/player/art/player.png" id="2_e6ar1"]
-[ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/resources/stats/stats.gd" id="2_g7ayv"]
-[ext_resource type="PackedScene" uid="uid://do052sqt3wjdp" path="res://common/_legacy/detectbox/detectbox.tscn" id="3_n81ss"]
 [ext_resource type="AnimationNodeBlendTree" uid="uid://bam4152vw8gtf" path="res://game/actors/player/data/player_animation_tree.tres" id="3_qa8rf"]
-[ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/modules/hurtbox/hurtbox.gd" id="3_wltfy"]
 [ext_resource type="Script" uid="uid://d1yimk3mk35ag" path="res://common/modules/combat/attack/melee_attack_module.gd" id="4_jq3dq"]
 [ext_resource type="Script" uid="uid://x10bxi1qicvw" path="res://common/modules/combat/attack/projectile_attack_module.gd" id="5_5unbj"]
-[ext_resource type="PackedScene" uid="uid://jla2t1i1qafl" path="res://common/modules/combat/attack/attack_effect/slash_attack_effect.tscn" id="5_g7ayv"]
 [ext_resource type="Script" uid="uid://b6r7vut6vta3w" path="res://game/actors/player/state/player_idle_state.gd" id="6_2iqu4"]
-[ext_resource type="PackedScene" uid="uid://mo52nt0sxj4w" path="res://common/modules/combat/attack/attack_effect/projectile_attack_effect.tscn" id="6_hc0kq"]
-[ext_resource type="PackedScene" uid="uid://d0tswwb1d3smv" path="res://common/modules/health_bar/health_bar.tscn" id="8_8wcyo"]
-[ext_resource type="Script" uid="uid://lnjp761bf75g" path="res://common/_legacy/movement/base_movement.gd" id="8_mx88g"]
-[ext_resource type="Script" uid="uid://bu436ru5hhd66" path="res://common/_legacy/animation/base_animation.gd" id="9_b15sj"]
+[ext_resource type="Script" uid="uid://bb4mbrq1u7pl" path="res://common/modules/combat/combat_module.gd" id="8_i5w6q"]
+[ext_resource type="Script" uid="uid://w30s7yqi1p3d" path="res://common/modules/movement/movement_module.gd" id="9_1bvv4"]
 [ext_resource type="Script" uid="uid://jtqne3plv0gg" path="res://game/actors/player/state/player_roll_state.gd" id="9_t2ln0"]
-[ext_resource type="PackedScene" uid="uid://d3g8jgprf7bfw" path="res://common/_legacy/enemy_scanner/enemy_scanner.tscn" id="9_vb105"]
+[ext_resource type="Script" uid="uid://dldqypakv40re" path="res://common/modules/animation/animation_module.gd" id="10_tiye0"]
 [ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/state_machine/state_machine.gd" id="11_b15sj"]
 [ext_resource type="Script" uid="uid://chearh86c82uf" path="res://game/actors/player/state/player_attack_state.gd" id="11_klmji"]
 [ext_resource type="Script" uid="uid://csp44dwfwcqu0" path="res://game/actors/player/state/player_move_state.gd" id="14_b15sj"]
 
-[sub_resource type="Resource" id="Resource_5unbj"]
-script = ExtResource("2_g7ayv")
-faction = 0
-base_max_health = 100.0
-base_damage = 20.0
-base_defense = 10.0
-base_speed = 1.0
-experience = 0.0
-metadata/_custom_type_script = "uid://bkgf2cii3bfri"
-
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_nqnt1"]
-radius = 1.0
-height = 8.0
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_hc0kq"]
-radius = 100.0
-
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_8eddv"]
-radius = 4.0
-height = 16.0
+[sub_resource type="Resource" id="Resource_8nq4u"]
+script = ExtResource("2_1bvv4")
 
 [sub_resource type="Animation" id="Animation_mx88g"]
 resource_name = "AttackDown"
@@ -48,7 +25,7 @@ step = 0.15
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite:frame")
+tracks/0/path = NodePath("Visual/Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -65,7 +42,7 @@ step = 0.15
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite:frame")
+tracks/0/path = NodePath("Visual/Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -82,7 +59,7 @@ step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite:frame")
+tracks/0/path = NodePath("Visual/Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -99,7 +76,7 @@ step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite:frame")
+tracks/0/path = NodePath("Visual/Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -116,7 +93,7 @@ step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite:frame")
+tracks/0/path = NodePath("Visual/Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -133,7 +110,7 @@ step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite:frame")
+tracks/0/path = NodePath("Visual/Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -150,7 +127,7 @@ step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite:frame")
+tracks/0/path = NodePath("Visual/Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -167,7 +144,7 @@ step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite:frame")
+tracks/0/path = NodePath("Visual/Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -185,7 +162,7 @@ step = 0.15
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite:frame")
+tracks/0/path = NodePath("Visual/Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -203,7 +180,7 @@ step = 0.15
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite:frame")
+tracks/0/path = NodePath("Visual/Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -221,7 +198,7 @@ step = 0.15
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite:frame")
+tracks/0/path = NodePath("Visual/Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -239,7 +216,7 @@ step = 0.15
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite:frame")
+tracks/0/path = NodePath("Visual/Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -254,7 +231,7 @@ length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite:frame")
+tracks/0/path = NodePath("Visual/Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -271,7 +248,7 @@ step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite:frame")
+tracks/0/path = NodePath("Visual/Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -288,7 +265,7 @@ step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite:frame")
+tracks/0/path = NodePath("Visual/Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -305,7 +282,7 @@ step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite:frame")
+tracks/0/path = NodePath("Visual/Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -322,7 +299,7 @@ step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite:frame")
+tracks/0/path = NodePath("Visual/Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -353,82 +330,28 @@ _data = {
 &"RollUp": SubResource("Animation_ivlxb")
 }
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("attack_module", "hurtbox") groups=["player"]]
+[node name="Player" type="CharacterBody2D" unique_id=1080162393 node_paths=PackedStringArray("movement_module", "animation_module", "combat_module", "state_machine") groups=["player"]]
 collision_mask = 4
 motion_mode = 1
 script = ExtResource("1_b15sj")
-stats = SubResource("Resource_5unbj")
-attack_module = NodePath("Module/MeleeAttackModule")
-hurtbox = NodePath("Module/Hurtbox")
+stats = SubResource("Resource_8nq4u")
+movement_module = NodePath("Module/MovementModule")
+animation_module = NodePath("Module/AnimationModule")
+combat_module = NodePath("Module/CombatModule")
+state_machine = NodePath("StateMachine")
 
-[node name="Sprite" type="Sprite2D" parent="."]
+[node name="Visual" type="Node2D" parent="." unique_id=1393894860]
+
+[node name="Sprite" type="Sprite2D" parent="Visual" unique_id=296153584]
 texture = ExtResource("2_e6ar1")
 offset = Vector2(0, -10)
 hframes = 60
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-rotation = 1.5708
-shape = SubResource("CapsuleShape2D_nqnt1")
-
-[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
-avoidance_enabled = true
-radius = 12.0
-debug_use_custom = true
-debug_path_custom_color = Color(1, 0, 1, 1)
-
-[node name="HealthComponent" parent="." instance=ExtResource("8_8wcyo")]
-max_health = 500.0
-
-[node name="EnemyScanner" parent="." instance=ExtResource("9_vb105")]
-position = Vector2(0, -5)
-attack_range = 25.0
-
-[node name="Detectbox" parent="EnemyScanner" instance=ExtResource("3_n81ss")]
-position = Vector2(0, -5)
-collision_mask = 2
-radius = 100.0
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyScanner/Detectbox"]
-shape = SubResource("CircleShape2D_hc0kq")
-debug_color = Color(0.631373, 0.517647, 0.301961, 0.235294)
-
-[node name="Module" type="Node2D" parent="."]
-
-[node name="Hurtbox" type="Area2D" parent="Module"]
-script = ExtResource("3_wltfy")
-metadata/_custom_type_script = "uid://dby4p11qhtin7"
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Module/Hurtbox"]
-position = Vector2(0, -8)
-shape = SubResource("CapsuleShape2D_8eddv")
-debug_color = Color(0.976471, 0.156863, 0, 0.301961)
-
-[node name="ProjectileAttackModule" type="Node2D" parent="Module"]
-script = ExtResource("5_5unbj")
-projectile_effect_scene = ExtResource("6_hc0kq")
-attack_lifetime = 5.0
-metadata/_custom_type_script = "uid://x10bxi1qicvw"
-
-[node name="MeleeAttackModule" type="Node2D" parent="Module"]
-script = ExtResource("4_jq3dq")
-melee_effect_scene = ExtResource("5_g7ayv")
-max_distance = 50.0
-metadata/_custom_type_script = "uid://d1yimk3mk35ag"
-
-[node name="PlayerMovement" type="Node" parent="."]
-script = ExtResource("8_mx88g")
-
-[node name="PlayerAnimation" type="Node" parent="." node_paths=PackedStringArray("animation_tree")]
-script = ExtResource("9_b15sj")
-animation_tree = NodePath("AnimationTree")
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="PlayerAnimation"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Visual" unique_id=215012184]
 root_node = NodePath("../..")
-libraries = {
-&"": SubResource("AnimationLibrary_5afgs")
-}
+libraries/ = SubResource("AnimationLibrary_5afgs")
 
-[node name="AnimationTree" type="AnimationTree" parent="PlayerAnimation"]
+[node name="AnimationTree" type="AnimationTree" parent="Visual" unique_id=771808378]
 root_node = NodePath("../..")
 tree_root = ExtResource("3_qa8rf")
 anim_player = NodePath("../AnimationPlayer")
@@ -438,18 +361,61 @@ parameters/StateMachine/Move/blend_position = Vector2(0, 0)
 parameters/StateMachine/Roll/blend_position = Vector2(0, 0)
 parameters/TimeScale/scale = 1.0
 
-[node name="PlayerStateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
+[node name="Module" type="Node2D" parent="." unique_id=170022229]
+
+[node name="CombatModule" type="Node2D" parent="Module" unique_id=1050368959 node_paths=PackedStringArray("melee_attack", "projectile_attack")]
+script = ExtResource("8_i5w6q")
+melee_attack = NodePath("MeleeAttackModule")
+projectile_attack = NodePath("ProjectileAttackModule")
+metadata/_custom_type_script = "uid://bb4mbrq1u7pl"
+
+[node name="MeleeAttackModule" type="Node2D" parent="Module/CombatModule" unique_id=895088181]
+script = ExtResource("4_jq3dq")
+max_distance = 9999.0
+metadata/_custom_type_script = "uid://d1yimk3mk35ag"
+
+[node name="ProjectileAttackModule" type="Node2D" parent="Module/CombatModule" unique_id=1808082487]
+script = ExtResource("5_5unbj")
+metadata/_custom_type_script = "uid://x10bxi1qicvw"
+
+[node name="MovementModule" type="Node" parent="Module" unique_id=658364954 node_paths=PackedStringArray("character")]
+script = ExtResource("9_1bvv4")
+character = NodePath("../..")
+metadata/_custom_type_script = "uid://w30s7yqi1p3d"
+
+[node name="AnimationModule" type="Node" parent="Module" unique_id=659370517 node_paths=PackedStringArray("actor", "animation_tree")]
+script = ExtResource("10_tiye0")
+actor = NodePath("../..")
+animation_tree = NodePath("../../Visual/AnimationTree")
+metadata/_custom_type_script = "uid://dldqypakv40re"
+
+[node name="StateMachine" type="Node" parent="." unique_id=54803581 node_paths=PackedStringArray("initial_state")]
 script = ExtResource("11_b15sj")
-initial_state = NodePath("Idle")
+initial_state = NodePath("PlayerIdleState")
+metadata/_custom_type_script = "uid://lsk26m6ixhqu"
 
-[node name="Idle" type="Node" parent="PlayerStateMachine"]
+[node name="PlayerIdleState" type="Node" parent="StateMachine" unique_id=1390090809 node_paths=PackedStringArray("actor")]
 script = ExtResource("6_2iqu4")
+actor = NodePath("../..")
+state_id = 0
+metadata/_custom_type_script = "uid://b6r7vut6vta3w"
 
-[node name="Move" type="Node" parent="PlayerStateMachine"]
+[node name="PlayerMoveState" type="Node" parent="StateMachine" unique_id=958880817 node_paths=PackedStringArray("actor")]
 script = ExtResource("14_b15sj")
+actor = NodePath("../..")
+state_id = 1
+metadata/_custom_type_script = "uid://csp44dwfwcqu0"
 
-[node name="Roll" type="Node" parent="PlayerStateMachine"]
-script = ExtResource("9_t2ln0")
-
-[node name="Attack" type="Node" parent="PlayerStateMachine"]
+[node name="PlayerAttackState" type="Node" parent="StateMachine" unique_id=426952359 node_paths=PackedStringArray("actor")]
 script = ExtResource("11_klmji")
+actor = NodePath("../..")
+state_id = 2
+metadata/_custom_type_script = "uid://chearh86c82uf"
+
+[node name="PlayerRollState" type="Node" parent="StateMachine" unique_id=1969032798 node_paths=PackedStringArray("actor")]
+script = ExtResource("9_t2ln0")
+actor = NodePath("../..")
+state_id = 3
+metadata/_custom_type_script = "uid://jtqne3plv0gg"
+
+[connection signal="animation_changed" from="Visual/AnimationPlayer" to="." method="_on_animation_player_animation_changed"]

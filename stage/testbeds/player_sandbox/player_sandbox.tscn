@@ -1,0 +1,88 @@
+[gd_scene format=3 uid="uid://bui4lbf7chtx7"]
+
+[ext_resource type="Texture2D" uid="uid://c3kagdvi6j0pp" path="res://stage/testbeds/asset/grass_background.png" id="1_ptvfu"]
+[ext_resource type="PackedScene" uid="uid://dccho5kdagt0e" path="res://game/environment/bush/bush.tscn" id="2_rv4aa"]
+[ext_resource type="PackedScene" uid="uid://bmlww50h5ia4c" path="res://game/actors/dummies/dummy.tscn" id="3_4f4np"]
+[ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/resources/stats/stats.gd" id="4_i812l"]
+[ext_resource type="PackedScene" uid="uid://dhjvr7458gxu0" path="res://game/destroyables/plant_props/plant_props.tscn" id="5_0ev1d"]
+[ext_resource type="PackedScene" uid="uid://dbhtrssgng58f" path="res://game/actors/player/player.tscn" id="6_qwuv5"]
+[ext_resource type="Script" uid="uid://bbnuk476f2gu5" path="res://common/_legacy/camera/camera.gd" id="7_dv6ov"]
+
+[sub_resource type="Resource" id="Resource_rv4aa"]
+resource_local_to_scene = true
+script = ExtResource("4_i812l")
+faction = 1
+health = 1000.0
+base_max_health = 1000.0
+base_damage = 0.0
+base_defense = 25.0
+invuln_time = 0.0
+
+[sub_resource type="Resource" id="Resource_4f4np"]
+resource_local_to_scene = true
+script = ExtResource("4_i812l")
+faction = 1
+health = 1000.0
+base_max_health = 1000.0
+base_damage = 0.0
+base_defense = 25.0
+invuln_time = 0.5
+
+[sub_resource type="Resource" id="Resource_lxkjt"]
+script = ExtResource("4_i812l")
+faction = 2
+health = 1.0
+base_max_health = 1.0
+base_damage = 0.0
+base_defense = 0.0
+base_speed = 0.0
+metadata/_custom_type_script = "uid://bkgf2cii3bfri"
+
+[node name="PlayerSandbox" type="Node2D" unique_id=770849428]
+y_sort_enabled = true
+
+[node name="Background" type="TextureRect" parent="." unique_id=1756546601]
+offset_left = -712.0
+offset_top = -378.0
+offset_right = 911.0
+offset_bottom = 528.0
+texture = ExtResource("1_ptvfu")
+stretch_mode = 1
+metadata/_edit_lock_ = true
+
+[node name="Environment" type="Node2D" parent="." unique_id=425175818]
+metadata/_edit_lock_ = true
+metadata/_edit_group_ = true
+
+[node name="BushGroup" type="Node2D" parent="Environment" unique_id=313341823]
+
+[node name="Bush" parent="Environment/BushGroup" unique_id=1207469885 instance=ExtResource("2_rv4aa")]
+position = Vector2(70, 42)
+
+[node name="Bush2" parent="Environment/BushGroup" unique_id=756518628 instance=ExtResource("2_rv4aa")]
+position = Vector2(68, 126)
+
+[node name="Bush3" parent="Environment/BushGroup" unique_id=1231908047 instance=ExtResource("2_rv4aa")]
+position = Vector2(153, 86)
+
+[node name="Dummies" type="Node2D" parent="." unique_id=1017831920]
+position = Vector2(75, 124)
+
+[node name="Dummy" parent="Dummies" unique_id=306738905 instance=ExtResource("3_4f4np")]
+position = Vector2(69, 94)
+stats = SubResource("Resource_rv4aa")
+
+[node name="Dummy2" parent="Dummies" unique_id=1867008058 instance=ExtResource("3_4f4np")]
+position = Vector2(235, 86)
+stats = SubResource("Resource_4f4np")
+
+[node name="PlantProps" parent="Dummies" unique_id=117392384 instance=ExtResource("5_0ev1d")]
+position = Vector2(121, 51)
+stats = SubResource("Resource_lxkjt")
+
+[node name="Player" parent="." unique_id=986243242 instance=ExtResource("6_qwuv5")]
+position = Vector2(93, 80)
+
+[node name="Camera2D" type="Camera2D" parent="Player" unique_id=389206353]
+zoom = Vector2(0.2, 0.2)
+script = ExtResource("7_dv6ov")

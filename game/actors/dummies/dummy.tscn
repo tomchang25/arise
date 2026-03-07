@@ -24,25 +24,6 @@ health = 1000.0
 base_max_health = 1000.0
 base_damage = 0.0
 base_defense = 25.0
-base_crit_chance = null
-base_crit_multiplier = null
-weapon_damage = null
-weapon_crit_chance = null
-weapon_crit_multiplier = null
-primary_delivery_type = null
-primary_damage_multiplier = null
-primary_damage_variance = null
-primary_crit_bonus = null
-primary_knockback = null
-primary_lifetime = null
-primary_max_targets = null
-secondary_delivery_type = null
-secondary_damage_multiplier = null
-secondary_damage_variance = null
-secondary_crit_bonus = null
-secondary_knockback = null
-secondary_lifetime = null
-secondary_max_targets = null
 invuln_time = 0.5
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_pilld"]
