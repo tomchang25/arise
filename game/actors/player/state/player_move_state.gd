@@ -50,9 +50,10 @@ func _update(_delta: float) -> void:
         change_state(Player.StateId.ROLL)
         return
 
-    if actor.consume_attack_request() and not actor.is_run_pressed():
-        change_state(Player.StateId.ATTACK)
-        return
+    if not actor.is_run_pressed():
+        if actor.consume_attack_request() or actor.has_auto_attack_target():
+            change_state(Player.StateId.ATTACK)
+            return
 
     if _idle_timer >= idle_grace_time:
         change_state(Player.StateId.IDLE)

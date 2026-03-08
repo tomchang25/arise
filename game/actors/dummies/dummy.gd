@@ -20,7 +20,8 @@ func _ready() -> void:
     _auto_wire_nodes()
     _ensure_stats()
     _bind_modules()
-    
+
+
 func _physics_process(_delta: float) -> void:
     move_and_slide()
 

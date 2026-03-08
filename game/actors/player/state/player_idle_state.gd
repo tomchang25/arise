@@ -30,5 +30,9 @@ func _update(_delta: float) -> void:
         change_state(Player.StateId.ROLL)
         return
 
+    if actor.has_auto_attack_target():
+        change_state(Player.StateId.ATTACK)
+        return
+
     if actor.get_move_input() != Vector2.ZERO:
         change_state(Player.StateId.MOVE)

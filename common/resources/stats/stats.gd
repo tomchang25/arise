@@ -69,6 +69,11 @@ const BASE_LEVEL_XP_INCREMENT_PER_LEVEL: float = 50.0
 @export_group("Primary Attack")
 @export var primary_delivery_type: AttackInfo.DeliveryType = AttackInfo.DeliveryType.MELEE
 @export var primary_effect_scene: PackedScene = null
+@export var primary_attack_range: float = 30.0:
+    set(value):
+        primary_attack_range = value
+        recalculate_stats()
+
 @export var primary_damage_multiplier: float = 1.0
 @export_range(0.0, 4.0, 0.01) var primary_damage_variance: float = 0.10
 @export_range(0.0, 4.0, 0.01) var primary_crit_bonus: float = 0.0
@@ -79,6 +84,11 @@ const BASE_LEVEL_XP_INCREMENT_PER_LEVEL: float = 50.0
 @export_group("Secondary Attack")
 @export var secondary_delivery_type: AttackInfo.DeliveryType = AttackInfo.DeliveryType.MELEE
 @export var secondary_effect_scene: PackedScene = null
+@export var secondary_attack_range: float = 60.0:
+    set(value):
+        secondary_attack_range = value
+        recalculate_stats()
+
 @export var secondary_damage_multiplier: float = 1.8
 @export_range(0.0, 4.0, 0.01) var secondary_damage_variance: float = 0.15
 @export_range(0.0, 4.0, 0.01) var secondary_crit_bonus: float = 0.05

@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://dbhtrssgng58f"]
 
 [ext_resource type="Script" uid="uid://4veuxq1h5upn" path="res://game/actors/player/player.gd" id="1_b15sj"]
-[ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/resources/stats/stats.gd" id="2_1bvv4"]
+[ext_resource type="Resource" uid="uid://dg0jnt6ju4qcl" path="res://game/actors/player/data/player_stats.tres" id="2_64mjj"]
 [ext_resource type="Texture2D" uid="uid://e7rr31b6fwkg" path="res://game/actors/player/art/player.png" id="2_e6ar1"]
 [ext_resource type="AnimationNodeBlendTree" uid="uid://bam4152vw8gtf" path="res://game/actors/player/data/player_animation_tree.tres" id="3_qa8rf"]
 [ext_resource type="Script" uid="uid://d1yimk3mk35ag" path="res://common/modules/combat/attack/melee_attack_module.gd" id="4_jq3dq"]
@@ -10,13 +10,11 @@
 [ext_resource type="Script" uid="uid://bb4mbrq1u7pl" path="res://common/modules/combat/combat_module.gd" id="8_i5w6q"]
 [ext_resource type="Script" uid="uid://w30s7yqi1p3d" path="res://common/modules/movement/movement_module.gd" id="9_1bvv4"]
 [ext_resource type="Script" uid="uid://jtqne3plv0gg" path="res://game/actors/player/state/player_roll_state.gd" id="9_t2ln0"]
+[ext_resource type="Script" uid="uid://hyy86fs5b0fs" path="res://common/modules/detection/detection_module.gd" id="10_8nq4u"]
 [ext_resource type="Script" uid="uid://dldqypakv40re" path="res://common/modules/animation/animation_module.gd" id="10_tiye0"]
 [ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/state_machine/state_machine.gd" id="11_b15sj"]
 [ext_resource type="Script" uid="uid://chearh86c82uf" path="res://game/actors/player/state/player_attack_state.gd" id="11_klmji"]
 [ext_resource type="Script" uid="uid://csp44dwfwcqu0" path="res://game/actors/player/state/player_move_state.gd" id="14_b15sj"]
-
-[sub_resource type="Resource" id="Resource_8nq4u"]
-script = ExtResource("2_1bvv4")
 
 [sub_resource type="Animation" id="Animation_mx88g"]
 resource_name = "AttackDown"
@@ -330,14 +328,15 @@ _data = {
 &"RollUp": SubResource("Animation_ivlxb")
 }
 
-[node name="Player" type="CharacterBody2D" unique_id=1080162393 node_paths=PackedStringArray("movement_module", "animation_module", "combat_module", "state_machine") groups=["player"]]
+[node name="Player" type="CharacterBody2D" unique_id=1080162393 node_paths=PackedStringArray("movement_module", "animation_module", "combat_module", "detection_module", "state_machine") groups=["player"]]
 collision_mask = 4
 motion_mode = 1
 script = ExtResource("1_b15sj")
-stats = SubResource("Resource_8nq4u")
+stats = ExtResource("2_64mjj")
 movement_module = NodePath("Module/MovementModule")
 animation_module = NodePath("Module/AnimationModule")
 combat_module = NodePath("Module/CombatModule")
+detection_module = NodePath("Module/DetectionModule")
 state_machine = NodePath("StateMachine")
 
 [node name="Visual" type="Node2D" parent="." unique_id=1393894860]
@@ -364,6 +363,7 @@ parameters/TimeScale/scale = 1.0
 [node name="Module" type="Node2D" parent="." unique_id=170022229]
 
 [node name="CombatModule" type="Node2D" parent="Module" unique_id=1050368959 node_paths=PackedStringArray("melee_attack", "projectile_attack")]
+position = Vector2(0, -8)
 script = ExtResource("8_i5w6q")
 melee_attack = NodePath("MeleeAttackModule")
 projectile_attack = NodePath("ProjectileAttackModule")
@@ -371,12 +371,19 @@ metadata/_custom_type_script = "uid://bb4mbrq1u7pl"
 
 [node name="MeleeAttackModule" type="Node2D" parent="Module/CombatModule" unique_id=895088181]
 script = ExtResource("4_jq3dq")
-max_distance = 9999.0
 metadata/_custom_type_script = "uid://d1yimk3mk35ag"
 
 [node name="ProjectileAttackModule" type="Node2D" parent="Module/CombatModule" unique_id=1808082487]
 script = ExtResource("5_5unbj")
 metadata/_custom_type_script = "uid://x10bxi1qicvw"
+
+[node name="DetectionModule" type="Area2D" parent="Module" unique_id=2069352823]
+position = Vector2(0, -8)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("10_8nq4u")
+radius = 50.0
+metadata/_custom_type_script = "uid://hyy86fs5b0fs"
 
 [node name="MovementModule" type="Node" parent="Module" unique_id=658364954 node_paths=PackedStringArray("character")]
 script = ExtResource("9_1bvv4")

@@ -4,7 +4,7 @@ extends Node
 @export var character: CharacterBody2D
 @export var acceleration: float = 10000.0
 @export var deceleration: float = 16000.0
-@export var knockback_friction: float = 12000.0
+@export var knockback_friction: float = 1200.0
 
 var manual_velocity: Vector2 = Vector2.ZERO
 var path_velocity: Vector2 = Vector2.ZERO
@@ -48,8 +48,22 @@ func set_path_velocity(v: Vector2) -> void:
     path_velocity = v
 
 
-func apply_knockback(impulse: Vector2) -> void:
+func apply_knockback(impulse: Vector2, velocity_cap: float = -1.0) -> void:
     knockback_velocity += impulse
+
+    if velocity_cap > 0.0 and knockback_velocity.length() > velocity_cap:
+        knockback_velocity = knockback_velocity.normalized() * velocity_cap
+
+
+func set_knockback_velocity(v: Vector2, velocity_cap: float = -1.0) -> void:
+    knockback_velocity = v
+
+    if velocity_cap > 0.0 and knockback_velocity.length() > velocity_cap:
+        knockback_velocity = knockback_velocity.normalized() * velocity_cap
+
+
+func clear_knockback() -> void:
+    knockback_velocity = Vector2.ZERO
 
 
 func set_manual_mode() -> void:

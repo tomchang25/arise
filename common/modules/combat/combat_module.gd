@@ -27,6 +27,17 @@ func perform_attack(slot: Stats.AttackSlot, target_position: Vector2) -> void:
         push_error("CombatModule: stats is not set")
         return
 
+    var attack_range := get_attack_range(slot)
+    if attack_range <= 0.0:
+        return
+
+    var origin := global_position
+    var distance := origin.distance_to(target_position)
+
+    if distance > attack_range + 0.01:
+        push_warning("CombatModule: target out of range. (%s > %s)" % [distance, attack_range])
+        return
+
     var info := _build_attack_info(slot, target_position)
     if info == null:
         return
@@ -41,6 +52,23 @@ func perform_attack(slot: Stats.AttackSlot, target_position: Vector2) -> void:
 
     executor.execute_attack(target_position, info)
     executor.end_attack()
+
+
+func get_attack_range(slot: Stats.AttackSlot) -> float:
+    if stats == null:
+        return 0.0
+
+    match slot:
+        Stats.AttackSlot.PRIMARY:
+            return stats.primary_attack_range
+        Stats.AttackSlot.SECONDARY:
+            return stats.secondary_attack_range
+        _:
+            return 0.0
+
+
+func get_attack_origin() -> Vector2:
+    return global_position
 
 
 func _get_executor_for(delivery_type: int) -> AttackModule:
@@ -85,6 +113,10 @@ func _build_attack_info(slot: Stats.AttackSlot, target_position: Vector2) -> Att
             info.attack_lifetime = stats.secondary_lifetime
             info.max_targets = stats.secondary_max_targets
 
+        _:
+            push_warning("CombatModule: unsupported attack slot %s" % slot)
+            return null
+
     if effect_scene == null:
         push_warning("CombatModule: no effect_scene set for slot %s" % slot)
         return null
@@ -98,7 +130,12 @@ func _build_attack_info(slot: Stats.AttackSlot, target_position: Vector2) -> Att
     if info.is_crit:
         info.final_damage *= stats.current_crit_multiplier
 
-    var dir := (target_position - global_position).normalized()
+    var dir := target_position - global_position
+    if dir.length_squared() <= 0.0001:
+        dir = Vector2.RIGHT
+    else:
+        dir = dir.normalized()
+
     info.knockback_dir = dir
 
     return info

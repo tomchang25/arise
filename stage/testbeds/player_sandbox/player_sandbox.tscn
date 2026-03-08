@@ -8,7 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://dbhtrssgng58f" path="res://game/actors/player/player.tscn" id="6_qwuv5"]
 [ext_resource type="Script" uid="uid://bbnuk476f2gu5" path="res://common/_legacy/camera/camera.gd" id="7_dv6ov"]
 
-[sub_resource type="Resource" id="Resource_rv4aa"]
+[sub_resource type="Resource" id="Resource_ptvfu"]
 resource_local_to_scene = true
 script = ExtResource("4_i812l")
 faction = 1
@@ -18,7 +18,7 @@ base_damage = 0.0
 base_defense = 25.0
 invuln_time = 0.0
 
-[sub_resource type="Resource" id="Resource_4f4np"]
+[sub_resource type="Resource" id="Resource_rv4aa"]
 resource_local_to_scene = true
 script = ExtResource("4_i812l")
 faction = 1
@@ -70,11 +70,11 @@ position = Vector2(75, 124)
 
 [node name="Dummy" parent="Dummies" unique_id=306738905 instance=ExtResource("3_4f4np")]
 position = Vector2(69, 94)
-stats = SubResource("Resource_rv4aa")
+stats = SubResource("Resource_ptvfu")
 
 [node name="Dummy2" parent="Dummies" unique_id=1867008058 instance=ExtResource("3_4f4np")]
 position = Vector2(235, 86)
-stats = SubResource("Resource_4f4np")
+stats = SubResource("Resource_rv4aa")
 
 [node name="PlantProps" parent="Dummies" unique_id=117392384 instance=ExtResource("5_0ev1d")]
 position = Vector2(121, 51)

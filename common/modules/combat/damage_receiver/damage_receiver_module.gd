@@ -59,7 +59,7 @@ func _on_hurtbox_hit(info: AttackInfo) -> void:
     final_damage = max(final_damage, clamp_min_damage)
 
     if final_damage > 0.0:
-        print_debug("DamageReceiverModule: _on_hurtbox_hit: %s took %s damage, remaining: %s" % [owner.name, final_damage, stats.health])
+        # print_debug("DamageReceiverModule: _on_hurtbox_hit: %s took %s damage, remaining: %s" % [owner.name, final_damage, stats.health])
 
         stats.take_damage(final_damage)
         set_invulnerable_for(stats.invuln_time)

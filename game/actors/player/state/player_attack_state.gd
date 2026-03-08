@@ -16,9 +16,15 @@ func _enter() -> void:
     if not actor:
         return
 
-    _attack_direction = actor.get_aim_direction()
+    var target_pos := actor.get_attack_target_position()
+    _attack_direction = target_pos - actor.global_position
+
+    if _attack_direction == Vector2.ZERO:
+        _attack_direction = actor.get_aim_direction()
+
     if _attack_direction == Vector2.ZERO:
         _attack_direction = Vector2.DOWN
+
     _attack_direction = _attack_direction.normalized()
 
     if not actor.attack_finished.is_connected(_on_attack_finished):
@@ -27,7 +33,6 @@ func _enter() -> void:
     actor.play_actor_animation(Player.AnimationState.Attack, _attack_direction)
 
     if actor.combat_module:
-        var target_pos := actor.global_position + _attack_direction * 24.0
         actor.combat_module.perform_attack(attack_slot, target_pos)
 
 

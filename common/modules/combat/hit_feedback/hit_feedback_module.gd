@@ -3,11 +3,14 @@ extends Node
 
 @export var stats: Stats
 @export var damage_receiver: DamageReceiverModule
+@export var movement_module: MovementModule
 
 @export_group("Knockback")
 @export var enabled_knockback := true
 @export var knockback_scale := 1.0
 @export var knockback_velocity_cap := 1200.0
+@export var minimum_knockback_force := 0.0
+@export var ignore_zero_source_position := true
 
 @export_group("Flash")
 @export var enabled_flash := true
@@ -53,6 +56,10 @@ var _cached_targets: Array[CanvasItem] = []
 func _ready() -> void:
     if not damage_receiver:
         damage_receiver = owner.find_child("DamageReceiverModule", true, false) as DamageReceiverModule
+
+    if not movement_module:
+        movement_module = owner.find_child("MovementModule", true, false) as MovementModule
+
     if not stats and owner and owner.get("stats") is Stats:
         stats = owner.stats
 
@@ -169,31 +176,45 @@ func _spawn_particles(scene: PackedScene, color: Color, scale_amount: float, inf
 # Knockback
 # -------------------------
 func _apply_knockback(info: AttackInfo) -> void:
-    var force := info.knockback_force * knockback_scale
-    if force <= 0.0:
+    if info == null:
         return
 
-    var dir := info.knockback_dir
-    if dir == Vector2.ZERO:
-        dir = (owner.global_position - info.source_position).normalized()
+    var force := info.knockback_force * knockback_scale
+    if force <= minimum_knockback_force:
+        return
+
+    var dir := _resolve_knockback_dir(info)
     if dir == Vector2.ZERO:
         return
 
     var impulse := dir * force
 
+    if movement_module:
+        movement_module.apply_knockback(impulse, knockback_velocity_cap)
+        return
+
     if owner.has_method("apply_knockback"):
         owner.call("apply_knockback", impulse)
         return
 
-    if owner is CharacterBody2D:
-        var body := owner as CharacterBody2D
-        body.velocity += impulse
-        if body.velocity.length() > knockback_velocity_cap:
-            body.velocity = body.velocity.normalized() * knockback_velocity_cap
-    elif owner is RigidBody2D:
+    if owner is RigidBody2D:
         (owner as RigidBody2D).apply_impulse(impulse)
-    elif owner is Node2D:
-        (owner as Node2D).global_position += impulse * 0.016
+
+
+func _resolve_knockback_dir(info: AttackInfo) -> Vector2:
+    var dir := info.knockback_dir
+
+    if dir != Vector2.ZERO:
+        return dir.normalized()
+
+    if owner is Node2D:
+        var owner_pos := (owner as Node2D).global_position
+        var from_source := owner_pos - info.source_position
+
+        if from_source != Vector2.ZERO:
+            return from_source.normalized()
+
+    return Vector2.ZERO
 
 
 # -------------------------

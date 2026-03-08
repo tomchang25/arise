@@ -5,6 +5,7 @@
 
 [resource]
 script = ExtResource("1_87o2f")
+limiter_key = &"damaged"
 volume_db = -10.0
 bus_id = 1
 streams = Array[AudioStream]([ExtResource("2_f1vy3")])

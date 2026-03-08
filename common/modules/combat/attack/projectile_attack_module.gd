@@ -9,7 +9,7 @@ func _execute_attack_logic(target_position: Vector2, info: AttackInfo) -> void:
         end_attack()
         return
 
-    var dir := target_position - global_position
+    var dir := target_position - info.source_position
     if dir.length_squared() <= 0.0001:
         dir = Vector2.RIGHT
     else:
@@ -22,5 +22,5 @@ func _execute_attack_logic(target_position: Vector2, info: AttackInfo) -> void:
         return
 
     get_tree().current_scene.add_child(projectile)
-    projectile.global_position = global_position
+    projectile.global_position = info.source_position
     projectile.setup(info, dir, projectile_speed)
