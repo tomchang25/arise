@@ -338,10 +338,10 @@ _data = {
 radius = 3.0
 height = 14.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_64mjj"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_8nq4u"]
 radius = 50.0
 
-[node name="Player" type="CharacterBody2D" unique_id=1080162393 node_paths=PackedStringArray("movement_module", "animation_module", "combat_module", "detection_module", "state_machine") groups=["player"]]
+[node name="Player" type="CharacterBody2D" unique_id=1080162393 node_paths=PackedStringArray("movement_module", "animation_module", "combat_module", "detection_module", "damage_receiver", "hurtbox", "state_machine") groups=["player"]]
 collision_mask = 4
 motion_mode = 1
 script = ExtResource("1_b15sj")
@@ -350,6 +350,8 @@ movement_module = NodePath("Module/MovementModule")
 animation_module = NodePath("Module/AnimationModule")
 combat_module = NodePath("Module/CombatModule")
 detection_module = NodePath("Module/DetectionModule")
+damage_receiver = NodePath("Module/DamageReceiverModule")
+hurtbox = NodePath("Module/Hurtbox")
 state_machine = NodePath("StateMachine")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1649341033]
@@ -383,6 +385,7 @@ parameters/TimeScale/scale = 1.0
 
 [node name="Hurtbox" type="Area2D" parent="Module" unique_id=101171387]
 position = Vector2(0, -8)
+collision_mask = 0
 script = ExtResource("5_8nq4u")
 metadata/_custom_type_script = "uid://dby4p11qhtin7"
 metadata/_edit_group_ = true
@@ -415,7 +418,7 @@ radius = 50.0
 metadata/_custom_type_script = "uid://hyy86fs5b0fs"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionModule" unique_id=508858704]
-shape = SubResource("CircleShape2D_64mjj")
+shape = SubResource("CircleShape2D_8nq4u")
 debug_color = Color(0, 0.101960786, 0.69803923, 0.11764706)
 
 [node name="MovementModule" type="Node" parent="Module" unique_id=658364954 node_paths=PackedStringArray("character")]

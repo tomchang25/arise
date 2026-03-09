@@ -1,4 +1,3 @@
-class_name TesterAttacker
 extends Node2D
 
 const KEY_HEAL := KEY_H
@@ -47,15 +46,27 @@ func _heal_all():
     if not dummy_container:
         return
 
-    for d in dummy_container.get_children():
-        if d.has_method("heal"):
-            d.heal(heal_amount)
+    _heal_recursive(dummy_container)
+
+
+func _heal_recursive(node: Node) -> void:
+    for child in node.get_children():
+        if child.has_method("heal"):
+            child.heal(heal_amount)
+
+        _heal_recursive(child)
 
 
 func _reset_all():
     if not dummy_container:
         return
 
-    for d in dummy_container.get_children():
-        if d.has_method("reset_dummy"):
-            d.reset_dummy()
+    _reset_recursive(dummy_container)
+
+
+func _reset_recursive(node: Node) -> void:
+    for child in node.get_children():
+        if child.has_method("reset_dummy"):
+            child.reset_dummy()
+
+        _reset_recursive(child)
