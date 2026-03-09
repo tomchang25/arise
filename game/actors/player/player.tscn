@@ -6,6 +6,7 @@
 [ext_resource type="AnimationNodeBlendTree" uid="uid://bam4152vw8gtf" path="res://game/actors/player/data/player_animation_tree.tres" id="3_qa8rf"]
 [ext_resource type="Script" uid="uid://d1yimk3mk35ag" path="res://common/modules/combat/attack/melee_attack_module.gd" id="4_jq3dq"]
 [ext_resource type="Script" uid="uid://x10bxi1qicvw" path="res://common/modules/combat/attack/projectile_attack_module.gd" id="5_5unbj"]
+[ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/modules/hurtbox/hurtbox.gd" id="5_8nq4u"]
 [ext_resource type="Script" uid="uid://b6r7vut6vta3w" path="res://game/actors/player/state/player_idle_state.gd" id="6_2iqu4"]
 [ext_resource type="Script" uid="uid://bb4mbrq1u7pl" path="res://common/modules/combat/combat_module.gd" id="8_i5w6q"]
 [ext_resource type="Script" uid="uid://w30s7yqi1p3d" path="res://common/modules/movement/movement_module.gd" id="9_1bvv4"]
@@ -14,7 +15,12 @@
 [ext_resource type="Script" uid="uid://dldqypakv40re" path="res://common/modules/animation/animation_module.gd" id="10_tiye0"]
 [ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/state_machine/state_machine.gd" id="11_b15sj"]
 [ext_resource type="Script" uid="uid://chearh86c82uf" path="res://game/actors/player/state/player_attack_state.gd" id="11_klmji"]
+[ext_resource type="Script" uid="uid://dpi3inldik0ho" path="res://common/modules/combat/damage_receiver/damage_receiver_module.gd" id="12_i5w6q"]
 [ext_resource type="Script" uid="uid://csp44dwfwcqu0" path="res://game/actors/player/state/player_move_state.gd" id="14_b15sj"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_64mjj"]
+radius = 2.0
+height = 4.0
 
 [sub_resource type="Animation" id="Animation_mx88g"]
 resource_name = "AttackDown"
@@ -328,6 +334,13 @@ _data = {
 &"RollUp": SubResource("Animation_ivlxb")
 }
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_fxn5h"]
+radius = 3.0
+height = 14.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_64mjj"]
+radius = 50.0
+
 [node name="Player" type="CharacterBody2D" unique_id=1080162393 node_paths=PackedStringArray("movement_module", "animation_module", "combat_module", "detection_module", "state_machine") groups=["player"]]
 collision_mask = 4
 motion_mode = 1
@@ -338,6 +351,12 @@ animation_module = NodePath("Module/AnimationModule")
 combat_module = NodePath("Module/CombatModule")
 detection_module = NodePath("Module/DetectionModule")
 state_machine = NodePath("StateMachine")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1649341033]
+top_level = true
+rotation = 1.5707964
+shape = SubResource("CapsuleShape2D_64mjj")
+debug_color = Color(0.7529412, 0.05882353, 0, 0.59607846)
 
 [node name="Visual" type="Node2D" parent="." unique_id=1393894860]
 
@@ -362,6 +381,16 @@ parameters/TimeScale/scale = 1.0
 
 [node name="Module" type="Node2D" parent="." unique_id=170022229]
 
+[node name="Hurtbox" type="Area2D" parent="Module" unique_id=101171387]
+position = Vector2(0, -8)
+script = ExtResource("5_8nq4u")
+metadata/_custom_type_script = "uid://dby4p11qhtin7"
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Module/Hurtbox" unique_id=124425114]
+shape = SubResource("CapsuleShape2D_fxn5h")
+debug_color = Color(1, 0, 0.69803923, 0.41960785)
+
 [node name="CombatModule" type="Node2D" parent="Module" unique_id=1050368959 node_paths=PackedStringArray("melee_attack", "projectile_attack")]
 position = Vector2(0, -8)
 script = ExtResource("8_i5w6q")
@@ -385,6 +414,10 @@ script = ExtResource("10_8nq4u")
 radius = 50.0
 metadata/_custom_type_script = "uid://hyy86fs5b0fs"
 
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionModule" unique_id=508858704]
+shape = SubResource("CircleShape2D_64mjj")
+debug_color = Color(0, 0.101960786, 0.69803923, 0.11764706)
+
 [node name="MovementModule" type="Node" parent="Module" unique_id=658364954 node_paths=PackedStringArray("character")]
 script = ExtResource("9_1bvv4")
 character = NodePath("../..")
@@ -395,6 +428,11 @@ script = ExtResource("10_tiye0")
 actor = NodePath("../..")
 animation_tree = NodePath("../../Visual/AnimationTree")
 metadata/_custom_type_script = "uid://dldqypakv40re"
+
+[node name="DamageReceiverModule" type="Node" parent="Module" unique_id=1657380889 node_paths=PackedStringArray("hurtbox")]
+script = ExtResource("12_i5w6q")
+hurtbox = NodePath("../Hurtbox")
+metadata/_custom_type_script = "uid://dpi3inldik0ho"
 
 [node name="StateMachine" type="Node" parent="." unique_id=54803581 node_paths=PackedStringArray("initial_state")]
 script = ExtResource("11_b15sj")
