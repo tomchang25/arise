@@ -1,0 +1,67 @@
+[gd_scene format=3 uid="uid://bm2nc7p61qi43"]
+
+[ext_resource type="Script" uid="uid://duuv348he5806" path="res://stage/testbeds/pathfinding_testbed/pathfinding_testbed.gd" id="1_rm3v7"]
+[ext_resource type="PackedScene" uid="uid://58kbxdhebluy" path="res://stage/testbeds/pathfinding_testbed/test_dummies/pathfinding_test_dummy.tscn" id="2_rlx1t"]
+[ext_resource type="PackedScene" uid="uid://dccho5kdagt0e" path="res://game/environment/bush/bush.tscn" id="2_t2ndq"]
+[ext_resource type="Script" uid="uid://bbnuk476f2gu5" path="res://common/_legacy/camera/camera.gd" id="3_3e1am"]
+[ext_resource type="PackedScene" uid="uid://dbhtrssgng58f" path="res://game/actors/player/player.tscn" id="5_1pwl1"]
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_rm3v7"]
+vertices = PackedVector2Array(120.359375, 107, 309.75, -115.39844, 3864.6719, -3750.4531, 3669.289, 2839, 118.6875, 113.17969, 118.6875, 100.82031, 182.47656, -279.84375, -3922.4922, -3352.461, -227.42969, -134.5625, -4254.4375, 2839, -203.92969, -11.1875, 93.82031, 117.6875, 114.17969, 96.3125, 109.328125, 95, 98.671875, 95, 93.82031, 96.3125, 89.3125, 100.82031, 87.640625, 107, 114.17969, 117.6875, 89.3125, 113.17969, 109.328125, 119, 98.671875, 119)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3, 4), PackedInt32Array(1, 0, 5), PackedInt32Array(2, 1, 6), PackedInt32Array(7, 2, 6, 8), PackedInt32Array(9, 7, 8, 10), PackedInt32Array(3, 9, 10, 11), PackedInt32Array(1, 5, 12), PackedInt32Array(10, 1, 12, 13), PackedInt32Array(10, 13, 14), PackedInt32Array(10, 14, 15), PackedInt32Array(10, 15, 16), PackedInt32Array(10, 16, 17), PackedInt32Array(18, 4, 3), PackedInt32Array(10, 17, 19), PackedInt32Array(20, 18, 3), PackedInt32Array(21, 20, 3), PackedInt32Array(11, 21, 3), PackedInt32Array(11, 10, 19)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-3932, -3362, 3875, -3761, 3679, 2849, -4265, 2849)])
+
+[node name="PathfindingTestbed" type="Node2D" unique_id=997047089 node_paths=PackedStringArray("dummies_root", "dummies", "moving_target")]
+script = ExtResource("1_rm3v7")
+dummies_root = NodePath("Dummies")
+dummies = [NodePath("Dummies/PathfindingTestDummy"), NodePath("Dummies/PathfindingTestDummy2"), NodePath("Dummies/PathfindingTestDummy3"), NodePath("Dummies/PathfindingTestDummy4"), NodePath("Dummies/PathfindingTestDummy5"), NodePath("Dummies/PathfindingTestDummy6"), NodePath("Dummies/PathfindingTestDummy7")]
+moving_target = NodePath("Player")
+auto_move_target = false
+
+[node name="MovingTarget" type="Marker2D" parent="." unique_id=826176951]
+
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="." unique_id=318907164]
+navigation_polygon = SubResource("NavigationPolygon_rm3v7")
+metadata/_edit_group_ = true
+
+[node name="Obstacles" type="Node2D" parent="NavigationRegion2D" unique_id=2002337056]
+
+[node name="Bush" parent="NavigationRegion2D/Obstacles" unique_id=1689149563 instance=ExtResource("2_t2ndq")]
+position = Vector2(104, 107)
+
+[node name="StaticBody2D" type="StaticBody2D" parent="NavigationRegion2D/Obstacles" unique_id=1798959766]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="NavigationRegion2D/Obstacles/StaticBody2D" unique_id=466872447]
+polygon = PackedVector2Array(-196, -23, 292, -122, 179, -268, -216, -128)
+
+[node name="Line2D" type="Line2D" parent="NavigationRegion2D/Obstacles/StaticBody2D" unique_id=1391982307]
+points = PackedVector2Array(-225, -133, 183, -280, 300, -119, -200, -14, -224, -133)
+
+[node name="Dummies" type="Node2D" parent="." unique_id=2142860327]
+
+[node name="PathfindingTestDummy" parent="Dummies" unique_id=165349617 instance=ExtResource("2_rlx1t")]
+position = Vector2(-106, 106)
+
+[node name="PathfindingTestDummy2" parent="Dummies" unique_id=1632093384 instance=ExtResource("2_rlx1t")]
+position = Vector2(-144.16235, 68.38306)
+
+[node name="PathfindingTestDummy3" parent="Dummies" unique_id=1149645756 instance=ExtResource("2_rlx1t")]
+position = Vector2(-152.25235, 46.60669)
+
+[node name="PathfindingTestDummy4" parent="Dummies" unique_id=2018311007 instance=ExtResource("2_rlx1t")]
+position = Vector2(-92.41118, 50.567017)
+
+[node name="PathfindingTestDummy5" parent="Dummies" unique_id=401122769 instance=ExtResource("2_rlx1t")]
+position = Vector2(-111.14343, 23.04358)
+
+[node name="PathfindingTestDummy6" parent="Dummies" unique_id=568130797 instance=ExtResource("2_rlx1t")]
+position = Vector2(-140.39667, 29.950806)
+
+[node name="PathfindingTestDummy7" parent="Dummies" unique_id=188372367 instance=ExtResource("2_rlx1t")]
+position = Vector2(-112, 44)
+
+[node name="Player" parent="." unique_id=1080162393 instance=ExtResource("5_1pwl1")]
+position = Vector2(-192.53978, -194.9757)
+
+[node name="Camera2D" type="Camera2D" parent="Player" unique_id=719676269]
+script = ExtResource("3_3e1am")
