@@ -1,0 +1,92 @@
+[gd_scene format=3 uid="uid://djp08npipdoo1"]
+
+[ext_resource type="Script" uid="uid://car03b1l27ldq" path="res://stage/testbeds/loot_pickup_testbed/loot_pickup_testbed.gd" id="1_uqnsq"]
+[ext_resource type="Texture2D" uid="uid://c3kagdvi6j0pp" path="res://stage/testbeds/asset/grass_background.png" id="2_vl2he"]
+[ext_resource type="Script" uid="uid://bbvs1tmy0r2x3" path="res://stage/testbeds/loot_pickup_testbed/loot_test_dummy.gd" id="2_xmwo6"]
+[ext_resource type="PackedScene" uid="uid://dccho5kdagt0e" path="res://game/environment/bush/bush.tscn" id="3_5o4v0"]
+[ext_resource type="Resource" uid="uid://db8ht3m2gd7lv" path="res://stage/testbeds/loot_pickup_testbed/loot_test_droptable.tres" id="3_6me2w"]
+[ext_resource type="Texture2D" uid="uid://bgxwwufm2aroh" path="res://game/destroyables/chestbox/assets/chest_3.png" id="3_8nrjs"]
+[ext_resource type="Texture2D" uid="uid://cm2c6n0ytikey" path="res://icon.svg" id="3_dcmda"]
+[ext_resource type="Script" uid="uid://b5aicofpx733b" path="res://stage/testbeds/loot_pickup_testbed/loot_test_player.gd" id="3_enhpa"]
+[ext_resource type="Script" uid="uid://bbnuk476f2gu5" path="res://common/_legacy/camera/camera.gd" id="4_enhpa"]
+[ext_resource type="Script" uid="uid://i1ibypyr38xv" path="res://common/gameplay/loot/loot_drop_module.gd" id="6_k88kd"]
+[ext_resource type="Script" uid="uid://bil6iq1so8k4p" path="res://common/gameplay/loot/loot_drop_table.gd" id="8_4022q"]
+[ext_resource type="Script" uid="uid://bnnlxh40ib7j8" path="res://common/gameplay/spawning/spawn_context.gd" id="9_csgi8"]
+
+[sub_resource type="Resource" id="Resource_c02bx"]
+script = ExtResource("9_csgi8")
+metadata/_custom_type_script = "uid://bnnlxh40ib7j8"
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6me2w"]
+size = Vector2(12, 12)
+
+[node name="LootPickupTestbed" type="Node2D" unique_id=1798922732 node_paths=PackedStringArray("dummy", "player", "pickups_root", "world_root", "dummy_spawn", "player_spawn", "debug_label")]
+script = ExtResource("1_uqnsq")
+dummy = NodePath("World/Dummy")
+player = NodePath("World/Player")
+pickups_root = NodePath("World/PickupsRoot")
+world_root = NodePath("World")
+dummy_spawn = NodePath("World/DummySpawn")
+player_spawn = NodePath("World/PlayerSpawn")
+debug_label = NodePath("CanvasLayer/DebugLabel")
+loot_tables = Array[ExtResource("8_4022q")]([ExtResource("3_6me2w")])
+
+[node name="World" type="Node2D" parent="." unique_id=1503277031]
+
+[node name="Background" type="TextureRect" parent="World" unique_id=1925526688]
+offset_left = -712.0
+offset_top = -378.0
+offset_right = 911.0
+offset_bottom = 528.0
+texture = ExtResource("2_vl2he")
+stretch_mode = 1
+metadata/_edit_lock_ = true
+
+[node name="Bush" parent="World" unique_id=1944890360 instance=ExtResource("3_5o4v0")]
+position = Vector2(145, 130)
+
+[node name="DummySpawn" type="Marker2D" parent="World" unique_id=64023869]
+position = Vector2(251, 83)
+
+[node name="PlayerSpawn" type="Marker2D" parent="World" unique_id=124669794]
+position = Vector2(80, 80)
+
+[node name="Dummy" type="Node2D" parent="World" unique_id=111675989 node_paths=PackedStringArray("loot_drop_module")]
+position = Vector2(168, 72)
+script = ExtResource("2_xmwo6")
+loot_drop_module = NodePath("LootDropModule")
+
+[node name="Sprite2D" type="Sprite2D" parent="World/Dummy" unique_id=1569473651]
+texture = ExtResource("3_8nrjs")
+
+[node name="LootDropModule" type="Node" parent="World/Dummy" unique_id=839276780 node_paths=PackedStringArray("owner_node")]
+script = ExtResource("6_k88kd")
+owner_node = NodePath("..")
+drop_table = ExtResource("3_6me2w")
+spawn_context = SubResource("Resource_c02bx")
+spawn_parent_path = NodePath("../../PickupsRoot")
+print_debug_log = true
+metadata/_custom_type_script = "uid://i1ibypyr38xv"
+
+[node name="Player" type="CharacterBody2D" parent="World" unique_id=1763129613]
+position = Vector2(80, 80)
+script = ExtResource("3_enhpa")
+
+[node name="Sprite2D" type="Sprite2D" parent="World/Player" unique_id=549332578]
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("3_dcmda")
+
+[node name="Camera2D" type="Camera2D" parent="World/Player" unique_id=1144838785]
+script = ExtResource("4_enhpa")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/Player" unique_id=753707478]
+shape = SubResource("RectangleShape2D_6me2w")
+
+[node name="PickupsRoot" type="Node2D" parent="World" unique_id=386017114]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1061476745]
+
+[node name="DebugLabel" type="Label" parent="CanvasLayer" unique_id=1271656505]
+offset_right = 40.0
+offset_bottom = 22.0
+theme_override_font_sizes/font_size = 6

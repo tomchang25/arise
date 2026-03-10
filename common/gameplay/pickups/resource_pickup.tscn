@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://dvon73ywr5duo"]
+
+[ext_resource type="Script" uid="uid://du3sg6ghqnqr1" path="res://common/gameplay/pickups/resource_pickup.gd" id="1_dutky"]
+
+[node name="ResourcePickup" type="Area2D" unique_id=815153095 node_paths=PackedStringArray("body", "collision_shape")]
+script = ExtResource("1_dutky")
+body = NodePath("Body")
+collision_shape = NodePath("CollisionShape2D")
+base_size = 4.0
+
+[node name="Body" type="Polygon2D" parent="." unique_id=1504862194]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=575429486]

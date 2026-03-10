@@ -1,0 +1,53 @@
+[gd_resource type="Resource" script_class="LootDropTable" format=3 uid="uid://db8ht3m2gd7lv"]
+
+[ext_resource type="Script" uid="uid://bxi4hrljbdmm6" path="res://common/gameplay/loot/loot_drop_entry.gd" id="1_nt731"]
+[ext_resource type="PackedScene" uid="uid://dvon73ywr5duo" path="res://common/gameplay/pickups/resource_pickup.tscn" id="2_q7wsb"]
+[ext_resource type="Script" uid="uid://bil6iq1so8k4p" path="res://common/gameplay/loot/loot_drop_table.gd" id="3_ig1q2"]
+[ext_resource type="PackedScene" uid="uid://bf0be8r66s4er" path="res://common/gameplay/pickups/item_pickup.tscn" id="3_q7wsb"]
+
+[sub_resource type="Resource" id="Resource_j77px"]
+script = ExtResource("1_nt731")
+pickup_scene = ExtResource("2_q7wsb")
+max_amount = 5
+resource_type = &"souls"
+metadata/_custom_type_script = "uid://bxi4hrljbdmm6"
+
+[sub_resource type="Resource" id="Resource_4022q"]
+script = ExtResource("1_nt731")
+pickup_scene = ExtResource("2_q7wsb")
+chance = 0.7
+weight = 6
+min_amount = 20
+max_amount = 50
+resource_type = &"health"
+metadata/_custom_type_script = "uid://bxi4hrljbdmm6"
+
+[sub_resource type="Resource" id="Resource_csgi8"]
+script = ExtResource("1_nt731")
+pickup_scene = ExtResource("2_q7wsb")
+min_amount = 10
+max_amount = 100
+resource_type = &"gold"
+metadata/_custom_type_script = "uid://bxi4hrljbdmm6"
+
+[sub_resource type="Resource" id="Resource_nt731"]
+script = ExtResource("1_nt731")
+pickup_scene = ExtResource("2_q7wsb")
+chance = 0.5
+weight = 7
+min_amount = 2
+max_amount = 10
+resource_type = &"mana"
+metadata/_custom_type_script = "uid://bxi4hrljbdmm6"
+
+[sub_resource type="Resource" id="Resource_q7wsb"]
+script = ExtResource("1_nt731")
+reward_kind = 1
+pickup_scene = ExtResource("3_q7wsb")
+item_id = &"key"
+metadata/_custom_type_script = "uid://bxi4hrljbdmm6"
+
+[resource]
+script = ExtResource("3_ig1q2")
+entries = Array[ExtResource("1_nt731")]([SubResource("Resource_j77px"), SubResource("Resource_4022q"), SubResource("Resource_csgi8"), SubResource("Resource_nt731"), SubResource("Resource_q7wsb")])
+metadata/_custom_type_script = "uid://bil6iq1so8k4p"

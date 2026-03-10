@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://bf0be8r66s4er"]
+
+[ext_resource type="Script" uid="uid://oh44pat6k5c8" path="res://common/gameplay/pickups/item_pickup.gd" id="1_mjlyj"]
+
+[node name="ItemPickup" type="Area2D" unique_id=815153095 node_paths=PackedStringArray("body", "outline", "icon_label", "collision_shape")]
+script = ExtResource("1_mjlyj")
+body = NodePath("Body")
+outline = NodePath("Outline")
+icon_label = NodePath("IconLabel")
+collision_shape = NodePath("CollisionShape2D")
+
+[node name="Body" type="Polygon2D" parent="." unique_id=1504862194]
+
+[node name="Outline" type="Line2D" parent="." unique_id=800879698]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=575429486]
+
+[node name="IconLabel" type="Label" parent="." unique_id=407235690]
+offset_right = 40.0
+offset_bottom = 22.0
