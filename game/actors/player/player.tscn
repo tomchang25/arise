@@ -417,9 +417,8 @@ radius = 50.0
 shape = SubResource("CircleShape2D_8nq4u")
 debug_color = Color(0, 0.101960786, 0.69803923, 0.11764706)
 
-[node name="MovementModule" type="Node" parent="Module" unique_id=658364954 node_paths=PackedStringArray("character")]
+[node name="MovementModule" type="Node" parent="Module" unique_id=658364954]
 script = ExtResource("9_1bvv4")
-character = NodePath("../..")
 
 [node name="AnimationModule" type="Node" parent="Module" unique_id=659370517 node_paths=PackedStringArray("actor", "animation_tree")]
 script = ExtResource("10_tiye0")

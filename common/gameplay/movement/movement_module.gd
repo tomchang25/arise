@@ -6,7 +6,7 @@ extends Node
     set(value):
         enabled = value
         if not enabled:
-            _stop_runtime_motion()
+            _stop_runtime_state()
 
 @export var character: CharacterBody2D
 
@@ -25,15 +25,6 @@ var use_path := false
 # -------------------------
 # Lifecycle
 # -------------------------
-
-
-func _ready() -> void:
-    _auto_wire()
-
-
-func _enter_tree() -> void:
-    if Engine.is_editor_hint():
-        _auto_wire()
 
 
 func _physics_process(delta: float) -> void:
@@ -66,35 +57,19 @@ func _physics_process(delta: float) -> void:
 # -------------------------
 
 
-func _auto_wire() -> void:
-    if character == null:
-        character = get_parent() as CharacterBody2D
-
-
-func _stop_runtime_motion() -> void:
-    stop_all_motion()
-
-
 func set_enabled(value: bool, clear_motion: bool = true) -> void:
     enabled = value
 
     if not enabled and clear_motion:
-        _stop_runtime_motion()
-
-
-func stop_all_motion(force_clear_knockback: bool = true) -> void:
-    manual_velocity = Vector2.ZERO
-    path_velocity = Vector2.ZERO
-
-    if force_clear_knockback:
-        knockback_velocity = Vector2.ZERO
-
-    if character:
-        character.velocity = Vector2.ZERO
+        _stop_runtime_state()
 
 
 func is_enabled() -> bool:
     return enabled
+
+
+func has_character() -> bool:
+    return character != null
 
 
 func is_using_manual_mode() -> bool:
@@ -105,16 +80,33 @@ func is_using_path_mode() -> bool:
     return use_path
 
 
+func stop_all_motion(force_clear_knockback: bool = true) -> void:
+    manual_velocity = Vector2.ZERO
+    path_velocity = Vector2.ZERO
+
+    if force_clear_knockback:
+        knockback_velocity = Vector2.ZERO
+
+    if character != null:
+        character.velocity = Vector2.ZERO
+
+
 # -------------------------
 # Manual Control
 # -------------------------
 
 
-func set_manual_velocity(v: Vector2) -> void:
-    manual_velocity = v
+func set_manual_velocity(velocity: Vector2) -> void:
+    if not enabled:
+        return
+
+    manual_velocity = velocity
 
 
 func set_move_direction(direction: Vector2, speed: float) -> void:
+    if not enabled:
+        return
+
     if direction == Vector2.ZERO:
         manual_velocity = Vector2.ZERO
         return
@@ -137,8 +129,11 @@ func set_manual_mode() -> void:
 # -------------------------
 
 
-func set_path_velocity(v: Vector2) -> void:
-    path_velocity = v
+func set_path_velocity(velocity: Vector2) -> void:
+    if not enabled:
+        return
+
+    path_velocity = velocity
 
 
 func stop_path_motion() -> void:
@@ -152,19 +147,25 @@ func set_path_mode() -> void:
 
 
 # -------------------------
-# Knockback Control
+# Knockback
 # -------------------------
 
 
 func apply_knockback(impulse: Vector2, velocity_cap: float = -1.0) -> void:
+    if not enabled:
+        return
+
     knockback_velocity += impulse
 
     if velocity_cap > 0.0 and knockback_velocity.length() > velocity_cap:
         knockback_velocity = knockback_velocity.normalized() * velocity_cap
 
 
-func set_knockback_velocity(v: Vector2, velocity_cap: float = -1.0) -> void:
-    knockback_velocity = v
+func set_knockback_velocity(velocity: Vector2, velocity_cap: float = -1.0) -> void:
+    if not enabled:
+        return
+
+    knockback_velocity = velocity
 
     if velocity_cap > 0.0 and knockback_velocity.length() > velocity_cap:
         knockback_velocity = knockback_velocity.normalized() * velocity_cap
@@ -172,3 +173,12 @@ func set_knockback_velocity(v: Vector2, velocity_cap: float = -1.0) -> void:
 
 func clear_knockback() -> void:
     knockback_velocity = Vector2.ZERO
+
+
+# -------------------------
+# Internal Helpers
+# -------------------------
+
+
+func _stop_runtime_state() -> void:
+    stop_all_motion()

@@ -1,0 +1,426 @@
+# Arise Module Architecture Standard
+
+This document defines the structural rules used by gameplay modules in the **Arise** project.
+
+Goals of this standard:
+
+* Maintain consistent module architecture
+* Reduce coupling between actors and gameplay systems
+* Improve maintainability and debugging
+* Allow modules to be reused across different actors
+* Keep gameplay logic separated from low-level systems
+
+Modules that follow this standard include (but are not limited to):
+
+* AnimationModule
+* MovementModule
+* CombatModule
+* DetectionModule
+* DamageReceiverModule
+* PlacementModule
+* HealthBarModule
+
+---
+
+# Scope
+
+This standard applies to gameplay modules located under:
+
+```
+common/modules/*
+```
+
+These modules provide reusable gameplay functionality that can be attached to actors such as:
+
+* Player
+* Enemies
+* NPCs
+* Summons
+* World objects
+
+This document does **not** apply to:
+
+* UI scripts
+* Editor tools
+* Standalone gameplay systems
+* Global managers
+
+---
+
+# 1. Module Structure
+
+Every module should follow a consistent code layout order.
+
+Example structure:
+
+```gdscript
+# -------------------------
+# Lifecycle
+# -------------------------
+
+func _enter_tree()
+func _ready()
+
+
+# -------------------------
+# Common API
+# -------------------------
+
+func set_enabled()
+func is_enabled()
+
+
+# -------------------------
+# Feature APIs
+# -------------------------
+
+func do_feature_a()
+func do_feature_b()
+
+
+# -------------------------
+# Internal Helpers
+# -------------------------
+
+func _cache_handles()
+func _stop_runtime_state()
+
+
+# -------------------------
+# Signals / Callbacks
+# -------------------------
+
+func _on_xxx()
+```
+
+### Domain-specific headers
+
+The **Feature APIs** section may use a domain-specific header when clearer.
+
+Examples:
+
+```gdscript
+# -------------------------
+# State Travel
+# -------------------------
+```
+
+```gdscript
+# -------------------------
+# Navigation Control
+# -------------------------
+```
+
+```gdscript
+# -------------------------
+# Knockback
+# -------------------------
+```
+
+Do not rename meaningful domain headers only to match generic labels.
+
+The standard enforces **layout order**, not header wording.
+
+---
+
+# 2. Enabled Switch Pattern
+
+Every gameplay module should support runtime enabling and disabling.
+
+```gdscript
+@export var enabled := true:
+    set(value):
+        enabled = value
+        if not enabled:
+            _stop_runtime_state()
+```
+
+Purpose:
+
+* Allow temporary disable for debugging
+* Support actor variants that may not use certain modules
+* Improve modular flexibility
+* Prevent modules from running when not needed
+
+Each module must implement a cleanup function:
+
+```
+func _stop_runtime_state() -> void
+```
+
+Example behaviors:
+
+| Module    | Reset Behavior   |
+| --------- | ---------------- |
+| Movement  | clear velocity   |
+| Animation | reset time scale |
+| Combat    | cancel attack    |
+| Detection | clear targets    |
+
+This guarantees:
+
+```
+module disabled → safe runtime state
+```
+
+---
+
+# 3. Dependency Assignment Pattern
+
+Gameplay modules must **not auto-wire dependencies**.
+
+All dependencies must be assigned by the **entity that owns the modules**.
+
+Examples of entities:
+
+* Player
+* Enemy
+* NPC
+* Summon
+* World object
+
+Dependencies may include:
+
+* actor references
+* cross-module references
+* gameplay nodes (AnimationTree, Hitbox, Hurtbox)
+* navigation agents
+* stats resources
+
+Modules should only **use the references they are given**.
+
+### Responsibility
+
+```
+Entity
+  └ creating or owning scene components
+
+Module
+  └ receives references and executes behavior
+```
+
+### Correct Example
+
+Entity script:
+
+```gdscript
+func _wire_modules() -> void:
+    navigation_module.character = self
+    navigation_module.movement = movement_module
+    navigation_module.navigation_agent = navigation_agent
+
+    animation_module.animation_tree = animation_tree
+    combat_module.hitbox = hitbox
+    damage_receiver.stats = stats
+```
+
+Module script:
+
+```gdscript
+@export var character: CharacterBody2D
+@export var movement: MovementModule
+@export var navigation_agent: NavigationAgent2D
+```
+
+Modules must **never search the scene tree for dependencies**.
+
+---
+
+# 4. Handle Caching Pattern
+
+Modules may cache derived runtime handles or expensive lookups.
+
+Examples:
+
+* AnimationTree playback objects
+* NodePath resolutions
+* search results
+
+Typical helper:
+
+```
+func _cache_handles() -> void
+```
+
+Example:
+
+```gdscript
+_playback = animation_tree.get(state_machine_path)
+```
+
+Rule:
+
+* Cache **derived runtime handles**
+* Do **not cache exported node references**
+
+Example of what **not** to cache:
+
+```gdscript
+@export var character: CharacterBody2D
+```
+
+Exported references are already direct pointers.
+
+---
+
+# 5. Public API Rules
+
+Module public APIs should follow these principles:
+
+* Small surface area
+* Clear verb-based names
+* No gameplay decision logic
+
+Examples of good APIs:
+
+```
+travel(state)
+set_blend_position()
+set_time_scale()
+stop()
+scan()
+attack()
+```
+
+Examples of bad APIs:
+
+```
+decide_attack_target()
+handle_combat_logic()
+choose_state_transition()
+```
+
+Modules should act as **tools**, not **decision makers**.
+
+### Safety Guard
+
+Public functions should guard against invalid states.
+
+Example:
+
+```gdscript
+if not enabled:
+    return
+
+if animation_tree == null:
+    return
+```
+
+This prevents runtime crashes and allows modules to be safely called without strict ordering.
+
+---
+
+# 6. Modules Should Not Own Gameplay Logic
+
+Modules must not contain gameplay decision logic.
+
+| Module    | Allowed              | Not Allowed            |
+| --------- | -------------------- | ---------------------- |
+| Animation | play animation state | decide animation state |
+| Movement  | move actor body      | read player input      |
+| Combat    | execute attack       | decide when to attack  |
+| Detection | detect targets       | choose attack target   |
+
+Gameplay decisions should exist in:
+
+```
+Player
+Enemy
+StateMachine
+AI
+```
+
+Modules only **execute behavior**.
+
+---
+
+# 7. Export Groups
+
+Use export groups to organize inspector properties.
+
+Example:
+
+```gdscript
+@export_group("AnimationTree Paths")
+@export var state_machine_path
+
+@export_group("Behavior")
+@export var reset_time_scale_on_disable
+```
+
+Benefits:
+
+* Cleaner inspector layout
+* Easier configuration
+* Consistent editor experience
+
+---
+
+# 8. Standard Utility Functions
+
+Modules should provide basic utility helpers.
+
+Required:
+
+```
+func set_enabled()
+func is_enabled()
+
+func _stop_runtime_state()
+```
+
+Optional helpers:
+
+```
+_cache_handles()
+has_xxx()
+clear_xxx()
+stop_xxx()
+```
+
+---
+
+# 9. Signal Bridging
+
+Modules may expose signals from internal systems.
+
+Example:
+
+```gdscript
+signal animation_finished
+```
+
+Internally:
+
+```gdscript
+animation_tree.animation_finished.connect(_on_animation_finished)
+```
+
+This allows actors to respond to module events without depending on internal nodes.
+
+---
+
+# Module Layout Summary
+
+A typical module follows this structure:
+
+```
+enabled switch
+export configuration
+cached handles
+
+Lifecycle
+Common API
+Feature APIs
+Internal Helpers
+Signals / Callbacks
+```
+
+Following this structure ensures modules remain:
+
+* predictable
+* maintainable
+* reusable
+* consistent across the project
+
+---

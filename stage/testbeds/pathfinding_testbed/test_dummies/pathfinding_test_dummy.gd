@@ -2,6 +2,9 @@
 class_name PathfindingTestDummy
 extends CharacterBody2D
 
+@onready var navigation_agent_2d: NavigationAgent2D = $NavigationAgent2D
+
+
 @export var movement: MovementModule
 @export var navigation: NavigationModule
 @export var sprite: Node2D
@@ -23,6 +26,7 @@ func _ready() -> void:
     if navigation:
         navigation.character = self
         navigation.movement = movement
+        navigation.navigation_agent = navigation_agent_2d
         navigation.debug_draw = enable_path_debug
 
 
@@ -34,6 +38,7 @@ func _enter_tree() -> void:
     if navigation:
         navigation.character = self
         navigation.movement = movement
+        navigation.navigation_agent = navigation_agent_2d
 
 
 func _auto_wire() -> void:

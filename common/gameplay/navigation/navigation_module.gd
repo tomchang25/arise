@@ -10,8 +10,9 @@ signal target_lost
     set(value):
         enabled = value
         if not enabled:
-            _stop_runtime_pathing()
+            _stop_runtime_state()
 
+@export_group("References")
 @export var character: CharacterBody2D
 @export var movement: MovementModule
 @export var navigation_agent: NavigationAgent2D
@@ -56,16 +57,14 @@ var _finished_emitted := false
 # -------------------------
 
 
-func _ready() -> void:
-    _auto_wire()
-    _apply_navigation_settings()
-    _clear_path_velocity()
-
-
 func _enter_tree() -> void:
     if Engine.is_editor_hint():
-        _auto_wire()
         _apply_navigation_settings()
+
+
+func _ready() -> void:
+    _apply_navigation_settings()
+    _clear_path_velocity()
 
 
 func _physics_process(delta: float) -> void:
@@ -87,6 +86,10 @@ func _physics_process(delta: float) -> void:
 
     if _should_use_fallback_direct_path():
         _fallback_direct_path()
+        return
+
+    if navigation_agent == null:
+        _clear_path_velocity()
         return
 
     if navigation_agent.is_navigation_finished():
@@ -118,26 +121,19 @@ func _draw() -> void:
 
     var origin := character.global_position
 
-    # Draw target
     if _has_target_position:
-        draw_circle(to_local(_target_position), 4, debug_color_target)
+        draw_circle(to_local(_target_position), 4.0, debug_color_target)
+        draw_arc(to_local(_target_position), arrive_distance, 0.0, TAU, 24, debug_color_target, 1.5)
 
-        draw_arc(to_local(_target_position), arrive_distance, 0, TAU, 24, debug_color_target, 1.5)
-
-    # Draw path
-    if navigation_agent:
+    if navigation_agent != null:
         var path := navigation_agent.get_current_navigation_path()
-
         if path.size() >= 2:
             for i in range(path.size() - 1):
                 draw_line(to_local(path[i]), to_local(path[i + 1]), debug_color_path, 2.0)
 
-    # Draw next point
-    if navigation_agent and not navigation_agent.is_navigation_finished():
+    if navigation_agent != null and not navigation_agent.is_navigation_finished():
         var next_point := navigation_agent.get_next_path_position()
-
-        draw_circle(to_local(next_point), 3, debug_color_next)
-
+        draw_circle(to_local(next_point), 3.0, debug_color_next)
         draw_line(to_local(origin), to_local(next_point), debug_color_next, 1.5)
 
 
@@ -146,54 +142,19 @@ func _draw() -> void:
 # -------------------------
 
 
-func _auto_wire() -> void:
-    if character == null:
-        character = get_parent() as CharacterBody2D
-
-    if movement == null:
-        movement = find_child("MovementModule", true, false) as MovementModule
-
-    if navigation_agent == null:
-        navigation_agent = find_child("NavigationAgent2D", true, false) as NavigationAgent2D
-
-
-func _apply_navigation_settings() -> void:
-    if navigation_agent == null:
-        return
-
-    navigation_agent.target_desired_distance = arrive_distance
-    navigation_agent.max_speed = max_speed
-
-    _apply_avoidance_settings()
-
-    if not navigation_agent.velocity_computed.is_connected(_on_velocity_computed):
-        navigation_agent.velocity_computed.connect(_on_velocity_computed)
-
-    if not navigation_agent.navigation_finished.is_connected(_on_navigation_finished):
-        navigation_agent.navigation_finished.connect(_on_navigation_finished)
-
-
-func _apply_avoidance_settings() -> void:
-    if navigation_agent == null:
-        return
-
-    navigation_agent.avoidance_enabled = enable_avoidance
-    navigation_agent.avoidance_priority = avoidance_priority
-
-
-func _stop_runtime_pathing() -> void:
-    clear_target()
-
-
 func set_enabled(value: bool, clear_target_data: bool = true) -> void:
     enabled = value
 
     if not enabled and clear_target_data:
-        _stop_runtime_pathing()
+        _stop_runtime_state()
 
 
 func is_enabled() -> bool:
     return enabled
+
+
+func stop() -> void:
+    clear_target()
 
 
 func has_target() -> bool:
@@ -202,34 +163,14 @@ func has_target() -> bool:
 
 func is_path_finished() -> bool:
     if _should_use_fallback_direct_path():
-        if not character or not _has_target_position:
+        if character == null or not _has_target_position:
             return true
         return character.global_position.distance_to(_target_position) <= arrive_distance
 
-    if navigation_agent:
+    if navigation_agent != null:
         return navigation_agent.is_navigation_finished()
 
     return true
-
-
-func get_target_position() -> Vector2:
-    return _target_position
-
-
-func get_follow_target() -> Node2D:
-    return _follow_target
-
-
-func set_avoidance_enabled(value: bool) -> void:
-    enable_avoidance = value
-
-
-func is_avoidance_enabled() -> bool:
-    return enable_avoidance
-
-
-func set_avoidance_priority(value: float) -> void:
-    avoidance_priority = value
 
 
 # -------------------------
@@ -264,27 +205,108 @@ func clear_target() -> void:
 
     _clear_path_velocity()
 
-    if navigation_agent and character:
-        navigation_agent.target_position = character.global_position
-    elif navigation_agent:
-        navigation_agent.target_position = Vector2.ZERO
+    if navigation_agent != null:
+        if character != null:
+            navigation_agent.target_position = character.global_position
+        else:
+            navigation_agent.target_position = Vector2.ZERO
 
 
-func stop() -> void:
-    clear_target()
+func get_target_position() -> Vector2:
+    return _target_position
+
+
+func get_follow_target() -> Node2D:
+    return _follow_target
+
+
+# -------------------------
+# Navigation Control
+# -------------------------
 
 
 func stop_path_motion_only() -> void:
     _clear_path_velocity()
 
 
+func set_speed(value: float) -> void:
+    max_speed = max(0.0, value)
+
+    if navigation_agent != null:
+        navigation_agent.max_speed = max_speed
+
+
+func set_arrive_distance(value: float) -> void:
+    arrive_distance = max(0.0, value)
+
+    if navigation_agent != null:
+        navigation_agent.target_desired_distance = arrive_distance
+
+
+func set_avoidance_enabled(value: bool) -> void:
+    enable_avoidance = value
+
+
+func is_avoidance_enabled() -> bool:
+    return enable_avoidance
+
+
+func set_avoidance_priority(value: float) -> void:
+    avoidance_priority = value
+
+
 # -------------------------
-# Runtime Helpers
+# Debug / Test Helpers
 # -------------------------
+
+
+func debug_print_target_state() -> void:
+    print(
+        {
+            "enabled": enabled,
+            "has_target": has_target(),
+            "target_position": _target_position,
+            "follow_target": _follow_target,
+            "path_finished": is_path_finished()
+        }
+    )
+
+
+# -------------------------
+# Internal Helpers
+# -------------------------
+
+
+func _apply_navigation_settings() -> void:
+    if navigation_agent == null:
+        return
+
+    navigation_agent.target_desired_distance = arrive_distance
+    navigation_agent.max_speed = max_speed
+
+    _apply_avoidance_settings()
+
+    if not navigation_agent.velocity_computed.is_connected(_on_velocity_computed):
+        navigation_agent.velocity_computed.connect(_on_velocity_computed)
+
+    if not navigation_agent.navigation_finished.is_connected(_on_navigation_finished):
+        navigation_agent.navigation_finished.connect(_on_navigation_finished)
+
+
+func _apply_avoidance_settings() -> void:
+    if navigation_agent == null:
+        return
+
+    navigation_agent.avoidance_enabled = enable_avoidance
+    navigation_agent.avoidance_priority = avoidance_priority
+
+
+func _stop_runtime_state() -> void:
+    clear_target()
 
 
 func _has_active_target() -> bool:
-    if _follow_target and not is_instance_valid(_follow_target):
+    if _follow_target != null and not is_instance_valid(_follow_target):
         _follow_target = null
         _has_target_position = false
         target_lost.emit()
@@ -296,23 +318,25 @@ func _has_active_target() -> bool:
 func _refresh_target_position() -> void:
     var next_target := _target_position
 
-    if _follow_target:
+    if _follow_target != null:
         next_target = _follow_target.global_position
 
     _target_position = next_target
     _has_target_position = true
 
-    if (
-        navigation_agent
-        and (_last_applied_target_position == Vector2.INF or _last_applied_target_position.distance_to(_target_position) >= repath_distance_threshold)
-    ):
-        navigation_agent.target_position = _target_position
-        _last_applied_target_position = _target_position
+    if navigation_agent != null:
+        var should_repath := (
+            _last_applied_target_position == Vector2.INF or _last_applied_target_position.distance_to(_target_position) >= repath_distance_threshold
+        )
+
+        if should_repath:
+            navigation_agent.target_position = _target_position
+            _last_applied_target_position = _target_position
 
     target_changed.emit(_target_position)
 
     if debug_print_state:
-        print("[PathfindingModule] target updated: ", _target_position)
+        print("[NavigationModule] target updated: ", _target_position)
 
 
 func _should_use_fallback_direct_path() -> bool:
@@ -334,29 +358,31 @@ func _fallback_direct_path() -> void:
     _apply_path_velocity(delta_to_target.normalized() * max_speed)
 
 
-func _apply_path_velocity(v: Vector2) -> void:
+func _apply_path_velocity(value: Vector2) -> void:
     if movement == null:
         return
 
     if auto_set_path_mode:
         movement.set_path_mode()
 
-    movement.set_path_velocity(v)
+    movement.set_path_velocity(value)
 
 
 func _clear_path_velocity() -> void:
-    if movement:
+    if movement != null:
         movement.set_path_velocity(Vector2.ZERO)
 
 
 func _emit_navigation_finished_once() -> void:
-    if not _finished_emitted:
-        _finished_emitted = true
-        navigation_finished.emit()
+    if _finished_emitted:
+        return
+
+    _finished_emitted = true
+    navigation_finished.emit()
 
 
 # -------------------------
-# Navigation Callbacks
+# Signals / Callbacks
 # -------------------------
 
 
@@ -371,39 +397,3 @@ func _on_velocity_computed(safe_velocity: Vector2) -> void:
 func _on_navigation_finished() -> void:
     _clear_path_velocity()
     _emit_navigation_finished_once()
-
-
-# -------------------------
-# Config API
-# -------------------------
-
-
-func set_speed(value: float) -> void:
-    max_speed = max(0.0, value)
-
-    if navigation_agent:
-        navigation_agent.max_speed = max_speed
-
-
-func set_arrive_distance(value: float) -> void:
-    arrive_distance = max(0.0, value)
-
-    if navigation_agent:
-        navigation_agent.target_desired_distance = arrive_distance
-
-
-# -------------------------
-# Debug / Test Helpers
-# -------------------------
-
-
-func debug_print_target_state() -> void:
-    print(
-        {
-            "enabled": enabled,
-            "has_target": has_target(),
-            "target_position": _target_position,
-            "follow_target": _follow_target,
-            "path_finished": is_path_finished()
-        }
-    )

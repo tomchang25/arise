@@ -39,29 +39,36 @@ points = PackedVector2Array(-225, -133, 183, -280, 300, -119, -200, -14, -224, -
 
 [node name="Dummies" type="Node2D" parent="." unique_id=2142860327]
 
-[node name="PathfindingTestDummy" parent="Dummies" unique_id=165349617 instance=ExtResource("2_rlx1t")]
-position = Vector2(-106, 106)
+[node name="PathfindingTestDummy" parent="Dummies" unique_id=165349617 node_paths=PackedStringArray("navigation") instance=ExtResource("2_rlx1t")]
+position = Vector2(-160.64769, -189.99834)
+navigation = NodePath("NavigationModule")
 
-[node name="PathfindingTestDummy2" parent="Dummies" unique_id=1632093384 instance=ExtResource("2_rlx1t")]
-position = Vector2(-144.16235, 68.38306)
+[node name="PathfindingTestDummy2" parent="Dummies" unique_id=1632093384 node_paths=PackedStringArray("navigation") instance=ExtResource("2_rlx1t")]
+position = Vector2(-175.29375, -161.73315)
+navigation = NodePath("NavigationModule")
 
-[node name="PathfindingTestDummy3" parent="Dummies" unique_id=1149645756 instance=ExtResource("2_rlx1t")]
-position = Vector2(-152.25235, 46.60669)
+[node name="PathfindingTestDummy3" parent="Dummies" unique_id=1149645756 node_paths=PackedStringArray("navigation") instance=ExtResource("2_rlx1t")]
+position = Vector2(-203.51286, -153.88806)
+navigation = NodePath("NavigationModule")
 
-[node name="PathfindingTestDummy4" parent="Dummies" unique_id=2018311007 instance=ExtResource("2_rlx1t")]
-position = Vector2(-92.41118, 50.567017)
+[node name="PathfindingTestDummy4" parent="Dummies" unique_id=2018311007 node_paths=PackedStringArray("navigation") instance=ExtResource("2_rlx1t")]
+position = Vector2(-224.64359, -172.4593)
+navigation = NodePath("NavigationModule")
 
-[node name="PathfindingTestDummy5" parent="Dummies" unique_id=401122769 instance=ExtResource("2_rlx1t")]
-position = Vector2(-111.14343, 23.04358)
+[node name="PathfindingTestDummy5" parent="Dummies" unique_id=401122769 node_paths=PackedStringArray("navigation") instance=ExtResource("2_rlx1t")]
+position = Vector2(-224.73138, -203.07104)
+navigation = NodePath("NavigationModule")
 
-[node name="PathfindingTestDummy6" parent="Dummies" unique_id=568130797 instance=ExtResource("2_rlx1t")]
-position = Vector2(-140.39667, 29.950806)
+[node name="PathfindingTestDummy6" parent="Dummies" unique_id=568130797 node_paths=PackedStringArray("navigation") instance=ExtResource("2_rlx1t")]
+position = Vector2(-201.69122, -223.63103)
+navigation = NodePath("NavigationModule")
 
-[node name="PathfindingTestDummy7" parent="Dummies" unique_id=188372367 instance=ExtResource("2_rlx1t")]
-position = Vector2(-112, 44)
+[node name="PathfindingTestDummy7" parent="Dummies" unique_id=188372367 node_paths=PackedStringArray("navigation") instance=ExtResource("2_rlx1t")]
+position = Vector2(-173.09937, -217.02675)
+navigation = NodePath("NavigationModule")
 
 [node name="Player" parent="." unique_id=1080162393 instance=ExtResource("5_1pwl1")]
-position = Vector2(-192.53978, -194.9757)
+position = Vector2(-364.2477, -248.97928)
 
 [node name="Camera2D" type="Camera2D" parent="Player" unique_id=719676269]
 script = ExtResource("3_3e1am")

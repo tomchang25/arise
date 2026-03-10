@@ -5,14 +5,18 @@
 [ext_resource type="Script" uid="uid://w30s7yqi1p3d" path="res://common/gameplay/movement/movement_module.gd" id="2_4ckr7"]
 [ext_resource type="Script" uid="uid://ds7jcv6cdv02p" path="res://common/gameplay/navigation/navigation_module.gd" id="3_n8l3v"]
 
-[node name="PathfindingTestDummy" type="CharacterBody2D" unique_id=165349617 node_paths=PackedStringArray("movement", "sprite")]
+[node name="PathfindingTestDummy" type="CharacterBody2D" unique_id=165349617 node_paths=PackedStringArray("movement", "navigation", "sprite")]
 script = ExtResource("1_b6ds1")
 movement = NodePath("MovementModule")
+navigation = NodePath("NavigationModule")
 sprite = NodePath("Sprite2D")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1616958216]
 scale = Vector2(0.25, 0.25)
 texture = ExtResource("2_2mf1l")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="." unique_id=433342766]
+target_desired_distance = 4.0
 
 [node name="MovementModule" type="Node" parent="." unique_id=1590119203 node_paths=PackedStringArray("character")]
 script = ExtResource("2_4ckr7")
@@ -23,8 +27,5 @@ metadata/_custom_type_script = "uid://w30s7yqi1p3d"
 script = ExtResource("3_n8l3v")
 character = NodePath("..")
 movement = NodePath("../MovementModule")
-navigation_agent = NodePath("NavigationAgent2D")
+navigation_agent = NodePath("../NavigationAgent2D")
 metadata/_custom_type_script = "uid://ds7jcv6cdv02p"
-
-[node name="NavigationAgent2D" type="NavigationAgent2D" parent="NavigationModule" unique_id=433342766]
-target_desired_distance = 4.0
