@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="SpatialAudioEvent" format=3 uid="uid://dtounutdyy0jl"]
 
-[ext_resource type="Script" uid="uid://dk6ul5gi57s2y" path="res://common/resources/audio/spatial_audio_event.gd" id="1_8dfj7"]
-[ext_resource type="AudioStream" uid="uid://dm3lusf2ifjrt" path="res://game/destroyables/plant_props/asset/Bright_Crisp_Strike_Impact_4.wav" id="2_j21dk"]
+[ext_resource type="Script" uid="uid://dk6ul5gi57s2y" path="res://common/audio/events/spatial_audio_event.gd" id="1_8dfj7"]
+[ext_resource type="AudioStream" uid="uid://dm3lusf2ifjrt" path="res://game/destroyables/plant_props/assets/Bright_Crisp_Strike_Impact_4.wav" id="2_j21dk"]
 
 [resource]
 script = ExtResource("1_8dfj7")

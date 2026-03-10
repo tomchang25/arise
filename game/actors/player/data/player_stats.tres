@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="Stats" format=3 uid="uid://dg0jnt6ju4qcl"]
 
-[ext_resource type="PackedScene" uid="uid://jla2t1i1qafl" path="res://common/modules/combat/attack/attack_effect/slash_attack_effect.tscn" id="1_pcc23"]
-[ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/resources/stats/stats.gd" id="2_87lid"]
+[ext_resource type="PackedScene" uid="uid://jla2t1i1qafl" path="res://common/gameplay/combat/attack/effects/slash_attack_effect.tscn" id="1_pcc23"]
+[ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="2_87lid"]
 
 [resource]
 script = ExtResource("2_87lid")

@@ -2,13 +2,12 @@
 
 [ext_resource type="Script" uid="uid://gg8ephhviwae" path="res://stage/testbeds/pathfinding_testbed/test_dummies/pathfinding_test_dummy.gd" id="1_b6ds1"]
 [ext_resource type="Texture2D" uid="uid://cm2c6n0ytikey" path="res://icon.svg" id="2_2mf1l"]
-[ext_resource type="Script" uid="uid://w30s7yqi1p3d" path="res://common/modules/movement/movement_module.gd" id="2_4ckr7"]
-[ext_resource type="Script" uid="uid://ds7jcv6cdv02p" path="res://common/modules/pathfinding/pathfinding_module.gd" id="3_n8l3v"]
+[ext_resource type="Script" uid="uid://w30s7yqi1p3d" path="res://common/gameplay/movement/movement_module.gd" id="2_4ckr7"]
+[ext_resource type="Script" uid="uid://ds7jcv6cdv02p" path="res://common/gameplay/navigation/navigation_module.gd" id="3_n8l3v"]
 
-[node name="PathfindingTestDummy" type="CharacterBody2D" unique_id=165349617 node_paths=PackedStringArray("movement", "pathfinding", "sprite")]
+[node name="PathfindingTestDummy" type="CharacterBody2D" unique_id=165349617 node_paths=PackedStringArray("movement", "sprite")]
 script = ExtResource("1_b6ds1")
 movement = NodePath("MovementModule")
-pathfinding = NodePath("PathfindingModule")
 sprite = NodePath("Sprite2D")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1616958216]
@@ -20,12 +19,12 @@ script = ExtResource("2_4ckr7")
 character = NodePath("..")
 metadata/_custom_type_script = "uid://w30s7yqi1p3d"
 
-[node name="PathfindingModule" type="Node2D" parent="." unique_id=512737190 node_paths=PackedStringArray("character", "movement", "navigation_agent")]
+[node name="NavigationModule" type="Node2D" parent="." unique_id=512737190 node_paths=PackedStringArray("character", "movement", "navigation_agent")]
 script = ExtResource("3_n8l3v")
 character = NodePath("..")
 movement = NodePath("../MovementModule")
 navigation_agent = NodePath("NavigationAgent2D")
 metadata/_custom_type_script = "uid://ds7jcv6cdv02p"
 
-[node name="NavigationAgent2D" type="NavigationAgent2D" parent="PathfindingModule" unique_id=433342766]
-target_desired_distance = 6.0
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="NavigationModule" unique_id=433342766]
+target_desired_distance = 4.0

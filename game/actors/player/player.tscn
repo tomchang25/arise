@@ -2,20 +2,20 @@
 
 [ext_resource type="Script" uid="uid://4veuxq1h5upn" path="res://game/actors/player/player.gd" id="1_b15sj"]
 [ext_resource type="Resource" uid="uid://dg0jnt6ju4qcl" path="res://game/actors/player/data/player_stats.tres" id="2_64mjj"]
-[ext_resource type="Texture2D" uid="uid://e7rr31b6fwkg" path="res://game/actors/player/art/player.png" id="2_e6ar1"]
+[ext_resource type="Texture2D" uid="uid://e7rr31b6fwkg" path="res://game/actors/player/assets/player.png" id="2_e6ar1"]
 [ext_resource type="AnimationNodeBlendTree" uid="uid://bam4152vw8gtf" path="res://game/actors/player/data/player_animation_tree.tres" id="3_qa8rf"]
-[ext_resource type="Script" uid="uid://d1yimk3mk35ag" path="res://common/modules/combat/attack/melee_attack_module.gd" id="4_jq3dq"]
-[ext_resource type="Script" uid="uid://x10bxi1qicvw" path="res://common/modules/combat/attack/projectile_attack_module.gd" id="5_5unbj"]
-[ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/modules/hurtbox/hurtbox.gd" id="5_8nq4u"]
+[ext_resource type="Script" uid="uid://d1yimk3mk35ag" path="res://common/gameplay/combat/attack/melee_attack_module.gd" id="4_jq3dq"]
+[ext_resource type="Script" uid="uid://x10bxi1qicvw" path="res://common/gameplay/combat/attack/projectile_attack_module.gd" id="5_5unbj"]
+[ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/gameplay/combat/hurtbox/hurtbox.gd" id="5_8nq4u"]
 [ext_resource type="Script" uid="uid://b6r7vut6vta3w" path="res://game/actors/player/state/player_idle_state.gd" id="6_2iqu4"]
-[ext_resource type="Script" uid="uid://bb4mbrq1u7pl" path="res://common/modules/combat/combat_module.gd" id="8_i5w6q"]
-[ext_resource type="Script" uid="uid://w30s7yqi1p3d" path="res://common/modules/movement/movement_module.gd" id="9_1bvv4"]
+[ext_resource type="Script" uid="uid://bb4mbrq1u7pl" path="res://common/gameplay/combat/combat_module.gd" id="8_i5w6q"]
+[ext_resource type="Script" uid="uid://w30s7yqi1p3d" path="res://common/gameplay/movement/movement_module.gd" id="9_1bvv4"]
 [ext_resource type="Script" uid="uid://jtqne3plv0gg" path="res://game/actors/player/state/player_roll_state.gd" id="9_t2ln0"]
-[ext_resource type="Script" uid="uid://hyy86fs5b0fs" path="res://common/modules/detection/detection_module.gd" id="10_8nq4u"]
-[ext_resource type="Script" uid="uid://dldqypakv40re" path="res://common/modules/animation/animation_module.gd" id="10_tiye0"]
-[ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/state_machine/state_machine.gd" id="11_b15sj"]
+[ext_resource type="Script" uid="uid://hyy86fs5b0fs" path="res://common/gameplay/detection/detection_module.gd" id="10_8nq4u"]
+[ext_resource type="Script" uid="uid://dldqypakv40re" path="res://common/gameplay/animation/animation_module.gd" id="10_tiye0"]
+[ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/framework/state_machine/state_machine.gd" id="11_b15sj"]
 [ext_resource type="Script" uid="uid://chearh86c82uf" path="res://game/actors/player/state/player_attack_state.gd" id="11_klmji"]
-[ext_resource type="Script" uid="uid://dpi3inldik0ho" path="res://common/modules/combat/damage_receiver/damage_receiver_module.gd" id="12_i5w6q"]
+[ext_resource type="Script" uid="uid://dpi3inldik0ho" path="res://common/gameplay/combat/damage_receiver/damage_receiver_module.gd" id="12_i5w6q"]
 [ext_resource type="Script" uid="uid://csp44dwfwcqu0" path="res://game/actors/player/state/player_move_state.gd" id="14_b15sj"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_64mjj"]
@@ -387,7 +387,6 @@ parameters/TimeScale/scale = 1.0
 position = Vector2(0, -8)
 collision_mask = 0
 script = ExtResource("5_8nq4u")
-metadata/_custom_type_script = "uid://dby4p11qhtin7"
 metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/Hurtbox" unique_id=124425114]
@@ -397,17 +396,15 @@ debug_color = Color(1, 0, 0.69803923, 0.41960785)
 [node name="CombatModule" type="Node2D" parent="Module" unique_id=1050368959 node_paths=PackedStringArray("melee_attack", "projectile_attack")]
 position = Vector2(0, -8)
 script = ExtResource("8_i5w6q")
+stats = ExtResource("2_64mjj")
 melee_attack = NodePath("MeleeAttackModule")
 projectile_attack = NodePath("ProjectileAttackModule")
-metadata/_custom_type_script = "uid://bb4mbrq1u7pl"
 
 [node name="MeleeAttackModule" type="Node2D" parent="Module/CombatModule" unique_id=895088181]
 script = ExtResource("4_jq3dq")
-metadata/_custom_type_script = "uid://d1yimk3mk35ag"
 
 [node name="ProjectileAttackModule" type="Node2D" parent="Module/CombatModule" unique_id=1808082487]
 script = ExtResource("5_5unbj")
-metadata/_custom_type_script = "uid://x10bxi1qicvw"
 
 [node name="DetectionModule" type="Area2D" parent="Module" unique_id=2069352823]
 position = Vector2(0, -8)
@@ -415,7 +412,6 @@ collision_layer = 0
 collision_mask = 2
 script = ExtResource("10_8nq4u")
 radius = 50.0
-metadata/_custom_type_script = "uid://hyy86fs5b0fs"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionModule" unique_id=508858704]
 shape = SubResource("CircleShape2D_8nq4u")
@@ -424,23 +420,20 @@ debug_color = Color(0, 0.101960786, 0.69803923, 0.11764706)
 [node name="MovementModule" type="Node" parent="Module" unique_id=658364954 node_paths=PackedStringArray("character")]
 script = ExtResource("9_1bvv4")
 character = NodePath("../..")
-metadata/_custom_type_script = "uid://w30s7yqi1p3d"
 
 [node name="AnimationModule" type="Node" parent="Module" unique_id=659370517 node_paths=PackedStringArray("actor", "animation_tree")]
 script = ExtResource("10_tiye0")
 actor = NodePath("../..")
 animation_tree = NodePath("../../Visual/AnimationTree")
-metadata/_custom_type_script = "uid://dldqypakv40re"
 
 [node name="DamageReceiverModule" type="Node" parent="Module" unique_id=1657380889 node_paths=PackedStringArray("hurtbox")]
 script = ExtResource("12_i5w6q")
+stats = ExtResource("2_64mjj")
 hurtbox = NodePath("../Hurtbox")
-metadata/_custom_type_script = "uid://dpi3inldik0ho"
 
 [node name="StateMachine" type="Node" parent="." unique_id=54803581 node_paths=PackedStringArray("initial_state")]
 script = ExtResource("11_b15sj")
 initial_state = NodePath("PlayerIdleState")
-metadata/_custom_type_script = "uid://lsk26m6ixhqu"
 
 [node name="PlayerIdleState" type="Node" parent="StateMachine" unique_id=1390090809 node_paths=PackedStringArray("actor")]
 script = ExtResource("6_2iqu4")

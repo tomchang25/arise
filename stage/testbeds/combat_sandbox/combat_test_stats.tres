@@ -1,8 +1,8 @@
 [gd_resource type="Resource" script_class="Stats" format=3 uid="uid://b4ur0pnoptiel"]
 
-[ext_resource type="PackedScene" uid="uid://327801cur3pj" path="res://common/modules/combat/attack/attack_effect/mini_slash_attack_effect.tscn" id="1_88ngr"]
-[ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/resources/stats/stats.gd" id="2_dvnyk"]
-[ext_resource type="PackedScene" uid="uid://jla2t1i1qafl" path="res://common/modules/combat/attack/attack_effect/slash_attack_effect.tscn" id="3_o338r"]
+[ext_resource type="PackedScene" uid="uid://327801cur3pj" path="res://common/gameplay/combat/attack/effects/mini_slash_attack_effect.tscn" id="1_88ngr"]
+[ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="2_dvnyk"]
+[ext_resource type="PackedScene" uid="uid://jla2t1i1qafl" path="res://common/gameplay/combat/attack/effects/slash_attack_effect.tscn" id="3_o338r"]
 
 [resource]
 script = ExtResource("2_dvnyk")

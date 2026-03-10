@@ -1,210 +1,35 @@
-[gd_scene load_steps=26 format=3 uid="uid://ceycbig0prdwp"]
+[gd_scene format=3 uid="uid://ceycbig0prdwp"]
 
 [ext_resource type="Script" uid="uid://cov55tu74xu51" path="res://game/dungeon/runtime/dungeon_manager.gd" id="1_boif0"]
 [ext_resource type="Script" uid="uid://dr1grapgwr1kp" path="res://stage/runs/dungeon_run/dungeon_run.gd" id="1_u05mf"]
+[ext_resource type="TileSet" uid="uid://b41stnir1xvrs" path="res://stage/tilesets/dungeon_tile_set.tres" id="2_i75gb"]
 [ext_resource type="PackedScene" uid="uid://i0w72n7e6is8" path="res://stage/testbeds/dungeon_generation/player_with_camera.tscn" id="2_slkuc"]
 [ext_resource type="Script" uid="uid://hcjudwk5lhyr" path="res://game/dungeon/runtime/dungeon_builder.gd" id="2_vumvy"]
 [ext_resource type="PackedScene" uid="uid://du280a8a0o5vc" path="res://game/dungeon/placement/mob_spawner.tscn" id="3_r61lq"]
-[ext_resource type="Script" uid="uid://cw41kmidn3k8s" path="res://common/resources/placement/tables/weighted_encounter_table.gd" id="7_boif0"]
-[ext_resource type="Script" uid="uid://cvq56uwcrrn64" path="res://common/resources/placement/tables/enemy_encounter_profile.gd" id="7_plica"]
-[ext_resource type="Texture2D" uid="uid://du701y6uyh67q" path="res://asset/unmanaged/2D Pixel Dungeon Asset Pack/character and tileset/Dungeon_Tileset.png" id="7_t1yfp"]
-[ext_resource type="Script" uid="uid://ctqqj3qhmiuyc" path="res://common/resources/placement/tables/weighted_scene_entry.gd" id="8_2fqss"]
+[ext_resource type="Script" uid="uid://cw41kmidn3k8s" path="res://common/gameplay/spawning/tables/weighted_encounter_table.gd" id="7_boif0"]
+[ext_resource type="Script" uid="uid://cvq56uwcrrn64" path="res://common/gameplay/spawning/tables/enemy_encounter_profile.gd" id="7_plica"]
+[ext_resource type="Script" uid="uid://ctqqj3qhmiuyc" path="res://common/gameplay/spawning/tables/weighted_scene_entry.gd" id="8_2fqss"]
 [ext_resource type="PackedScene" uid="uid://31x7n43mme6c" path="res://game/actors/enemies/ninja_red.tscn" id="9_t1yfp"]
-[ext_resource type="Script" uid="uid://dj6711ko5fxis" path="res://common/resources/placement/tables/weighted_encounter_entry.gd" id="10_i75gb"]
+[ext_resource type="Script" uid="uid://dj6711ko5fxis" path="res://common/gameplay/spawning/tables/weighted_encounter_entry.gd" id="10_i75gb"]
 [ext_resource type="Script" uid="uid://c5v0bg0liwpod" path="res://game/dungeon/placement/dungeon_placement_pass.gd" id="12_2fqss"]
-[ext_resource type="PackedScene" uid="uid://djodnob72wufg" path="res://common/modules/placement/spawn_point/spawn_point.tscn" id="13_t1yfp"]
+[ext_resource type="PackedScene" uid="uid://djodnob72wufg" path="res://common/gameplay/spawning/spawn_point.tscn" id="13_t1yfp"]
 [ext_resource type="PackedScene" uid="uid://dvhrop2jg3wan" path="res://game/dungeon/extraction/extraction_point.tscn" id="14_i75gb"]
-
-[sub_resource type="NavigationPolygon" id="NavigationPolygon_15jr8"]
-
-[sub_resource type="NavigationPolygon" id="NavigationPolygon_nw6ca"]
-vertices = PackedVector2Array(8, 8, -8, 8, -8, -8, 8, -8)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)])
-agent_radius = 0.0
-
-[sub_resource type="NavigationPolygon" id="NavigationPolygon_oqgqn"]
-vertices = PackedVector2Array(8, 8, -8, 8, -8, -8, 8, -8)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)])
-agent_radius = 0.0
-
-[sub_resource type="NavigationPolygon" id="NavigationPolygon_oyo51"]
-vertices = PackedVector2Array(8, 8, -8, 8, -8, -8, 8, -8)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)])
-agent_radius = 0.0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_f5qua"]
-texture = ExtResource("7_t1yfp")
-0:0/0 = 0
-0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(0, -8, 8, -8, 8, 8, 0, 8)
-0:0/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_15jr8")
-1:0/0 = 0
-1:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
-2:0/0 = 0
-2:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
-3:0/0 = 0
-3:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
-4:0/0 = 0
-4:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
-5:0/0 = 0
-5:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 0, -8, 0, 8, -8, 8)
-6:0/0 = 0
-6:0/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_oyo51")
-7:0/0 = 0
-7:0/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_oyo51")
-8:0/0 = 0
-8:0/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_oyo51")
-9:0/0 = 0
-9:0/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_oyo51")
-0:1/0 = 0
-0:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(0, -8, 8, -8, 8, 8, 0, 8)
-1:1/0 = 0
-1:1/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_nw6ca")
-2:1/0 = 0
-2:1/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_oqgqn")
-3:1/0 = 0
-3:1/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_oqgqn")
-4:1/0 = 0
-4:1/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_oqgqn")
-5:1/0 = 0
-5:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 0, -8, 0, 8, -8, 8)
-6:1/0 = 0
-6:1/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_oyo51")
-7:1/0 = 0
-7:1/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_oyo51")
-8:1/0 = 0
-8:1/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_oyo51")
-9:1/0 = 0
-9:1/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_oyo51")
-0:2/0 = 0
-0:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(0, -8, 8, -8, 8, 8, 0, 8)
-1:2/0 = 0
-1:2/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_oqgqn")
-2:2/0 = 0
-2:2/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_oqgqn")
-3:2/0 = 0
-3:2/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_oqgqn")
-4:2/0 = 0
-4:2/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_oqgqn")
-5:2/0 = 0
-5:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 0, -8, 0, 8, -8, 8)
-6:2/0 = 0
-6:2/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_oyo51")
-7:2/0 = 0
-7:2/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_oyo51")
-8:2/0 = 0
-8:2/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_oyo51")
-9:2/0 = 0
-9:2/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_oyo51")
-0:3/0 = 0
-0:3/0/physics_layer_0/polygon_0/points = PackedVector2Array(0, -8, 8, -8, 8, 8, 0, 8)
-1:3/0 = 0
-1:3/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_oqgqn")
-2:3/0 = 0
-2:3/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_oqgqn")
-3:3/0 = 0
-3:3/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_oqgqn")
-4:3/0 = 0
-4:3/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_oqgqn")
-5:3/0 = 0
-5:3/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 0, -8, 0, 8, -8, 8)
-6:3/0 = 0
-7:3/0 = 0
-8:3/0 = 0
-9:3/0 = 0
-0:4/0 = 0
-0:4/0/physics_layer_0/polygon_0/points = PackedVector2Array(0, -8, 8, -8, 8, 8, 0, 8)
-1:4/0 = 0
-1:4/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
-2:4/0 = 0
-2:4/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
-3:4/0 = 0
-3:4/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
-4:4/0 = 0
-4:4/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
-5:4/0 = 0
-5:4/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 0, -8, 0, 8, -8, 8)
-6:4/0 = 0
-7:4/0 = 0
-8:4/0 = 0
-9:4/0 = 0
-0:5/0 = 0
-1:5/0 = 0
-2:5/0 = 0
-3:5/0 = 0
-4:5/0 = 0
-5:5/0 = 0
-6:5/0 = 0
-7:5/0 = 0
-8:5/0 = 0
-9:5/0 = 0
-0:6/0 = 0
-1:6/0 = 0
-2:6/0 = 0
-3:6/0 = 0
-4:6/0 = 0
-5:6/0 = 0
-6:6/0 = 0
-7:6/0 = 0
-8:6/0 = 0
-9:6/0 = 0
-0:7/0 = 0
-1:7/0 = 0
-2:7/0 = 0
-3:7/0 = 0
-4:7/0 = 0
-5:7/0 = 0
-6:7/0 = 0
-7:7/0 = 0
-8:7/0 = 0
-9:7/0 = 0
-0:8/0 = 0
-1:8/0 = 0
-2:8/0 = 0
-3:8/0 = 0
-4:8/0 = 0
-5:8/0 = 0
-6:8/0 = 0
-7:8/0 = 0
-8:8/0 = 0
-9:8/0 = 0
-0:9/0 = 0
-1:9/0 = 0
-2:9/0 = 0
-3:9/0 = 0
-4:9/0 = 0
-5:9/0 = 0
-6:9/0 = 0
-7:9/0 = 0
-8:9/0 = 0
-9:9/0 = 0
-
-[sub_resource type="TileSet" id="TileSet_jbmsb"]
-physics_layer_0/collision_layer = 4
-physics_layer_0/collision_mask = 4
-navigation_layer_0/layers = 1
-sources/0 = SubResource("TileSetAtlasSource_f5qua")
 
 [sub_resource type="Resource" id="Resource_o3722"]
 script = ExtResource("8_2fqss")
 scene = ExtResource("9_t1yfp")
-weight = 10
 metadata/_custom_type_script = "uid://ctqqj3qhmiuyc"
 
 [sub_resource type="Resource" id="Resource_28y1w"]
 script = ExtResource("7_plica")
 min_size = 1
 max_size = 5
-spawn_radius = 60.0
 unit_entries = Array[ExtResource("8_2fqss")]([SubResource("Resource_o3722")])
 metadata/_custom_type_script = "uid://cvq56uwcrrn64"
 
 [sub_resource type="Resource" id="Resource_4kxrq"]
 script = ExtResource("10_i75gb")
 encounter = SubResource("Resource_28y1w")
-weight = 10
 metadata/_custom_type_script = "uid://dj6711ko5fxis"
 
 [sub_resource type="Resource" id="Resource_ykn46"]
@@ -214,22 +39,22 @@ metadata/_custom_type_script = "uid://cw41kmidn3k8s"
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_7hd15"]
 
-[node name="DungeonRun" type="Node" node_paths=PackedStringArray("dungeon_manager")]
+[node name="DungeonRun" type="Node" unique_id=810489429 node_paths=PackedStringArray("dungeon_manager")]
 script = ExtResource("1_u05mf")
 dungeon_manager = NodePath("World/Dungeon/DungeonManager")
 
-[node name="World" type="Node2D" parent="." groups=["world"]]
+[node name="World" type="Node2D" parent="." unique_id=251264603 groups=["world"]]
 
-[node name="Dungeon" type="Node2D" parent="World"]
+[node name="Dungeon" type="Node2D" parent="World" unique_id=53094011]
 
-[node name="TileMap" type="TileMapLayer" parent="World/Dungeon"]
-tile_set = SubResource("TileSet_jbmsb")
+[node name="TileMap" type="TileMapLayer" parent="World/Dungeon" unique_id=331806581]
+tile_set = ExtResource("2_i75gb")
 
-[node name="DungeonBuilder" type="Node" parent="World/Dungeon"]
+[node name="DungeonBuilder" type="Node" parent="World/Dungeon" unique_id=2043499158]
 script = ExtResource("2_vumvy")
 metadata/_custom_type_script = "uid://hcjudwk5lhyr"
 
-[node name="DungeonManager" type="Node2D" parent="World/Dungeon" node_paths=PackedStringArray("minimap_display", "minimap_icon_container", "dungeon_builder", "tilemap", "dungeon_placement_pass")]
+[node name="DungeonManager" type="Node2D" parent="World/Dungeon" unique_id=452492608 node_paths=PackedStringArray("minimap_display", "minimap_icon_container", "dungeon_builder", "tilemap", "dungeon_placement_pass")]
 script = ExtResource("1_boif0")
 minimap_display = NodePath("../../../UI/Minimap")
 minimap_icon_container = NodePath("../../../UI/IconContainer")
@@ -241,15 +66,15 @@ encounter_table = SubResource("Resource_ykn46")
 dungeon_placement_pass = NodePath("DungeonPlacementPass")
 metadata/_custom_type_script = "uid://cov55tu74xu51"
 
-[node name="DungeonPlacementPass" type="Node" parent="World/Dungeon/DungeonManager"]
+[node name="DungeonPlacementPass" type="Node" parent="World/Dungeon/DungeonManager" unique_id=627008654]
 script = ExtResource("12_2fqss")
 spawn_point_scene = ExtResource("13_t1yfp")
 extraction_scene = ExtResource("14_i75gb")
 metadata/_custom_type_script = "uid://c5v0bg0liwpod"
 
-[node name="UI" type="CanvasLayer" parent="."]
+[node name="UI" type="CanvasLayer" parent="." unique_id=122803832]
 
-[node name="Minimap" type="TextureRect" parent="UI"]
+[node name="Minimap" type="TextureRect" parent="UI" unique_id=1516220712]
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
@@ -258,7 +83,7 @@ offset_bottom = 40.0
 grow_horizontal = 0
 texture = SubResource("PlaceholderTexture2D_7hd15")
 
-[node name="IconContainer" type="Control" parent="UI"]
+[node name="IconContainer" type="Control" parent="UI" unique_id=972394836]
 layout_mode = 3
 anchors_preset = 1
 anchor_left = 1.0

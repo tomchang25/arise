@@ -1,0 +1,48 @@
+[gd_scene format=3 uid="uid://d0tswwb1d3smv"]
+
+[ext_resource type="Script" uid="uid://bu6qty8wweb6r" path="res://common/gameplay/health_bar/health_bar.gd" id="1_du2br"]
+[ext_resource type="Texture2D" uid="uid://cuorsruakhp1b" path="res://common/gameplay/health_bar/assets/healthbarUnder.png" id="2_gtn2h"]
+[ext_resource type="Texture2D" uid="uid://b5r0ri7hhtn4c" path="res://common/gameplay/health_bar/assets/healthbarDamage.png" id="3_pw2mo"]
+[ext_resource type="Texture2D" uid="uid://ci5essmu3mln8" path="res://common/gameplay/health_bar/assets/healthbarProgress.png" id="4_0yf13"]
+
+[node name="HealthBar" type="Control" node_paths=PackedStringArray("under_bar", "damage_bar", "full_bar")]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 64.0
+offset_bottom = 10.0
+script = ExtResource("1_du2br")
+under_bar = NodePath("UnderBar")
+damage_bar = NodePath("DamageBar")
+full_bar = NodePath("FullBar")
+
+[node name="UnderBar" type="TextureProgressBar" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+nine_patch_stretch = true
+texture_under = ExtResource("2_gtn2h")
+
+[node name="DamageBar" type="TextureProgressBar" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+value = 80.0
+nine_patch_stretch = true
+texture_progress = ExtResource("3_pw2mo")
+
+[node name="FullBar" type="TextureProgressBar" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+value = 60.0
+nine_patch_stretch = true
+texture_progress = ExtResource("4_0yf13")
