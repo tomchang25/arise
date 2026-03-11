@@ -11,7 +11,12 @@ extends Area2D
 @export var collector_group: StringName = &"player"
 @export var collect_delay: float = 0.0
 
+@export_group("Debug")
+@export var print_debug_log := false
+
 var _can_collect := false
+var _is_collecting := false
+var _is_collected := false
 
 # -------------------------
 # Lifecycle
@@ -20,6 +25,10 @@ var _can_collect := false
 
 func _ready() -> void:
     body_entered.connect(_on_body_entered)
+
+    if not _validate_configuration():
+        _debug_invalid("invalid pickup configuration")
+        return
 
     if collect_delay <= 0.0:
         _can_collect = true
@@ -41,25 +50,37 @@ func is_enabled() -> bool:
     return enabled
 
 
-# -------------------------
-# Pickup Setup
-# -------------------------
-
-
-func setup_from_drop_result(_result: LootDropResult) -> void:
-    pass
-
-
 func try_collect(collector: Node) -> void:
     if not enabled:
         return
+
     if not _can_collect:
         return
-    if collector == null:
+
+    if _is_collecting or _is_collected:
         return
 
-    if _apply_to_collector(collector):
+    if collector == null:
+        _debug_invalid("collector is null")
+        return
+
+    if not _validate_configuration():
+        _debug_invalid("pickup configuration invalid")
+        return
+
+    if not _validate_receiver(collector):
+        _debug_invalid("collector is incompatible")
+        return
+
+    _is_collecting = true
+
+    var success := _apply_to_collector(collector)
+    if success:
+        _is_collected = true
         queue_free()
+    else:
+        _is_collecting = false
+        _debug_invalid("apply_to_collector failed")
 
 
 # -------------------------
@@ -67,12 +88,26 @@ func try_collect(collector: Node) -> void:
 # -------------------------
 
 
+func _validate_configuration() -> bool:
+    return true
+
+
+func _validate_receiver(_collector: Node) -> bool:
+    return true
+
+
 func _apply_to_collector(_collector: Node) -> bool:
     return false
 
 
+func _debug_invalid(message: String) -> void:
+    if print_debug_log:
+        push_warning("%s: %s" % [name, message])
+
+
 func _stop_runtime_state() -> void:
     _can_collect = false
+    _is_collecting = false
 
 
 # -------------------------
@@ -81,6 +116,9 @@ func _stop_runtime_state() -> void:
 
 
 func _on_body_entered(body: Node) -> void:
+    if _is_collected:
+        return
+
     if not body.is_in_group(collector_group):
         return
 

@@ -2,11 +2,8 @@
 
 [ext_resource type="Script" uid="uid://oh44pat6k5c8" path="res://common/gameplay/pickups/item_pickup.gd" id="1_mjlyj"]
 
-[node name="ItemPickup" type="Area2D" unique_id=815153095 node_paths=PackedStringArray("body", "outline", "icon_label", "collision_shape")]
+[node name="ItemPickup" type="Area2D" unique_id=815153095 node_paths=PackedStringArray("collision_shape")]
 script = ExtResource("1_mjlyj")
-body = NodePath("Body")
-outline = NodePath("Outline")
-icon_label = NodePath("IconLabel")
 collision_shape = NodePath("CollisionShape2D")
 
 [node name="Body" type="Polygon2D" parent="." unique_id=1504862194]

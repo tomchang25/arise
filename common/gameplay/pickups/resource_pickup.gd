@@ -1,22 +1,22 @@
 class_name ResourcePickup
 extends BasePickup
 
-@export_group("Resource")
-@export var resource_type: StringName = &"souls":
+const MAX_ICON_SIZE := Vector2(16.0, 16.0)
+const DEFAULT_COLLISION_RADIUS := 8.0
+
+@export_group("Reward")
+@export var resource_data: ResourceRewardData:
     set(value):
-        resource_type = value
+        resource_data = value
         _refresh_visual()
 
 @export var amount: int = 1:
     set(value):
         amount = max(1, value)
-        _refresh_visual()
 
-@export_group("Visual")
-@export var body: Polygon2D
-@export var amount_label: Label
+@export_group("Nodes")
+@export var sprite_node: Sprite2D
 @export var collision_shape: CollisionShape2D
-@export var base_size: float = 12.0
 
 # -------------------------
 # Lifecycle
@@ -29,16 +29,13 @@ func _ready() -> void:
 
 
 # -------------------------
-# Pickup Setup
+# Setup API
 # -------------------------
 
 
-func setup_from_drop_result(result: LootDropResult) -> void:
-    if result == null:
-        return
-
-    resource_type = result.resource_type
-    amount = result.amount
+func setup_resource(data: ResourceRewardData, value: int) -> void:
+    resource_data = data
+    amount = max(1, value)
     _refresh_visual()
 
 
@@ -47,98 +44,60 @@ func setup_from_drop_result(result: LootDropResult) -> void:
 # -------------------------
 
 
+func _validate_configuration() -> bool:
+    return resource_data != null and resource_data.is_valid()
+
+
+func _validate_receiver(collector: Node) -> bool:
+    if collector == null:
+        return false
+
+    return resource_data != null
+
+
 func _apply_to_collector(collector: Node) -> bool:
-    match resource_type:
-        &"souls":
-            if collector.has_method("add_souls"):
-                collector.add_souls(amount)
-                return true
+    if resource_data == null:
+        return false
 
-        &"health":
-            if collector.has_method("heal"):
-                collector.heal(amount)
-                return true
-
-        &"mana":
-            if collector.has_method("add_mana"):
-                collector.add_mana(amount)
-                return true
-
-        &"gold":
-            if collector.has_method("add_gold"):
-                collector.add_gold(amount)
-                return true
-
-    return false
+    return resource_data.execute_effect(collector, amount)
 
 
 func _refresh_visual() -> void:
-    if body == null:
+    if sprite_node == null:
         return
 
-    var radius: float = base_size + min(amount - 1, 6) * 1.5
+    sprite_node.texture = null
+    sprite_node.scale = Vector2.ONE
 
-    match resource_type:
-        &"souls":
-            body.color = Color(0.3, 0.9, 1.0, 1.0)
-            body.polygon = _build_circle_polygon(radius, 12)
-            _set_circle_collision(radius)
-
-        &"health":
-            body.color = Color(1.0, 0.25, 0.25, 1.0)
-            body.polygon = PackedVector2Array(
-                [
-                    Vector2(0, -radius),
-                    Vector2(radius, 0),
-                    Vector2(0, radius),
-                    Vector2(-radius, 0),
-                ]
-            )
-            _set_circle_collision(radius)
-
-        &"mana":
-            body.color = Color(0.35, 0.55, 1.0, 1.0)
-            body.polygon = _build_circle_polygon(radius, 6)
-            _set_circle_collision(radius)
-
-        &"gold":
-            body.color = Color(1.0, 0.85, 0.2, 1.0)
-            body.polygon = PackedVector2Array(
-                [
-                    Vector2(-radius, -radius),
-                    Vector2(radius, -radius),
-                    Vector2(radius, radius),
-                    Vector2(-radius, radius),
-                ]
-            )
-            _set_circle_collision(radius)
-
-        _:
-            body.color = Color(0.8, 0.8, 0.8, 1.0)
-            body.polygon = _build_circle_polygon(radius, 8)
-            _set_circle_collision(radius)
-
-    if amount_label:
-        amount_label.text = str(amount)
-
-
-func _build_circle_polygon(radius: float, points: int) -> PackedVector2Array:
-    var polygon := PackedVector2Array()
-
-    for i in range(points):
-        var angle := TAU * float(i) / float(points)
-        polygon.append(Vector2.RIGHT.rotated(angle) * radius)
-
-    return polygon
-
-
-func _set_circle_collision(radius: float) -> void:
-    if collision_shape == null:
+    if resource_data == null:
         return
 
-    var shape := collision_shape.shape as CircleShape2D
-    if shape == null:
-        shape = CircleShape2D.new()
-        collision_shape.shape = shape
+    sprite_node.texture = resource_data.sprite
+    _fit_sprite_to_max_size(sprite_node, MAX_ICON_SIZE)
 
-    shape.radius = radius
+    if collision_shape != null:
+        var circle_shape := collision_shape.shape as CircleShape2D
+        if circle_shape == null:
+            circle_shape = CircleShape2D.new()
+            collision_shape.shape = circle_shape
+        circle_shape.radius = DEFAULT_COLLISION_RADIUS
+
+
+func _fit_sprite_to_max_size(target: Sprite2D, max_size: Vector2) -> void:
+    if target == null:
+        return
+
+    if target.texture == null:
+        target.scale = Vector2.ONE
+        return
+
+    var texture_size := target.texture.get_size()
+    if texture_size.x <= 0.0 or texture_size.y <= 0.0:
+        target.scale = Vector2.ONE
+        return
+
+    var scale_x: float = max_size.x / texture_size.x
+    var scale_y: float = max_size.y / texture_size.y
+    var final_scale: float = min(scale_x, scale_y, 1.0)
+
+    target.scale = Vector2.ONE * final_scale

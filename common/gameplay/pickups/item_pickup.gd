@@ -1,33 +1,24 @@
 class_name ItemPickup
 extends BasePickup
 
-const DEFAULT_COLOR := Color(0.75, 0.35, 1.0, 1.0)
-const DEFAULT_OUTLINE_COLOR := Color(1.0, 1.0, 1.0, 1.0)
-const DEFAULT_SIZE := 12.0
+const MAX_ICON_SIZE := Vector2(16.0, 16.0)
+const DEFAULT_COLLISION_RADIUS := 8.0
 
-@export_group("Item")
-@export var item_id: StringName = &"":
+@export_group("Reward")
+@export var item_data: ItemData:
     set(value):
-        item_id = value
+        item_data = value
         _refresh_visual()
 
-@export var item_resource: Resource
+@export var amount: int = 1:
+    set(value):
+        amount = max(1, value)
+        _refresh_label()
 
-@export_group("Visual")
-@export var body: Polygon2D
-@export var outline: Line2D
-@export var icon_label: Label
+@export_group("Nodes")
+@export var sprite_node: Sprite2D
+@export var label_node: Label
 @export var collision_shape: CollisionShape2D
-@export var base_size: float = DEFAULT_SIZE
-@export var body_color: Color = DEFAULT_COLOR:
-    set(value):
-        body_color = value
-        _refresh_visual()
-
-@export var outline_color: Color = DEFAULT_OUTLINE_COLOR:
-    set(value):
-        outline_color = value
-        _refresh_visual()
 
 # -------------------------
 # Lifecycle
@@ -40,21 +31,13 @@ func _ready() -> void:
 
 
 # -------------------------
-# Pickup Setup
+# Setup API
 # -------------------------
 
 
-func setup_from_drop_result(result: LootDropResult) -> void:
-    if result == null:
-        return
-
-    item_id = result.item_id
-
-    if result.has_method("get"):
-        var resource_value = result.get("item_resource")
-        if resource_value != null:
-            item_resource = resource_value
-
+func setup_item(data: ItemData, value: int) -> void:
+    item_data = data
+    amount = max(1, value)
     _refresh_visual()
 
 
@@ -63,87 +46,86 @@ func setup_from_drop_result(result: LootDropResult) -> void:
 # -------------------------
 
 
-func _apply_to_collector(collector: Node) -> bool:
+func _validate_configuration() -> bool:
+    return item_data != null and item_data.is_valid()
+
+
+func _validate_receiver(collector: Node) -> bool:
     if collector == null:
         return false
 
-    if item_id == StringName():
-        push_warning("ItemPickup: item_id is empty")
+    return collector.has_method("add_item_reward")
+
+
+func _apply_to_collector(collector: Node) -> bool:
+    if item_data == null:
         return false
 
-    if collector.has_method("grant_item_reward"):
-        collector.grant_item_reward(item_id, item_resource)
-        return true
-
-    return false
+    collector.add_item_reward(item_data, amount)
+    return true
 
 
 func _refresh_visual() -> void:
-    _refresh_body()
-    _refresh_outline()
+    _refresh_sprite()
     _refresh_label()
     _refresh_collision()
 
 
-func _refresh_body() -> void:
-    if body == null:
+func _refresh_sprite() -> void:
+    if sprite_node == null:
         return
 
-    body.color = body_color
-    body.polygon = _build_diamond_polygon(base_size)
+    sprite_node.texture = null
+    sprite_node.scale = Vector2.ONE
 
-
-func _refresh_outline() -> void:
-    if outline == null:
+    if item_data == null:
         return
 
-    var polygon := _build_diamond_polygon(base_size)
-    var points := PackedVector2Array(polygon)
-    if not points.is_empty():
-        points.append(points[0])
-
-    outline.default_color = outline_color
-    outline.width = 2.0
-    outline.closed = false
-    outline.points = points
+    sprite_node.texture = item_data.sprite
+    _fit_sprite_to_max_size(sprite_node, MAX_ICON_SIZE)
 
 
 func _refresh_label() -> void:
-    if icon_label == null:
+    if label_node == null:
         return
 
-    icon_label.text = _build_label_text()
+    if item_data == null:
+        label_node.text = ""
+        return
+
+    if amount > 1:
+        label_node.text = "%s x%d" % [item_data.label, amount]
+    else:
+        label_node.text = item_data.label
 
 
 func _refresh_collision() -> void:
     if collision_shape == null:
         return
 
-    var shape := collision_shape.shape as CircleShape2D
-    if shape == null:
-        shape = CircleShape2D.new()
-        collision_shape.shape = shape
+    var circle_shape := collision_shape.shape as CircleShape2D
+    if circle_shape == null:
+        circle_shape = CircleShape2D.new()
+        collision_shape.shape = circle_shape
 
-    shape.radius = base_size
-
-
-func _build_label_text() -> String:
-    if item_id == StringName():
-        return "?"
-
-    var text := String(item_id)
-    if text.is_empty():
-        return "?"
-
-    return text.left(1).to_upper()
+    circle_shape.radius = DEFAULT_COLLISION_RADIUS
 
 
-func _build_diamond_polygon(radius: float) -> PackedVector2Array:
-    return PackedVector2Array(
-        [
-            Vector2(0.0, -radius),
-            Vector2(radius, 0.0),
-            Vector2(0.0, radius),
-            Vector2(-radius, 0.0),
-        ]
-    )
+func _fit_sprite_to_max_size(target: Sprite2D, max_size: Vector2) -> void:
+    if target == null:
+        return
+
+    if target.texture == null:
+        target.scale = Vector2.ONE
+        return
+
+    var texture_size := target.texture.get_size()
+    if texture_size.x <= 0.0 or texture_size.y <= 0.0:
+        target.scale = Vector2.ONE
+        return
+
+    var scale_x: float = max_size.x / texture_size.x
+    var scale_y: float = max_size.y / texture_size.y
+    var final_scale: float = min(scale_x, scale_y, 1.0)
+
+    target.scale = Vector2.ONE * final_scale
