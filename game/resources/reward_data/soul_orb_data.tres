@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="SoulOrbData" format=3 uid="uid://s018jvixf0dd"]
+
+[ext_resource type="Script" uid="uid://bf74a24baqq4d" path="res://game/resources/reward_data/soul_orb_data.gd" id="1_nvckp"]
+[ext_resource type="Texture2D" uid="uid://coh04birjhi0w" path="res://asset/unmanaged/2D Pixel Dungeon Asset Pack/interface/arrow_1.png" id="2_eb5iw"]
+
+[resource]
+script = ExtResource("1_nvckp")
+id = &"soul_orb"
+sprite = ExtResource("2_eb5iw")
+label = "Soul Orb"
+description = "Adds soul resource."
+metadata/_custom_type_script = "uid://bf74a24baqq4d"

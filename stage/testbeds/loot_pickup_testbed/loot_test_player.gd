@@ -59,14 +59,18 @@ func add_gold(value: int) -> void:
 # -------------------------
 
 
-func grant_item_reward(item_id: StringName, item_resource: Resource) -> void:
-    if item_id == StringName():
-        push_warning("[test_player] grant_item_reward -> empty item_id")
+func add_item_reward(item_data: ItemData, amount: int) -> void:
+    if item_data == null:
+        push_warning("[test_player] add_item_reward -> item_data is null")
         return
 
-    granted_items[item_id] = int(granted_items.get(item_id, 0)) + 1
+    if item_data.id == StringName():
+        push_warning("[test_player] add_item_reward -> empty item id")
+        return
 
-    print("[test_player] grant_item_reward -> item_id=%s count=%s resource=%s" % [String(item_id), granted_items[item_id], item_resource])
+    granted_items[item_data.id] = int(granted_items.get(item_data.id, 0)) + max(1, amount)
+
+    print("[test_player] add_item_reward -> item_id=%s amount=%s total=%s" % [String(item_data.id), amount, granted_items[item_data.id]])
 
 
 # -------------------------

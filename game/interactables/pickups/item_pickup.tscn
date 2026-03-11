@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://bf0be8r66s4er"]
+
+[ext_resource type="Script" uid="uid://oh44pat6k5c8" path="res://game/interactables/pickups/item_pickup.gd" id="1_mjlyj"]
+
+[node name="ItemPickup" type="Area2D" unique_id=815153095 node_paths=PackedStringArray("sprite_node", "label_node", "collision_shape")]
+script = ExtResource("1_mjlyj")
+sprite_node = NodePath("Sprite2D")
+label_node = NodePath("IconLabel")
+collision_shape = NodePath("CollisionShape2D")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=261044363]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=575429486]
+
+[node name="IconLabel" type="Label" parent="." unique_id=407235690]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -24.0
+offset_right = 24.0
+offset_bottom = 12.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 8
+text = "Test key"
+horizontal_alignment = 1
+vertical_alignment = 1

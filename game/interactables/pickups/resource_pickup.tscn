@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://dvon73ywr5duo"]
+
+[ext_resource type="Script" uid="uid://du3sg6ghqnqr1" path="res://game/interactables/pickups/resource_pickup.gd" id="1_dutky"]
+
+[node name="ResourcePickup" type="Area2D" unique_id=815153095 node_paths=PackedStringArray("sprite_node", "collision_shape")]
+script = ExtResource("1_dutky")
+sprite_node = NodePath("Sprite2D")
+collision_shape = NodePath("CollisionShape2D")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=2100141285]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=575429486]

@@ -12,7 +12,7 @@ extends Area2D
 @export var collect_delay: float = 0.0
 
 @export_group("Debug")
-@export var print_debug_log := false
+@export var print_debug_log := true
 
 var _can_collect := false
 var _is_collecting := false
@@ -26,15 +26,13 @@ var _is_collected := false
 func _ready() -> void:
     body_entered.connect(_on_body_entered)
 
-    if not _validate_configuration():
-        _debug_invalid("invalid pickup configuration")
-        return
-
     if collect_delay <= 0.0:
         _can_collect = true
+
     else:
         await get_tree().create_timer(collect_delay).timeout
         _can_collect = true
+
 
 
 # -------------------------
@@ -53,12 +51,15 @@ func is_enabled() -> bool:
 func try_collect(collector: Node) -> void:
     if not enabled:
         return
-
+    print_debug("FUCK1")
+    print(collect_delay)
     if not _can_collect:
         return
+    print_debug("FUCK2")
 
     if _is_collecting or _is_collected:
         return
+    print_debug("FUCK3")
 
     if collector == null:
         _debug_invalid("collector is null")

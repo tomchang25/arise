@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ItemDropEntry" format=3 uid="uid://d1c20uu18dmri"]
+
+[ext_resource type="Script" uid="uid://bkab65gukug88" path="res://common/gameplay/loot/item_drop_entry.gd" id="1_f8y66"]
+[ext_resource type="Resource" uid="uid://bmsqahh0ldgpu" path="res://game/items/data/test_key_item_data.tres" id="1_qabay"]
+[ext_resource type="PackedScene" uid="uid://bf0be8r66s4er" path="res://game/interactables/pickups/item_pickup.tscn" id="2_u1hv2"]
+
+[resource]
+script = ExtResource("1_f8y66")
+item_data = ExtResource("1_qabay")
+pickup_scene = ExtResource("2_u1hv2")
+metadata/_custom_type_script = "uid://bkab65gukug88"

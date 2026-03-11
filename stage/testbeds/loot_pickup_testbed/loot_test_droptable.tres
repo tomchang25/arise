@@ -1,53 +1,15 @@
 [gd_resource type="Resource" script_class="LootDropTable" format=3 uid="uid://db8ht3m2gd7lv"]
 
 [ext_resource type="Script" uid="uid://bxi4hrljbdmm6" path="res://common/gameplay/loot/loot_drop_entry.gd" id="1_nt731"]
-[ext_resource type="PackedScene" uid="uid://dvon73ywr5duo" path="res://common/gameplay/pickups/resource_pickup.tscn" id="2_q7wsb"]
+[ext_resource type="Resource" uid="uid://bdyshi02b4y7n" path="res://common/gameplay/loot/data/resources/gold_drop_entry.tres" id="2_4kpp1"]
+[ext_resource type="Resource" uid="uid://v1swqbn3atsn" path="res://common/gameplay/loot/data/resources/health_orb_drop_entry.tres" id="3_2cibg"]
 [ext_resource type="Script" uid="uid://bil6iq1so8k4p" path="res://common/gameplay/loot/loot_drop_table.gd" id="3_ig1q2"]
-[ext_resource type="PackedScene" uid="uid://bf0be8r66s4er" path="res://common/gameplay/pickups/item_pickup.tscn" id="3_q7wsb"]
-
-[sub_resource type="Resource" id="Resource_j77px"]
-script = ExtResource("1_nt731")
-pickup_scene = ExtResource("2_q7wsb")
-max_amount = 5
-resource_type = &"souls"
-metadata/_custom_type_script = "uid://bxi4hrljbdmm6"
-
-[sub_resource type="Resource" id="Resource_4022q"]
-script = ExtResource("1_nt731")
-pickup_scene = ExtResource("2_q7wsb")
-chance = 0.7
-weight = 6
-min_amount = 20
-max_amount = 50
-resource_type = &"health"
-metadata/_custom_type_script = "uid://bxi4hrljbdmm6"
-
-[sub_resource type="Resource" id="Resource_csgi8"]
-script = ExtResource("1_nt731")
-pickup_scene = ExtResource("2_q7wsb")
-min_amount = 10
-max_amount = 100
-resource_type = &"gold"
-metadata/_custom_type_script = "uid://bxi4hrljbdmm6"
-
-[sub_resource type="Resource" id="Resource_nt731"]
-script = ExtResource("1_nt731")
-pickup_scene = ExtResource("2_q7wsb")
-chance = 0.5
-weight = 7
-min_amount = 2
-max_amount = 10
-resource_type = &"mana"
-metadata/_custom_type_script = "uid://bxi4hrljbdmm6"
-
-[sub_resource type="Resource" id="Resource_q7wsb"]
-script = ExtResource("1_nt731")
-reward_kind = 1
-pickup_scene = ExtResource("3_q7wsb")
-item_id = &"key"
-metadata/_custom_type_script = "uid://bxi4hrljbdmm6"
+[ext_resource type="Resource" uid="uid://bqrjo0nmhgedo" path="res://common/gameplay/loot/data/resources/mana_orb_drop_entry.tres" id="4_g2ay3"]
+[ext_resource type="Resource" uid="uid://clhd2tqiwuob3" path="res://common/gameplay/loot/data/resources/soul_orb_drop_entry.tres" id="5_js0x2"]
+[ext_resource type="Resource" uid="uid://d1c20uu18dmri" path="res://common/gameplay/loot/data/items/test_key_drop_entry.tres" id="6_wpy0y"]
 
 [resource]
 script = ExtResource("3_ig1q2")
-entries = Array[ExtResource("1_nt731")]([SubResource("Resource_j77px"), SubResource("Resource_4022q"), SubResource("Resource_csgi8"), SubResource("Resource_nt731"), SubResource("Resource_q7wsb")])
+rolls = 5
+entries = Array[ExtResource("1_nt731")]([ExtResource("2_4kpp1"), ExtResource("3_2cibg"), ExtResource("4_g2ay3"), ExtResource("5_js0x2"), ExtResource("6_wpy0y")])
 metadata/_custom_type_script = "uid://bil6iq1so8k4p"

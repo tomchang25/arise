@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bmsqahh0ldgpu"]
+
+[ext_resource type="Script" uid="uid://b0dv41w674lem" path="res://game/items/data/item_data.gd" id="1_sa6gs"]
+[ext_resource type="Texture2D" uid="uid://cm2c6n0ytikey" path="res://icon.svg" id="2_712ps"]
+
+[resource]
+script = ExtResource("1_sa6gs")
+id = &"test_key"
+sprite = ExtResource("2_712ps")
+label = "Test Key"
+description = "A test item for loot pickup."
+metadata/_custom_type_script = "uid://b0dv41w674lem"

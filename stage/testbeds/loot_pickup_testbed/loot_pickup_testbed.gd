@@ -14,6 +14,7 @@ const ACTION_RESET_PLAYER := "test_reset_player"
 @export var dummy_spawn: Marker2D
 @export var player_spawn: Marker2D
 @export var debug_label: Label
+@export var loot_world_spawner: LootWorldSpawner
 
 @export_group("Loot Tables")
 @export var loot_tables: Array[LootDropTable] = []
@@ -78,17 +79,10 @@ func _on_kill_dummy_pressed() -> void:
         push_warning("[loot_pickup_testbed] dummy is null")
         return
 
-    var results := dummy.kill_dummy()
+    dummy.kill_dummy()
 
     if print_hotkey_log:
-        print("[loot_pickup_testbed] kill dummy -> %s result(s)" % results.size())
-        for i in range(results.size()):
-            var r := results[i]
-            if r == null:
-                print("  [%s] null" % i)
-                continue
-
-            print("  [%s] kind=%s amount=%s resource_type=%s item_id=%s" % [i, str(r.reward_kind), r.amount, String(r.resource_type), String(r.item_id)])
+        print("[loot_pickup_testbed] kill dummy")
 
     dummy.visible = false
 
@@ -157,16 +151,10 @@ func _setup_dummy() -> void:
         return
 
     dummy.loot_drop_module.owner_node = dummy
+    dummy.loot_drop_module.world_spawner = loot_world_spawner
 
-    if dummy.loot_drop_module.spawn_context == null:
-        dummy.loot_drop_module.spawn_context = SpawnContext.new()
-
-    if world_root != null:
-        dummy.loot_drop_module.spawn_context.spawn_root = world_root
-
-    if pickups_root != null:
-        dummy.loot_drop_module.spawn_parent_mode = LootSpawnAction.ParentMode.NODEPATH_FROM_SPAWN_POINT
-        dummy.loot_drop_module.spawn_parent_path = ^"../PickupsRoot"
+    if loot_world_spawner != null and pickups_root != null:
+        loot_world_spawner.world_root = pickups_root
 
 
 func _set_table_index(index: int) -> void:

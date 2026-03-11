@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ResourceDropEntry" format=3 uid="uid://v1swqbn3atsn"]
+
+[ext_resource type="PackedScene" uid="uid://dvon73ywr5duo" path="res://game/interactables/pickups/resource_pickup.tscn" id="1_3u4vl"]
+[ext_resource type="Resource" uid="uid://d2ry0gdkqu8e5" path="res://game/resources/reward_data/health_orb_data.tres" id="2_olfbp"]
+[ext_resource type="Script" uid="uid://dcwg7mfnwyixs" path="res://common/gameplay/loot/resource_drop_entry.gd" id="3_nx77d"]
+
+[resource]
+script = ExtResource("3_nx77d")
+resource_data = ExtResource("2_olfbp")
+pickup_scene = ExtResource("1_3u4vl")
+weight = 10
+max_amount = 10
+metadata/_custom_type_script = "uid://dcwg7mfnwyixs"

@@ -11,16 +11,12 @@
 [ext_resource type="Script" uid="uid://bbnuk476f2gu5" path="res://common/_legacy/camera/camera.gd" id="4_enhpa"]
 [ext_resource type="Script" uid="uid://i1ibypyr38xv" path="res://common/gameplay/loot/loot_drop_module.gd" id="6_k88kd"]
 [ext_resource type="Script" uid="uid://bil6iq1so8k4p" path="res://common/gameplay/loot/loot_drop_table.gd" id="8_4022q"]
-[ext_resource type="Script" uid="uid://bnnlxh40ib7j8" path="res://common/gameplay/spawning/spawn_context.gd" id="9_csgi8"]
-
-[sub_resource type="Resource" id="Resource_c02bx"]
-script = ExtResource("9_csgi8")
-metadata/_custom_type_script = "uid://bnnlxh40ib7j8"
+[ext_resource type="Script" uid="uid://c7mn7ck86mw1b" path="res://common/gameplay/loot/loot_world_spawner.gd" id="12_6me2w"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6me2w"]
 size = Vector2(12, 12)
 
-[node name="LootPickupTestbed" type="Node2D" unique_id=1798922732 node_paths=PackedStringArray("dummy", "player", "pickups_root", "world_root", "dummy_spawn", "player_spawn", "debug_label")]
+[node name="LootPickupTestbed" type="Node2D" unique_id=1798922732 node_paths=PackedStringArray("dummy", "player", "pickups_root", "world_root", "dummy_spawn", "player_spawn", "debug_label", "loot_world_spawner")]
 script = ExtResource("1_uqnsq")
 dummy = NodePath("World/Dummy")
 player = NodePath("World/Player")
@@ -29,6 +25,7 @@ world_root = NodePath("World")
 dummy_spawn = NodePath("World/DummySpawn")
 player_spawn = NodePath("World/PlayerSpawn")
 debug_label = NodePath("CanvasLayer/DebugLabel")
+loot_world_spawner = NodePath("World/LootWorldSpawner")
 loot_tables = Array[ExtResource("8_4022q")]([ExtResource("3_6me2w")])
 
 [node name="World" type="Node2D" parent="." unique_id=1503277031]
@@ -59,12 +56,11 @@ loot_drop_module = NodePath("LootDropModule")
 [node name="Sprite2D" type="Sprite2D" parent="World/Dummy" unique_id=1569473651]
 texture = ExtResource("3_8nrjs")
 
-[node name="LootDropModule" type="Node" parent="World/Dummy" unique_id=839276780 node_paths=PackedStringArray("owner_node")]
+[node name="LootDropModule" type="Node" parent="World/Dummy" unique_id=839276780 node_paths=PackedStringArray("owner_node", "world_spawner")]
 script = ExtResource("6_k88kd")
 owner_node = NodePath("..")
+world_spawner = NodePath("../../LootWorldSpawner")
 drop_table = ExtResource("3_6me2w")
-spawn_context = SubResource("Resource_c02bx")
-spawn_parent_path = NodePath("../../PickupsRoot")
 print_debug_log = true
 metadata/_custom_type_script = "uid://i1ibypyr38xv"
 
@@ -83,6 +79,11 @@ script = ExtResource("4_enhpa")
 shape = SubResource("RectangleShape2D_6me2w")
 
 [node name="PickupsRoot" type="Node2D" parent="World" unique_id=386017114]
+
+[node name="LootWorldSpawner" type="Node" parent="World" unique_id=1099653096 node_paths=PackedStringArray("world_root")]
+script = ExtResource("12_6me2w")
+world_root = NodePath("..")
+metadata/_custom_type_script = "uid://c7mn7ck86mw1b"
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1061476745]
 

@@ -83,6 +83,7 @@ func spawn_entry(source: Node2D, entry: LootDropEntry, amount: int) -> Node:
         _debug_invalid("unsupported entry type")
         instance.queue_free()
         return null
+    print_debug(instance)
 
     return instance
 

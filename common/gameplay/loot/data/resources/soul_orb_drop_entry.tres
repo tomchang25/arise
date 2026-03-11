@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ResourceDropEntry" format=3 uid="uid://clhd2tqiwuob3"]
+
+[ext_resource type="PackedScene" uid="uid://dvon73ywr5duo" path="res://game/interactables/pickups/resource_pickup.tscn" id="1_el7m4"]
+[ext_resource type="Resource" uid="uid://s018jvixf0dd" path="res://game/resources/reward_data/soul_orb_data.tres" id="2_wl8yy"]
+[ext_resource type="Script" uid="uid://dcwg7mfnwyixs" path="res://common/gameplay/loot/resource_drop_entry.gd" id="3_vtlon"]
+
+[resource]
+script = ExtResource("3_vtlon")
+resource_data = ExtResource("2_wl8yy")
+pickup_scene = ExtResource("1_el7m4")
+weight = 10
+max_amount = 10
+metadata/_custom_type_script = "uid://dcwg7mfnwyixs"

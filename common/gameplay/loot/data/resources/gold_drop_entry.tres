@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ResourceDropEntry" format=3 uid="uid://bdyshi02b4y7n"]
+
+[ext_resource type="PackedScene" uid="uid://dvon73ywr5duo" path="res://game/interactables/pickups/resource_pickup.tscn" id="1_srvad"]
+[ext_resource type="Resource" uid="uid://by53n00aymnmd" path="res://game/resources/reward_data/gold_data.tres" id="2_ug7hu"]
+[ext_resource type="Script" uid="uid://dcwg7mfnwyixs" path="res://common/gameplay/loot/resource_drop_entry.gd" id="3_phuik"]
+
+[resource]
+script = ExtResource("3_phuik")
+resource_data = ExtResource("2_ug7hu")
+pickup_scene = ExtResource("1_srvad")
+weight = 10
+min_amount = 100
+max_amount = 999
+metadata/_custom_type_script = "uid://dcwg7mfnwyixs"

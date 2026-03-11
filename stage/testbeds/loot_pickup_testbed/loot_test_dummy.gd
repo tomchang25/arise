@@ -1,7 +1,7 @@
 class_name LootTestDummy
 extends Node2D
 
-signal dummy_killed(results: Array[LootDropResult])
+signal dummy_killed
 signal dummy_reset
 
 @export_group("Dependencies")
@@ -25,21 +25,20 @@ func _ready() -> void:
 # -------------------------
 
 
-func kill_dummy() -> Array[LootDropResult]:
+func kill_dummy() -> void:
     if not alive:
         print("[loot_test_dummy] already dead")
-        return []
+        return
 
     alive = false
 
     if loot_drop_module == null:
         push_warning("[loot_test_dummy] loot_drop_module is null")
-        dummy_killed.emit([])
-        return []
+        dummy_killed.emit()
+        return
 
-    var results := loot_drop_module.drop_loot()
-    dummy_killed.emit(results)
-    return results
+    loot_drop_module.drop_loot()
+    dummy_killed.emit()
 
 
 func reset_dummy() -> void:
