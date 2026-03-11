@@ -45,15 +45,3 @@ func reset_dummy() -> void:
     alive = true
     visible = true
     dummy_reset.emit()
-
-
-func set_drop_table(table: LootDropTable) -> void:
-    if loot_drop_module == null:
-        return
-    loot_drop_module.drop_table = table
-
-
-func get_drop_table() -> LootDropTable:
-    if loot_drop_module == null:
-        return null
-    return loot_drop_module.drop_table

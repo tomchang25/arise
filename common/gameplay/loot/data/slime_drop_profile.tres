@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="LootDropProfile" format=3 uid="uid://bq584j3uqsyau"]
+
+[ext_resource type="Script" uid="uid://0hg831gihu68" path="res://common/gameplay/loot/loot_drop_profile.gd" id="1_fdipf"]
+[ext_resource type="Script" uid="uid://bil6iq1so8k4p" path="res://common/gameplay/loot/loot_drop_table.gd" id="2_5xubm"]
+[ext_resource type="Resource" uid="uid://bjm08hudp85tg" path="res://common/gameplay/loot/data/tables/slime_resources_drop_table.tres" id="3_q7tgx"]
+[ext_resource type="Resource" uid="uid://0pphjy1axgq7" path="res://common/gameplay/loot/data/tables/slime_common_items_drop_table.tres" id="4_mkfpg"]
+
+[resource]
+script = ExtResource("1_fdipf")
+tables = Array[ExtResource("2_5xubm")]([ExtResource("3_q7tgx"), ExtResource("4_mkfpg")])
+metadata/_custom_type_script = "uid://0hg831gihu68"

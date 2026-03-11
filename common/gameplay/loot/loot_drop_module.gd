@@ -12,7 +12,7 @@ signal loot_dropped
 @export_group("Dependencies")
 @export var owner_node: Node2D
 @export var world_spawner: LootWorldSpawner
-@export var drop_table: LootDropTable
+@export var drop_profile: LootDropProfile
 
 @export_group("Debug")
 @export var print_debug_log := false
@@ -58,35 +58,57 @@ func drop_loot() -> void:
         _debug_invalid("world_spawner is null")
         return
 
-    if drop_table == null:
-        _debug_invalid("drop_table is null")
+    if drop_profile == null:
+        _debug_invalid("drop_profile is null")
         return
 
-    if drop_table.entries.is_empty():
-        _debug_invalid("drop_table has no entries")
+    if drop_profile.tables.is_empty():
+        _debug_invalid("drop_profile has no tables")
         return
 
-    if not drop_table.has_valid_entries():
-        _debug_invalid("drop_table has no valid entries")
+    if not drop_profile.has_valid_tables():
+        _debug_invalid("drop_profile has no valid tables")
         return
 
-    var valid_entries := _get_valid_entries(drop_table.entries)
-    if valid_entries.is_empty():
-        _debug_invalid("no valid entries after filtering")
-        return
+    var did_spawn := false
 
-    for _i in range(drop_table.rolls):
-        var entry := _pick_weighted_entry(valid_entries)
-        if entry == null:
+    for table in drop_profile.tables:
+        if table == null:
+            _debug_invalid("table is null")
             continue
 
-        if _rng.randf() > clampf(entry.chance, 0.0, 1.0):
+        if table.rolls <= 0:
+            _debug_invalid("table rolls <= 0")
             continue
 
-        var amount := _rng.randi_range(entry.min_amount, entry.max_amount)
-        world_spawner.spawn_entry(owner_node, entry, amount)
+        if table.entries.is_empty():
+            _debug_invalid("table has no entries")
+            continue
 
-    loot_dropped.emit()
+        if not table.has_valid_entries():
+            _debug_invalid("table has no valid entries")
+            continue
+
+        var valid_entries := _get_valid_entries(table.entries)
+        if valid_entries.is_empty():
+            _debug_invalid("no valid entries after filtering")
+            continue
+
+        for _i in range(table.rolls):
+            var entry := _pick_weighted_entry(valid_entries)
+            if entry == null:
+                continue
+
+            if _rng.randf() > clampf(entry.chance, 0.0, 1.0):
+                continue
+
+            var amount := _rng.randi_range(entry.min_amount, entry.max_amount)
+            var spawned := world_spawner.spawn_entry(owner_node, entry, amount)
+            if spawned != null:
+                did_spawn = true
+
+    if did_spawn:
+        loot_dropped.emit()
 
 
 # -------------------------

@@ -4,13 +4,12 @@
 [ext_resource type="Texture2D" uid="uid://c3kagdvi6j0pp" path="res://stage/testbeds/asset/grass_background.png" id="2_vl2he"]
 [ext_resource type="Script" uid="uid://bbvs1tmy0r2x3" path="res://stage/testbeds/loot_pickup_testbed/loot_test_dummy.gd" id="2_xmwo6"]
 [ext_resource type="PackedScene" uid="uid://dccho5kdagt0e" path="res://game/environment/bush/bush.tscn" id="3_5o4v0"]
-[ext_resource type="Resource" uid="uid://db8ht3m2gd7lv" path="res://stage/testbeds/loot_pickup_testbed/loot_test_droptable.tres" id="3_6me2w"]
 [ext_resource type="Texture2D" uid="uid://bgxwwufm2aroh" path="res://game/destroyables/chestbox/assets/chest_3.png" id="3_8nrjs"]
 [ext_resource type="Texture2D" uid="uid://cm2c6n0ytikey" path="res://icon.svg" id="3_dcmda"]
 [ext_resource type="Script" uid="uid://b5aicofpx733b" path="res://stage/testbeds/loot_pickup_testbed/loot_test_player.gd" id="3_enhpa"]
 [ext_resource type="Script" uid="uid://bbnuk476f2gu5" path="res://common/_legacy/camera/camera.gd" id="4_enhpa"]
 [ext_resource type="Script" uid="uid://i1ibypyr38xv" path="res://common/gameplay/loot/loot_drop_module.gd" id="6_k88kd"]
-[ext_resource type="Script" uid="uid://bil6iq1so8k4p" path="res://common/gameplay/loot/loot_drop_table.gd" id="8_4022q"]
+[ext_resource type="Resource" uid="uid://bq584j3uqsyau" path="res://common/gameplay/loot/data/slime_drop_profile.tres" id="7_15q8n"]
 [ext_resource type="Script" uid="uid://c7mn7ck86mw1b" path="res://common/gameplay/loot/loot_world_spawner.gd" id="12_6me2w"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6me2w"]
@@ -26,7 +25,6 @@ dummy_spawn = NodePath("World/DummySpawn")
 player_spawn = NodePath("World/PlayerSpawn")
 debug_label = NodePath("CanvasLayer/DebugLabel")
 loot_world_spawner = NodePath("World/LootWorldSpawner")
-loot_tables = Array[ExtResource("8_4022q")]([ExtResource("3_6me2w")])
 
 [node name="World" type="Node2D" parent="." unique_id=1503277031]
 
@@ -60,7 +58,7 @@ texture = ExtResource("3_8nrjs")
 script = ExtResource("6_k88kd")
 owner_node = NodePath("..")
 world_spawner = NodePath("../../LootWorldSpawner")
-drop_table = ExtResource("3_6me2w")
+drop_profile = ExtResource("7_15q8n")
 print_debug_log = true
 metadata/_custom_type_script = "uid://i1ibypyr38xv"
 
