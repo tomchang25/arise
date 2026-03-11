@@ -428,7 +428,6 @@ metadata/_custom_type_script = "uid://6jeesy7iltw"
 script = ExtResource("7_ef5gh")
 damage_receiver = NodePath("../DamageReceiverModule")
 movement_module = NodePath("../MovementModule")
-visuals_path = NodePath("../../Visuals")
 hit_particles_scene = ExtResource("7_elycs")
 death_particles_scene = ExtResource("8_brnip")
 damaged_audio = ExtResource("7_3o05k")
