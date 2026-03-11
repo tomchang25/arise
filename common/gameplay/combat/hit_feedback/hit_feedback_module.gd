@@ -17,9 +17,10 @@ extends Node
 @export var flash_step := 0.5
 @export var flash_white := Color(1, 1, 1, 1)
 @export var flash_red := Color(1, 0.25, 0.25, 1)
+@export var flash_color := flash_red
 
 @export_group("Visual Targets")
-@export var visuals_path: NodePath = ^"Visuals"
+@export var visuals: Node
 @export var hit_shader: Shader = preload("res://common/rendering/shaders/hit_overlay_flash.gdshader")
 
 @export_group("Particles")
@@ -74,7 +75,6 @@ func _ready() -> void:
 
 func _get_flash_time_from_invuln() -> float:
     var t := stats.invuln_time
-
     return min(t * 1.2, t + 0.1)
 
 
@@ -246,7 +246,7 @@ func _play_flash(duration: float) -> void:
 
     # Set color once
     for m in mats:
-        m.set_shader_parameter("overlay_color", flash_red)
+        m.set_shader_parameter("overlay_color", flash_color)
         m.set_shader_parameter("overlay_amount", 1.0)
 
     # Fade red overlay out
@@ -270,9 +270,10 @@ func _play_flash(duration: float) -> void:
 func _cache_visual_targets() -> void:
     _cached_targets.clear()
 
-    var visuals := owner.get_node_or_null(visuals_path)
     if visuals == null:
-        # Fail-safe: don't flash everything if visuals not set.
+        visuals = owner.find_child("Visuals", true, false)
+
+    if visuals == null:
         return
 
     # Prefer sprites (most common). If you want *all* CanvasItems, change this filter.
@@ -312,9 +313,9 @@ func _ensure_hit_shader_material(ci: CanvasItem) -> void:
     # Ensure per-instance uniqueness even if something assigns shared resources later.
     sm.resource_local_to_scene = true
 
-    # init params
-    sm.set_shader_parameter("overlay_amount", 0.0)
-    sm.set_shader_parameter("overlay_color", flash_red)
+    # # init params
+    # sm.set_shader_parameter("overlay_amount", 0.0)
+    # sm.set_shader_parameter("overlay_color", flash_red)
 
 
 # -------------------------
