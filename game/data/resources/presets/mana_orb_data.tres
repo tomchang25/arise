@@ -1,12 +1,13 @@
-[gd_resource type="Resource" script_class="ManaOrbData" format=3 uid="uid://dq16ehvdxppi6"]
+[gd_resource type="Resource" script_class="ResourceData" format=3 uid="uid://d0tpfg3ivbno0"]
 
-[ext_resource type="Script" uid="uid://c16yje7og8l7r" path="res://game/data/resources/mana_orb_data.gd" id="1_6nr7b"]
+[ext_resource type="Script" uid="uid://d1hiuslt4wlek" path="res://game/data/resources/resource_data.gd" id="1_ods3s"]
 [ext_resource type="Texture2D" uid="uid://dg0u0xesbar5e" path="res://asset/unmanaged/Ninja Adventure - Asset Pack/Items/Food/Fish.png" id="2_lr54j"]
 
 [resource]
-script = ExtResource("1_6nr7b")
+script = ExtResource("1_ods3s")
 id = &"mana_orb"
+kind = 1
 sprite = ExtResource("2_lr54j")
 label = "Mana Orb"
 description = "Restores mana."
-metadata/_custom_type_script = "uid://c16yje7og8l7r"
+metadata/_custom_type_script = "uid://d1hiuslt4wlek"

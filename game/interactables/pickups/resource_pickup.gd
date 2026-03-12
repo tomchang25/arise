@@ -12,9 +12,9 @@ const DEFAULT_COLLISION_RADIUS := 8.0
 
 @export var amount: int = 1:
     set(value):
-        amount = max(1, value)
+        amount = max(value, 1)
 
-@export_group("Nodes")
+@export_group("Dependencies")
 @export var sprite_node: Sprite2D
 @export var collision_shape: CollisionShape2D
 
@@ -29,13 +29,13 @@ func _ready() -> void:
 
 
 # -------------------------
-# Setup API
+# Feature APIs
 # -------------------------
 
 
-func setup_resource(data: ResourceData, value: int) -> void:
+func setup_resource(data: ResourceData, stack_amount: int) -> void:
     resource_data = data
-    amount = max(1, value)
+    amount = max(stack_amount, 1)
     _refresh_visual()
 
 
@@ -48,18 +48,22 @@ func _validate_configuration() -> bool:
     return resource_data != null and resource_data.is_valid()
 
 
-func _validate_receiver(collector: Node) -> bool:
-    if collector == null:
-        return false
-
-    return resource_data != null
-
-
-func _apply_to_collector(collector: Node) -> bool:
+func _can_collect_from(_collector: Node, pickup_collector_module: PickupCollectorModule) -> bool:
     if resource_data == null:
         return false
+    if pickup_collector_module == null:
+        return false
 
-    return resource_data.execute_effect(collector, amount)
+    return pickup_collector_module.can_collect_resource(resource_data, amount)
+
+
+func _apply_to_collector(_collector: Node, pickup_collector_module: PickupCollectorModule) -> bool:
+    if resource_data == null:
+        return false
+    if pickup_collector_module == null:
+        return false
+
+    return pickup_collector_module.collect_resource(resource_data, amount)
 
 
 func _refresh_visual() -> void:
@@ -75,11 +79,8 @@ func _refresh_visual() -> void:
     sprite_node.texture = resource_data.sprite
     _fit_sprite_to_max_size(sprite_node, MAX_ICON_SIZE)
 
-    if collision_shape != null:
+    if collision_shape != null and collision_shape.shape is CircleShape2D:
         var circle_shape := collision_shape.shape as CircleShape2D
-        if circle_shape == null:
-            circle_shape = CircleShape2D.new()
-            collision_shape.shape = circle_shape
         circle_shape.radius = DEFAULT_COLLISION_RADIUS
 
 

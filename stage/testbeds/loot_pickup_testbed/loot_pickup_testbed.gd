@@ -26,6 +26,7 @@ const ACTION_RESET_PLAYER := "test_reset_player"
 func _ready() -> void:
     _ensure_test_actions()
     _apply_start_positions()
+    _setup_player()
     _setup_dummy()
     _update_debug_text()
 
@@ -80,7 +81,7 @@ func _on_reset_dummy_pressed() -> void:
 
     dummy.reset_dummy()
 
-    if dummy_spawn:
+    if dummy_spawn != null:
         dummy.global_position = dummy_spawn.global_position
 
     if print_hotkey_log:
@@ -105,7 +106,7 @@ func _on_reset_player_pressed() -> void:
 
     player.reset_test_state()
 
-    if player_spawn:
+    if player_spawn != null:
         player.global_position = player_spawn.global_position
 
     if print_hotkey_log:
@@ -115,6 +116,13 @@ func _on_reset_player_pressed() -> void:
 # -------------------------
 # Internal Helpers
 # -------------------------
+
+
+func _setup_player() -> void:
+    if player == null:
+        return
+
+    player._wire_modules()
 
 
 func _setup_dummy() -> void:
@@ -133,10 +141,10 @@ func _setup_dummy() -> void:
 
 
 func _apply_start_positions() -> void:
-    if dummy and dummy_spawn:
+    if dummy != null and dummy_spawn != null:
         dummy.global_position = dummy_spawn.global_position
 
-    if player and player_spawn:
+    if player != null and player_spawn != null:
         player.global_position = player_spawn.global_position
 
 
@@ -145,14 +153,33 @@ func _update_debug_text() -> void:
         return
 
     var dummy_state := "Alive"
-    if dummy and not dummy.alive:
+    if dummy != null and not dummy.alive:
         dummy_state = "Dead"
 
+    var pickup_count := 0
+    if pickups_root != null:
+        pickup_count = pickups_root.get_child_count()
+
     var player_text := ""
-    if player:
+    if player != null:
         player_text = player.get_debug_text()
 
-    debug_label.text = "\n".join(["[K] Kill Dummy", "[R] Reset Dummy", "[C] Clear Pickups", "[P] Reset Player", "", "Dummy: %s" % dummy_state, "", player_text])
+    debug_label.text = (
+        "\n"
+        . join(
+            [
+                "[K] Kill Dummy",
+                "[R] Reset Dummy",
+                "[C] Clear Pickups",
+                "[P] Reset Player",
+                "",
+                "Dummy: %s" % dummy_state,
+                "Pickups: %s" % pickup_count,
+                "",
+                player_text,
+            ]
+        )
+    )
 
 
 func _ensure_test_actions() -> void:

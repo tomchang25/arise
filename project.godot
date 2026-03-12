@@ -122,6 +122,7 @@ mouse_right={
 2d_physics/layer_9="Army"
 2d_physics/layer_10="Army Soft Collision"
 2d_physics/layer_26="Wall"
+2d_physics/layer_32="Pickup"
 avoidance/layer_9="Enemy"
 avoidance/layer_17="Army"
 

@@ -1,22 +1,37 @@
 class_name BasePickup
 extends Area2D
 
+signal collected(collector: Node, pickup_collector_module: PickupCollectorModule)
+signal despawned
+
 @export var enabled := true:
     set(value):
         enabled = value
         if not enabled:
             _stop_runtime_state()
+        _refresh_runtime_state()
 
 @export_group("Collection")
-@export var collector_group: StringName = &"player"
 @export var collect_delay: float = 0.0
 
-@export_group("Debug")
-@export var print_debug_log := true
+@export_group("Magnet")
+@export var magnet_enabled := true
+@export var magnet_speed: float = 160.0
+@export var collect_distance: float = 10.0
+
+@export_group("Lifetime")
+@export var use_lifetime := false
+@export var lifetime: float = 10.0
+@export var despawn_on_timeout := true
+
+@export_group("Dependencies")
+@export var collect_audio_event: AudioEvent
 
 var _can_collect := false
 var _is_collecting := false
 var _is_collected := false
+var _lifetime_left := 0.0
+var _magnet_target: PickupCollectorModule
 
 # -------------------------
 # Lifecycle
@@ -24,14 +39,32 @@ var _is_collected := false
 
 
 func _ready() -> void:
-    body_entered.connect(_on_body_entered)
+    if not body_entered.is_connected(_on_body_entered):
+        body_entered.connect(_on_body_entered)
 
-    if collect_delay <= 0.0:
-        _can_collect = true
+    if not area_entered.is_connected(_on_area_entered):
+        area_entered.connect(_on_area_entered)
 
-    else:
-        await get_tree().create_timer(collect_delay).timeout
-        _can_collect = true
+    _can_collect = collect_delay <= 0.0
+    if use_lifetime:
+        _lifetime_left = lifetime
+
+    _refresh_runtime_state()
+
+
+func _physics_process(delta: float) -> void:
+    if not enabled:
+        return
+    if _is_collected:
+        return
+
+    if use_lifetime:
+        _update_lifetime(delta)
+        if _is_collected:
+            return
+
+    if magnet_enabled:
+        _update_magnet(delta)
 
 
 # -------------------------
@@ -47,62 +80,160 @@ func is_enabled() -> bool:
     return enabled
 
 
-func try_collect(collector: Node) -> void:
+# -------------------------
+# Pickup Control
+# -------------------------
+
+
+func try_collect(candidate: Node) -> void:
     if not enabled:
         return
-    print_debug("FUCK1")
-    print(collect_delay)
     if not _can_collect:
         return
-    print_debug("FUCK2")
-
     if _is_collecting or _is_collected:
         return
-    print_debug("FUCK3")
-
-    if collector == null:
-        Debug.invalid("collector is null")
+    if candidate == null:
         return
-
     if not _validate_configuration():
-        Debug.invalid("pickup configuration invalid")
         return
 
-    if not _validate_receiver(collector):
-        Debug.invalid("collector is incompatible")
+    var pickup_collector_module := _resolve_pickup_collector_module(candidate)
+    if pickup_collector_module == null:
+        return
+    if not pickup_collector_module.is_enabled():
+        return
+
+    var collector := pickup_collector_module.owner_body
+    if collector == null:
+        return
+    if not _can_collect_from(collector, pickup_collector_module):
         return
 
     _is_collecting = true
 
-    var success := _apply_to_collector(collector)
-    if success:
-        _is_collected = true
-        queue_free()
+    if _apply_to_collector(collector, pickup_collector_module):
+        _finish_collect(collector, pickup_collector_module)
     else:
         _is_collecting = false
-        Debug.invalid("apply_to_collector failed")
 
+
+func begin_magnet_pull(pickup_collector_module: PickupCollectorModule) -> void:
+    if not enabled:
+        return
+    if not magnet_enabled:
+        return
+    if _is_collected:
+        return
+    if pickup_collector_module == null:
+        return
+    if not pickup_collector_module.can_collect_pickup(self):
+        return
+
+    _magnet_target = pickup_collector_module
+
+
+func clear_magnet_target(source: PickupCollectorModule = null) -> void:
+    if source == null:
+        _magnet_target = null
+        return
+
+    if _magnet_target == source:
+        _magnet_target = null
+
+
+# -------------------------
+# Feature APIs
+# -------------------------
+
+# func setup_pickup() -> void:
+#     pass
 
 # -------------------------
 # Internal Helpers
 # -------------------------
 
 
+func _refresh_runtime_state() -> void:
+    set_physics_process(enabled and (magnet_enabled or use_lifetime))
+
+
+func _resolve_pickup_collector_module(candidate: Node) -> PickupCollectorModule:
+    if candidate is PickupCollectorModule:
+        return candidate
+
+    if candidate.has_method("get_pickup_collector_module"):
+        var result: Variant = candidate.get_pickup_collector_module()
+        if result is PickupCollectorModule:
+            return result
+
+    return null
+
+
 func _validate_configuration() -> bool:
     return true
 
 
-func _validate_receiver(_collector: Node) -> bool:
+func _can_collect_from(_collector: Node, _pickup_collector_module: PickupCollectorModule) -> bool:
     return true
 
 
-func _apply_to_collector(_collector: Node) -> bool:
+func _apply_to_collector(_collector: Node, _pickup_collector_module: PickupCollectorModule) -> bool:
     return false
 
 
-func _stop_runtime_state() -> void:
-    _can_collect = false
+func _finish_collect(collector: Node, pickup_collector_module: PickupCollectorModule) -> void:
+    _is_collected = true
     _is_collecting = false
+    _magnet_target = null
+
+    if collect_audio_event != null and AudioManager != null:
+        AudioManager.play_event(collect_audio_event, global_position)
+
+    if pickup_collector_module != null:
+        pickup_collector_module.pickup_collected.emit(self)
+
+    collected.emit(collector, pickup_collector_module)
+    queue_free()
+
+
+func _despawn() -> void:
+    if _is_collected:
+        return
+
+    _is_collected = true
+    _is_collecting = false
+    _magnet_target = null
+    despawned.emit()
+    queue_free()
+
+
+func _update_lifetime(delta: float) -> void:
+    _lifetime_left -= delta
+    if _lifetime_left <= 0.0 and despawn_on_timeout:
+        _despawn()
+
+
+func _update_magnet(delta: float) -> void:
+    if _magnet_target == null or not is_instance_valid(_magnet_target):
+        _magnet_target = null
+        return
+
+    if not _magnet_target.has_pickup_in_range(self):
+        _magnet_target = null
+        return
+
+    var target_position := _magnet_target.global_position
+    if global_position.distance_to(target_position) <= collect_distance:
+        try_collect(_magnet_target)
+        return
+
+    global_position = global_position.move_toward(target_position, magnet_speed * delta)
+
+
+func _stop_runtime_state() -> void:
+    _is_collecting = false
+    _magnet_target = null
+    set_physics_process(false)
 
 
 # -------------------------
@@ -114,7 +245,11 @@ func _on_body_entered(body: Node) -> void:
     if _is_collected:
         return
 
-    if not body.is_in_group(collector_group):
+    try_collect(body)
+
+
+func _on_area_entered(area: Area2D) -> void:
+    if _is_collected:
         return
 
-    try_collect(body)
+    try_collect(area)

@@ -1,12 +1,12 @@
-[gd_resource type="Resource" script_class="HealthOrbData" format=3 uid="uid://d2ry0gdkqu8e5"]
+[gd_resource type="Resource" script_class="ResourceData" format=3 uid="uid://bsy3xqk18xmf7"]
 
-[ext_resource type="Script" uid="uid://bl1p6igmy1gv8" path="res://game/data/resources/health_orb_data.gd" id="1_5rtfe"]
+[ext_resource type="Script" uid="uid://d1hiuslt4wlek" path="res://game/data/resources/resource_data.gd" id="1_rkj30"]
 [ext_resource type="Texture2D" uid="uid://de2dqq88cxcvo" path="res://asset/unmanaged/youtube-action-rpg/ui/heart_ui_full.png" id="2_cqrba"]
 
 [resource]
-script = ExtResource("1_5rtfe")
+script = ExtResource("1_rkj30")
 id = &"health_orb"
 sprite = ExtResource("2_cqrba")
 label = "Health Orb"
 description = "Restores health."
-metadata/_custom_type_script = "uid://bl1p6igmy1gv8"
+metadata/_custom_type_script = "uid://d1hiuslt4wlek"

@@ -1,4 +1,6 @@
-# **第一部分**
+# **Scratchpad**
+
+Stats update for pickup system
 
 ## File Naming and Folder Location
 
@@ -35,15 +37,17 @@ Try to keep the pattern stable:
 Gameplay loop.
 
 ```
-Pickup system Finished
 Summon system
 Enemy spawning
 Basic dialog
 Basic objective
-
+Player simple refactor
+Enemy simple refactor
+Allies simple refactor
 --- Finished
 Basic debug
-SFX refactor
+Audio refactor
+Pickup system Finished
 ```
 
 ---
@@ -226,29 +230,35 @@ Itch page
 
 ## Pickup Module
 
-- [x]  Core Features
-    - [x]  **Pickup interaction works** — actors can trigger pickup when entering the pickup area
-    - [x]  **Pickup reward application works** — pickup applies reward data to the collector
-    - [x]  **Pickup removes itself after collection** — pickup is consumed once reward is applied
-    - [x]  **Pickup integrates with loot system** — loot drops spawn pickups correctly
-- [x]  Supported Pickup Types
-    - [x]  **Resource pickup** (souls, health, mana, gold, etc.)
-    - [x]  **Item pickup** (item data / progression unlocks)
-- [x]  Robustness
-    - [x]  **Validate pickup configuration**
-        - [x]  Missing reward data
-        - [x]  Missing pickup scene setup
-    - [x]  Prevent duplicate pickup triggers
-    - [x]  Prevent invalid collector from applying reward
-    - [x]  Prevent broken pickup from silently failing
-- [ ]  Future Features
-    - [ ]  Pickup magnet / auto-collect radius
-    - [ ]  Pickup lifetime / auto-despawn
-    - [ ]  Prevent pickup if collector stats are already full
-    - [ ]  Split resource pickups into independent scenes/scripts instead of a single shared resource pickup
-    - [ ]  Pickup should check **hurtbox → body order** when validating collectors
-    - [ ]  Pickup VFX / sound hooks
-    - [ ]  Cleanup debug system
+### Core Features
+
+- [x]  **Pickup interaction works** — actors can trigger pickup when entering the pickup area
+- [x]  **Pickup reward application works** — pickup applies reward data to the collector
+- [x]  **Pickup removes itself after collection** — pickup is consumed once reward is applied
+- [x]  **Pickup integrates with loot system** — loot drops spawn pickups correctly
+- [x]  Pickup magnet / auto-collect radius
+- [x]  Pickup lifetime / auto-despawn
+- [x]  Prevent pickup if collector stats are already full
+- [x]  Pickup sound hooks
+
+### Robustness
+
+- [x]  **Validate pickup configuration**
+    - [x]  Missing reward data
+    - [x]  Missing pickup scene setup
+- [x]  Prevent duplicate pickup triggers
+- [x]  Prevent invalid collector from applying reward
+- [x]  Prevent broken pickup from silently failing
+- [x]  Pickup should check **hurtbox → body order** when validating collectors
+
+### Supported Pickup Types
+
+- [x]  **Resource pickup** (souls, health, mana, gold, etc.)
+- [x]  **Item pickup** (item data / progression unlocks)
+
+### Future Features
+
+- [ ]  Pickup VFX
 
 ---
 

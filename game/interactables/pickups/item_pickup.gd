@@ -12,10 +12,10 @@ const DEFAULT_COLLISION_RADIUS := 8.0
 
 @export var amount: int = 1:
     set(value):
-        amount = max(1, value)
+        amount = max(value, 1)
         _refresh_label()
 
-@export_group("Nodes")
+@export_group("Dependencies")
 @export var sprite_node: Sprite2D
 @export var label_node: Label
 @export var collision_shape: CollisionShape2D
@@ -31,13 +31,13 @@ func _ready() -> void:
 
 
 # -------------------------
-# Setup API
+# Feature APIs
 # -------------------------
 
 
-func setup_item(data: ItemData, value: int) -> void:
+func setup_item(data: ItemData, stack_amount: int) -> void:
     item_data = data
-    amount = max(1, value)
+    amount = max(stack_amount, 1)
     _refresh_visual()
 
 
@@ -50,19 +50,22 @@ func _validate_configuration() -> bool:
     return item_data != null and item_data.is_valid()
 
 
-func _validate_receiver(collector: Node) -> bool:
-    if collector == null:
-        return false
-
-    return collector.has_method("add_item")
-
-
-func _apply_to_collector(collector: Node) -> bool:
+func _can_collect_from(_collector: Node, pickup_collector_module: PickupCollectorModule) -> bool:
     if item_data == null:
         return false
+    if pickup_collector_module == null:
+        return false
 
-    collector.add_item(item_data, amount)
-    return true
+    return pickup_collector_module.can_collect_item(item_data, amount)
+
+
+func _apply_to_collector(_collector: Node, pickup_collector_module: PickupCollectorModule) -> bool:
+    if item_data == null:
+        return false
+    if pickup_collector_module == null:
+        return false
+
+    return pickup_collector_module.collect_item(item_data, amount)
 
 
 func _refresh_visual() -> void:
@@ -100,21 +103,14 @@ func _refresh_label() -> void:
 
 
 func _refresh_collision() -> void:
-    if collision_shape == null:
-        return
-
-    var circle_shape := collision_shape.shape as CircleShape2D
-    if circle_shape == null:
-        circle_shape = CircleShape2D.new()
-        collision_shape.shape = circle_shape
-
-    circle_shape.radius = DEFAULT_COLLISION_RADIUS
+    if collision_shape != null and collision_shape.shape is CircleShape2D:
+        var circle_shape := collision_shape.shape as CircleShape2D
+        circle_shape.radius = DEFAULT_COLLISION_RADIUS
 
 
 func _fit_sprite_to_max_size(target: Sprite2D, max_size: Vector2) -> void:
     if target == null:
         return
-
     if target.texture == null:
         target.scale = Vector2.ONE
         return
