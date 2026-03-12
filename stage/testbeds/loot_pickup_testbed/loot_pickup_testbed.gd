@@ -63,13 +63,13 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _on_kill_dummy_pressed() -> void:
     if dummy == null:
-        push_warning("[loot_pickup_testbed] dummy is null")
+        Debug.invalid("Dummy is null")
         return
 
     dummy.kill_dummy()
 
     if print_hotkey_log:
-        print("[loot_pickup_testbed] kill dummy")
+        Debug.log("Kill dummy")
 
     dummy.visible = false
 
@@ -84,7 +84,7 @@ func _on_reset_dummy_pressed() -> void:
         dummy.global_position = dummy_spawn.global_position
 
     if print_hotkey_log:
-        print("[loot_pickup_testbed] dummy reset")
+        Debug.log("Dummy reset")
 
 
 func _on_clear_pickups_pressed() -> void:
@@ -96,7 +96,7 @@ func _on_clear_pickups_pressed() -> void:
             child.queue_free()
 
     if print_hotkey_log:
-        print("[loot_pickup_testbed] pickups cleared")
+        Debug.log("Pickups cleared")
 
 
 func _on_reset_player_pressed() -> void:
@@ -109,7 +109,7 @@ func _on_reset_player_pressed() -> void:
         player.global_position = player_spawn.global_position
 
     if print_hotkey_log:
-        print("[loot_pickup_testbed] player reset")
+        Debug.log("Player reset")
 
 
 # -------------------------
@@ -122,7 +122,7 @@ func _setup_dummy() -> void:
         return
 
     if dummy.loot_drop_module == null:
-        push_warning("[loot_pickup_testbed] dummy.loot_drop_module is null")
+        Debug.log("[loot_pickup_testbed] dummy.loot_drop_module is null")
         return
 
     dummy.loot_drop_module.owner_node = dummy

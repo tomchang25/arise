@@ -1,3 +1,81 @@
+# **Scratchpad**
+
+Generalize _debug_invalid and debug system(autoload)
+
+Check if need to roll sfx in feedback module or remain play all
+
+## File Naming and Folder Location
+
+Try to keep the pattern stable:
+
+- feature system script → `_module.gd`
+- base data resource → `_data.gd`, `_event.gd`, `_profile.gd`, `_table.gd`
+- scene companion → same base name as script where possible
+- resource scripts → module or entity → data/
+- .tres presets → data/presets/
+-
+
+## SFX Naming
+
+| ID | 庫命名 | 音效名 | 用途 |
+| --- | --- | --- | --- |
+| swing_light | weapon_swing_light | whoosh | 普通攻擊 |
+| swing_heavy | weapon_swing_heavy | heavy whoosh | 重攻擊 |
+| hit_flesh | impact_flesh | thud | 命中敵人 |
+| hit_metal | impact_metal | clang | 格擋 |
+| enemy_die | enemy_death | death burst | 敵人死亡 |
+| pickup_spawn | pickup_spawn | drop | 掉落資源 |
+| pickup_collect | pickup_collect | pling | 吸收 |
+| item_drop | item_drop | clink | 掉寶 |
+| item_collect | item_collect | pop | 撿裝備 |
+| ui_click | ui_click | tick | UI按鈕 |
+| ui_confirm | ui_confirm | confirm | UI確認 |
+| ui_cancel | ui_cancel | cancel | UI返回 |
+
+# Demo Production Plan
+
+### Week 1 - 3/12 -3/18
+
+Gameplay loop.
+
+```
+Basic debug
+Pickup system Finished
+Summon system
+Enemy spawning
+Basic dialog
+Basic objective
+```
+
+---
+
+### Week 2 - 3/19 -3/25
+
+Boss + polish.
+
+```
+Dragon boss
+Dragon attacks
+Dragon death
+Unlock dragon summon
+Chaos mode
+```
+
+---
+
+### Week 3 - 3/25 -3/31
+
+Polish.
+
+```
+Sound
+Particles
+Balance
+Bug fixing
+Build export
+Itch page
+```
+
 # **Core Systems**
 
 # Refactored Modules
@@ -431,6 +509,9 @@ I could confirm a `damage_numbers` folder and a `DamageNumber` implementation, b
 
 ## Summon
 
+- [ ]  Summon system
+    - [ ]  Just spawn random thing first
+    - [ ]  UI
 - [ ]  Focus on spawn armies? bridge?
 - [ ]  Show summon slots
 - [ ]  Show cooldown
@@ -478,32 +559,146 @@ I could confirm a `damage_numbers` folder and a `DamageNumber` implementation, b
     - [ ]  Trigger dialog by event
     - [ ]  Trigger dialog by script call
 
-## Progress System
+## Run System
 
-- [ ]  Objective / Progress framework
-    - [ ]  Listen to gameplay events (EventBus)
-    - [ ]  Track objective progress
-    - [ ]  Emit objective_completed signal
-    - [ ]  Update Objective HUD text
-- [ ]  Basic  objective HUD
-- [ ]  Basic objective types
-    - [ ]  Kill quota objective
-        - Track killed enemies
-        - Complete when kill target reached
-        - Emit `objective_completed`
-    - [ ]  Kill boss objective
-        - Track alive bosses in room
-        - Complete when all bosses dead
-    - [ ]  Extraction objective
-        - Activate extraction point
-        - Require hold timer
-        - Emit `extraction_completed`
-- [ ]  Objective progression logic
-    - [ ]  Objective → Spawn Boss trigger
-    - [ ]  Boss killed → Enable extraction
-    - [ ]  Allow player choice
-        - Continue fighting
-        - Extract and finish run
+### Objective Framework
+
+- [ ]  Base objective
+    - [ ]  Objective state (active / completed)
+    - [ ]  Emit `objective_completed`
+    - [ ]  Provide objective text for HUD
+- [ ]  Objective manager
+    - [ ]  Register active objective
+    - [ ]  Listen to EventBus
+    - [ ]  Forward events to objective
+    - [ ]  Emit objective completion signal
+- [ ]  Objective HUD
+    - [ ]  Show current objective text
+    - [ ]  Update when objective changes
+    - [ ]  Hide when no objective
+
+### Objective Types
+
+- [ ]  Kill quota objective
+    - [ ]  Track `enemy_killed`
+    - [ ]  Complete when target reached
+- [ ]  Kill boss objective
+    - [ ]  Track boss alive count
+    - [ ]  Complete when all bosses dead
+- [ ]  Extraction objective
+    - [ ]  Activate extraction point
+    - [ ]  Hold timer to extract
+    - [ ]  Emit `extraction_completed`
+
+### Run Flow Controller
+
+Controls **run progression**, not objective logic.
+
+- [ ]  Start run
+- [ ]  Assign first objective
+- [ ]  Objective completed → spawn boss
+- [ ]  Boss killed → enable extraction
+- [ ]  Extraction finished
+    - [ ]  End run
+    - [ ]  Send rewards
+- [ ]  Player choice
+    - [ ]  Continue fighting
+    - [ ]  Extract and finish run
+
+### Future work
+
+- [ ]  Additional objective types
+- [ ]  Multiple simultaneous objectives
+- [ ]  Objective chains
+- [ ]  Run modifiers
+
+## Unlock / progression system
+
+### Core
+
+- [ ]  Dragon soul item
+- [ ]  Summon unlock system
+    - [ ]  Check unlock requirement
+    - [ ]  Unlock summon
+    - [ ]  Persist unlocked summons
+- [ ]  Save / load progression
+    - [ ]  Unique Souls Include
+    - [ ]  Unlocks
+
+## Telegraph Module
+
+### Core
+
+- [ ]  Enable / disable telegraph system
+- [ ]  Spawn telegraph visual
+- [ ]  Remove telegraph visual
+- [ ]  Clear all active telegraphs
+
+### Target Indicators
+
+- [ ]  Lock-on marker on target
+- [ ]  Target tracking indicator (follows moving target)
+- [ ]  Target countdown indicator
+
+### Area Warnings
+
+- [ ]  Circular AOE preview
+- [ ]  Rectangular / line AOE preview
+- [ ]  Directional cone preview
+- [ ]  Radius scaling preview
+
+### Attack Direction Indicators
+
+- [ ]  Rush / charge direction indicator
+- [ ]  Sweep / slash direction indicator
+- [ ]  Beam / laser line preview
+
+### Continuous AOE
+
+- [ ]  Rotating / spiral AOE indicator
+- [ ]  Expanding AOE indicator
+- [ ]  Pulsing AOE indicator
+
+### Timing Feedback
+
+- [ ]  Countdown ring
+- [ ]  Flash warning before attack
+- [ ]  Telegraph fade out when attack begins
+
+### Runtime Control
+
+- [ ]  Cancel telegraph
+- [ ]  Update telegraph position
+- [ ]  Update telegraph direction
+- [ ]  Update telegraph size
+
+### Multi Telegraph Support
+
+- [ ]  Multiple simultaneous telegraphs
+- [ ]  Telegraph layering / priority
+- [ ]  Replace existing telegraph
+
+## Debug Autoload
+
+### Core
+
+- [x]  Debug enable / disable switch
+- [x]  Debug logging
+- [x]  Debug warnings / invalid checks
+
+### Gameplay Cheats
+
+- [ ]  God mode
+- [ ]  No cooldown
+- [ ]  Free resources
+- [ ]  Spawn entity
+- [ ]  Kill all enemies
+
+### Runtime Tools
+
+- [ ]  Hotkey debug actions
+- [ ]  Debug console
+- [ ]  Command execution system
 
 ---
 
@@ -872,5 +1067,25 @@ If you want, I can turn this into a tighter paste-ready markdown checklist with 
 - [ ]  Unlock system
 - [ ]  Upgrade system
 - [ ]  Run rewards
+
+---
+
+# **研究部分**
+
+---
+
+# World Generation Research
+
+- [ ]  Dungeon generation addons
+
+# Damage - Later polish
+
+*(Not required for demo)*
+
+- [ ]  Hitstop
+- [ ]  Advanced VFX manager
+- [ ]  Damage number merging
+- [ ]  Damage number priority system
+- [ ]  Weapon system separation from Stats
 
 ---

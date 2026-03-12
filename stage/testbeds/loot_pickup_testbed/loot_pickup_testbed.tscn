@@ -56,6 +56,7 @@ texture = ExtResource("3_8nrjs")
 
 [node name="LootDropModule" type="Node" parent="World/Dummy" unique_id=839276780 node_paths=PackedStringArray("owner_node", "world_spawner")]
 script = ExtResource("6_k88kd")
+enabled = null
 owner_node = NodePath("..")
 world_spawner = NodePath("../../LootWorldSpawner")
 drop_profile = ExtResource("7_15q8n")

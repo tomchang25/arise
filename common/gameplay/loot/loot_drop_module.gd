@@ -51,47 +51,47 @@ func drop_loot() -> void:
         return
 
     if owner_node == null:
-        _debug_invalid("owner_node is null")
+        Debug.invalid("owner_node is null")
         return
 
     if world_spawner == null:
-        _debug_invalid("world_spawner is null")
+        Debug.invalid("world_spawner is null")
         return
 
     if drop_profile == null:
-        _debug_invalid("drop_profile is null")
+        Debug.invalid("drop_profile is null")
         return
 
     if drop_profile.tables.is_empty():
-        _debug_invalid("drop_profile has no tables")
+        Debug.invalid("drop_profile has no tables")
         return
 
     if not drop_profile.has_valid_tables():
-        _debug_invalid("drop_profile has no valid tables")
+        Debug.invalid("drop_profile has no valid tables")
         return
 
     var did_spawn := false
 
     for table in drop_profile.tables:
         if table == null:
-            _debug_invalid("table is null")
+            Debug.invalid("table is null")
             continue
 
         if table.rolls <= 0:
-            _debug_invalid("table rolls <= 0")
+            Debug.invalid("table rolls <= 0")
             continue
 
         if table.entries.is_empty():
-            _debug_invalid("table has no entries")
+            Debug.invalid("table has no entries")
             continue
 
         if not table.has_valid_entries():
-            _debug_invalid("table has no valid entries")
+            Debug.invalid("table has no valid entries")
             continue
 
         var valid_entries := _get_valid_entries(table.entries)
         if valid_entries.is_empty():
-            _debug_invalid("no valid entries after filtering")
+            Debug.invalid("no valid entries after filtering")
             continue
 
         for _i in range(table.rolls):
@@ -121,11 +121,11 @@ func _get_valid_entries(entries: Array[LootDropEntry]) -> Array[LootDropEntry]:
 
     for entry in entries:
         if entry == null:
-            _debug_invalid("entry is null")
+            Debug.invalid("entry is null")
             continue
 
         if not entry.is_valid():
-            _debug_invalid("invalid entry detected")
+            Debug.invalid("invalid entry detected")
             continue
 
         valid_entries.append(entry)
@@ -140,7 +140,7 @@ func _pick_weighted_entry(entries: Array[LootDropEntry]) -> LootDropEntry:
         total_weight += max(entry.weight, 0)
 
     if total_weight <= 0:
-        _debug_invalid("total_weight <= 0")
+        Debug.invalid("total_weight <= 0")
         return null
 
     var roll := _rng.randi_range(1, total_weight)
@@ -152,11 +152,6 @@ func _pick_weighted_entry(entries: Array[LootDropEntry]) -> LootDropEntry:
             return entry
 
     return null
-
-
-func _debug_invalid(message: String) -> void:
-    if print_debug_log:
-        push_warning("LootDropModule: %s" % message)
 
 
 func _stop_runtime_state() -> void:

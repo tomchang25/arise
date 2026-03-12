@@ -61,15 +61,15 @@ func try_collect(collector: Node) -> void:
     print_debug("FUCK3")
 
     if collector == null:
-        _debug_invalid("collector is null")
+        Debug.invalid("collector is null")
         return
 
     if not _validate_configuration():
-        _debug_invalid("pickup configuration invalid")
+        Debug.invalid("pickup configuration invalid")
         return
 
     if not _validate_receiver(collector):
-        _debug_invalid("collector is incompatible")
+        Debug.invalid("collector is incompatible")
         return
 
     _is_collecting = true
@@ -80,7 +80,7 @@ func try_collect(collector: Node) -> void:
         queue_free()
     else:
         _is_collecting = false
-        _debug_invalid("apply_to_collector failed")
+        Debug.invalid("apply_to_collector failed")
 
 
 # -------------------------
@@ -98,11 +98,6 @@ func _validate_receiver(_collector: Node) -> bool:
 
 func _apply_to_collector(_collector: Node) -> bool:
     return false
-
-
-func _debug_invalid(message: String) -> void:
-    if print_debug_log:
-        push_warning("%s: %s" % [name, message])
 
 
 func _stop_runtime_state() -> void:

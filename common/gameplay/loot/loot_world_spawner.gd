@@ -27,29 +27,29 @@ func _ready() -> void:
 
 func spawn_entry(source: Node2D, entry: LootDropEntry, amount: int) -> Node:
     if source == null:
-        _debug_invalid("source is null")
+        Debug.invalid("source is null")
         return null
 
     if entry == null:
-        _debug_invalid("entry is null")
+        Debug.invalid("entry is null")
         return null
 
     if not entry.is_valid():
-        _debug_invalid("entry is invalid")
+        Debug.invalid("entry is invalid")
         return null
 
     if entry.pickup_scene == null:
-        _debug_invalid("pickup_scene is null")
+        Debug.invalid("pickup_scene is null")
         return null
 
     var parent := world_root if world_root != null else source.get_parent()
     if parent == null:
-        _debug_invalid("spawn parent is null")
+        Debug.invalid("spawn parent is null")
         return null
 
     var instance := entry.pickup_scene.instantiate()
     if instance == null:
-        _debug_invalid("failed to instantiate pickup scene")
+        Debug.invalid("failed to instantiate pickup scene")
         return null
 
     parent.add_child(instance)
@@ -66,7 +66,7 @@ func spawn_entry(source: Node2D, entry: LootDropEntry, amount: int) -> Node:
         if instance.has_method("setup_resource"):
             instance.setup_resource(resource_entry.resource_data, amount)
         else:
-            _debug_invalid("pickup scene missing setup_resource()")
+            Debug.invalid("pickup scene missing setup_resource()")
             instance.queue_free()
             return null
 
@@ -75,15 +75,14 @@ func spawn_entry(source: Node2D, entry: LootDropEntry, amount: int) -> Node:
         if instance.has_method("setup_item"):
             instance.setup_item(item_entry.item_data, amount)
         else:
-            _debug_invalid("pickup scene missing setup_item()")
+            Debug.invalid("pickup scene missing setup_item()")
             instance.queue_free()
             return null
 
     else:
-        _debug_invalid("unsupported entry type")
+        Debug.invalid("unsupported entry type")
         instance.queue_free()
         return null
-    print_debug(instance)
 
     return instance
 
@@ -97,8 +96,3 @@ func _get_scatter_position(origin: Vector2) -> Vector2:
     var angle := _rng.randf_range(0.0, TAU)
     var distance := _rng.randf_range(0.0, scatter_radius)
     return origin + Vector2.RIGHT.rotated(angle) * distance
-
-
-func _debug_invalid(message: String) -> void:
-    if print_debug_log:
-        push_warning("LootWorldSpawner: %s" % message)
