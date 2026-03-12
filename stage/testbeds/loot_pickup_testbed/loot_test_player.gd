@@ -11,10 +11,7 @@ extends CharacterBody2D
 
 @export_group("Debug State")
 @export var reset_health_value: float = 50.0
-@export var souls: int = 0
-@export var mana: int = 0
-@export var max_mana: int = 100
-@export var gold: int = 0
+@export var reset_mana_value: float = 0.0
 
 var granted_items: Dictionary = {}
 
@@ -46,41 +43,6 @@ func get_pickup_collector_module() -> PickupCollectorModule:
 
 
 # -------------------------
-# Resource API
-# -------------------------
-
-
-func can_add_souls(_value: int) -> bool:
-    return true
-
-
-func add_souls(value: int) -> void:
-    souls += max(0, value)
-    print("[loot_test_player] add_souls -> +%s | total=%s" % [value, souls])
-
-
-func can_add_mana(value: int) -> bool:
-    if value <= 0:
-        return false
-
-    return mana < max_mana
-
-
-func add_mana(value: int) -> void:
-    mana = min(max_mana, mana + max(0, value))
-    print("[loot_test_player] add_mana -> +%s | mana=%s/%s" % [value, mana, max_mana])
-
-
-func can_add_gold(_value: int) -> bool:
-    return true
-
-
-func add_gold(value: int) -> void:
-    gold += max(0, value)
-    print("[loot_test_player] add_gold -> +%s | total=%s" % [value, gold])
-
-
-# -------------------------
 # Item API
 # -------------------------
 
@@ -109,23 +71,30 @@ func add_item(item_data: ItemData, amount: int) -> void:
 
 
 func reset_test_state() -> void:
-    souls = 0
-    mana = 0
-    gold = 0
     granted_items.clear()
 
     if stats != null:
-        stats.health = min(reset_health_value, stats.current_max_health)
+        stats.reset_runtime_resources(reset_health_value, reset_mana_value, 0, 0)
 
     print("[loot_test_player] reset_test_state")
 
 
 func get_debug_text() -> String:
-    var health_text := "n/a"
-    if stats != null:
-        health_text = "%s/%s" % [stats.health, stats.current_max_health]
+    if stats == null:
+        return "stats=n/a | items=%s" % [granted_items]
 
-    return "souls=%s | hp=%s | mana=%s/%s | gold=%s | items=%s" % [souls, health_text, mana, max_mana, gold, granted_items]
+    return (
+        "souls=%s | hp=%s/%s | mana=%s/%s | gold=%s | items=%s"
+        % [
+            stats.souls,
+            stats.health,
+            stats.current_max_health,
+            stats.mana,
+            stats.current_max_mana,
+            stats.gold,
+            granted_items,
+        ]
+    )
 
 
 # -------------------------

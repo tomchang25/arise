@@ -148,7 +148,7 @@ func can_collect_resource(resource_data: ResourceData, amount: int = 1) -> bool:
         ResourceData.ResourceKind.HEALTH:
             return can_recover_health(total_amount)
         ResourceData.ResourceKind.MANA:
-            return can_add_mana(int(total_amount))
+            return can_add_mana(total_amount)
         ResourceData.ResourceKind.SOUL:
             return can_add_souls(int(total_amount))
         ResourceData.ResourceKind.GOLD:
@@ -167,7 +167,7 @@ func collect_resource(resource_data: ResourceData, amount: int = 1) -> bool:
         ResourceData.ResourceKind.HEALTH:
             return recover_health(total_amount)
         ResourceData.ResourceKind.MANA:
-            return add_mana(int(total_amount))
+            return add_mana(total_amount)
         ResourceData.ResourceKind.SOUL:
             return add_souls(int(total_amount))
         ResourceData.ResourceKind.GOLD:
@@ -185,81 +185,73 @@ func can_recover_health(amount: float) -> bool:
     if not resource_full_check_enabled:
         return true
 
-    return stats.health < stats.current_max_health
+    return stats.can_recover_health(amount)
 
 
 func recover_health(amount: float) -> bool:
-    if not can_recover_health(amount):
+    if stats == null:
         return false
 
-    stats.health = min(stats.health + amount, stats.current_max_health)
-    return true
+    if not resource_full_check_enabled and amount > 0.0:
+        stats.health = min(stats.health + amount, stats.current_max_health)
+        return true
+
+    return stats.recover_health(amount)
 
 
-func can_add_mana(amount: int) -> bool:
-    if amount <= 0:
+func can_add_mana(amount: float) -> bool:
+    if amount <= 0.0:
         return false
-    if owner_body == null:
-        return false
-
-    if owner_body.has_method("can_add_mana"):
-        return owner_body.can_add_mana(amount)
-
-    return owner_body.has_method("add_mana")
-
-
-func add_mana(amount: int) -> bool:
-    if not can_add_mana(amount):
-        return false
-    if not owner_body.has_method("add_mana"):
+    if stats == null:
         return false
 
-    owner_body.add_mana(amount)
-    return true
+    if not resource_full_check_enabled:
+        return true
+
+    return stats.can_add_mana(amount)
+
+
+func add_mana(amount: float) -> bool:
+    if stats == null:
+        return false
+
+    if not resource_full_check_enabled and amount > 0.0:
+        stats.mana = min(stats.mana + amount, stats.current_max_mana)
+        return true
+
+    return stats.add_mana(amount)
 
 
 func can_add_souls(amount: int) -> bool:
     if amount <= 0:
         return false
-    if owner_body == null:
+    if stats == null:
         return false
 
-    if owner_body.has_method("can_add_souls"):
-        return owner_body.can_add_souls(amount)
-
-    return owner_body.has_method("add_souls")
+    return stats.can_add_souls(amount)
 
 
 func add_souls(amount: int) -> bool:
-    if not can_add_souls(amount):
-        return false
-    if not owner_body.has_method("add_souls"):
+    if stats == null:
         return false
 
-    owner_body.add_souls(amount)
-    return true
+    return stats.add_souls(amount)
 
 
 func can_add_gold(amount: int) -> bool:
     if amount <= 0:
         return false
-    if owner_body == null:
+    if stats == null:
         return false
 
-    if owner_body.has_method("can_add_gold"):
-        return owner_body.can_add_gold(amount)
-
-    return owner_body.has_method("add_gold")
+    return stats.can_add_gold(amount)
 
 
 func add_gold(amount: int) -> bool:
-    if not can_add_gold(amount):
-        return false
-    if not owner_body.has_method("add_gold"):
+    if stats == null:
         return false
 
-    owner_body.add_gold(amount)
-    return true
+    return stats.add_gold(amount)
 
 
 # -------------------------

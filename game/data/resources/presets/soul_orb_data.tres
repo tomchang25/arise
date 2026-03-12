@@ -10,4 +10,5 @@ kind = 2
 sprite = ExtResource("2_38hho")
 label = "Soul Orb"
 description = "Adds soul resource."
+amount_per_unit = 20.0
 metadata/_custom_type_script = "uid://d1hiuslt4wlek"

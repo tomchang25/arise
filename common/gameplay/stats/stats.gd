@@ -3,10 +3,13 @@ class_name Stats
 extends Resource
 
 signal health_changed(health: float)
+signal mana_changed(mana: float)
+signal souls_changed(souls: int)
+signal gold_changed(gold: int)
 signal health_depleted
 signal stats_recalculated
 
-enum BuffableStat { MAX_HEALTH, DAMAGE, DEFENSE, SPEED }
+enum BuffableStat { MAX_HEALTH, MAX_MANA, DAMAGE, DEFENSE, SPEED }
 enum Faction { PLAYER, ENEMY, NEUTRAL }
 enum AttackSlot { PRIMARY, SECONDARY, SKILL_1, SKILL_2 }
 
@@ -15,13 +18,28 @@ const BASE_LEVEL_XP_INCREMENT_PER_LEVEL: float = 50.0
 
 @export var faction: Faction
 
+@export_group("Runtime Resources")
 @export var health: float = 100.0:
     set = _on_health_set
+
+@export var mana: float = 0.0:
+    set = _on_mana_set
+
+@export var souls: int = 0:
+    set = _on_souls_set
+
+@export var gold: int = 0:
+    set = _on_gold_set
 
 @export_group("Base Stats")
 @export var base_max_health: float = 100.0:
     set(value):
         base_max_health = value
+        recalculate_stats()
+
+@export var base_max_mana: float = 100.0:
+    set(value):
+        base_max_mana = value
         recalculate_stats()
 
 @export var base_damage: float = 10.0:
@@ -108,6 +126,7 @@ var level: int:
         return _get_level_from_xp(experience)
 
 var current_max_health: float = 0.0
+var current_max_mana: float = 0.0
 var current_damage: float = 0.0
 var current_defense: float = 0.0
 var current_speed: float = 0.0
@@ -115,30 +134,151 @@ var current_crit_chance: float = 0.0
 var current_crit_multiplier: float = 1.5
 
 
-func _init():
+func _init() -> void:
     setup_stats()
+
+
+# -------------------------
+# Lifecycle
+# -------------------------
 
 
 func setup_stats() -> void:
     recalculate_stats()
     health = current_max_health
+    mana = current_max_mana
+    souls = max(0, souls)
+    gold = max(0, gold)
+
+
+# -------------------------
+# Stats Recalculation
+# -------------------------
 
 
 func recalculate_stats() -> void:
-    current_max_health = base_max_health + ((level - 1) * 10)
-    current_damage = base_damage + weapon_damage + ((level - 1) * 2)
-    current_defense = base_defense + ((level - 1) * 2)
+    current_max_health = base_max_health + ((level - 1) * 10.0)
+    current_max_mana = base_max_mana + ((level - 1) * 5.0)
+    current_damage = base_damage + weapon_damage + ((level - 1) * 2.0)
+    current_defense = base_defense + ((level - 1) * 2.0)
     current_speed = base_speed + ((level - 1) * 0.1)
 
     current_crit_chance = clamp(base_crit_chance + weapon_crit_chance, 0.0, 1.0)
     current_crit_multiplier = max(1.0, base_crit_multiplier + weapon_crit_multiplier)
 
     health = clamp(health, 0.0, current_max_health)
+    mana = clamp(mana, 0.0, current_max_mana)
+    souls = max(0, souls)
+    gold = max(0, gold)
+
     stats_recalculated.emit()
+
+
+# -------------------------
+# Health
+# -------------------------
+
+
+func can_recover_health(amount: float) -> bool:
+    return amount > 0.0 and health < current_max_health
+
+
+func recover_health(amount: float) -> bool:
+    if not can_recover_health(amount):
+        return false
+
+    health = min(health + amount, current_max_health)
+    return true
 
 
 func take_damage(damage: float) -> void:
     health -= damage
+
+
+# -------------------------
+# Mana
+# -------------------------
+
+
+func can_add_mana(amount: float) -> bool:
+    return amount > 0.0 and mana < current_max_mana
+
+
+func add_mana(amount: float) -> bool:
+    if not can_add_mana(amount):
+        return false
+
+    mana = min(mana + amount, current_max_mana)
+    return true
+
+
+func spend_mana(amount: float) -> bool:
+    if amount <= 0.0:
+        return false
+    if mana < amount:
+        return false
+
+    mana -= amount
+    return true
+
+
+# -------------------------
+# Souls
+# -------------------------
+
+
+func can_add_souls(amount: int) -> bool:
+    return amount > 0
+
+
+func add_souls(amount: int) -> bool:
+    if not can_add_souls(amount):
+        return false
+
+    souls += amount
+    return true
+
+
+func spend_souls(amount: int) -> bool:
+    if amount <= 0:
+        return false
+    if souls < amount:
+        return false
+
+    souls -= amount
+    return true
+
+
+# -------------------------
+# Gold
+# -------------------------
+
+
+func can_add_gold(amount: int) -> bool:
+    return amount > 0
+
+
+func add_gold(amount: int) -> bool:
+    if not can_add_gold(amount):
+        return false
+
+    gold += amount
+    return true
+
+
+func spend_gold(amount: int) -> bool:
+    if amount <= 0:
+        return false
+    if gold < amount:
+        return false
+
+    gold -= amount
+    return true
+
+
+# -------------------------
+# XP
+# -------------------------
 
 
 func get_xp_required_for_level(lvl: int) -> float:
@@ -154,11 +294,51 @@ func _get_level_from_xp(total_xp: float) -> int:
     return estimated_lvl
 
 
+# -------------------------
+# Debug / Reset
+# -------------------------
+
+
+func reset_runtime_resources(reset_health_value: float = -1.0, reset_mana_value: float = -1.0, reset_souls_value: int = 0, reset_gold_value: int = 0) -> void:
+    if reset_health_value < 0.0:
+        health = current_max_health
+    else:
+        health = clamp(reset_health_value, 0.0, current_max_health)
+
+    if reset_mana_value < 0.0:
+        mana = current_max_mana
+    else:
+        mana = clamp(reset_mana_value, 0.0, current_max_mana)
+
+    souls = max(0, reset_souls_value)
+    gold = max(0, reset_gold_value)
+
+
+# -------------------------
+# Property Setters
+# -------------------------
+
+
 func _on_health_set(new_value: float) -> void:
     health = clamp(new_value, 0.0, current_max_health)
     health_changed.emit(health)
     if health <= 0.0:
         health_depleted.emit()
+
+
+func _on_mana_set(new_value: float) -> void:
+    mana = clamp(new_value, 0.0, current_max_mana)
+    mana_changed.emit(mana)
+
+
+func _on_souls_set(new_value: int) -> void:
+    souls = max(0, new_value)
+    souls_changed.emit(souls)
+
+
+func _on_gold_set(new_value: int) -> void:
+    gold = max(0, new_value)
+    gold_changed.emit(gold)
 
 
 func _on_experience_set(new_value: float) -> void:

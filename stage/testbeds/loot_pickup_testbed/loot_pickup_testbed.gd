@@ -122,7 +122,8 @@ func _setup_player() -> void:
     if player == null:
         return
 
-    player._wire_modules()
+    if player.stats == null:
+        Debug.log("[loot_pickup_testbed] player.stats is null")
 
 
 func _setup_dummy() -> void:

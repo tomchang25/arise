@@ -10,4 +10,5 @@ kind = 1
 sprite = ExtResource("2_lr54j")
 label = "Mana Orb"
 description = "Restores mana."
+amount_per_unit = 10.0
 metadata/_custom_type_script = "uid://d1hiuslt4wlek"

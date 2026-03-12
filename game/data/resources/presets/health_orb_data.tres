@@ -9,4 +9,5 @@ id = &"health_orb"
 sprite = ExtResource("2_cqrba")
 label = "Health Orb"
 description = "Restores health."
+amount_per_unit = 5.0
 metadata/_custom_type_script = "uid://d1hiuslt4wlek"
