@@ -1,6 +1,5 @@
 # **Scratchpad**
 
-Stats update for pickup system
 
 ## File Naming and Folder Location
 
@@ -82,6 +81,31 @@ Itch page
 # **Core Systems**
 
 # Refactored Modules
+
+## Stats System
+
+### Core Features
+
+- [x]  Basic attributes
+- [x]  Current runtime attributes
+- [x]  Stat recalculation
+- [x]  Damage / health handling
+- [x]  Resource stats support (health / mana / souls / gold)
+
+### Robustness
+
+- [x]  Clamp runtime values to valid range
+- [x]  Keep runtime resources synced after recalculation
+- [x]  Expose resource add / spend / recover helpers
+- [x]  Support pickup-driven resource checks
+
+### Future Features
+
+- [ ]  Buff system
+    - [ ]  Buff data structure
+    - [ ]  Add / remove buff API
+    - [ ]  Duration / expire handling
+    - [ ]  Recalculation integration
 
 ## Movement Module
 
@@ -419,19 +443,6 @@ Placement is partially refactored: `SpawnContext` and `SpawnPoint` are real and 
 - [ ]  Add manager / aggregation / throttling layer if still planned
 
 I could confirm a `damage_numbers` folder and a `DamageNumber` implementation, but not a verified manager script from the paths I checked.
-
-## Stats System
-
-- [ ]  Stats system completion
-    - [x]  Basic attributes
-    - [x]  Current attributes
-    - [x]  Damage review
-    - [ ]  Buff system
-        - [ ]  Buff data structure (id, duration, stacks)
-        - [ ]  Add / remove buff API
-        - [ ]  Tick / expire (optional for 0.1.0)
-        - [ ]  Recalculate integration
-    - [x]  Recalculate stats
 
 ## Audio
 
