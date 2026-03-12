@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="HealthOrbData" format=3 uid="uid://d2ry0gdkqu8e5"]
 
-[ext_resource type="Script" uid="uid://bl1p6igmy1gv8" path="res://game/resources/reward_data/health_orb_data.gd" id="1_5rtfe"]
+[ext_resource type="Script" uid="uid://bl1p6igmy1gv8" path="res://game/data/resources/health_orb_data.gd" id="1_5rtfe"]
 [ext_resource type="Texture2D" uid="uid://de2dqq88cxcvo" path="res://asset/unmanaged/youtube-action-rpg/ui/heart_ui_full.png" id="2_cqrba"]
 
 [resource]

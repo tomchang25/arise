@@ -4,8 +4,8 @@ extends BasePickup
 const MAX_ICON_SIZE := Vector2(16.0, 16.0)
 const DEFAULT_COLLISION_RADIUS := 8.0
 
-@export_group("Reward")
-@export var resource_data: ResourceRewardData:
+@export_group("Resource")
+@export var resource_data: ResourceData:
     set(value):
         resource_data = value
         _refresh_visual()
@@ -33,7 +33,7 @@ func _ready() -> void:
 # -------------------------
 
 
-func setup_resource(data: ResourceRewardData, value: int) -> void:
+func setup_resource(data: ResourceData, value: int) -> void:
     resource_data = data
     amount = max(1, value)
     _refresh_visual()

@@ -34,7 +34,6 @@ func _ready() -> void:
         _can_collect = true
 
 
-
 # -------------------------
 # Common API
 # -------------------------

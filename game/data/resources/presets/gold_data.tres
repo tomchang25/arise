@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GoldData" format=3 uid="uid://by53n00aymnmd"]
 
-[ext_resource type="Script" uid="uid://bj5kqhsoagian" path="res://game/resources/reward_data/gold_data.gd" id="1_pkjoy"]
+[ext_resource type="Script" uid="uid://bj5kqhsoagian" path="res://game/data/resources/gold_data.gd" id="1_pkjoy"]
 [ext_resource type="Texture2D" uid="uid://b173y7dtt1nl2" path="res://asset/unmanaged/Ninja Adventure - Asset Pack/Ui/Emote/emote6.png" id="2_im2kn"]
 
 [resource]

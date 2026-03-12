@@ -1,8 +1,8 @@
 class_name ResourceDropEntry
 extends LootDropEntry
 
-@export_group("Reward Data")
-@export var resource_data: ResourceRewardData
+@export_group("Resource Data")
+@export var resource_data: ResourceData
 
 
 func is_resource_entry() -> bool:

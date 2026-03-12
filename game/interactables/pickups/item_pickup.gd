@@ -4,7 +4,7 @@ extends BasePickup
 const MAX_ICON_SIZE := Vector2(16.0, 16.0)
 const DEFAULT_COLLISION_RADIUS := 8.0
 
-@export_group("Reward")
+@export_group("Item")
 @export var item_data: ItemData:
     set(value):
         item_data = value
@@ -54,14 +54,14 @@ func _validate_receiver(collector: Node) -> bool:
     if collector == null:
         return false
 
-    return collector.has_method("add_item_reward")
+    return collector.has_method("add_item")
 
 
 func _apply_to_collector(collector: Node) -> bool:
     if item_data == null:
         return false
 
-    collector.add_item_reward(item_data, amount)
+    collector.add_item(item_data, amount)
     return true
 
 

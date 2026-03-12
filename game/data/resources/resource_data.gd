@@ -1,4 +1,4 @@
-class_name ResourceRewardData
+class_name ResourceData
 extends Resource
 
 @export_group("Identity")

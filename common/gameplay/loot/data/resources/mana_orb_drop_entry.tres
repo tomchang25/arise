@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="ResourceDropEntry" format=3 uid="uid://bqrjo0nmhgedo"]
 
 [ext_resource type="PackedScene" uid="uid://dvon73ywr5duo" path="res://game/interactables/pickups/resource_pickup.tscn" id="1_kdnnf"]
-[ext_resource type="Resource" uid="uid://dq16ehvdxppi6" path="res://game/resources/reward_data/mana_orb_data.tres" id="2_34x5j"]
+[ext_resource type="Resource" uid="uid://dq16ehvdxppi6" path="res://game/data/resources/presets/mana_orb_data.tres" id="2_34x5j"]
 [ext_resource type="Script" uid="uid://dcwg7mfnwyixs" path="res://common/gameplay/loot/resource_drop_entry.gd" id="3_ld848"]
 
 [resource]

@@ -1,7 +1,7 @@
 class_name ItemDropEntry
 extends LootDropEntry
 
-@export_group("Reward Data")
+@export_group("Item Data")
 @export var item_data: ItemData
 
 
