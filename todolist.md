@@ -1,8 +1,4 @@
-# **Scratchpad**
-
-Generalize _debug_invalid and debug system(autoload)
-
-Check if need to roll sfx in feedback module or remain play all
+# **第一部分**
 
 ## File Naming and Folder Location
 
@@ -39,12 +35,15 @@ Try to keep the pattern stable:
 Gameplay loop.
 
 ```
-Basic debug
 Pickup system Finished
 Summon system
 Enemy spawning
 Basic dialog
 Basic objective
+
+--- Finished
+Basic debug
+SFX refactor
 ```
 
 ---
@@ -426,9 +425,57 @@ I could confirm a `damage_numbers` folder and a `DamageNumber` implementation, b
 
 ## Audio
 
-- [x]  AudioManager
-    - [x]  SoundHandler
-    - [x]  MusicHandler
+### Core System
+
+- [x]  **AudioManager**
+    - [x]  Player pooling
+    - [x]  Bus routing
+    - [x]  Global playback API
+    - [x]  Event-based playback (`play_event`)
+
+### Playback Handlers
+
+- [x]  **SoundHandler**
+    - [x]  2D spatial SFX playback
+    - [x]  SFX player pool
+    - [x]  rate limiter / spam protection
+    - [x]  world position playback
+- [x]  **MusicHandler**
+    - [x]  Music player
+    - [x]  restart / ignore duplicate music
+    - [x]  start time support
+
+### Audio Events
+
+- [x]  **AudioEvent (base)**
+    - [x]  stream list
+    - [x]  random stream selection
+    - [x]  avoid repeat
+    - [x]  pitch control
+    - [x]  random pitch
+    - [x]  volume control
+    - [x]  bus configuration
+- [x]  **SpatialAudioEvent**
+    - [x]  world SFX playback
+    - [x]  limiter configuration
+    - [x]  default SFX bus
+- [x]  **UiAudioEvent**
+    - [x]  UI sound playback
+    - [x]  default UI bus
+- [x]  **MusicAudioEvent**
+    - [x]  music playback configuration
+    - [x]  restart policy
+        - [x]  restart_if_same
+
+### Future Improvements (Low Priority)
+
+- [ ]  editor validation for empty stream list *(optional)*
+- [ ]  weighted random streams
+- [ ]  audio variation presets
+- [ ]  fade in / fade out helpers
+- [ ]  music crossfade
+- [ ]  positional follow target
+- [ ]  audio debug overlay
 
 ## Hit Feedback
 

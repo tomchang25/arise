@@ -9,3 +9,5 @@ extends AudioEvent
 
 func _init() -> void:
     bus_id = AudioBus.Id.MUSIC
+    use_random_pitch = false
+    pitch_scale = 1.0

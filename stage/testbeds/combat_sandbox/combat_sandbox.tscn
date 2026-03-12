@@ -192,7 +192,6 @@ metadata/_custom_type_script = "uid://bb4mbrq1u7pl"
 
 [node name="MeleeAttackModule" type="Node2D" parent="CombatModule" unique_id=465471090]
 script = ExtResource("3_lq0vo")
-attack_cooldown = 0.01
 metadata/_custom_type_script = "uid://d1yimk3mk35ag"
 
 [node name="Dummies" type="Node2D" parent="." unique_id=1558802149]

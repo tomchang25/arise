@@ -17,10 +17,6 @@ extends Node
 @export var sfx_pool_2d_size: int = 24
 @export var sfx_pool_ui_size: int = 8
 
-@export_group("Defaults")
-@export var default_pitch_min: float = 0.95
-@export var default_pitch_max: float = 1.05
-
 var _music_player: AudioStreamPlayer
 var _sfx_2d_pool: Array[AudioStreamPlayer2D] = []
 var _ui_pool: Array[AudioStreamPlayer] = []
@@ -109,7 +105,7 @@ func play_ui(stream: AudioStream, volume_db: float = 0.0, pitch: float = 1.0, bu
     p.play()
 
 
-func play_sfx_2d(stream: AudioStream, world_pos: Vector2, volume_db: float = 0.0, pitch: float = -1.0, bus_override: StringName = &"") -> void:
+func play_sfx_2d(stream: AudioStream, world_pos: Vector2, volume_db: float = 0.0, pitch: float = 1.0, bus_override: StringName = &"") -> void:
     if stream == null:
         return
     var p := _get_free_sfx_2d_player()
@@ -119,7 +115,7 @@ func play_sfx_2d(stream: AudioStream, world_pos: Vector2, volume_db: float = 0.0
     p.stream = stream
     p.global_position = world_pos
     p.volume_db = volume_db
-    p.pitch_scale = pitch if pitch > 0.0 else randf_range(default_pitch_min, default_pitch_max)
+    p.pitch_scale = pitch
     p.bus = bus_override if bus_override != &"" else get_bus_name(AudioBus.Id.SOUND)
     p.play()
 
@@ -131,7 +127,7 @@ func play_sfx_limited(
     max_per_window: int = 4,
     window_sec: float = 0.05,
     volume_db: float = 0.0,
-    pitch: float = -1.0,
+    pitch: float = 1.0,
     bus_override: StringName = &""
 ) -> void:
     if stream == null:
@@ -140,21 +136,6 @@ func play_sfx_limited(
         return
     play_sfx_2d(stream, world_pos, volume_db, pitch, bus_override)
 
-
-# func play_event(event: AudioEvent, world_pos: Vector2 = Vector2.ZERO) -> void:
-#     if event == null:
-#         return
-
-#     var stream := event.pick_stream()
-#     if stream == null:
-#         return
-
-#     var pitch := randf_range(event.pitch_min, event.pitch_max)
-
-#     if event.limiter_key != &"":
-#         play_sfx_limited(stream, event.limiter_key, world_pos, event.max_per_window, event.window_sec, event.volume_db, pitch)
-#     else:
-#         play_sfx_2d(stream, world_pos, event.volume_db, pitch)
 
 # -------------------------
 # Unified API: play_event
@@ -169,6 +150,8 @@ func play_event(event: AudioEvent, world_pos: Vector2 = Vector2.ZERO) -> void:
     if stream == null:
         return
 
+    var pitch := event.resolve_pitch()
+
     # Music
     if event is MusicAudioEvent:
         var e := event as MusicAudioEvent
@@ -180,7 +163,7 @@ func play_event(event: AudioEvent, world_pos: Vector2 = Vector2.ZERO) -> void:
         play_music(stream, e.volume_db, e.from_sec, bus_name)
         return
 
-    # UI (non-positional)
+    # UI
     if event is UiAudioEvent:
         var e := event as UiAudioEvent
         var bus_name := _resolve_bus_name(event, AudioBus.Id.UI)
@@ -188,25 +171,23 @@ func play_event(event: AudioEvent, world_pos: Vector2 = Vector2.ZERO) -> void:
         if e.limiter_key != &"" and _is_rate_limited(e.limiter_key, e.max_per_window, e.window_sec):
             return
 
-        var pitch := randf_range(e.pitch_min, e.pitch_max)
         play_ui(stream, e.volume_db, pitch, bus_name)
         return
 
-    # Spatial (2D positional)
+    # Spatial
     if event is SpatialAudioEvent:
         var e := event as SpatialAudioEvent
         var bus_name := _resolve_bus_name(event, AudioBus.Id.SOUND)
 
-        var pitch := randf_range(e.pitch_min, e.pitch_max)
         if e.limiter_key != &"":
             play_sfx_limited(stream, e.limiter_key, world_pos, e.max_per_window, e.window_sec, e.volume_db, pitch, bus_name)
         else:
             play_sfx_2d(stream, world_pos, e.volume_db, pitch, bus_name)
         return
 
-    # Fallback: treat base AudioEvent as spatial SFX with default pitch range
+    # Fallback
     var fallback_bus := _resolve_bus_name(event, AudioBus.Id.SOUND)
-    play_sfx_2d(stream, world_pos, event.volume_db, -1.0, fallback_bus)
+    play_sfx_2d(stream, world_pos, event.volume_db, pitch, fallback_bus)
 
 
 # -------------------------
