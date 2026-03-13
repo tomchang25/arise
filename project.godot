@@ -21,11 +21,11 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-Global="*res://global/systems/global.gd"
+Global="*res://global/autoload/global.gd"
 BeehaveGlobalMetrics="*uid://c3ktl6ontsdt7"
 BeehaveGlobalDebugger="*uid://bl3ma400hpvsh"
-EventBus="*res://global/systems/event_bus.gd"
-AudioManager="*res://global/systems/audio_manager/audio_manager.gd"
+EventBus="*res://global/autoload/event_bus.gd"
+AudioManager="*res://global/autoload/audio_manager/audio_manager.gd"
 Debug="*uid://l63h0afxdmif"
 
 [debug]

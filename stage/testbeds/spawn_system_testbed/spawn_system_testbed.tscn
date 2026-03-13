@@ -11,7 +11,8 @@ script = ExtResource("1_lcqdy")
 world_root = NodePath("WorldRoot")
 spawned_root = NodePath("WorldRoot/SpawnedRoot")
 spawn_point = NodePath("WorldRoot/SpawnPoint")
-warning_spawn_point = NodePath("WorldRoot/WarningSpawnPoint")
+warning_spawn_point = NodePath("")
+warning_spawn_point_scene = ExtResource("3_m0283")
 debug_label = NodePath("UI/DebugLabel")
 direct_spawn_scene = ExtResource("2_80key")
 weighted_scene_table = ExtResource("3_cx2sr")
@@ -24,9 +25,6 @@ weighted_scene_table = ExtResource("3_cx2sr")
 position = Vector2(182, 78)
 script = ExtResource("2_8jr4v")
 metadata/_custom_type_script = "uid://dpsovxdp2ml33"
-
-[node name="WarningSpawnPoint" parent="WorldRoot" unique_id=2122405661 instance=ExtResource("3_m0283")]
-position = Vector2(96, 76)
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=1804332603]
 

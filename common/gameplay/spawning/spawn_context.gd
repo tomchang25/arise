@@ -1,5 +1,5 @@
 class_name SpawnContext
-extends Resource
+extends RefCounted
 
 @export var rng_seed: int = 0
 @export var metadata: Dictionary = {}

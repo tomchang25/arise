@@ -13,6 +13,7 @@ const ACTION_RESET_COUNTERS := "test_reset_spawn_counters"
 @export var spawned_root: Node2D
 @export var spawn_point: SpawnPoint
 @export var warning_spawn_point: WarningSpawnPoint
+@export var warning_spawn_point_scene: PackedScene
 @export var debug_label: Label
 
 @export_group("Spawn Data")
@@ -102,60 +103,39 @@ func _on_spawn_from_point_pressed() -> void:
         Debug.invalid("spawn_point is null")
         return
 
-    if direct_spawn_scene == null:
-        Debug.invalid("direct_spawn_scene is null")
+    var action := _build_direct_action(direct_scatter_radius, false)
+    if action == null:
         return
 
-    var action := SpawnPackedSceneAction.new()
-    action.scene = direct_spawn_scene
-    action.parent_mode = SpawnAction.ParentMode.CTX_SPAWN_PARENT
-    action.use_anchor_position = true
-    action.use_anchor_rotation = false
-    action.random_rotation = false
-    action.scatter_radius = direct_scatter_radius
+    var ctx := _build_context(default_seed + _spawn_count_point, {"mode": "spawn_point"})
 
-    var ctx := SpawnContext.new()
-    ctx.setup(spawned_root, default_seed + _spawn_count_point, self, {"mode": "spawn_point"})
-
-    spawn_point.setup(action, ctx)
-    var spawned := spawn_point.start()
+    var spawned := SpawnExecutor.execute_at_node(action, spawn_point, ctx)
     _apply_spawn_debug(spawned, "point_%s" % _spawn_count_point)
 
     _spawn_count_point += 1
 
     if print_hotkey_log:
-        Debug.log("Spawn from SpawnPoint")
+        Debug.log("Spawn from SpawnPoint via SpawnExecutor")
 
 
 func _on_spawn_from_warning_point_pressed() -> void:
-    if warning_spawn_point == null:
-        Debug.invalid("warning_spawn_point is null")
+    if spawned_root == null:
+        Debug.invalid("spawned_root is null")
         return
 
-    if direct_spawn_scene == null:
-        Debug.invalid("direct_spawn_scene is null")
+    var action := _build_direct_action(direct_scatter_radius, true)
+    if action == null:
         return
 
-    var action := SpawnPackedSceneAction.new()
-    action.scene = direct_spawn_scene
-    action.parent_mode = SpawnAction.ParentMode.CTX_SPAWN_PARENT
-    action.use_anchor_position = true
-    action.use_anchor_rotation = false
-    action.random_rotation = true
-    action.scatter_radius = direct_scatter_radius
+    var ctx := _build_context(default_seed + 1000 + _spawn_count_warning, {"mode": "warning_spawn_point"})
 
-    var ctx := SpawnContext.new()
-    ctx.setup(spawned_root, default_seed + 1000 + _spawn_count_warning, self, {"mode": "warning_spawn_point"})
-
-    warning_spawn_point.setup(action, ctx)
-
-    var spawned = await warning_spawn_point.start()
+    var spawned := await _spawn_from_runtime_warning_point(get_global_mouse_position(), action, ctx)
     _apply_spawn_debug(spawned, "warning_%s" % _spawn_count_warning)
 
     _spawn_count_warning += 1
 
     if print_hotkey_log:
-        Debug.log("Spawn from WarningSpawnPoint")
+        Debug.log("Spawn from warning flow")
 
 
 func _on_spawn_from_executor_pressed() -> void:
@@ -163,25 +143,20 @@ func _on_spawn_from_executor_pressed() -> void:
         Debug.invalid("spawned_root is null")
         return
 
-    if direct_spawn_scene == null:
-        Debug.invalid("direct_spawn_scene is null")
+    var spawn_position := get_global_mouse_position()
+    var action := _build_direct_action(executor_scatter_radius, true)
+    if action == null:
         return
 
-    var spawn_position := get_global_mouse_position()
-
-    var action := SpawnPackedSceneAction.new()
-    action.scene = direct_spawn_scene
-    action.parent_mode = SpawnAction.ParentMode.CTX_SPAWN_PARENT
-    action.use_anchor_position = true
-    action.use_anchor_rotation = false
-    action.random_rotation = true
-    action.scatter_radius = executor_scatter_radius
-
-    var ctx := SpawnContext.new()
-    ctx.setup(spawned_root, default_seed + 2000 + _spawn_count_executor, self, {"mode": "executor", "mouse_position": spawn_position})
+    var ctx := _build_context(
+        default_seed + 2000 + _spawn_count_executor,
+        {
+            "mode": "executor",
+            "mouse_position": spawn_position,
+        }
+    )
 
     var spawned := SpawnExecutor.execute_at_position(action, spawn_position, spawned_root, ctx)
-
     _apply_spawn_debug(spawned, "executor_%s" % _spawn_count_executor)
 
     _spawn_count_executor += 1
@@ -207,17 +182,15 @@ func _on_spawn_from_weighted_table_pressed() -> void:
     action.random_rotation = true
     action.scatter_radius = weighted_scatter_radius
 
-    var ctx := SpawnContext.new()
-    ctx.setup(spawned_root, default_seed + 3000 + _spawn_count_weighted, self, {"mode": "weighted_table"})
+    var ctx := _build_context(default_seed + 3000 + _spawn_count_weighted, {"mode": "weighted_table"})
 
-    spawn_point.setup(action, ctx)
-    var spawned := spawn_point.start()
+    var spawned := SpawnExecutor.execute_at_node(action, spawn_point, ctx)
     _apply_spawn_debug(spawned, "weighted_%s" % _spawn_count_weighted)
 
     _spawn_count_weighted += 1
 
     if print_hotkey_log:
-        Debug.log("Spawn from WeightedSceneTable")
+        Debug.log("Spawn from WeightedSceneTable via SpawnExecutor")
 
 
 func _on_roll_encounter_pressed() -> void:
@@ -226,8 +199,7 @@ func _on_roll_encounter_pressed() -> void:
         _last_encounter_text = "encounter_table=null"
         return
 
-    var ctx := SpawnContext.new()
-    ctx.setup(spawned_root, default_seed + 4000 + Time.get_ticks_msec(), self)
+    var ctx := _build_context(default_seed + 4000 + Time.get_ticks_msec(), {})
 
     var encounter := encounter_table.pick_encounter(ctx.get_rng())
     if encounter == null:
@@ -305,12 +277,13 @@ func _auto_wire_scene_refs() -> void:
             Debug
             . log(
                 (
-                    "SpawnSystemTestbed auto wire -> world_root=%s spawned_root=%s spawn_point=%s warning_spawn_point=%s debug_label=%s"
+                    "SpawnSystemTestbed auto wire -> world_root=%s spawned_root=%s spawn_point=%s warning_spawn_point=%s warning_spawn_point_scene=%s debug_label=%s"
                     % [
                         world_root != null,
                         spawned_root != null,
                         spawn_point != null,
                         warning_spawn_point != null,
+                        warning_spawn_point_scene != null,
                         debug_label != null,
                     ]
                 )
@@ -322,8 +295,59 @@ func _wire_spawn_points() -> void:
     if spawn_point != null:
         spawn_point.spawn_parent = spawned_root
 
-    if warning_spawn_point != null:
-        warning_spawn_point.spawn_parent = spawned_root
+
+func _build_direct_action(scatter_radius: float, enable_random_rotation: bool) -> SpawnPackedSceneAction:
+    if direct_spawn_scene == null:
+        Debug.invalid("direct_spawn_scene is null")
+        return null
+
+    var action := SpawnPackedSceneAction.new()
+    action.scene = direct_spawn_scene
+    action.parent_mode = SpawnAction.ParentMode.CTX_SPAWN_PARENT
+    action.use_anchor_position = true
+    action.use_anchor_rotation = false
+    action.random_rotation = enable_random_rotation
+    action.scatter_radius = scatter_radius
+    return action
+
+
+func _build_context(ctx_seed: int, extra_metadata: Dictionary) -> SpawnContext:
+    var ctx := SpawnContext.new()
+    ctx.setup(spawned_root, ctx_seed, self, extra_metadata)
+    return ctx
+
+
+func _spawn_from_runtime_warning_point(target_global_position: Vector2, action: SpawnAction, ctx: SpawnContext) -> Node:
+    if warning_spawn_point_scene != null:
+        return await SpawnWarningExecutor.execute_at_position(warning_spawn_point_scene, action, target_global_position, spawned_root, ctx)
+
+    var runtime_point := _instantiate_runtime_warning_point()
+    if runtime_point == null:
+        Debug.invalid("warning_spawn_point_scene and warning_spawn_point are both invalid")
+        return null
+
+    spawned_root.add_child(runtime_point)
+    runtime_point.global_position = target_global_position
+    runtime_point.spawn_parent = spawned_root
+    runtime_point.setup(action, ctx)
+
+    return await runtime_point.start()
+
+
+func _instantiate_runtime_warning_point() -> WarningSpawnPoint:
+    if warning_spawn_point == null:
+        return null
+
+    if not is_instance_valid(warning_spawn_point):
+        return null
+
+    var duplicated := warning_spawn_point.duplicate() as WarningSpawnPoint
+    if duplicated == null:
+        Debug.warn("SpawnSystemTestbed: failed to duplicate warning_spawn_point")
+        return null
+
+    duplicated.name = "%sRuntime" % warning_spawn_point.name
+    return duplicated
 
 
 func _apply_spawn_debug(spawned: Node, debug_name: String) -> void:
@@ -349,7 +373,7 @@ func _update_debug_text() -> void:
         . join(
             [
                 "[1] Spawn from SpawnPoint",
-                "[2] Spawn from WarningSpawnPoint",
+                "[2] Spawn from Warning flow",
                 "[3] Spawn from Executor (mouse global position)",
                 "[4] Spawn from WeightedSceneTable",
                 "[5] Roll WeightedEncounterTable",

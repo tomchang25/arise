@@ -1,3 +1,4 @@
+@tool
 class_name WarningSpawnPoint
 extends SpawnPoint
 
@@ -8,6 +9,10 @@ extends SpawnPoint
 
 var _warning_sign: CanvasItem
 var _warning_timer: Timer
+
+
+func _init() -> void:
+    free_after_execute = true
 
 
 func _ready() -> void:

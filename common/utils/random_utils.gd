@@ -1,5 +1,5 @@
 class_name RandomUtils
-extends Node
+extends RefCounted
 
 
 static func pick_weighted_index(weights: Array[int], rng: RandomNumberGenerator = null) -> int:
@@ -48,17 +48,7 @@ static func pick_weighted_entry(entries: Array, rng: RandomNumberGenerator = nul
     return entries[picked_index]
 
 
-static func random_point_in_radius(radius: float, rng: RandomNumberGenerator = null) -> Vector2:
-    if radius <= 0.0:
-        return Vector2.ZERO
-
-    var resolved_rng := rng if rng != null else _create_fallback_rng()
-    var angle := resolved_rng.randf_range(0.0, TAU)
-    var distance := sqrt(resolved_rng.randf()) * radius
-    return Vector2.RIGHT.rotated(angle) * distance
-
-
 static func _create_fallback_rng() -> RandomNumberGenerator:
-    var new_rng := RandomNumberGenerator.new()
-    new_rng.randomize()
-    return new_rng
+    var rng := RandomNumberGenerator.new()
+    rng.randomize()
+    return rng
