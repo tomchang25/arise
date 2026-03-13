@@ -53,11 +53,11 @@ func can_add_item(item_data: ItemData, amount: int) -> bool:
 
 func add_item(item_data: ItemData, amount: int) -> void:
     if item_data == null:
-        push_warning("[loot_test_player] add_item -> item_data is null")
+        Debug.warn("[loot_test_player] add_item -> item_data is null")
         return
 
     if item_data.id == StringName():
-        push_warning("[loot_test_player] add_item -> empty item id")
+        Debug.warn("[loot_test_player] add_item -> empty item id")
         return
 
     granted_items[item_data.id] = int(granted_items.get(item_data.id, 0)) + max(1, amount)

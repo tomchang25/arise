@@ -27,13 +27,13 @@ func _ready() -> void:
 
 func kill_dummy() -> void:
     if not alive:
-        print("[loot_test_dummy] already dead")
+        Debug.log("[loot_test_dummy] already dead")
         return
 
     alive = false
 
     if loot_drop_module == null:
-        push_warning("[loot_test_dummy] loot_drop_module is null")
+        Debug.warn("[loot_test_dummy] loot_drop_module is null")
         dummy_killed.emit()
         return
 

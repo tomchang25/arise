@@ -2,24 +2,28 @@ class_name SpawnContext
 extends Resource
 
 @export var rng_seed: int = 0
+@export var metadata: Dictionary = {}
 
-@export var room_id: int = -1
-@export var difficulty: int = 0
+var spawn_parent: Node
+var source_node: Node
 
-var rng: RandomNumberGenerator
-var spawn_root: Node
-
-
-func setup(_spawn_root: Node, _rng_seed: int = 0) -> void:
-    spawn_root = _spawn_root
-    rng_seed = _rng_seed
+var _rng: RandomNumberGenerator
 
 
-func ensure_rng() -> RandomNumberGenerator:
-    if rng == null:
-        rng = RandomNumberGenerator.new()
+func setup(parent: Node = null, setup_seed: int = 0, source: Node = null, extra_metadata: Dictionary = {}) -> void:
+    spawn_parent = parent
+    rng_seed = setup_seed
+    source_node = source
+    metadata = extra_metadata
+    _rng = null
+
+
+func get_rng() -> RandomNumberGenerator:
+    if _rng == null:
+        _rng = RandomNumberGenerator.new()
         if rng_seed != 0:
-            rng.seed = rng_seed
+            _rng.seed = rng_seed
         else:
-            rng.randomize()
-    return rng
+            _rng.randomize()
+
+    return _rng

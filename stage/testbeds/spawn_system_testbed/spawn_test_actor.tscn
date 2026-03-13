@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://efv2kl7j80gr"]
+
+[ext_resource type="Script" uid="uid://2yc52vxbdv8i" path="res://stage/testbeds/spawn_system_testbed/spawn_test_actor.gd" id="1_iu471"]
+[ext_resource type="Texture2D" uid="uid://cm2c6n0ytikey" path="res://icon.svg" id="1_ri1ds"]
+
+[node name="SpawnTestActor" type="Node2D" unique_id=1404825100]
+script = ExtResource("1_iu471")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=334420055]
+texture = ExtResource("1_ri1ds")

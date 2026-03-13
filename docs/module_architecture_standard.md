@@ -27,7 +27,7 @@ Modules that follow this standard include (but are not limited to):
 This standard applies to gameplay modules located under:
 
 ```
-common/modules/*
+common/gameplay/*
 ```
 
 These modules provide reusable gameplay functionality that can be attached to actors such as:

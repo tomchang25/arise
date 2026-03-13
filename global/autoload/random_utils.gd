@@ -1,7 +1,7 @@
 extends Node
 
 
-static func pick_weighted_index(weights: Array[int], rng: RandomNumberGenerator = null) -> int:
+func pick_weighted_index(weights: Array[int], rng: RandomNumberGenerator = null) -> int:
     if weights.is_empty():
         return -1
 
@@ -24,7 +24,7 @@ static func pick_weighted_index(weights: Array[int], rng: RandomNumberGenerator 
     return -1
 
 
-static func pick_weighted_entry(entries: Array, rng: RandomNumberGenerator = null):
+func pick_weighted_entry(entries: Array, rng: RandomNumberGenerator = null):
     if entries.is_empty():
         return null
 
@@ -47,7 +47,7 @@ static func pick_weighted_entry(entries: Array, rng: RandomNumberGenerator = nul
     return entries[picked_index]
 
 
-static func random_point_in_radius(radius: float, rng: RandomNumberGenerator = null) -> Vector2:
+func random_point_in_radius(radius: float, rng: RandomNumberGenerator = null) -> Vector2:
     if radius <= 0.0:
         return Vector2.ZERO
 

@@ -1,59 +1,67 @@
 class_name SpawnPackedSceneAction
 extends SpawnAction
 
-enum ParentMode { CTX_SPAWN_ROOT, SPAWN_POINT_PARENT, NODEPATH_FROM_SPAWN_POINT, GROUP_NAME }
-
 @export var scene: PackedScene
-@export var parent_mode: ParentMode = ParentMode.CTX_SPAWN_ROOT
 
-# Used when parent_mode == NODEPATH_FROM_SPAWN_POINT
+@export_group("Parent")
+@export var parent_mode: ParentMode = ParentMode.CTX_SPAWN_PARENT
 @export var parent_path: NodePath
+@export var parent_group: String = ""
 
-# Used when parent_mode == GROUP_NAME
-@export var parent_group: String = "world"
+@export_group("Transform")
+@export var use_anchor_position: bool = true
+@export var use_anchor_rotation: bool = false
+@export var random_rotation: bool = false
 
-@export var set_global_position: bool = true
+@export_group("Offset")
+@export var local_offset: Vector2 = Vector2.ZERO
+@export var scatter_radius: float = 0.0
 
 
-func execute(spawn_point: Node2D, ctx: SpawnContext) -> Node:
+func execute(anchor: Node2D, ctx: SpawnContext) -> Node:
     if scene == null:
-        push_warning("SpawnPackedSceneAction: scene is null")
+        Debug.warn("SpawnPackedSceneAction: scene is null")
         return null
 
-    var parent := _resolve_parent(spawn_point, ctx)
+    if anchor == null:
+        Debug.warn("SpawnPackedSceneAction: anchor is null")
+        return null
+
+    var parent := resolve_parent(anchor, ctx, parent_mode, parent_path, parent_group)
     if parent == null:
-        push_warning("SpawnPackedSceneAction: parent is null (cannot place)")
+        Debug.warn("SpawnPackedSceneAction: parent is null")
         return null
 
-    var inst := scene.instantiate()
-    parent.add_child.call_deferred(inst)
+    var instance := scene.instantiate()
+    if instance == null:
+        Debug.warn("SpawnPackedSceneAction: failed to instantiate scene")
+        return null
 
-    if set_global_position and inst is Node2D:
-        (inst as Node2D).global_position = spawn_point.global_position
+    parent.add_child(instance)
 
-    return inst
+    if instance is Node2D:
+        var node_2d := instance as Node2D
+        var target_position := anchor.global_position
 
+        if local_offset != Vector2.ZERO:
+            target_position += local_offset.rotated(anchor.global_rotation)
 
-func _resolve_parent(spawn_point: Node2D, ctx: SpawnContext) -> Node:
-    match parent_mode:
-        ParentMode.CTX_SPAWN_ROOT:
-            if ctx != null and ctx.spawn_root != null:
-                return ctx.spawn_root
-            return spawn_point.get_parent()
+        if scatter_radius > 0.0:
+            var rng := ctx.get_rng() if ctx != null else null
+            target_position += RandomUtils.random_point_in_radius(scatter_radius, rng)
 
-        ParentMode.SPAWN_POINT_PARENT:
-            return spawn_point.get_parent()
+        if use_anchor_position:
+            node_2d.global_position = target_position
 
-        ParentMode.NODEPATH_FROM_SPAWN_POINT:
-            if parent_path == NodePath():
-                push_warning("SpawnPackedSceneAction: parent_path is empty")
-                return null
-            return spawn_point.get_node_or_null(parent_path)
+        if use_anchor_rotation:
+            node_2d.global_rotation = anchor.global_rotation
 
-        ParentMode.GROUP_NAME:
-            var tree := spawn_point.get_tree()
-            if tree == null:
-                return null
-            return tree.get_first_node_in_group(parent_group)
+        if random_rotation:
+            var rng_rotation := ctx.get_rng() if ctx != null else null
+            if rng_rotation == null:
+                rng_rotation = RandomNumberGenerator.new()
+                rng_rotation.randomize()
 
-    return null
+            node_2d.global_rotation = rng_rotation.randf_range(0.0, TAU)
+
+    return instance

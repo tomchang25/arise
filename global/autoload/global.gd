@@ -12,7 +12,7 @@ func get_mask_from_name(mask_name: String) -> int:
         var layer_num = GROUP_TO_LAYER[mask_name]
         return int(pow(2, layer_num - 1))
 
-    push_warning("Layer name '" + mask_name + "' not found in GROUP_TO_LAYER")
+    Debug.log("Layer name '" + mask_name + "' not found in GROUP_TO_LAYER")
     return 0
 
 

@@ -1,0 +1,36 @@
+[gd_scene format=3 uid="uid://e50ikgg3ivu6"]
+
+[ext_resource type="Script" uid="uid://bo5im5dt2nktn" path="res://stage/testbeds/spawn_system_testbed/spawn_system_testbed.gd" id="1_lcqdy"]
+[ext_resource type="Script" uid="uid://dpsovxdp2ml33" path="res://common/gameplay/spawning/spawn_point.gd" id="2_8jr4v"]
+[ext_resource type="PackedScene" uid="uid://bmlww50h5ia4c" path="res://game/actors/dummies/dummy.tscn" id="2_80key"]
+[ext_resource type="Resource" uid="uid://dmj032ak0fxvj" path="res://stage/testbeds/spawn_system_testbed/spawn_test_weighted_table.tres" id="3_cx2sr"]
+[ext_resource type="PackedScene" uid="uid://djodnob72wufg" path="res://common/gameplay/spawning/warning_spawn_point.tscn" id="3_m0283"]
+
+[node name="SpawnSystemTestbed" type="Node2D" unique_id=574373426 node_paths=PackedStringArray("world_root", "spawned_root", "spawn_point", "warning_spawn_point", "debug_label")]
+script = ExtResource("1_lcqdy")
+world_root = NodePath("WorldRoot")
+spawned_root = NodePath("WorldRoot/SpawnedRoot")
+spawn_point = NodePath("WorldRoot/SpawnPoint")
+warning_spawn_point = NodePath("WorldRoot/WarningSpawnPoint")
+debug_label = NodePath("UI/DebugLabel")
+direct_spawn_scene = ExtResource("2_80key")
+weighted_scene_table = ExtResource("3_cx2sr")
+
+[node name="WorldRoot" type="Node2D" parent="." unique_id=202695055]
+
+[node name="SpawnedRoot" type="Node2D" parent="WorldRoot" unique_id=1781873223]
+
+[node name="SpawnPoint" type="Node2D" parent="WorldRoot" unique_id=255388180]
+position = Vector2(182, 78)
+script = ExtResource("2_8jr4v")
+metadata/_custom_type_script = "uid://dpsovxdp2ml33"
+
+[node name="WarningSpawnPoint" parent="WorldRoot" unique_id=2122405661 instance=ExtResource("3_m0283")]
+position = Vector2(96, 76)
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=1804332603]
+
+[node name="DebugLabel" type="Label" parent="UI" unique_id=1000205736]
+offset_right = 40.0
+offset_bottom = 22.0
+theme_override_font_sizes/font_size = 8

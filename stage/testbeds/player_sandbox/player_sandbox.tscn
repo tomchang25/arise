@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bui4lbf7chtx7"]
 
-[ext_resource type="Texture2D" uid="uid://c3kagdvi6j0pp" path="res://stage/testbeds/asset/grass_background.png" id="1_ptvfu"]
+[ext_resource type="Texture2D" uid="uid://c3kagdvi6j0pp" path="res://stage/testbeds/assets/grass_background.png" id="1_ptvfu"]
 [ext_resource type="PackedScene" uid="uid://dccho5kdagt0e" path="res://game/environment/bush/bush.tscn" id="2_rv4aa"]
 [ext_resource type="PackedScene" uid="uid://bmlww50h5ia4c" path="res://game/actors/dummies/dummy.tscn" id="3_4f4np"]
 [ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="4_i812l"]

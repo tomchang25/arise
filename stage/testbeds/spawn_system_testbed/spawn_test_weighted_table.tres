@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="WeightedSceneTable" format=3 uid="uid://dmj032ak0fxvj"]
+
+[ext_resource type="Script" uid="uid://ctqqj3qhmiuyc" path="res://common/gameplay/spawning/tables/weighted_scene_entry.gd" id="1_2a73g"]
+[ext_resource type="PackedScene" uid="uid://dhjvr7458gxu0" path="res://game/destroyables/plant_props/plant_props.tscn" id="2_6j470"]
+[ext_resource type="Script" uid="uid://swdxv304662a" path="res://common/gameplay/spawning/tables/weighted_scene_table.gd" id="2_keiwv"]
+[ext_resource type="PackedScene" uid="uid://bmlww50h5ia4c" path="res://game/actors/dummies/dummy.tscn" id="3_s4f58"]
+
+[sub_resource type="Resource" id="Resource_btkvo"]
+script = ExtResource("1_2a73g")
+scene = ExtResource("2_6j470")
+weight = 20
+metadata/_custom_type_script = "uid://ctqqj3qhmiuyc"
+
+[sub_resource type="Resource" id="Resource_g3wyj"]
+script = ExtResource("1_2a73g")
+scene = ExtResource("3_s4f58")
+metadata/_custom_type_script = "uid://ctqqj3qhmiuyc"
+
+[resource]
+script = ExtResource("2_keiwv")
+entries = Array[ExtResource("1_2a73g")]([SubResource("Resource_btkvo"), SubResource("Resource_g3wyj")])
+metadata/_custom_type_script = "uid://swdxv304662a"
