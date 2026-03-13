@@ -159,7 +159,7 @@ func _place_extraction(ctx: SpawnContext) -> void:
     action.parent_mode = SpawnPackedSceneAction.ParentMode.CTX_SPAWN_ROOT
     action.set_global_position = true
 
-    _spawn_buildtime(pos, action, ctx, room_id)
+    _spawn_buidtime(pos, action, ctx, room_id)
     print(pos)
 
 

@@ -1,7 +1,8 @@
+class_name RandomUtils
 extends Node
 
 
-func pick_weighted_index(weights: Array[int], rng: RandomNumberGenerator = null) -> int:
+static func pick_weighted_index(weights: Array[int], rng: RandomNumberGenerator = null) -> int:
     if weights.is_empty():
         return -1
 
@@ -24,7 +25,7 @@ func pick_weighted_index(weights: Array[int], rng: RandomNumberGenerator = null)
     return -1
 
 
-func pick_weighted_entry(entries: Array, rng: RandomNumberGenerator = null):
+static func pick_weighted_entry(entries: Array, rng: RandomNumberGenerator = null):
     if entries.is_empty():
         return null
 
@@ -47,7 +48,7 @@ func pick_weighted_entry(entries: Array, rng: RandomNumberGenerator = null):
     return entries[picked_index]
 
 
-func random_point_in_radius(radius: float, rng: RandomNumberGenerator = null) -> Vector2:
+static func random_point_in_radius(radius: float, rng: RandomNumberGenerator = null) -> Vector2:
     if radius <= 0.0:
         return Vector2.ZERO
 

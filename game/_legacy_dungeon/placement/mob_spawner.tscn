@@ -1,6 +1,6 @@
-[gd_scene load_steps=8 format=3 uid="uid://du280a8a0o5vc"]
+[gd_scene format=3 uid="uid://du280a8a0o5vc"]
 
-[ext_resource type="Script" uid="uid://bkgda0k2lymui" path="res://game/dungeon/placement/mob_spawner.gd" id="1_2tdyy"]
+[ext_resource type="Script" uid="uid://bkgda0k2lymui" path="res://game/_legacy_dungeon/placement/mob_spawner.gd" id="1_2tdyy"]
 [ext_resource type="PackedScene" uid="uid://cssols6rmii6m" path="res://game/actors/enemies/enemy_group/enemy_group.tscn" id="2_dskmf"]
 [ext_resource type="Texture2D" uid="uid://c03ai1c1shhqm" path="res://asset/unmanaged/Ninja Adventure - Asset Pack/FX/Magic/Circle/SpriteSheetWhite.png" id="2_mtxsr"]
 

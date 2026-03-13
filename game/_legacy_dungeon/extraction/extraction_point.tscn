@@ -1,7 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://dvhrop2jg3wan"]
+[gd_scene format=3 uid="uid://dvhrop2jg3wan"]
 
 [ext_resource type="Texture2D" uid="uid://c03ai1c1shhqm" path="res://asset/unmanaged/Ninja Adventure - Asset Pack/FX/Magic/Circle/SpriteSheetWhite.png" id="1_k50gg"]
-[ext_resource type="Script" uid="uid://bqfp1tw3npdsx" path="res://game/dungeon/extraction/extraction_point.gd" id="1_p3bg4"]
+[ext_resource type="Script" uid="uid://bqfp1tw3npdsx" path="res://game/_legacy_dungeon/extraction/extraction_point.gd" id="1_p3bg4"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_kchy0"]
 atlas = ExtResource("1_k50gg")

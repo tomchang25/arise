@@ -34,6 +34,7 @@ animations = [{
 
 [node name="WarningSpawnPoint" type="Node2D" unique_id=2122405661]
 script = ExtResource("1_ubemp")
+warning_sign_path = NodePath("WarningSign")
 
 [node name="WarningSign" type="AnimatedSprite2D" parent="." unique_id=527299089]
 sprite_frames = SubResource("SpriteFrames_413xu")

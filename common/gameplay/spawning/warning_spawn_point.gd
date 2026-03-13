@@ -13,6 +13,8 @@ var _warning_timer: Timer
 func _ready() -> void:
     if warning_sign_path != NodePath():
         _warning_sign = get_node_or_null(warning_sign_path) as CanvasItem
+        if _warning_sign != null:
+            _warning_sign.visible = false
 
     _warning_timer = get_node_or_null("WarningTimer") as Timer
     if _warning_timer == null:
