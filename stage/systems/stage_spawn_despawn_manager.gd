@@ -17,7 +17,7 @@ extends Node
 @export_group("Runtime")
 @export var cleanup_interval: float = 0.25
 
-var _tracked_nodes: Array[Node2D] = []
+var _spawn_registry := SpawnRegistry.new()
 var _timer: float = 0.0
 
 
@@ -39,36 +39,23 @@ func register_spawned(node: Node) -> void:
     if node_2d == null:
         return
 
-    if _tracked_nodes.has(node_2d):
-        return
-
-    _tracked_nodes.append(node_2d)
+    _spawn_registry.register_node(node_2d)
 
 
 func unregister_spawned(node: Node) -> void:
-    var node_2d := node as Node2D
-    if node_2d == null:
-        return
-
-    _tracked_nodes.erase(node_2d)
+    _spawn_registry.unregister_node(node)
 
 
 func clear_all() -> void:
-    _tracked_nodes.clear()
+    _spawn_registry.clear()
 
 
 func _cleanup_invalid_entries() -> void:
-    var next_nodes: Array[Node2D] = []
-
-    for node in _tracked_nodes:
-        if is_instance_valid(node):
-            next_nodes.append(node)
-
-    _tracked_nodes = next_nodes
+    _spawn_registry.cleanup_invalid()
 
 
 func _despawn_outside_rules() -> void:
-    for node in _tracked_nodes:
+    for node in _spawn_registry.get_valid_nodes_2d():
         if not is_instance_valid(node):
             continue
 

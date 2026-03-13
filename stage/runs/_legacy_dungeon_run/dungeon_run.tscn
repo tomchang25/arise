@@ -12,7 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://31x7n43mme6c" path="res://game/actors/enemies/ninja_red.tscn" id="9_t1yfp"]
 [ext_resource type="Script" uid="uid://dj6711ko5fxis" path="res://common/gameplay/spawning/tables/weighted_encounter_entry.gd" id="10_i75gb"]
 [ext_resource type="Script" uid="uid://c5v0bg0liwpod" path="res://game/_legacy_dungeon/placement/dungeon_placement_pass.gd" id="12_2fqss"]
-[ext_resource type="PackedScene" uid="uid://djodnob72wufg" path="res://common/gameplay/spawning/warning_spawn_point.tscn" id="13_t1yfp"]
+[ext_resource type="PackedScene" uid="uid://djodnob72wufg" path="res://common/gameplay/spawning/points/warning_spawn_point.tscn" id="13_t1yfp"]
 [ext_resource type="PackedScene" uid="uid://dvhrop2jg3wan" path="res://game/_legacy_dungeon/extraction/extraction_point.tscn" id="14_i75gb"]
 
 [sub_resource type="Resource" id="Resource_o3722"]

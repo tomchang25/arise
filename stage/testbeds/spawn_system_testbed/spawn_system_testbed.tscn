@@ -1,10 +1,10 @@
 [gd_scene format=3 uid="uid://e50ikgg3ivu6"]
 
 [ext_resource type="Script" uid="uid://bo5im5dt2nktn" path="res://stage/testbeds/spawn_system_testbed/spawn_system_testbed.gd" id="1_lcqdy"]
-[ext_resource type="Script" uid="uid://dpsovxdp2ml33" path="res://common/gameplay/spawning/spawn_point.gd" id="2_8jr4v"]
+[ext_resource type="Script" uid="uid://dpsovxdp2ml33" path="res://common/gameplay/spawning/points/spawn_point.gd" id="2_8jr4v"]
 [ext_resource type="PackedScene" uid="uid://bmlww50h5ia4c" path="res://game/actors/dummies/dummy.tscn" id="2_80key"]
 [ext_resource type="Resource" uid="uid://dmj032ak0fxvj" path="res://stage/testbeds/spawn_system_testbed/spawn_test_weighted_table.tres" id="3_cx2sr"]
-[ext_resource type="PackedScene" uid="uid://djodnob72wufg" path="res://common/gameplay/spawning/warning_spawn_point.tscn" id="3_m0283"]
+[ext_resource type="PackedScene" uid="uid://djodnob72wufg" path="res://common/gameplay/spawning/points/warning_spawn_point.tscn" id="3_m0283"]
 
 [node name="SpawnSystemTestbed" type="Node2D" unique_id=574373426 node_paths=PackedStringArray("world_root", "spawned_root", "spawn_point", "warning_spawn_point", "debug_label")]
 script = ExtResource("1_lcqdy")

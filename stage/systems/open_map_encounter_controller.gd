@@ -18,7 +18,6 @@ signal pacing_tick
 
 @export_group("Spawn")
 @export var spawn_action: SpawnAction
-@export var warning_spawn_point_scene: PackedScene
 
 @export_group("Pacing")
 @export var auto_start := true
@@ -54,7 +53,7 @@ signal pacing_tick
 @export var draw_debug := false
 
 var _rng := RandomNumberGenerator.new()
-var _tracked_spawned: Array[WeakRef] = []
+var _spawn_registry := SpawnRegistry.new()
 var _spawn_timer := 0.0
 var _ramp_timer := 0.0
 var _started := false
@@ -171,7 +170,7 @@ func force_spawn_once(count: int = 1) -> void:
 
 func get_active_count() -> int:
     _cleanup_tracked_spawned()
-    return _tracked_spawned.size()
+    return _spawn_registry.get_valid_count()
 
 
 func get_pending_count() -> int:
@@ -236,10 +235,6 @@ func _can_spawn() -> bool:
         Debug.invalid("OpenMapEncounterController: spawn_action is null")
         return false
 
-    if warning_spawn_point_scene == null:
-        Debug.invalid("OpenMapEncounterController: warning_spawn_point_scene is null")
-        return false
-
     return true
 
 
@@ -262,37 +257,38 @@ func _schedule_spawn_batch(count: int) -> int:
 
 
 func _spawn_with_warning(spawned_global_position: Vector2) -> void:
-    var spawned_node: Node = null
+    var request := SpawnRequest.new()
+    request.action = spawn_action
+    request.global_position = spawned_global_position
+    request.spawn_parent = spawn_parent
+    request.use_warning_spawn = true
+    request.source_node = self
+    request.rng_seed = _rng.randi()
+    request.metadata = {
+        "player": player,
+        "spawn_position": spawned_global_position,
+        "controller": self,
+    }
 
-    var ctx := SpawnContext.new()
-    (
-        ctx
-        . setup(
-            spawn_parent,
-            _rng.randi(),
-            self,
-            {
-                "player": player,
-                "spawn_position": spawned_global_position,
-                "controller": self,
-            }
-        )
-    )
-
-    spawned_node = await SpawnWarningExecutor.execute_at_position(warning_spawn_point_scene, spawn_action, spawned_global_position, spawn_parent, ctx)
+    var result := await request.execute()
 
     _pending_spawn_count = maxi(_pending_spawn_count - 1, 0)
 
     if not is_instance_valid(self):
         return
 
-    if spawned_node == null:
+    if not result.success:
         if print_debug_log:
-            print("[OpenMapEncounterController] warning spawn finished but no node was spawned")
+            print("[OpenMapEncounterController] warning spawn failed: %s" % result.blocked_reason)
         return
 
-    _register_spawned_node(spawned_node)
-    encounter_spawned.emit([spawned_node])
+    if not result.has_node():
+        if print_debug_log:
+            print("[OpenMapEncounterController] spawn result success but node is invalid")
+        return
+
+    _register_spawn_result(result)
+    encounter_spawned.emit([result.spawned_node])
 
 
 func _find_spawn_position() -> Variant:
@@ -300,7 +296,6 @@ func _find_spawn_position() -> Variant:
         return null
 
     var validator := _build_spawn_position_validator()
-    # var validator = null
 
     return SpawnPositionFinder.find_position_in_annulus(
         player.global_position, min_spawn_distance, max_spawn_distance, validator, _rng, placement_attempts_per_enemy
@@ -331,33 +326,22 @@ func _build_spawn_position_validator() -> SpawnPositionValidator:
     return validator
 
 
-func _register_spawned_node(node: Node) -> void:
-    if node == null:
+func _register_spawn_result(result: SpawnResult) -> void:
+    if result == null:
         return
 
-    _tracked_spawned.append(weakref(node))
+    if not result.has_node():
+        return
 
-    if despawn_manager != null and despawn_manager.has_method("register_spawned"):
-        despawn_manager.call("register_spawned", node)
+    var node := result.spawned_node
+    _spawn_registry.register_node(node)
+
+    if despawn_manager != null:
+        despawn_manager.register_spawned(node)
 
 
 func _cleanup_tracked_spawned() -> void:
-    var cleaned: Array[WeakRef] = []
-
-    for weak_node in _tracked_spawned:
-        if weak_node == null:
-            continue
-
-        var node = weak_node.get_ref()
-        if node == null:
-            continue
-
-        if not is_instance_valid(node):
-            continue
-
-        cleaned.append(weak_node)
-
-    _tracked_spawned = cleaned
+    _spawn_registry.cleanup_invalid()
 
 
 func _tick_target_ramp(delta: float) -> void:

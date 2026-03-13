@@ -4,7 +4,6 @@
 [ext_resource type="Script" uid="uid://bv7qvk54s2ldt" path="res://common/gameplay/spawning/actions/spawn_packed_scene_action.gd" id="2_diy3v"]
 [ext_resource type="PackedScene" uid="uid://bmlww50h5ia4c" path="res://game/actors/dummies/dummy.tscn" id="2_lodkx"]
 [ext_resource type="PackedScene" uid="uid://i0w72n7e6is8" path="res://stage/systems/player_with_camera.tscn" id="2_pxgj2"]
-[ext_resource type="PackedScene" uid="uid://djodnob72wufg" path="res://common/gameplay/spawning/warning_spawn_point.tscn" id="4_a6hy3"]
 [ext_resource type="Script" uid="uid://bwm8u3xypysu8" path="res://stage/systems/stage_spawn_despawn_manager.gd" id="5_60flp"]
 
 [sub_resource type="Resource" id="Resource_a6hy3"]
@@ -20,7 +19,6 @@ player = NodePath("../Player")
 spawn_parent = NodePath("../SpawnRoot")
 despawn_manager = NodePath("../StageSpawnDespawnManager")
 spawn_action = SubResource("Resource_a6hy3")
-warning_spawn_point_scene = ExtResource("4_a6hy3")
 max_spawn_per_tick = 20
 draw_debug = true
 metadata/_custom_type_script = "uid://4geom1nd3ww2"
