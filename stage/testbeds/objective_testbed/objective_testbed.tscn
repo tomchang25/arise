@@ -1,0 +1,63 @@
+[gd_scene format=3 uid="uid://cl8ec3teg6or7"]
+
+[ext_resource type="Script" uid="uid://c0u1qygtogd4p" path="res://stage/testbeds/objective_testbed/objective_testbed.gd" id="1"]
+[ext_resource type="Script" uid="uid://cq4hamengotte" path="res://game/objectives/extraction/extraction_point.gd" id="3"]
+[ext_resource type="Script" uid="uid://cux5pydjudc0b" path="res://game/objectives/objective_manager.gd" id="3_dp1ud"]
+[ext_resource type="Script" uid="uid://dp580idnmc17n" path="res://game/ui/hud/objective_hud.gd" id="4"]
+[ext_resource type="PackedScene" uid="uid://i0w72n7e6is8" path="res://stage/systems/player_with_camera.tscn" id="5_5oe3h"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_dp1ud"]
+
+[node name="ObjectiveTestbed" type="Node2D" unique_id=2039378763 node_paths=PackedStringArray("objective_manager", "extraction_point", "debug_label", "hud_label")]
+script = ExtResource("1")
+objective_manager = NodePath("ObjectiveManager")
+extraction_point = NodePath("WorldRoot/ExtractionPoint")
+debug_label = NodePath("UI/DebugLabel")
+hud_label = NodePath("UI/ObjectiveHUD/ObjectiveLabel")
+
+[node name="WorldRoot" type="Node2D" parent="." unique_id=1801341807]
+
+[node name="ExtractionPoint" type="Area2D" parent="WorldRoot" unique_id=310675568]
+position = Vector2(120, 0)
+monitorable = false
+script = ExtResource("3")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldRoot/ExtractionPoint" unique_id=694307599]
+shape = SubResource("CircleShape2D_dp1ud")
+debug_color = Color(0, 0.6, 0.18039216, 0.41960785)
+
+[node name="Sprite2D" type="Sprite2D" parent="WorldRoot/ExtractionPoint" unique_id=1297707717]
+modulate = Color(0.2, 0.8, 0.3, 0.5)
+
+[node name="ObjectiveManager" type="Node" parent="." unique_id=589680979]
+script = ExtResource("3_dp1ud")
+metadata/_custom_type_script = "uid://cux5pydjudc0b"
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=513740195]
+
+[node name="ObjectiveHUD" type="Control" parent="UI" unique_id=1053198630 node_paths=PackedStringArray("objective_manager")]
+layout_mode = 3
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 8.0
+offset_bottom = 40.0
+grow_horizontal = 2
+script = ExtResource("4")
+objective_manager = NodePath("../../ObjectiveManager")
+
+[node name="ObjectiveLabel" type="Label" parent="UI/ObjectiveHUD" unique_id=390232000]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_font_sizes/font_size = 12
+text = "12345678"
+horizontal_alignment = 1
+
+[node name="DebugLabel" type="Label" parent="UI" unique_id=1364500804]
+offset_left = 8.0
+offset_top = 48.0
+offset_right = 320.0
+offset_bottom = 400.0
+theme_override_font_sizes/font_size = 6
+
+[node name="Player" parent="." unique_id=650034767 instance=ExtResource("5_5oe3h")]

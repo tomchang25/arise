@@ -13,7 +13,6 @@
 [ext_resource type="Script" uid="uid://dj6711ko5fxis" path="res://common/gameplay/spawning/tables/weighted_encounter_entry.gd" id="10_i75gb"]
 [ext_resource type="Script" uid="uid://c5v0bg0liwpod" path="res://game/_legacy_dungeon/placement/dungeon_placement_pass.gd" id="12_2fqss"]
 [ext_resource type="PackedScene" uid="uid://djodnob72wufg" path="res://common/gameplay/spawning/points/warning_spawn_point.tscn" id="13_t1yfp"]
-[ext_resource type="PackedScene" uid="uid://dvhrop2jg3wan" path="res://game/_legacy_dungeon/extraction/extraction_point.tscn" id="14_i75gb"]
 
 [sub_resource type="Resource" id="Resource_o3722"]
 script = ExtResource("8_2fqss")
@@ -36,6 +35,9 @@ metadata/_custom_type_script = "uid://dj6711ko5fxis"
 script = ExtResource("7_boif0")
 entries = Array[ExtResource("10_i75gb")]([SubResource("Resource_4kxrq")])
 metadata/_custom_type_script = "uid://cw41kmidn3k8s"
+
+[sub_resource type="Resource" id="Resource_ib8vw"]
+metadata/__load_path__ = "res://game/_legacy_dungeon/extraction/extraction_point.tscn"
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_7hd15"]
 
@@ -69,7 +71,7 @@ metadata/_custom_type_script = "uid://cov55tu74xu51"
 [node name="DungeonPlacementPass" type="Node" parent="World/Dungeon/DungeonManager" unique_id=627008654]
 script = ExtResource("12_2fqss")
 spawn_point_scene = ExtResource("13_t1yfp")
-extraction_scene = ExtResource("14_i75gb")
+extraction_scene = SubResource("Resource_ib8vw")
 metadata/_custom_type_script = "uid://c5v0bg0liwpod"
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=122803832]

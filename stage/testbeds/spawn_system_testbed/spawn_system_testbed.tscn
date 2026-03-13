@@ -5,13 +5,13 @@
 [ext_resource type="PackedScene" uid="uid://bmlww50h5ia4c" path="res://game/actors/dummies/dummy.tscn" id="2_80key"]
 [ext_resource type="Resource" uid="uid://dmj032ak0fxvj" path="res://stage/testbeds/spawn_system_testbed/spawn_test_weighted_table.tres" id="3_cx2sr"]
 [ext_resource type="PackedScene" uid="uid://djodnob72wufg" path="res://common/gameplay/spawning/points/warning_spawn_point.tscn" id="3_m0283"]
+[ext_resource type="PackedScene" uid="uid://i0w72n7e6is8" path="res://stage/systems/player_with_camera.tscn" id="6_cx2sr"]
 
-[node name="SpawnSystemTestbed" type="Node2D" unique_id=574373426 node_paths=PackedStringArray("world_root", "spawned_root", "spawn_point", "warning_spawn_point", "debug_label")]
+[node name="SpawnSystemTestbed" type="Node2D" unique_id=574373426 node_paths=PackedStringArray("world_root", "spawned_root", "spawn_point", "debug_label")]
 script = ExtResource("1_lcqdy")
 world_root = NodePath("WorldRoot")
 spawned_root = NodePath("WorldRoot/SpawnedRoot")
 spawn_point = NodePath("WorldRoot/SpawnPoint")
-warning_spawn_point = NodePath("")
 warning_spawn_point_scene = ExtResource("3_m0283")
 debug_label = NodePath("UI/DebugLabel")
 direct_spawn_scene = ExtResource("2_80key")
@@ -32,3 +32,5 @@ metadata/_custom_type_script = "uid://dpsovxdp2ml33"
 offset_right = 40.0
 offset_bottom = 22.0
 theme_override_font_sizes/font_size = 8
+
+[node name="Player" parent="." unique_id=650034767 instance=ExtResource("6_cx2sr")]
