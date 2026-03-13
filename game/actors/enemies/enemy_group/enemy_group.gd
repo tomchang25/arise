@@ -115,39 +115,6 @@ func _pick_unit_scene(entries: Array[WeightedSceneEntry]) -> PackedScene:
     return null
 
 
-# func spawn_group_members(rng: RandomNumberGenerator = null) -> void:
-#     if not spawn_table:
-#         push_warning("EnemyGroup has no spawn table")
-#         return
-
-#     var local_rng := rng if rng else _rng
-#     if local_rng == null:
-#         local_rng = RandomNumberGenerator.new()
-#         local_rng.randomize()
-
-#     # Reset so we don't mix previous references if re-used
-#     reset_units()
-
-#     for i in range(size):
-#         var mob_scene := spawn_table.get_random_mob(local_rng)
-#         if mob_scene == null:
-#             continue
-#         if not (mob_scene is PackedScene):
-#             push_warning("EnemyGroup.spawn_table returned non-PackedScene: %s" % [mob_scene])
-#             continue
-
-#         var unit := (mob_scene as PackedScene).instantiate() as Enemy
-#         add_child(unit)
-
-#         var ang := local_rng.randf_range(0.0, TAU)
-#         var dist := local_rng.randf_range(spawn_radius / 4.0, spawn_radius)
-#         var spawn_offset := Vector2.RIGHT.rotated(ang) * dist
-#         var spawn_position := global_position + spawn_offset
-
-#         # Important: avoid home_position becoming (0,0)
-#         unit.setup_spawn(spawn_position)
-
-
 func _on_child_entered_tree(child: Node):
     if child is Enemy:
         _add_unit(child)
@@ -156,27 +123,6 @@ func _on_child_entered_tree(child: Node):
 func _on_child_exiting_tree(child: Node):
     if child is Enemy:
         _remove_unit(child)
-
-
-# func _physics_process(_delta):
-#     if share_vision:
-#         _update_shared_vision()
-
-# func _update_shared_vision() -> void:
-#     var all_units = get_all_units()
-#     var collective_enemies = []
-
-#     for unit in all_units:
-#         if unit.enemy_scanner:
-#             for enemy in unit.enemy_scanner.get_internal_enemies():
-#                 if not collective_enemies.has(enemy):
-#                     collective_enemies.append(enemy)
-
-#     for unit in all_units:
-#         if unit.enemy_scanner:
-#             unit.enemy_scanner.set_external_enemies(collective_enemies)
-
-## --- Public API ---
 
 
 func _reset_units(size: int) -> void:

@@ -12,7 +12,6 @@ signal navigation_finished
 @export_category("Modules")
 @export var vision_detection_module: DetectionModule
 @export var reach_detection_module: DetectionModule
-@export var communication_module: CommunicationModule
 @export var attack_module: AttackModule
 
 @export_group("Movement Settings")

@@ -27,6 +27,7 @@ BeehaveGlobalDebugger="*uid://bl3ma400hpvsh"
 EventBus="*res://global/autoload/event_bus.gd"
 AudioManager="*res://global/autoload/audio_manager/audio_manager.gd"
 Debug="*uid://l63h0afxdmif"
+RandomUtils="*uid://c1aa1fi0po2rc"
 
 [debug]
 
