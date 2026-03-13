@@ -1,5 +1,16 @@
 # **Scratchpad**
 
+Clean up world spawn system flow
+Dynamic tilemap map with border
+
+Enemy simple refactor
+
+- Add missing latest module
+- Review FSM, if still work, try to adjust it even it ugly
+    - Aggro Range, Deaggro Range, Reach Range Seperate
+    -
+
+Basic objective (second)
 
 ## File Naming and Folder Location
 
@@ -36,17 +47,19 @@ Try to keep the pattern stable:
 Gameplay loop.
 
 ```
-Summon system
-Enemy spawning
-Basic dialog
-Basic objective
-Player simple refactor
 Enemy simple refactor
+Basic objective
+
+Summon system
+Basic dialog
 Allies simple refactor
 --- Finished
 Basic debug
 Audio refactor
 Pickup system Finished
+Generic spawn system + Enemy spawning
+Simple demo
+Encounter manager
 ```
 
 ---
@@ -56,9 +69,12 @@ Pickup system Finished
 Boss + polish.
 
 ```
+2 Enemies build
+3 Summons build
 Dragon boss
 Dragon attacks
 Dragon death
+Dragon Summon build
 Unlock dragon summon
 Chaos mode
 ```
@@ -187,51 +203,55 @@ Itch page
 
 ## Loot Module
 
-- [x]  Core Features
-    - [x]  **Loot roll system implemented** — drop tables support weighted selection, chance rolls, and amount rolls.
-    - [x]  **Drop results generated correctly** — roll results are converted into structured drop result data.
-    - [x]  **Loot spawning pipeline works** — drops can be triggered from one function, spawned with scatter, and emit a `loot_dropped` signal.
+### Core Features
+
+- [x]  **Loot roll system implemented** — drop tables support weighted selection, chance rolls, and amount rolls.
+- [x]  **Drop results generated correctly** — roll results are converted into structured drop result data.
+- [x]  **Loot spawning pipeline works** — drops can be triggered from one function, spawned with scatter, and emit a `loot_dropped` signal.
 - [x]  Supported pickup module
-- [x]  Robustness
-    - [x]  Validate bad drop entries
-        - [x]  Missing pickup scene
-        - [x]  Missing reward data
-    - [x]  Validate empty / broken drop table
-- [x]  Future Features
-    - [x]  **Multiple independent drop tables per loot profile**
-        - [x]  `LootDropProfile` contains several `LootDropTable`
-        - [x]  Each `LootDropTable` rolls independently
-        - [x]  Entry weights only compete within the same table
-        - [x]  Support setups like:
-            - [x]  `xA` rolls from common resource table
-            - [x]  `xB` rolls from common item table
-            - [x]  `xC` rolls from rare item table
-    - [ ]  **Shared drop entries / reusable loot setup**
-        - [ ]  Allow common drop entries to be reused across multiple loot tables
-        - [ ]  Reduce repeated manual setup for common rewards such as gold, mana, and basic resources
-        - [ ]  Add a simple workflow to create loot tables from shared entry definitions instead of rebuilding similar entries every time
-    - [ ]  **Simple reward scaling**
-        - [ ]  Keep the same base `LootDropProfile` for the same mob family
-        - [ ]  Support enemy-side amount scaling for level, tier, or rank
-        - [ ]  Allow elites / bosses to add an optional bonus rare table without replacing the full base profile
-        - [ ]  Keep base loot tables focused on reward composition, while final quantity is adjusted at runtime
-    - [ ]  Luck / rarity modifier (Buff)
-    - [ ]  Cleanup debug system
 
-    ## Simple technical summary
+### Robustness
 
-    - **Base profile** decides **what can drop**
-    - **Tables** decide **how each category rolls**
-    - **Entries** decide **base chance, weight, and amount**
-    - **Enemy-side scaling** adjusts **final quantity** for stronger variants
-    - **Elite / boss bonus table** adds special rewards without duplicating the whole profile
+- [x]  Validate bad drop entries
+    - [x]  Missing pickup scene
+    - [x]  Missing reward data
+- [x]  Validate empty / broken drop table
 
-    This keeps the loot module simple:
+### Future Features
 
-    - profile = composition
-    - table = independent roll bucket
-    - entry = base reward row
-    - enemy = runtime scaling input
+- [x]  **Multiple independent drop tables per loot profile**
+    - [x]  `LootDropProfile` contains several `LootDropTable`
+    - [x]  Each `LootDropTable` rolls independently
+    - [x]  Entry weights only compete within the same table
+    - [x]  Support setups like:
+        - [x]  `xA` rolls from common resource table
+        - [x]  `xB` rolls from common item table
+        - [x]  `xC` rolls from rare item table
+- [ ]  **Shared drop entries / reusable loot setup**
+    - [ ]  Allow common drop entries to be reused across multiple loot tables
+    - [ ]  Reduce repeated manual setup for common rewards such as gold, mana, and basic resources
+    - [ ]  Add a simple workflow to create loot tables from shared entry definitions instead of rebuilding similar entries every time
+- [ ]  **Simple reward scaling**
+    - [ ]  Keep the same base `LootDropProfile` for the same mob family
+    - [ ]  Support enemy-side amount scaling for level, tier, or rank
+    - [ ]  Allow elites / bosses to add an optional bonus rare table without replacing the full base profile
+    - [ ]  Keep base loot tables focused on reward composition, while final quantity is adjusted at runtime
+- [ ]  Luck / rarity modifier (Buff)
+
+### Simple technical summary
+
+- **Base profile** decides **what can drop**
+- **Tables** decide **how each category rolls**
+- **Entries** decide **base chance, weight, and amount**
+- **Enemy-side scaling** adjusts **final quantity** for stronger variants
+- **Elite / boss bonus table** adds special rewards without duplicating the whole profile
+
+This keeps the loot module simple:
+
+- profile = composition
+- table = independent roll bucket
+- entry = base reward row
+- enemy = runtime scaling input
 
 ## Item / Resources System
 
@@ -283,6 +303,145 @@ Itch page
 ### Future Features
 
 - [ ]  Pickup VFX
+- [ ]  Issue: magnet keep pull to collector even when collector can’t collect
+    - [ ]  Pull start when still collect but state changed before real collected
+
+## Spawn System
+
+### Core Features
+
+- [x]  **Spawn action abstraction** — extendable spawn behavior system
+- [x]  **Spawn executor abstraction** — unified runtime spawn execution
+- [x]  **Spawn actions supported** — spawn scenes through configurable spawn actions
+- [x]  **Spawn points work** — scene anchors can trigger spawn actions
+- [x]  **Direct spawn execution** — systems can spawn without a scene anchor
+- [x]  **Spawn context support** — spawn actions receive runtime context data
+- [x]  **Weighted spawn tables** — random selection from weighted entries
+- [x]  **Enemy encounter profiles** — encounter tables define enemy compositions
+- [x]  **Spawn parent routing** — spawned entities attach to correct world parent
+
+### Spawn Placement
+
+- [x]  **Spawn placement helpers** — runtime placement utilities available
+- [x]  **Spawn around target** — spawn entities within distance range of a target
+- [x]  **Spawn without scene anchors** — runtime systems can resolve spawn positions
+- [x]  **Spawn validation hooks** — caller can validate spawn positions
+
+### Warning / Telegraph Spawning
+
+- [x]  **Warning spawn point** — telegraph spawn before execution
+- [x]  **Runtime warning spawns** — warning points can be created dynamically
+- [x]  **Delayed spawn via warning flow** — spawns can occur after warning duration
+
+### Robustness
+
+- [x]  **Validate spawn configuration**
+    - [x]  Missing spawn action
+    - [x]  Missing spawn parent
+    - [x]  Missing spawn scene
+    - [x]  Invalid spawn table / entries
+    - [x]  Invalid spawn context
+- [x]  **Prevent spawn execution with invalid context**
+- [x]  **Prevent broken spawn actions from silently failing**
+
+### Supported Spawn Types
+
+- [x]  **Scene spawn** — PackedScene entities
+- [x]  **Weighted spawn** — tables selecting entries randomly
+- [x]  **Encounter spawn** — enemy encounter definitions
+
+### Future Features
+
+- [ ]  **Spawn VFX hooks**
+- [ ]  **Spawn SFX hooks**
+- [ ]  **Spawn collision / nav validation helpers**
+- [ ]  **Spawn burst / multi-spawn patterns**
+- [ ]  **Spawn controller for open-map encounter pacing**
+
+## Stage Spawn / Despawn System
+
+### Core Features
+
+- [x]  **Stage spawn manager** — central system controlling runtime spawn lifecycle
+- [x]  **Dynamic spawn triggering** — spawn entities when player enters spawn range
+- [x]  **Runtime despawn system** — entities despawn when outside configured distance
+- [x]  **Spawn context propagation** — spawn requests pass runtime context to spawn actions
+- [x]  **Spawn point integration** — stage spawn points trigger spawn actions automatically
+- [x]  **Spawn distance rules** — minimum and maximum spawn distance supported
+- [x]  **Camera-safe spawning** — prevent spawning inside camera view
+- [x]  **Spawn debug visualization** — draw spawn radius and debug helpers
+
+### Spawn Management
+
+- [x]  **Spawn point registration** — manager tracks active spawn points
+- [x]  **Spawn state tracking** — prevent duplicate spawn executions
+- [x]  **Spawn cooldown / gating** — avoid repeated spawning loops
+- [x]  **Dynamic spawn position resolution** — runtime position selection without fixed anchors
+- [x]  **Spawn distance validation** — ensure spawn occurs inside allowed range
+
+### Despawn System
+
+- [x]  **Distance-based despawn** — entities removed when far from player
+- [x]  **Spawn ownership tracking** — despawn only entities owned by spawn system
+- [x]  **Safe despawn flow** — avoid removing active entities incorrectly
+- [x]  **Spawn cleanup** — despawned entities free their runtime references
+
+### Robustness
+
+- [x]  **Validate spawn manager configuration**
+- [x]  **Prevent duplicate spawn execution**
+- [x]  **Prevent invalid spawn positions**
+- [x]  **Prevent spawn inside restricted zones**
+- [x]  **Prevent despawn while entity is active in combat (if applicable)**
+
+### Future Features
+
+- [ ]  **Spawn batching optimization**
+- [ ]  **Spawn pooling support**
+- [ ]  **Spawn group orchestration**
+- [ ]  **Spawn wave controller**
+- [ ]  **Advanced spawn visibility checks**
+
+## Open Map Encounter System
+
+### Core Features
+
+- [x]  **Encounter controller** — runtime system managing open-world encounters
+- [x]  **Encounter spawn logic** — dynamically spawn enemy encounters around player
+- [x]  **Encounter table integration** — encounters defined via weighted tables
+- [x]  **Encounter pacing rules** — limit encounter density and spawn rate
+- [x]  **Encounter spawn context** — spawn system receives encounter runtime context
+- [x]  **Encounter lifecycle tracking** — encounters tracked from spawn to completion
+
+### Encounter Placement
+
+- [x]  **Spawn around player** — encounters generated within allowed distance range
+- [x]  **Avoid camera spawning** — encounters do not spawn inside camera view
+- [x]  **Avoid player proximity spawning** — minimum safe distance enforced
+- [x]  **Encounter spawn validation** — ensure valid spawn position before execution
+
+### Encounter Control
+
+- [x]  **Active encounter tracking** — system limits simultaneous encounters
+- [x]  **Encounter completion detection** — encounter removed when enemies defeated
+- [x]  **Encounter spawn gating** — delay new encounters if too many active
+- [x]  **Encounter cooldown support** — prevent rapid spawn bursts
+
+### Robustness
+
+- [x]  **Validate encounter tables**
+- [x]  **Prevent empty encounter spawn**
+- [x]  **Prevent invalid spawn requests**
+- [x]  **Prevent encounters spawning in invalid locations**
+- [x]  **Fail-safe spawn cancellation**
+
+### Future Features
+
+- [ ]  **Encounter difficulty scaling**
+- [ ]  **Biome-based encounter tables**
+- [ ]  **Player progression encounter modifiers**
+- [ ]  **Dynamic event encounters**
+- [ ]  **Boss encounter controller**
 
 ---
 
@@ -517,11 +676,6 @@ I could confirm a `damage_numbers` folder and a `DamageNumber` implementation, b
 - [x]  Player on minimap
 - [x]  Enemy on minimap
 - [ ]  General world to dungeon and open world with minimap module
-
-## Spawn System
-
-- [x]  Area with spawner
-- [x]  Trigger by player inpu
 
 ---
 
