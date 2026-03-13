@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://cov55tu74xu51" path="res://game/_legacy_dungeon/runtime/dungeon_manager.gd" id="1_boif0"]
 [ext_resource type="Script" uid="uid://dr1grapgwr1kp" path="res://stage/runs/_legacy_dungeon_run/dungeon_run.gd" id="1_u05mf"]
 [ext_resource type="TileSet" uid="uid://b41stnir1xvrs" path="res://stage/tilesets/dungeon_tile_set.tres" id="2_i75gb"]
-[ext_resource type="PackedScene" uid="uid://i0w72n7e6is8" path="res://stage/testbeds/_legacy_dungeon_generation/player_with_camera.tscn" id="2_slkuc"]
+[ext_resource type="PackedScene" uid="uid://i0w72n7e6is8" path="res://stage/systems/player_with_camera.tscn" id="2_slkuc"]
 [ext_resource type="Script" uid="uid://hcjudwk5lhyr" path="res://game/_legacy_dungeon/runtime/dungeon_builder.gd" id="2_vumvy"]
 [ext_resource type="PackedScene" uid="uid://du280a8a0o5vc" path="res://game/_legacy_dungeon/placement/mob_spawner.tscn" id="3_r61lq"]
 [ext_resource type="Script" uid="uid://cw41kmidn3k8s" path="res://common/gameplay/spawning/tables/weighted_encounter_table.gd" id="7_boif0"]

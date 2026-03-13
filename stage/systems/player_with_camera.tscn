@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://i0w72n7e6is8"]
+
+[ext_resource type="PackedScene" uid="uid://dbhtrssgng58f" path="res://game/actors/player/player.tscn" id="1_5xe3t"]
+[ext_resource type="Script" uid="uid://bbnuk476f2gu5" path="res://common/_legacy/camera/camera.gd" id="2_q3mwe"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_cn24k"]
+radius = 50.0
+
+[node name="Player" unique_id=650034767 instance=ExtResource("1_5xe3t")]
+collision_mask = 5
+
+[node name="CollisionShape2D" parent="Module/DetectionModule" parent_id_path=PackedInt32Array(2069352823) index="0" unique_id=508858704]
+shape = SubResource("CircleShape2D_cn24k")
+
+[node name="Camera2D" type="Camera2D" parent="." index="3" unique_id=1788111139]
+zoom = Vector2(0.2, 0.2)
+script = ExtResource("2_q3mwe")

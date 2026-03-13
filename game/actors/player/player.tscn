@@ -355,7 +355,7 @@ hurtbox = NodePath("Module/Hurtbox")
 state_machine = NodePath("StateMachine")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1649341033]
-top_level = true
+z_index = 1
 rotation = 1.5707964
 shape = SubResource("CapsuleShape2D_64mjj")
 debug_color = Color(0.7529412, 0.05882353, 0, 0.59607846)
@@ -417,8 +417,9 @@ radius = 50.0
 shape = SubResource("CircleShape2D_8nq4u")
 debug_color = Color(0, 0.101960786, 0.69803923, 0.11764706)
 
-[node name="MovementModule" type="Node" parent="Module" unique_id=658364954]
+[node name="MovementModule" type="Node" parent="Module" unique_id=658364954 node_paths=PackedStringArray("character")]
 script = ExtResource("9_1bvv4")
+character = NodePath("../..")
 
 [node name="AnimationModule" type="Node" parent="Module" unique_id=659370517 node_paths=PackedStringArray("actor", "animation_tree")]
 script = ExtResource("10_tiye0")
