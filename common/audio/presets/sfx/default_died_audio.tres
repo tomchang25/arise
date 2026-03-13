@@ -8,4 +8,5 @@ script = ExtResource("1_n5f47")
 limiter_key = &"died"
 bus_id = 1
 streams = Array[AudioStream]([ExtResource("2_n5f47")])
+use_random_pitch = true
 metadata/_custom_type_script = "uid://dk6ul5gi57s2y"

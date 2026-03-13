@@ -1,4 +1,4 @@
-class_name DamageNumbersModule
+class_name DamageNumberModule
 extends Node
 
 @export var damage_receiver: DamageReceiverModule
@@ -28,7 +28,7 @@ func _ready() -> void:
         damage_receiver = owner.find_child("DamageReceiverModule", true, false) as DamageReceiverModule
 
     if damage_number_scene == null:
-        push_warning("DamageNumbersModule: damage_number_scene is not assigned.")
+        push_warning("DamageNumberModule: damage_number_scene is not assigned.")
 
     if damage_receiver and not damage_receiver.damaged.is_connected(_on_damaged):
         damage_receiver.damaged.connect(_on_damaged)
@@ -54,7 +54,7 @@ func spawn_damage_number(amount: float, info: AttackInfo = null) -> void:
 
     var number := damage_number_scene.instantiate() as DamageNumber
     if number == null:
-        push_warning("DamageNumbersModule: damage_number_scene must instantiate a DamageNumber.")
+        push_warning("DamageNumberModule: damage_number_scene must instantiate a DamageNumber.")
         return
 
     root.add_child(number)

@@ -125,7 +125,7 @@ The standard enforces **layout order**, not header wording.
 
 # 2. Enabled Switch Pattern
 
-Every gameplay module should support runtime enabling and disabling.
+Gameplay modules may support runtime enabling and disabling when appropriate.
 
 ```gdscript
 @export var enabled := true:
@@ -356,31 +356,7 @@ Benefits:
 
 ---
 
-# 8. Standard Utility Functions
-
-Modules should provide basic utility helpers.
-
-Required:
-
-```
-func set_enabled()
-func is_enabled()
-
-func _stop_runtime_state()
-```
-
-Optional helpers:
-
-```
-_cache_handles()
-has_xxx()
-clear_xxx()
-stop_xxx()
-```
-
----
-
-# 9. Signal Bridging
+# 8. Signal Bridging
 
 Modules may expose signals from internal systems.
 

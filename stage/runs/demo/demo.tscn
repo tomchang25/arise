@@ -1,5 +1,6 @@
-[gd_scene format=3 uid="uid://c1vph6xttdohe"]
+[gd_scene format=4 uid="uid://c1vph6xttdohe"]
 
+[ext_resource type="TileSet" uid="uid://b41stnir1xvrs" path="res://stage/tilesets/dungeon_tile_set.tres" id="1_60flp"]
 [ext_resource type="Script" uid="uid://4geom1nd3ww2" path="res://stage/systems/open_map_encounter_controller.gd" id="1_dp1c1"]
 [ext_resource type="Script" uid="uid://bv7qvk54s2ldt" path="res://common/gameplay/spawning/actions/spawn_packed_scene_action.gd" id="2_diy3v"]
 [ext_resource type="PackedScene" uid="uid://bmlww50h5ia4c" path="res://game/actors/dummies/dummy.tscn" id="2_lodkx"]
@@ -12,6 +13,17 @@ scene = ExtResource("2_lodkx")
 metadata/_custom_type_script = "uid://bv7qvk54s2ldt"
 
 [node name="Demo" type="Node2D" unique_id=535920825]
+
+[node name="Tilemaps" type="Node2D" parent="." unique_id=606999450]
+
+[node name="TileMapLayer_Ground" type="TileMapLayer" parent="Tilemaps" unique_id=1947230642]
+position = Vector2(3, -17)
+tile_map_data = PackedByteArray("AAAFAAEAAAAJAAAAAAAFAAAAAAAJAAAAAAAFAP//AAAIAAAAAAAFAP7/AAAJAAAAAAAEAAEAAAAGAAIAAAAEAAAAAAAIAAIAAAAEAP//AAAGAAAAAAAEAP7/AAAJAAAAAAADAAEAAAAHAAAAAAADAAAAAAAIAAEAAAADAP//AAAHAAAAAAADAP7/AAAIAAAAAAACAAEAAAAGAAIAAAACAAAAAAAIAAIAAAACAP//AAAJAAEAAAACAP7/AAAIAAEAAAABAAEAAAAGAAAAAAABAAAAAAAGAAIAAAABAP//AAAGAAIAAAABAP7/AAAHAAEAAAAAAAEAAAAIAAAAAAAAAAAAAAAJAAIAAAAAAP//AAAJAAEAAAAAAP7/AAAJAAIAAAD//wEAAAAHAAIAAAD//wAAAAAJAAAAAAD/////AAAGAAEAAAD///7/AAAGAAAAAAD+/wEAAAAHAAAAAAD+/wAAAAAIAAEAAAD+////AAAGAAIAAAD+//7/AAAHAAEAAAD9////AAAAAAMAAAD9//7/AAAAAAMAAAD9//3/AAAAAAAAAAD+//3/AAACAAAAAAD///3/AAABAAAAAAD9/wAAAAAAAAEAAAD9/wEAAAAAAAMAAAD//wIAAAAFAAUAAAD+/wIAAAACAAQAAAD9/wIAAAAAAAQAAAAAAP3/AAABAAAAAAAAAAIAAAAHAAIAAAABAP3/AAABAAAAAAABAAIAAAAGAAIAAAACAP3/AAABAAAAAAACAAIAAAAHAAAAAAADAP3/AAACAAAAAAADAAIAAAAJAAEAAAAEAP3/AAADAAAAAAAEAAIAAAAGAAIAAAAFAP3/AAABAAAAAAAFAAIAAAAAAAUAAAAGAP7/AAAFAAEAAAAGAP//AAAFAAEAAAAGAP3/AAAFAAAAAAAGAAAAAAAFAAEAAAAGAAEAAAAFAAIAAAAGAAIAAAAFAAQAAAAEAAYAAAAGAAEAAAAEAAUAAAAHAAAAAAAEAAQAAAAIAAIAAAAEAAMAAAAIAAIAAAADAAYAAAAJAAIAAAADAAUAAAAHAAIAAAADAAQAAAAHAAAAAAADAAMAAAAIAAEAAAACAAYAAAAGAAAAAAACAAUAAAAHAAAAAAACAAQAAAAIAAAAAAACAAMAAAAHAAAAAAABAAMAAAAJAAAAAAABAAQAAAAJAAIAAAABAAUAAAAGAAIAAAABAAYAAAAHAAEAAAADAAcAAAADAAQAAAACAAcAAAADAAQAAAABAAcAAAABAAUAAAAEAAcAAAAEAAQAAAAFAAMAAAAFAAAAAAAFAAQAAAAFAAIAAAAFAAUAAAAFAAIAAAAFAAYAAAAFAAEAAAAFAAcAAAAFAAQAAAAAAAQAAAAGAAIAAAAAAAMAAAAJAAIAAAD//wMAAAAAAAMAAAD//wQAAAAAAAMAAAAAAAUAAAAFAAUAAAD//wUAAAAAAAQAAAAAAAcAAAAAAAQAAAAAAAYAAAAAAAEAAAA=")
+tile_set = ExtResource("1_60flp")
+
+[node name="SpawnRoot" type="Node2D" parent="." unique_id=1252347885]
+
+[node name="Player" parent="." unique_id=143015393 instance=ExtResource("2_pxgj2")]
 
 [node name="OpenMapEncounterController" type="Node2D" parent="." unique_id=2085910987 node_paths=PackedStringArray("player", "spawn_parent", "despawn_manager")]
 script = ExtResource("1_dp1c1")
@@ -28,7 +40,3 @@ script = ExtResource("5_60flp")
 tracked_target = NodePath("../Player")
 despawn_distance = 600.0
 metadata/_custom_type_script = "uid://bwm8u3xypysu8"
-
-[node name="SpawnRoot" type="Node2D" parent="." unique_id=1252347885]
-
-[node name="Player" parent="." unique_id=143015393 instance=ExtResource("2_pxgj2")]

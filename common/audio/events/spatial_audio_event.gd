@@ -4,7 +4,7 @@ extends AudioEvent
 
 @export_group("Limiter")
 @export var limiter_key: StringName = &""
-@export var max_per_window: int = 4
+@export var max_per_window: int = 2
 @export var window_sec: float = 0.05
 
 
