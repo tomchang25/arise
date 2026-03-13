@@ -7,6 +7,7 @@ extends Resource
 @export_range(1, 999, 1) var weight: int = 1
 @export_range(1, 999999, 1) var min_amount: int = 1
 @export_range(1, 999999, 1) var max_amount: int = 1
+@export var scatter_radius: float = 20.0
 
 
 func is_valid() -> bool:

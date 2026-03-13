@@ -11,11 +11,8 @@ signal loot_dropped
 
 @export_group("Dependencies")
 @export var owner_node: Node2D
-@export var world_spawner: LootWorldSpawner
 @export var drop_profile: LootDropProfile
-
-@export_group("Debug")
-@export var print_debug_log := false
+@export var spawn_parent: Node
 
 var _rng := RandomNumberGenerator.new()
 
@@ -54,10 +51,6 @@ func drop_loot() -> void:
         Debug.invalid("owner_node is null")
         return
 
-    if world_spawner == null:
-        Debug.invalid("world_spawner is null")
-        return
-
     if drop_profile == null:
         Debug.invalid("drop_profile is null")
         return
@@ -68,6 +61,11 @@ func drop_loot() -> void:
 
     if not drop_profile.has_valid_tables():
         Debug.invalid("drop_profile has no valid tables")
+        return
+
+    var spawn_ctx := _build_spawn_context()
+    if spawn_ctx == null:
+        Debug.invalid("failed to build spawn context")
         return
 
     var did_spawn := false
@@ -102,8 +100,11 @@ func drop_loot() -> void:
             if _rng.randf() > clampf(entry.chance, 0.0, 1.0):
                 continue
 
-            var amount := _rng.randi_range(entry.min_amount, entry.max_amount)
-            var spawned := world_spawner.spawn_entry(owner_node, entry, amount)
+            var amount := _roll_entry_amount(entry)
+            if amount <= 0:
+                continue
+
+            var spawned := _spawn_entry(entry, amount, spawn_ctx)
             if spawned != null:
                 did_spawn = true
 
@@ -114,6 +115,26 @@ func drop_loot() -> void:
 # -------------------------
 # Internal Helpers
 # -------------------------
+
+
+func _build_spawn_context() -> SpawnContext:
+    var parent := spawn_parent if spawn_parent != null else owner_node.get_parent()
+    if parent == null:
+        return null
+
+    var spawn_ctx := SpawnContext.new()
+    (
+        spawn_ctx
+        . setup(
+            parent,
+            0,
+            owner_node,
+            {
+                "spawn_reason": "loot_drop",
+            }
+        )
+    )
+    return spawn_ctx
 
 
 func _get_valid_entries(entries: Array[LootDropEntry]) -> Array[LootDropEntry]:
@@ -152,6 +173,67 @@ func _pick_weighted_entry(entries: Array[LootDropEntry]) -> LootDropEntry:
             return entry
 
     return null
+
+
+func _roll_entry_amount(entry: LootDropEntry) -> int:
+    var min_amount: int = min(entry.min_amount, entry.max_amount)
+    var max_amount: int = max(entry.min_amount, entry.max_amount)
+
+    if max_amount <= 0:
+        return 0
+
+    return _rng.randi_range(max(1, min_amount), max_amount)
+
+
+func _spawn_entry(entry: LootDropEntry, amount: int, spawn_ctx: SpawnContext) -> Node:
+    if entry.pickup_scene == null:
+        Debug.invalid("entry.pickup_scene is null")
+        return null
+
+    var spawn_action := SpawnPackedSceneAction.new()
+    spawn_action.scene = entry.pickup_scene
+    spawn_action.parent_mode = SpawnAction.ParentMode.CTX_SPAWN_PARENT
+    spawn_action.use_anchor_position = true
+    spawn_action.use_anchor_rotation = false
+    spawn_action.random_rotation = false
+    spawn_action.local_offset = Vector2.ZERO
+    spawn_action.scatter_radius = maxf(entry.scatter_radius, 0.0)
+
+    var instance := SpawnExecutor.execute_at_node(spawn_action, owner_node, spawn_ctx)
+    if instance == null:
+        Debug.invalid("failed to spawn loot pickup instance")
+        return null
+
+    if not _setup_spawned_loot_instance(instance, entry, amount):
+        instance.queue_free()
+        return null
+
+    Debug.log("Spawned loot: entry=%s amount=%d instance=%s" % [entry, amount, instance])
+
+    return instance
+
+
+func _setup_spawned_loot_instance(instance: Node, entry: LootDropEntry, amount: int) -> bool:
+    if entry is ResourceDropEntry:
+        var resource_entry := entry as ResourceDropEntry
+        if not instance.has_method("setup_resource"):
+            Debug.invalid("pickup scene missing setup_resource()")
+            return false
+
+        instance.setup_resource(resource_entry.resource_data, amount)
+        return true
+
+    if entry is ItemDropEntry:
+        var item_entry := entry as ItemDropEntry
+        if not instance.has_method("setup_item"):
+            Debug.invalid("pickup scene missing setup_item()")
+            return false
+
+        instance.setup_item(item_entry.item_data, amount)
+        return true
+
+    Debug.invalid("unsupported entry type")
+    return false
 
 
 func _stop_runtime_state() -> void:

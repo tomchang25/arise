@@ -25,7 +25,7 @@ size = Vector2(12, 12)
 [sub_resource type="CircleShape2D" id="CircleShape2D_4022q"]
 radius = 48.0
 
-[node name="LootPickupTestbed" type="Node2D" unique_id=1798922732 node_paths=PackedStringArray("dummy", "player", "pickups_root", "world_root", "dummy_spawn", "player_spawn", "debug_label", "loot_world_spawner")]
+[node name="LootPickupTestbed" type="Node2D" unique_id=1798922732 node_paths=PackedStringArray("dummy", "player", "pickups_root", "world_root", "dummy_spawn", "player_spawn", "debug_label")]
 script = ExtResource("1_uqnsq")
 dummy = NodePath("World/Dummy")
 player = NodePath("World/Player")
@@ -34,7 +34,6 @@ world_root = NodePath("World")
 dummy_spawn = NodePath("World/DummySpawn")
 player_spawn = NodePath("World/PlayerSpawn")
 debug_label = NodePath("CanvasLayer/DebugLabel")
-loot_world_spawner = NodePath("World/LootWorldSpawner")
 
 [node name="World" type="Node2D" parent="." unique_id=1503277031]
 
@@ -64,12 +63,11 @@ loot_drop_module = NodePath("LootDropModule")
 [node name="Sprite2D" type="Sprite2D" parent="World/Dummy" unique_id=1569473651]
 texture = ExtResource("3_8nrjs")
 
-[node name="LootDropModule" type="Node" parent="World/Dummy" unique_id=839276780 node_paths=PackedStringArray("owner_node", "world_spawner")]
+[node name="LootDropModule" type="Node" parent="World/Dummy" unique_id=839276780 node_paths=PackedStringArray("owner_node", "spawn_parent")]
 script = ExtResource("6_k88kd")
 owner_node = NodePath("..")
-world_spawner = NodePath("../../LootWorldSpawner")
 drop_profile = ExtResource("7_15q8n")
-print_debug_log = true
+spawn_parent = NodePath("../../PickupsRoot")
 metadata/_custom_type_script = "uid://i1ibypyr38xv"
 
 [node name="Player" type="CharacterBody2D" parent="World" unique_id=1763129613 node_paths=PackedStringArray("pickup_collector_module") groups=["player"]]

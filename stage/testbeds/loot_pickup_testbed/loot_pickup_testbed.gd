@@ -13,7 +13,7 @@ const ACTION_RESET_PLAYER := "test_reset_player"
 @export var dummy_spawn: Marker2D
 @export var player_spawn: Marker2D
 @export var debug_label: Label
-@export var loot_world_spawner: LootWorldSpawner
+# @export var loot_world_spawner: LootWorldSpawner
 
 @export_group("Debug")
 @export var print_hotkey_log := true
@@ -135,10 +135,6 @@ func _setup_dummy() -> void:
         return
 
     dummy.loot_drop_module.owner_node = dummy
-    dummy.loot_drop_module.world_spawner = loot_world_spawner
-
-    if loot_world_spawner != null and pickups_root != null:
-        loot_world_spawner.world_root = pickups_root
 
 
 func _apply_start_positions() -> void:
