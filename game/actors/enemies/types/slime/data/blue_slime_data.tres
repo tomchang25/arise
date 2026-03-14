@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3 uid="uid://c8poiox62uv13"]
+
+[ext_resource type="Resource" uid="uid://bq584j3uqsyau" path="res://game/actors/enemies/types/slime/data/slime_drop_profile.tres" id="1_0ovju"]
+[ext_resource type="Script" uid="uid://boqrgdnjxi8n8" path="res://game/actors/enemies/enemy_data.gd" id="2_8jf34"]
+[ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="3_mufbj"]
+
+[sub_resource type="Resource" id="Resource_84vaf"]
+script = ExtResource("3_mufbj")
+faction = 1
+health = 10.0
+base_max_health = 10.0
+base_max_mana = 0.0
+base_crit_chance = 0.0
+base_crit_multiplier = 1.0
+metadata/_custom_type_script = "uid://bkgf2cii3bfri"
+
+[resource]
+resource_local_to_scene = true
+script = ExtResource("2_8jf34")
+stats = SubResource("Resource_84vaf")
+aggro_range = 100.0
+deaggro_range = 150.0
+drop_profile = ExtResource("1_0ovju")
+metadata/_custom_type_script = "uid://boqrgdnjxi8n8"

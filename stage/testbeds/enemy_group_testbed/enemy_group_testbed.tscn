@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://8g4vcotbniey"]
 
 [ext_resource type="Script" uid="uid://btjqx2wrjbbjd" path="res://stage/testbeds/enemy_group_testbed/enemy_group_testbed.gd" id="1_testbed"]
-[ext_resource type="PackedScene" uid="uid://31x7n43mme6c" path="res://game/actors/enemies/ninja_red.tscn" id="2_muh21"]
+[ext_resource type="PackedScene" uid="uid://31x7n43mme6c" path="res://game/actors/enemies/types/ninja/ninja_red.tscn" id="2_muh21"]
 [ext_resource type="PackedScene" uid="uid://i0w72n7e6is8" path="res://stage/systems/player_with_camera.tscn" id="2_player"]
 [ext_resource type="Texture2D" uid="uid://c3kagdvi6j0pp" path="res://stage/testbeds/assets/grass_background.png" id="3_bg"]
 

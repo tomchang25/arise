@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="LootDropTable" format=3 uid="uid://bjm08hudp85tg"]
+
+[ext_resource type="Script" uid="uid://bxi4hrljbdmm6" path="res://common/gameplay/loot/loot_drop_entry.gd" id="1_5koay"]
+[ext_resource type="Resource" uid="uid://v1swqbn3atsn" path="res://common/gameplay/loot/data/resources/health_orb_drop_entry.tres" id="2_2g1ib"]
+[ext_resource type="Resource" uid="uid://bqrjo0nmhgedo" path="res://common/gameplay/loot/data/resources/mana_orb_drop_entry.tres" id="3_kwe7m"]
+[ext_resource type="Resource" uid="uid://clhd2tqiwuob3" path="res://common/gameplay/loot/data/resources/soul_orb_drop_entry.tres" id="4_gc8a3"]
+[ext_resource type="Script" uid="uid://bil6iq1so8k4p" path="res://common/gameplay/loot/loot_drop_table.gd" id="5_xepf8"]
+
+[resource]
+script = ExtResource("5_xepf8")
+entries = Array[ExtResource("1_5koay")]([ExtResource("2_2g1ib"), ExtResource("3_kwe7m"), ExtResource("4_gc8a3")])
+metadata/_custom_type_script = "uid://bil6iq1so8k4p"

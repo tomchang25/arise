@@ -1,0 +1,213 @@
+[gd_scene format=3 uid="uid://c3lbfkun8lbca"]
+
+[ext_resource type="PackedScene" uid="uid://srq1qxfjtyxq" path="res://game/actors/enemies/enemy.tscn" id="1_2nlqr"]
+[ext_resource type="Resource" uid="uid://bq584j3uqsyau" path="res://game/actors/enemies/types/slime/data/slime_drop_profile.tres" id="2_0ngd0"]
+[ext_resource type="Script" uid="uid://boqrgdnjxi8n8" path="res://game/actors/enemies/enemy_data.gd" id="3_f0r6p"]
+[ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="4_ho5gu"]
+[ext_resource type="Texture2D" uid="uid://bt4e0re6x3vj0" path="res://game/actors/enemies/types/slime/assets/Slime.png" id="5_f0r6p"]
+[ext_resource type="Script" uid="uid://ixpqntb22d76" path="res://game/actors/enemies/state/enemy_idle.gd" id="6_ho5gu"]
+[ext_resource type="Script" uid="uid://v0ips7afnj6" path="res://game/actors/enemies/state/enemy_wander.gd" id="7_bjud3"]
+
+[sub_resource type="Resource" id="Resource_84vaf"]
+script = ExtResource("4_ho5gu")
+faction = 1
+health = 10.0
+base_max_health = 10.0
+base_max_mana = 0.0
+base_crit_chance = 0.0
+base_crit_multiplier = 1.0
+metadata/_custom_type_script = "uid://bkgf2cii3bfri"
+
+[sub_resource type="Resource" id="Resource_0ngd0"]
+resource_local_to_scene = true
+script = ExtResource("3_f0r6p")
+stats = SubResource("Resource_84vaf")
+aggro_range = 100.0
+deaggro_range = 150.0
+drop_profile = ExtResource("2_0ngd0")
+metadata/_custom_type_script = "uid://boqrgdnjxi8n8"
+
+[sub_resource type="Animation" id="Animation_f0r6p"]
+resource_name = "Idle"
+length = 0.4
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:frame_coords")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [Vector2i(0, 1), Vector2i(0, 2), Vector2i(0, 3), Vector2i(0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_ho5gu"]
+resource_name = "MoveDown"
+length = 0.4
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:frame_coords")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [Vector2i(0, 1), Vector2i(0, 2), Vector2i(0, 3), Vector2i(0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_bjud3"]
+resource_name = "MoveLeft"
+length = 0.4
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:frame_coords")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [Vector2i(2, 1), Vector2i(2, 2), Vector2i(2, 3), Vector2i(2, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_g3jw7"]
+resource_name = "MoveRight"
+length = 0.4
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:frame_coords")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [Vector2i(3, 1), Vector2i(3, 2), Vector2i(3, 3), Vector2i(3, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_g05rx"]
+resource_name = "MoveUp"
+length = 0.4
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:frame_coords")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [Vector2i(1, 1), Vector2i(1, 2), Vector2i(1, 3), Vector2i(1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_v3pxi"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:frame_coords")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [Vector2i(0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_bjud3"]
+_data = {
+&"Idle": SubResource("Animation_f0r6p"),
+&"MoveDown": SubResource("Animation_ho5gu"),
+&"MoveLeft": SubResource("Animation_bjud3"),
+&"MoveRight": SubResource("Animation_g3jw7"),
+&"MoveUp": SubResource("Animation_g05rx"),
+&"RESET": SubResource("Animation_v3pxi")
+}
+
+[sub_resource type="Resource" id="Resource_f0r6p"]
+script = ExtResource("4_ho5gu")
+faction = 1
+health = 10.0
+base_max_health = 10.0
+base_max_mana = 0.0
+base_crit_chance = 0.0
+base_crit_multiplier = 1.0
+metadata/_custom_type_script = "uid://bkgf2cii3bfri"
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ho5gu"]
+radius = 100.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_bjud3"]
+radius = 150.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_g3jw7"]
+radius = 100.0
+
+[node name="BlueSlime" unique_id=1967515506 node_paths=PackedStringArray("sprite") instance=ExtResource("1_2nlqr")]
+data = SubResource("Resource_0ngd0")
+sprite = NodePath("Sprite")
+
+[node name="Sprite" type="Sprite2D" parent="." index="0" unique_id=2133661969]
+texture = ExtResource("5_f0r6p")
+hframes = 4
+vframes = 4
+region_rect = Rect2(0, 0, 64, 16)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Visuals" parent_id_path=PackedInt32Array(1556727938) index="0" unique_id=481062015]
+root_node = NodePath("../..")
+libraries/ = SubResource("AnimationLibrary_bjud3")
+
+[node name="AnimationTree" type="AnimationTree" parent="Visuals" parent_id_path=PackedInt32Array(1556727938) index="1" unique_id=1376721863]
+root_node = NodePath("../..")
+
+[node name="CombatModule" parent="Module/DetectionPivot" parent_id_path=PackedInt32Array(102638325) index="0" unique_id=1482874132]
+stats = SubResource("Resource_f0r6p")
+
+[node name="AggroDetection" parent="Module/DetectionPivot" parent_id_path=PackedInt32Array(102638325) index="1" unique_id=1334854310]
+radius = 100.0
+
+[node name="CollisionShape2D" parent="Module/DetectionPivot/AggroDetection" index="0" unique_id=225246358]
+shape = SubResource("CircleShape2D_ho5gu")
+
+[node name="DeaggroDetection" parent="Module/DetectionPivot" parent_id_path=PackedInt32Array(102638325) index="2" unique_id=204165240]
+radius = 150.0
+
+[node name="CollisionShape2D" parent="Module/DetectionPivot/DeaggroDetection" index="0" unique_id=259466445]
+shape = SubResource("CircleShape2D_bjud3")
+
+[node name="CollisionShape2D" parent="Module/DetectionPivot/ReachDetection" parent_id_path=PackedInt32Array(1588738871) index="0" unique_id=131652439]
+shape = SubResource("CircleShape2D_g3jw7")
+
+[node name="HealthBar" parent="Module" parent_id_path=PackedInt32Array(457160387) index="1" unique_id=1388357074]
+stats = SubResource("Resource_f0r6p")
+
+[node name="DamageReceiverModule" parent="Module" parent_id_path=PackedInt32Array(457160387) index="2" unique_id=1491145643]
+stats = SubResource("Resource_f0r6p")
+
+[node name="HitFeedbackModule" parent="Module" parent_id_path=PackedInt32Array(457160387) index="3" unique_id=924852354]
+stats = SubResource("Resource_f0r6p")
+
+[node name="AnimationModule" parent="Module" parent_id_path=PackedInt32Array(457160387) index="7" unique_id=1984737623 node_paths=PackedStringArray("animation_tree")]
+animation_tree = NodePath("../../Visuals/AnimationTree")
+
+[node name="StateMachine" parent="." index="4" unique_id=199281186 node_paths=PackedStringArray("initial_state")]
+initial_state = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="StateMachine" index="0" unique_id=1349034733]
+script = ExtResource("6_ho5gu")
+
+[node name="Wander" type="Node" parent="StateMachine" index="1" unique_id=755667328]
+script = ExtResource("7_bjud3")

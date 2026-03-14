@@ -1,0 +1,175 @@
+[gd_scene format=3 uid="uid://srq1qxfjtyxq"]
+
+[ext_resource type="Script" uid="uid://bmdh4vf3luco6" path="res://game/actors/enemies/enemy.gd" id="1_gecab"]
+[ext_resource type="Resource" uid="uid://bq584j3uqsyau" path="res://game/actors/enemies/types/slime/data/slime_drop_profile.tres" id="2_h3os5"]
+[ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/gameplay/combat/hurtbox/hurtbox.gd" id="7_hrkfa"]
+[ext_resource type="Script" uid="uid://x10bxi1qicvw" path="res://common/gameplay/combat/attack/projectile_attack_module.gd" id="8_tajik"]
+[ext_resource type="Script" uid="uid://bb4mbrq1u7pl" path="res://common/gameplay/combat/combat_module.gd" id="10_w8l2s"]
+[ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="12_k7gc3"]
+[ext_resource type="Script" uid="uid://d1yimk3mk35ag" path="res://common/gameplay/combat/attack/melee_attack_module.gd" id="13_d2f41"]
+[ext_resource type="Script" uid="uid://hyy86fs5b0fs" path="res://common/gameplay/detection/detection_module.gd" id="14_nu7lc"]
+[ext_resource type="PackedScene" uid="uid://d0tswwb1d3smv" path="res://common/gameplay/health_bar/health_bar.tscn" id="15_0q6ui"]
+[ext_resource type="Script" uid="uid://dpi3inldik0ho" path="res://common/gameplay/combat/damage_receiver/damage_receiver_module.gd" id="16_jftfi"]
+[ext_resource type="Script" uid="uid://duxq84e027el0" path="res://common/gameplay/combat/hit_feedback/hit_feedback_module.gd" id="17_8trwb"]
+[ext_resource type="PackedScene" uid="uid://c5uu71l3jwxu6" path="res://common/rendering/vfx/one_shot_hit_particles.tscn" id="18_bollf"]
+[ext_resource type="PackedScene" uid="uid://duohq0xpsyv1" path="res://common/rendering/vfx/explosion.tscn" id="19_4548w"]
+[ext_resource type="Resource" uid="uid://vp7463hsmyw0" path="res://common/audio/presets/sfx/default_damaged_audio.tres" id="20_h6r24"]
+[ext_resource type="Resource" uid="uid://xsccf58mw7d5" path="res://common/audio/presets/sfx/default_blocked_audio.tres" id="21_v2pyl"]
+[ext_resource type="Resource" uid="uid://csppceje2neh5" path="res://common/audio/presets/sfx/default_died_audio.tres" id="22_144x2"]
+[ext_resource type="Script" uid="uid://6jeesy7iltw" path="res://common/gameplay/combat/damage_number/damage_number_module.gd" id="23_l5ln2"]
+[ext_resource type="PackedScene" uid="uid://qhqm7usjk4s4" path="res://common/gameplay/combat/damage_number/damage_number.tscn" id="24_f70oa"]
+[ext_resource type="Script" uid="uid://w30s7yqi1p3d" path="res://common/gameplay/movement/movement_module.gd" id="25_sl6mr"]
+[ext_resource type="Script" uid="uid://ds7jcv6cdv02p" path="res://common/gameplay/navigation/navigation_module.gd" id="26_l3txc"]
+[ext_resource type="Script" uid="uid://dldqypakv40re" path="res://common/gameplay/animation/animation_module.gd" id="27_5q6sc"]
+[ext_resource type="Script" uid="uid://i1ibypyr38xv" path="res://common/gameplay/loot/loot_drop_module.gd" id="28_edxo4"]
+[ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/framework/state_machine/state_machine.gd" id="29_briec"]
+
+[sub_resource type="Resource" id="Resource_cc3v6"]
+script = ExtResource("12_k7gc3")
+faction = 1
+mana = 100.0
+base_defense = 0.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_n84af"]
+radius = 200.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_4xdin"]
+radius = 300.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_8ajnw"]
+radius = 100.0
+
+[node name="Enemy" type="CharacterBody2D" unique_id=1967515506 node_paths=PackedStringArray("hurtbox", "damage_receiver", "hit_feedback", "damage_number", "health_bar", "combat_module", "aggro_detection", "deaggro_detection", "reach_detection", "movement_module", "navigation_module", "animation_module", "loot_drop", "state_machine") groups=["enemies"]]
+collision_layer = 2
+collision_mask = 2
+script = ExtResource("1_gecab")
+hurtbox = NodePath("Hurtbox")
+damage_receiver = NodePath("Module/DamageReceiverModule")
+hit_feedback = NodePath("Module/HitFeedbackModule")
+damage_number = NodePath("Module/DamageNumberModule")
+health_bar = NodePath("Module/HealthBar")
+combat_module = NodePath("Module/DetectionPivot/CombatModule")
+aggro_detection = NodePath("Module/DetectionPivot/AggroDetection")
+deaggro_detection = NodePath("Module/DetectionPivot/DeaggroDetection")
+reach_detection = NodePath("Module/DetectionPivot/ReachDetection")
+movement_module = NodePath("Module/MovementModule")
+navigation_module = NodePath("Module/NavigationModule")
+animation_module = NodePath("Module/AnimationModule")
+loot_drop = NodePath("Module/LootDropModule")
+state_machine = NodePath("StateMachine")
+
+[node name="Visuals" type="Node2D" parent="." unique_id=1556727938]
+
+[node name="Hurtbox" type="Area2D" parent="." unique_id=550981385]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("7_hrkfa")
+metadata/_custom_type_script = "uid://dby4p11qhtin7"
+
+[node name="Module" type="Node2D" parent="." unique_id=457160387]
+
+[node name="DetectionPivot" type="Marker2D" parent="Module" unique_id=102638325]
+position = Vector2(0, -6)
+
+[node name="CombatModule" type="Node2D" parent="Module/DetectionPivot" unique_id=1482874132 node_paths=PackedStringArray("melee_attack", "projectile_attack")]
+script = ExtResource("10_w8l2s")
+stats = SubResource("Resource_cc3v6")
+melee_attack = NodePath("MeleeAttackModule")
+projectile_attack = NodePath("ProjectileAttackModule")
+
+[node name="MeleeAttackModule" type="Node2D" parent="Module/DetectionPivot/CombatModule" unique_id=412215185]
+script = ExtResource("13_d2f41")
+metadata/_custom_type_script = "uid://d1yimk3mk35ag"
+
+[node name="ProjectileAttackModule" type="Node2D" parent="Module/DetectionPivot/CombatModule" unique_id=1849151649]
+script = ExtResource("8_tajik")
+metadata/_custom_type_script = "uid://x10bxi1qicvw"
+
+[node name="AggroDetection" type="Area2D" parent="Module/DetectionPivot" unique_id=1334854310]
+collision_layer = 0
+monitorable = false
+script = ExtResource("14_nu7lc")
+radius = 200.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/AggroDetection" unique_id=225246358]
+shape = SubResource("CircleShape2D_n84af")
+debug_color = Color(0, 0.6, 0.1764706, 0.23529412)
+
+[node name="DeaggroDetection" type="Area2D" parent="Module/DetectionPivot" unique_id=204165240]
+collision_layer = 0
+monitorable = false
+script = ExtResource("14_nu7lc")
+radius = 300.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/DeaggroDetection" unique_id=259466445]
+shape = SubResource("CircleShape2D_4xdin")
+debug_color = Color(0.8627451, 0.23529412, 0.69803923, 0.23921569)
+
+[node name="ReachDetection" type="Area2D" parent="Module/DetectionPivot" unique_id=1588738871]
+collision_layer = 0
+monitorable = false
+script = ExtResource("14_nu7lc")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/ReachDetection" unique_id=131652439]
+shape = SubResource("CircleShape2D_8ajnw")
+
+[node name="HealthBar" parent="Module" unique_id=1388357074 instance=ExtResource("15_0q6ui")]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -12.0
+offset_top = 4.0
+offset_right = 12.0
+offset_bottom = 8.0
+grow_horizontal = 2
+stats = SubResource("Resource_cc3v6")
+
+[node name="DamageReceiverModule" type="Node" parent="Module" unique_id=1491145643 node_paths=PackedStringArray("hurtbox")]
+script = ExtResource("16_jftfi")
+stats = SubResource("Resource_cc3v6")
+hurtbox = NodePath("../../Hurtbox")
+
+[node name="HitFeedbackModule" type="Node" parent="Module" unique_id=924852354 node_paths=PackedStringArray("damage_receiver", "movement_module")]
+script = ExtResource("17_8trwb")
+stats = SubResource("Resource_cc3v6")
+damage_receiver = NodePath("../DamageReceiverModule")
+movement_module = NodePath("../MovementModule")
+hit_particles_scene = ExtResource("18_bollf")
+death_particles_scene = ExtResource("19_4548w")
+damaged_audio = ExtResource("20_h6r24")
+blocked_audio = ExtResource("21_v2pyl")
+died_audio = ExtResource("22_144x2")
+
+[node name="DamageNumberModule" type="Node" parent="Module" unique_id=80133805 node_paths=PackedStringArray("damage_receiver", "world_anchor")]
+script = ExtResource("23_l5ln2")
+damage_receiver = NodePath("../DamageReceiverModule")
+world_anchor = NodePath("../..")
+damage_number_scene = ExtResource("24_f70oa")
+
+[node name="MovementModule" type="Node" parent="Module" unique_id=496097567 node_paths=PackedStringArray("character")]
+script = ExtResource("25_sl6mr")
+character = NodePath("../..")
+
+[node name="NavigationModule" type="Node2D" parent="Module" unique_id=89508045 node_paths=PackedStringArray("character", "movement", "navigation_agent")]
+script = ExtResource("26_l3txc")
+character = NodePath("../..")
+movement = NodePath("../MovementModule")
+navigation_agent = NodePath("NavigationAgent2D")
+enable_avoidance = true
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="Module/NavigationModule" unique_id=2033484485]
+target_desired_distance = 5.0
+avoidance_enabled = true
+radius = 4.0
+
+[node name="AnimationModule" type="Node" parent="Module" unique_id=1984737623 node_paths=PackedStringArray("actor")]
+script = ExtResource("27_5q6sc")
+actor = NodePath("../..")
+
+[node name="LootDropModule" type="Node" parent="Module" unique_id=466401832 node_paths=PackedStringArray("owner_node")]
+script = ExtResource("28_edxo4")
+owner_node = NodePath("../..")
+drop_profile = ExtResource("2_h3os5")
+
+[node name="StateMachine" type="Node" parent="." unique_id=199281186]
+script = ExtResource("29_briec")

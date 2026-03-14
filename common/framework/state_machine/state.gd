@@ -8,6 +8,11 @@ signal transition_requested(from: State, to: int)
 var _locked := false
 
 
+func _ready() -> void:
+    if state_id == -1:
+        push_error("State must have a state_id")
+
+
 func _enter() -> void:
     pass
 

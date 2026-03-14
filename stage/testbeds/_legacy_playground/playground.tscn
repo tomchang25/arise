@@ -7,7 +7,7 @@
 [ext_resource type="Script" uid="uid://bbnuk476f2gu5" path="res://common/_legacy/camera/camera.gd" id="4_que0v"]
 [ext_resource type="PackedScene" uid="uid://12rdjr3aafmv" path="res://game/interactables/spawners/arise_box/arise_box.tscn" id="6_fu4i5"]
 [ext_resource type="PackedScene" uid="uid://cssols6rmii6m" path="res://game/actors/enemies/enemy_group/enemy_group.tscn" id="6_xkwl0"]
-[ext_resource type="PackedScene" uid="uid://31x7n43mme6c" path="res://game/actors/enemies/ninja_red.tscn" id="7_que0v"]
+[ext_resource type="PackedScene" uid="uid://31x7n43mme6c" path="res://game/actors/enemies/types/ninja/ninja_red.tscn" id="7_que0v"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_eeu4c"]
 vertices = PackedVector2Array(904, -364.039, 904, 521, -699.023, 521, -700.969, -370.953)

@@ -230,7 +230,7 @@ player/
 ├ player.tscn
 ├ state/
 ├ data/
-└ art/
+└ assets/
 ```
 
 ---

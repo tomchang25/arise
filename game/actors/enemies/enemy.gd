@@ -8,11 +8,13 @@ signal navigation_finished
 # Exports
 # -------------------------
 
-@export var stats: Stats
-@export var hurtbox: Hurtbox
-@export var home_position: Vector2
+@export var data: EnemyData
+
+@export_group("Visuals")
+@export var sprite: Sprite2D
 
 @export_group("Modules — Combat")
+@export var hurtbox: Hurtbox
 @export var damage_receiver: DamageReceiverModule
 @export var hit_feedback: HitFeedbackModule
 @export var damage_number: DamageNumberModule
@@ -44,10 +46,11 @@ const ANIM_MOVE: StringName = &"Move"
 const ANIM_ATTACK: StringName = &"Attack"
 
 # -------------------------
-# Internal
+# Runtime state
 # -------------------------
 
-var _sprite: Sprite2D
+var stats: Stats
+var home_position: Vector2
 
 # -------------------------
 # Lifecycle
@@ -62,7 +65,7 @@ func _enter_tree() -> void:
 
 func _ready() -> void:
     _auto_wire_nodes()
-    _ensure_stats()
+    _apply_data()
     _bind_modules()
 
     if home_position == Vector2.ZERO:
@@ -72,8 +75,8 @@ func _ready() -> void:
 
 
 func _auto_wire_nodes() -> void:
-    if not _sprite:
-        _sprite = find_child("Sprite", true, false) as Sprite2D
+    if not sprite:
+        sprite = find_child("Sprite", true, false) as Sprite2D
     if not hurtbox:
         hurtbox = find_child("Hurtbox", true, false) as Hurtbox
     if not damage_receiver:
@@ -104,17 +107,26 @@ func _auto_wire_nodes() -> void:
         state_machine = find_child("StateMachine", true, false) as StateMachine
 
 
-func _ensure_stats() -> void:
-    if stats:
+func _apply_data() -> void:
+    if data == null:
+        push_error("Enemy: no EnemyData assigned — using fallback stats.")
+        stats = Stats.new()
+        stats.faction = Stats.Faction.ENEMY
+        stats.base_max_health = 100.0
+        stats.base_defense = 0.0
+        stats.base_damage = 10.0
         stats.setup_stats()
         return
 
-    stats = Stats.new()
-    stats.faction = Stats.Faction.ENEMY
-    stats.base_max_health = 100.0
-    stats.base_defense = 0.0
-    stats.base_damage = 10.0
+    # Duplicate so each instance owns its own runtime stats
+    stats = data.stats.duplicate() as Stats
     stats.setup_stats()
+
+    if aggro_detection and data.aggro_range > 0.0:
+        aggro_detection.set_collision_radius(data.aggro_range)
+
+    if deaggro_detection and data.deaggro_range > 0.0:
+        deaggro_detection.set_collision_radius(data.deaggro_range)
 
 
 func _bind_modules() -> void:
@@ -128,6 +140,7 @@ func _bind_modules() -> void:
             damage_receiver.died.connect(_on_died)
 
     if hit_feedback:
+        hit_feedback.stats = stats
         hit_feedback.damage_receiver = damage_receiver
         hit_feedback.movement_module = movement_module
 
@@ -158,6 +171,8 @@ func _bind_modules() -> void:
     # --- Loot ---
     if loot_drop:
         loot_drop.owner_node = self
+        if data and data.drop_profile:
+            loot_drop.drop_profile = data.drop_profile
 
 
 func _bind_reach_detection() -> void:
@@ -181,9 +196,9 @@ func _bind_reach_detection() -> void:
 
 
 func _on_damaged(_amount: float, _new_health: float, _info: AttackInfo) -> void:
-    if _sprite and _sprite.material and stats:
+    if sprite and sprite.material and stats:
         var ratio := (1.0 - (stats.health / stats.current_max_health)) * 0.5
-        _sprite.material.set_shader_parameter("overlay_amount", ratio)
+        sprite.material.set_shader_parameter("overlay_amount", ratio)
 
 
 func _on_died(_info: AttackInfo) -> void:

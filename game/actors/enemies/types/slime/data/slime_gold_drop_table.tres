@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="LootDropTable" format=3 uid="uid://cx0rryuh8ymjn"]
+
+[ext_resource type="Script" uid="uid://bxi4hrljbdmm6" path="res://common/gameplay/loot/loot_drop_entry.gd" id="1_0ka5v"]
+[ext_resource type="Resource" uid="uid://bdyshi02b4y7n" path="res://common/gameplay/loot/data/resources/gold_drop_entry.tres" id="2_i7mu4"]
+[ext_resource type="Script" uid="uid://bil6iq1so8k4p" path="res://common/gameplay/loot/loot_drop_table.gd" id="5_ccjxi"]
+
+[resource]
+script = ExtResource("5_ccjxi")
+entries = Array[ExtResource("1_0ka5v")]([ExtResource("2_i7mu4")])
+metadata/_custom_type_script = "uid://bil6iq1so8k4p"

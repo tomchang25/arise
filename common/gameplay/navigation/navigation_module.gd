@@ -24,7 +24,7 @@ signal target_lost
 @export_group("Movement")
 @export var auto_set_path_mode := true
 @export var max_speed := 100.0
-@export var arrive_distance := 4.0
+@export var arrive_distance := 5.0
 
 @export_group("Avoidance")
 @export var enable_avoidance := false:
