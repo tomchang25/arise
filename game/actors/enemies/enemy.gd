@@ -35,12 +35,6 @@ signal navigation_finished
 @export_group("Modules — AI")
 @export var state_machine: StateMachine
 
-@export_group("Movement Speeds")
-@export var wander_speed: float = 50.0
-@export var chase_speed: float = 100.0
-@export var back_speed: float = 50.0
-
-@export var wander_range: float = 100.0
 # -------------------------
 # Animation state constants
 # -------------------------

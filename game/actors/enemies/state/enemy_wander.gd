@@ -1,5 +1,8 @@
 extends EnemyState
 
+@export var wander_speed: float = 50.0
+@export var wander_range: float = 100.0
+
 var _target_position: Vector2
 
 
@@ -10,8 +13,8 @@ func _init() -> void:
 func _enter() -> void:
     # Wander around home_position (set to group spawn_pivot at spawn time)
     var dir := Vector2.RIGHT.rotated(randf() * TAU)
-    var min_dist = enemy.wander_range * 0.25
-    var dist: float = min(randf() * enemy.wander_range + min_dist, enemy.wander_range)
+    var min_dist = wander_range * 0.25
+    var dist: float = min(randf() * wander_range + min_dist, wander_range)
     _target_position = enemy.home_position + dir * dist
 
     enemy.play_animation(Enemy.ANIM_MOVE)
@@ -28,7 +31,7 @@ func _update(_delta: float) -> void:
         change_state(EnemyStateId.CHASE)
         return
 
-    enemy.move_to_position(_target_position, enemy.wander_speed, 5.0)
+    enemy.move_to_position(_target_position, wander_speed, 5.0)
 
     var vel := enemy.get_path_velocity()
     if vel.length() > 0.1:

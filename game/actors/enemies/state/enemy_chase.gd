@@ -1,5 +1,7 @@
 extends EnemyState
 
+@export var chase_speed: float = 100.0
+
 ## How far the enemy can wander from home_position before giving up the chase.
 ## Acts as a leash — independent from the deaggro detection radius.
 @export var leash_distance: float = 300.0
@@ -36,5 +38,5 @@ func _update(_delta: float) -> void:
         if enemy.reach_detection:
             stop_dist = enemy.reach_detection.radius * 0.5
 
-        enemy.move_to_position(target.global_position, enemy.chase_speed, stop_dist)
+        enemy.move_to_position(target.global_position, chase_speed, stop_dist)
         enemy.set_facing_direction(enemy.global_position.direction_to(target.global_position), Enemy.ANIM_MOVE)
