@@ -16,8 +16,7 @@ signal dummy_reset
 
 
 func _ready() -> void:
-    if loot_drop_module:
-        loot_drop_module.owner_node = self
+    pass
 
 
 # -------------------------

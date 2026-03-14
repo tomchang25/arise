@@ -12,7 +12,9 @@ signal loot_dropped
 @export_group("Dependencies")
 @export var owner_node: Node2D
 @export var drop_profile: LootDropProfile
-@export var spawn_parent: Node
+
+@export_group("Spawn Target")
+@export var spawn_parent_group: String = "loot_root"
 
 var _rng := RandomNumberGenerator.new()
 
@@ -23,6 +25,11 @@ var _rng := RandomNumberGenerator.new()
 
 func _ready() -> void:
     _rng.randomize()
+
+    if owner_node == null:
+        owner_node = owner as Node2D
+        if owner_node == null:
+            Debug.warn("LootDropModule: owner_node is null and owner is not Node2D — wire it manually")
 
 
 # -------------------------
@@ -45,6 +52,10 @@ func is_enabled() -> bool:
 
 func drop_loot() -> void:
     if not enabled:
+        return
+
+    if not is_inside_tree():
+        Debug.warn("LootDropModule: drop_loot called while not in tree — skipping")
         return
 
     if owner_node == null:
@@ -118,7 +129,19 @@ func drop_loot() -> void:
 
 
 func _build_spawn_context() -> SpawnContext:
-    var parent := spawn_parent if spawn_parent != null else owner_node.get_parent()
+    var parent: Node = null
+
+    if not spawn_parent_group.is_empty():
+        var tree := get_tree()
+        if tree != null:
+            parent = tree.get_first_node_in_group(spawn_parent_group)
+
+    if parent == null:
+        Debug.warn("LootDropModule: group '%s' not found, falling back to current_scene" % spawn_parent_group)
+        var tree := get_tree()
+        if tree != null:
+            parent = tree.current_scene
+
     if parent == null:
         return null
 
@@ -180,6 +203,7 @@ func _roll_entry_amount(entry: LootDropEntry) -> int:
     var max_amount: int = max(entry.min_amount, entry.max_amount)
 
     if max_amount <= 0:
+        Debug.invalid("_roll_entry_amount: max_amount <= 0 — entry should have been filtered by is_valid()")
         return 0
 
     return _rng.randi_range(max(1, min_amount), max_amount)
@@ -235,4 +259,4 @@ func _setup_spawned_loot_instance(instance: Node, entry: LootDropEntry, amount: 
 
 
 func _stop_runtime_state() -> void:
-    pass
+    pass  # Loot drop is one-shot — no timers or ongoing processes to cancel

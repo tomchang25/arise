@@ -51,6 +51,10 @@ position = Vector2(-400, 0)
 
 [node name="EnemiesRoot" type="Node2D" parent="World" unique_id=1874268656]
 
+[node name="Pickups" type="Node2D" parent="World" unique_id=1626959089 groups=["loot_root"]]
+
+[node name="VFX" type="Node2D" parent="World" unique_id=389896816 groups=["damage_number"]]
+
 [node name="UI" type="Node2D" parent="." unique_id=525641519]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="UI" unique_id=958351847]

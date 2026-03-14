@@ -9,7 +9,7 @@ extends Node
 
 @export_group("Spawn")
 @export var damage_number_scene: PackedScene
-@export var spawn_group: String = ""
+@export var spawn_group: String = "damage_number"
 
 @export_group("Position")
 @export var height_offset: float = 18.0

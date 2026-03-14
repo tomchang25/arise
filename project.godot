@@ -58,6 +58,11 @@ folder_colors={
 "res://stage/": "purple"
 }
 
+[global_group]
+
+loot_root=""
+damage_number=""
+
 [gui]
 
 theme/custom="uid://m8fg7e20e3g"
