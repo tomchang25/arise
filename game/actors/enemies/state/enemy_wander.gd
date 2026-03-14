@@ -1,8 +1,6 @@
 extends EnemyState
 
-var animation_state: String = Enemy.AnimationState.MOVE
-
-var target_position: Vector2
+var _target_position: Vector2
 
 
 func _init() -> void:
@@ -10,14 +8,14 @@ func _init() -> void:
 
 
 func _enter() -> void:
-    var random_direction = Vector2.RIGHT.rotated(randf() * TAU)
-    var random_distance = randf() * enemy.wander_range
-    target_position = enemy.home_position + (random_direction * random_distance)
+    # Wander around home_position (set to group spawn_pivot at spawn time)
+    var dir := Vector2.RIGHT.rotated(randf() * TAU)
+    var min_dist = enemy.wander_range * 0.25
+    var dist: float = min(randf() * enemy.wander_range + min_dist, enemy.wander_range)
+    _target_position = enemy.home_position + dir * dist
 
-    enemy.play_animation(animation_state)
-
-    if not enemy.navigation_finished.is_connected(_on_navigation_finished):
-        enemy.navigation_finished.connect(_on_navigation_finished)
+    enemy.play_animation(Enemy.ANIM_MOVE)
+    enemy.navigation_finished.connect(_on_navigation_finished, CONNECT_ONE_SHOT)
 
 
 func _exit() -> void:
@@ -26,17 +24,16 @@ func _exit() -> void:
 
 
 func _update(_delta: float) -> void:
-    enemy.move_to_position(target_position, enemy.wander_speed, 5.0)
-
-    var movement_vector = enemy.get_velocity()
-    if movement_vector.length() > 0.1:
-        enemy.set_facing_direction(movement_vector, animation_state)
-
-    if enemy.is_target_tracked():
+    if enemy.is_player_in_aggro_range():
         change_state(EnemyStateId.CHASE)
         return
+
+    enemy.move_to_position(_target_position, enemy.wander_speed, 5.0)
+
+    var vel := enemy.get_path_velocity()
+    if vel.length() > 0.1:
+        enemy.set_facing_direction(vel, Enemy.ANIM_MOVE)
 
 
 func _on_navigation_finished() -> void:
     change_state(EnemyStateId.IDLE)
-    return

@@ -5,6 +5,7 @@
 
 [resource]
 script = ExtResource("2_87lid")
+mana = 100.0
 weapon_damage = 100.0
 primary_effect_scene = ExtResource("1_pcc23")
 primary_attack_range = 50.0

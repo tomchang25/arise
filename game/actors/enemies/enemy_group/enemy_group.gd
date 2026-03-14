@@ -1,158 +1,104 @@
 class_name EnemyGroup
 extends Node2D
 
-signal unit_grid_changed
+## Emitted when the last living member dies.
 signal group_depleted
 
-@export_group("Group Settings")
-@export var share_vision: bool = true
+## Emitted whenever the member list changes (for minimap or UI).
+signal members_changed
 
-@export_group("Wander Settings")
-@export var min_wait_time: float = 3.0
-@export var max_wait_time: float = 10.0
-@export var wander_range: float = 100.0
+# -------------------------
+# Internal state
+# -------------------------
 
-@export_group("Spawning Logic")
-@export var encounter_profile: EnemyEncounterProfile:
-    set(value):
-        encounter_profile = value
-        # if already in tree, schedule spawn
-        if is_inside_tree() and encounter_profile != null:
-            _schedule_spawn()
+## Frozen spawn position — set once by the spawner, never changes.
+var spawn_pivot: Vector2 = Vector2.ZERO
 
-# @export var spawn_table: WeightedSpawnTable
-# @export var spawn_radius: float = 60.0
-# @export var size := 10
+var _members: Array[Enemy] = []
 
-var units: Array[Enemy]
-var _rng: RandomNumberGenerator = null
-var _spawned := false
-var _target_size := 0
+# -------------------------
+# Lifecycle
+# -------------------------
 
 
-func _ready():
-    child_entered_tree.connect(_on_child_entered_tree)
-    child_exiting_tree.connect(_on_child_exiting_tree)
-
-    _rng = RandomNumberGenerator.new()
-    _rng.randomize()
-
-    # If placed in editor with an encounter_profile assigned:
-    if encounter_profile != null:
-        _schedule_spawn()
-    else:
-        # Still initialize internal storage
-        _reset_units(0)
-
-    # reset_units()
-    # for child in get_children():
-    #     if child is Enemy:
-    #         add_unit(child)
+func _ready() -> void:
+    # Capture the node's world position as the pivot the moment it enters the tree.
+    # The spawner should place the node at the desired center before add_child().
+    spawn_pivot = global_position
 
 
-# ---------------------------
-# Spawning
-# ---------------------------
-func _schedule_spawn() -> void:
-    # Prevent double spawn if profile is set twice
-    if _spawned:
-        return
-    _spawned = true
-
-    # Defer so global_position is already correct (spawner can set it before add_child)
-    call_deferred("_spawn_members_from_profile")
+# -------------------------
+# Member registry (called by spawner)
+# -------------------------
 
 
-func _spawn_members_from_profile() -> void:
-    if encounter_profile == null:
-        push_warning("EnemyGroup: encounter_profile is null")
+func register_member(enemy: Enemy) -> void:
+    if _members.has(enemy):
         return
 
-    _target_size = _rng.randi_range(encounter_profile.min_size, encounter_profile.max_size)
-    _reset_units(_target_size)
+    _members.append(enemy)
 
-    var entries := encounter_profile.unit_entries
-    if entries.is_empty():
-        push_warning("EnemyGroup: encounter_profile.unit_entries is empty")
+    # Listen for death so we can deregister and check depletion
+    if enemy.damage_receiver and not enemy.damage_receiver.died.is_connected(_on_member_died.bind(enemy)):
+        enemy.damage_receiver.died.connect(_on_member_died.bind(enemy))
+
+    members_changed.emit()
+
+
+func unregister_member(enemy: Enemy) -> void:
+    var idx := _members.find(enemy)
+    if idx == -1:
         return
 
-    for i in range(_target_size):
-        var scene := _pick_unit_scene(entries)
-        if scene == null:
-            continue
-
-        var ang := _rng.randf_range(0.0, TAU)
-        var dist := _rng.randf_range(encounter_profile.spawn_radius * 0.25, encounter_profile.spawn_radius)
-        var spawn_pos := global_position + Vector2.RIGHT.rotated(ang) * dist
-
-        var unit := scene.instantiate() as Enemy
-        unit.home_position = spawn_pos
-        add_child(unit)
-
-        # # Robust spawn init (prevents home_position=0,0)
-        # if unit.has_method("setup_spawn"):
-        #     unit.call("setup_spawn", spawn_pos)
-        # else:
-        #     unit.global_position = spawn_pos
-        #     if "home_position" in unit:
-        #         unit.home_position = spawn_pos
+    _members.remove_at(idx)
+    members_changed.emit()
+    _check_depleted()
 
 
-func _pick_unit_scene(entries: Array[WeightedSceneEntry]) -> PackedScene:
-    var total := 0
-    for e in entries:
-        total += max(0, e.weight)
-    if total <= 0:
-        return null
-
-    var roll := _rng.randi_range(1, total)
-    var acc := 0
-    for e in entries:
-        acc += max(0, e.weight)
-        if roll <= acc:
-            return e.scene
-
-    return null
+# -------------------------
+# Public API
+# -------------------------
 
 
-func _on_child_entered_tree(child: Node):
-    if child is Enemy:
-        _add_unit(child)
+## Returns the live centroid of all members.
+## Falls back to spawn_pivot when all members are dead (minimap icon stays in place).
+func get_center() -> Vector2:
+    var alive := get_alive_members()
+    if alive.is_empty():
+        return spawn_pivot
+
+    var sum := Vector2.ZERO
+    for m in alive:
+        sum += m.global_position
+    return sum / float(alive.size())
 
 
-func _on_child_exiting_tree(child: Node):
-    if child is Enemy:
-        _remove_unit(child)
+func get_alive_members() -> Array[Enemy]:
+    var result: Array[Enemy] = []
+    for m in _members:
+        if is_instance_valid(m):
+            result.append(m)
+    return result
 
 
-func _reset_units(size: int) -> void:
-    units.clear()
-    for i in range(size):
-        units.append(null)
-    unit_grid_changed.emit()
+func get_member_count() -> int:
+    return get_alive_members().size()
 
 
-func _add_unit(unit: Enemy) -> void:
-    for i in range(units.size()):
-        if units[i] == null:
-            units[i] = unit
-            unit_grid_changed.emit()
-            return
+func is_depleted() -> bool:
+    return get_alive_members().is_empty()
 
 
-func _remove_unit(unit: Enemy) -> void:
-    var idx := units.find(unit)
-    if idx != -1:
-        units[idx] = null
-        unit_grid_changed.emit()
+# -------------------------
+# Internal
+# -------------------------
 
-    # Group depleted check
-    var any_alive := false
-    for u in units:
-        if u != null:
-            any_alive = true
-            break
 
-    if not any_alive:
+func _on_member_died(_info: AttackInfo, enemy: Enemy) -> void:
+    unregister_member(enemy)
+
+
+func _check_depleted() -> void:
+    if is_depleted():
         group_depleted.emit()
         queue_free()

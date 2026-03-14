@@ -2,7 +2,7 @@ extends EnemyState
 
 
 func _init() -> void:
-    state_id = EnemyStateId.BACK
+    state_id = EnemyStateId.LEASH_BACK
 
 
 func _enter() -> void:
@@ -21,10 +21,6 @@ func _update(_delta: float) -> void:
     var vel := enemy.get_path_velocity()
     if vel.length() > 0.1:
         enemy.set_facing_direction(vel, Enemy.ANIM_MOVE)
-
-    # Re-engage if player wanders back inside aggro range while returning
-    if enemy.is_player_in_aggro_range():
-        change_state(EnemyStateId.CHASE)
 
 
 func _on_navigation_finished() -> void:

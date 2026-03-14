@@ -1,7 +1,6 @@
 extends EnemyState
 
-@export var follow_threshold: float = 250
-@export var animation_state: String = Enemy.AnimationState.ATTACK
+@export var animation_state: StringName = Enemy.ANIM_ATTACK
 
 
 func _init() -> void:
@@ -14,15 +13,17 @@ func _enter() -> void:
 
 
 func _update(_delta: float) -> void:
-    if not enemy.is_target_tracked() or enemy.get_distance_to_start() > follow_threshold:
+    # Exit: player escaped deaggro zone
+    if enemy.is_player_outside_deaggro_range():
         change_state(EnemyStateId.BACK)
         return
 
-    if not enemy.is_target_attackable():
+    # Player moved out of reach — chase again
+    if not enemy.is_player_in_reach():
         change_state(EnemyStateId.CHASE)
         return
 
-    var target = enemy.get_nearest_attackable_target()
+    var target := enemy.get_nearest_reachable_target()
     if target:
         enemy.perform_attack(target.global_position)
         enemy.set_facing_direction(enemy.global_position.direction_to(target.global_position), animation_state)

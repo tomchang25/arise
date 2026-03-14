@@ -4,146 +4,197 @@ extends CharacterBody2D
 
 signal navigation_finished
 
+# -------------------------
+# Exports
+# -------------------------
+
 @export var stats: Stats
 @export var hurtbox: Hurtbox
-
 @export var home_position: Vector2
 
-@export_category("Modules")
-@export var vision_detection_module: DetectionModule
-@export var reach_detection_module: DetectionModule
-@export var attack_module: AttackModule
+@export_group("Modules — Combat")
+@export var damage_receiver: DamageReceiverModule
+@export var hit_feedback: HitFeedbackModule
+@export var damage_number: DamageNumberModule
+@export var health_bar: HealthBarModule
+@export var combat_module: CombatModule
 
-@export_group("Movement Settings")
+@export_group("Modules — Perception")
+@export var aggro_detection: DetectionModule
+@export var deaggro_detection: DetectionModule
+@export var reach_detection: DetectionModule
+
+@export_group("Modules — Movement")
+@export var movement_module: MovementModule
+@export var navigation_module: NavigationModule
+@export var animation_module: AnimationModule
+
+@export_group("Modules — Gameplay")
+@export var loot_drop: LootDropModule
+
+@export_group("Modules — AI")
+@export var state_machine: StateMachine
+
+@export_group("Movement Speeds")
 @export var wander_speed: float = 50.0
-@export var wander_range: float = 150.0
-@export var back_speed: float = 50
-@export var chase_speed: float = 100
+@export var chase_speed: float = 100.0
+@export var back_speed: float = 50.0
 
-@export_category("Scanner Settings")
-@export var vision_range: float = 200.0:
-    set(value):
-        vision_range = value
+@export var wander_range: float = 100.0
+# -------------------------
+# Animation state constants
+# -------------------------
 
-        if is_inside_tree():
-            _setup_detection_radius()
+const ANIM_IDLE: StringName = &"Idle"
+const ANIM_MOVE: StringName = &"Move"
+const ANIM_ATTACK: StringName = &"Attack"
 
-@export var reach_range: float = 50.0:
-    set(value):
-        reach_range = value
+# -------------------------
+# Internal
+# -------------------------
 
-        if is_inside_tree():
-            _setup_detection_radius()
+var _sprite: Sprite2D
 
-@export_category("Actor Properties")
-@export var health := 10:
-    set(value):
-        health = value
-
-        if is_node_ready() and health_component:
-            health_component.health = value
-
-@export var max_health := 10:
-    set(value):
-        health = value
-
-        if is_node_ready() and health_component:
-            health_component.max_health = value
-
-@export var base_max_health: int = 100
-@export var base_defense: int = 10
-@export var base_attack: int = 10
-
-# ------ Module ------
-@onready var sprite := $Sprite
-@onready var health_component: HealthBarModule = $HealthComponent
-@onready var movement: BaseMovement = $Movement
-@onready var animation: BaseAnimation = $Animation
-@onready var pathfinding: Pathfinding = $Pathfinding
-@onready var state_machine: StateMachine = $StateMachine
-
-# @onready var enemy_scanner: EnemyScanner = $EnemyScanner
-
-# # ------ Utilities ------
+# -------------------------
+# Lifecycle
+# -------------------------
 
 
-class AnimationState:
-    const IDLE = "Idle"
-    const MOVE = "Move"
-    const ATTACK = "Attack"
-
-
-var animation_states := [AnimationState.IDLE, AnimationState.MOVE, AnimationState.ATTACK]
-
-# var attack_speed: float = 10
-
-# var leader: Enemy
-
-# var start_position: Vector2
-# var next_position: Vector2
-# var offset: Vector2
+func _enter_tree() -> void:
+    if Engine.is_editor_hint():
+        _auto_wire_nodes()
+        _bind_modules()
 
 
 func _ready() -> void:
-    _setup_modules()
-
-    if attack_module:
-        attack_module.initialize(stats)
+    _auto_wire_nodes()
+    _ensure_stats()
+    _bind_modules()
 
     if home_position == Vector2.ZERO:
-        push_error("Enemy: home_position not assigned. Did you forget to use setup_spawn()?")
+        push_error("Enemy: home_position not set. Assign it at spawn time.")
     else:
         global_position = home_position
 
-    pathfinding.navigation_agent.navigation_finished.connect(_on_navigation_finished)
+
+func _auto_wire_nodes() -> void:
+    if not _sprite:
+        _sprite = find_child("Sprite", true, false) as Sprite2D
+    if not hurtbox:
+        hurtbox = find_child("Hurtbox", true, false) as Hurtbox
+    if not damage_receiver:
+        damage_receiver = find_child("DamageReceiverModule", true, false) as DamageReceiverModule
+    if not hit_feedback:
+        hit_feedback = find_child("HitFeedbackModule", true, false) as HitFeedbackModule
+    if not damage_number:
+        damage_number = find_child("DamageNumberModule", true, false) as DamageNumberModule
+    if not health_bar:
+        health_bar = find_child("HealthBar", true, false) as HealthBarModule
+    if not combat_module:
+        combat_module = find_child("CombatModule", true, false) as CombatModule
+    if not aggro_detection:
+        aggro_detection = find_child("AggroDetection", true, false) as DetectionModule
+    if not deaggro_detection:
+        deaggro_detection = find_child("DeaggroDetection", true, false) as DetectionModule
+    if not reach_detection:
+        reach_detection = find_child("ReachDetection", true, false) as DetectionModule
+    if not movement_module:
+        movement_module = find_child("MovementModule", true, false) as MovementModule
+    if not navigation_module:
+        navigation_module = find_child("NavigationModule", true, false) as NavigationModule
+    if not animation_module:
+        animation_module = find_child("AnimationModule", true, false) as AnimationModule
+    if not loot_drop:
+        loot_drop = find_child("LootDropModule", true, false) as LootDropModule
+    if not state_machine:
+        state_machine = find_child("StateMachine", true, false) as StateMachine
 
 
-func _setup_modules() -> void:
-    _setup_detection_radius()
-    _setup_health_component()
-    _setup_hurtbox()
-
-
-func _setup_detection_radius() -> void:
-    if vision_detection_module:
-        vision_detection_module.set_collision_radius(vision_range)
-
-    if reach_detection_module:
-        reach_detection_module.set_collision_radius(reach_range)
-
-
-# func _setup_enemy_scanner() -> void:
-#     enemy_scanner.visible_range = visible_range
-#     enemy_scanner.attack_range = attack_range
-
-
-func _setup_health_component() -> void:
-    health_component.max_health = health
-    health_component.health = health
-    health_component.reset()
-
-    health_component.health_changed.connect(_on_health_changed)
-    health_component.health_depleted.connect(_on_health_depleted)
-
-
-func _setup_hurtbox() -> void:
-    hurtbox.get_hit.connect(_on_damaged)
-
-
-func _on_damaged(attack_info: AttackInfo) -> void:
-    health_component.apply_damage(attack_info)
-
-
-func _on_health_changed(new_health: float) -> void:
-    if new_health <= 0:
+func _ensure_stats() -> void:
+    if stats:
+        stats.setup_stats()
         return
 
-    if sprite.material:
-        var overlay_ratio = (1 - (new_health / health_component.max_health)) * 0.5
-        sprite.material.set_shader_parameter("overlay_amount", overlay_ratio)
+    stats = Stats.new()
+    stats.faction = Stats.Faction.ENEMY
+    stats.base_max_health = 100.0
+    stats.base_defense = 0.0
+    stats.base_damage = 10.0
+    stats.setup_stats()
 
 
-func _on_health_depleted() -> void:
+func _bind_modules() -> void:
+    # --- Combat ---
+    if damage_receiver:
+        damage_receiver.stats = stats
+        damage_receiver.hurtbox = hurtbox
+
+        if not Engine.is_editor_hint():
+            damage_receiver.damaged.connect(_on_damaged)
+            damage_receiver.died.connect(_on_died)
+
+    if hit_feedback:
+        hit_feedback.damage_receiver = damage_receiver
+        hit_feedback.movement_module = movement_module
+
+    if damage_number:
+        damage_number.damage_receiver = damage_receiver
+
+    if health_bar:
+        health_bar.bind(stats)
+
+    if combat_module:
+        combat_module.stats = stats
+
+    # --- Perception: reach radius is derived from attack range, never manual ---
+    if not Engine.is_editor_hint():
+        _bind_reach_detection()
+
+    # --- Movement ---
+    if movement_module:
+        movement_module.character = self
+
+    if navigation_module:
+        navigation_module.character = self
+        navigation_module.movement = movement_module
+
+        if not Engine.is_editor_hint():
+            navigation_module.navigation_finished.connect(_on_navigation_finished)
+
+    # --- Loot ---
+    if loot_drop:
+        loot_drop.owner_node = self
+
+
+func _bind_reach_detection() -> void:
+    if reach_detection == null:
+        return
+
+    if combat_module == null:
+        push_warning("Enemy: reach_detection present but combat_module is null — radius not set.")
+        return
+
+    var attack_range := combat_module.get_attack_range(Stats.AttackSlot.PRIMARY)
+    if attack_range > 0.0:
+        reach_detection.set_collision_radius(attack_range)
+    else:
+        push_warning("Enemy: attack range returned 0 — reach_detection radius not set.")
+
+
+# -------------------------
+# Lifecycle callbacks
+# -------------------------
+
+
+func _on_damaged(_amount: float, _new_health: float, _info: AttackInfo) -> void:
+    if _sprite and _sprite.material and stats:
+        var ratio := (1.0 - (stats.health / stats.current_max_health)) * 0.5
+        _sprite.material.set_shader_parameter("overlay_amount", ratio)
+
+
+func _on_died(_info: AttackInfo) -> void:
+    if loot_drop:
+        loot_drop.drop_loot()
     queue_free()
 
 
@@ -151,67 +202,116 @@ func _on_navigation_finished() -> void:
     navigation_finished.emit()
 
 
-# ------ High-Level Public API (Refactored) ------
-# func setup_spawn(spawn_pos: Vector2) -> void:
-#     global_position = spawn_pos
-#     home_position = spawn_pos
+# -------------------------
+# Public API — movement
+# -------------------------
 
 
-## Moves the enemy toward a global position using pathfinding
 func move_to_position(target_pos: Vector2, speed: float, arrive_dist: float = 5.0) -> void:
-    pathfinding.set_target_position(target_pos)
-    pathfinding.set_speed(speed)
-    pathfinding.set_arrive_distance(arrive_dist)
-
-    var velocity_output = pathfinding.get_velocity()
-    movement.set_velocity(velocity_output)
-
-
-## Sets the animation direction based on a vector
-func set_facing_direction(direction: Vector2, state_name: String) -> void:
-    animation.set_animation_direction(direction, state_name)
+    if navigation_module == null:
+        return
+    navigation_module.set_speed(speed)
+    navigation_module.set_arrive_distance(arrive_dist)
+    navigation_module.set_target_position(target_pos)
 
 
-## Plays a specific animation state
-func play_animation(state_name: String, time_scale: float = 1.0) -> void:
-    animation.travel_to_state(state_name)
-    animation.set_time_scale(time_scale)
-
-
-## Stops all movement
 func stop_movement() -> void:
-    movement.stop()
+    if navigation_module:
+        navigation_module.stop()
+    if movement_module:
+        movement_module.stop_all_motion()
 
 
-## Attack Logic
+func get_path_velocity() -> Vector2:
+    if movement_module == null:
+        return Vector2.ZERO
+    return movement_module.path_velocity
+
+
+# -------------------------
+# Public API — combat
+# -------------------------
+
+
+## Perform a primary attack toward target_pos via CombatModule.
+## Uses reach_detection.global_position as origin so the range check
+## matches the detection zone, avoiding false out-of-range warnings.
 func perform_attack(target_pos: Vector2) -> void:
-    if attack_module.can_attack():
-        attack_module.start_attack(target_pos)
-        attack_module.end_attack()
+    if combat_module == null:
+        return
+
+    var origin := reach_detection.global_position if reach_detection else global_position
+    var attack_range := combat_module.get_attack_range(Stats.AttackSlot.PRIMARY)
+    if origin.distance_to(target_pos) > attack_range:
+        return
+
+    combat_module.perform_attack(Stats.AttackSlot.PRIMARY, target_pos)
 
 
-## Scanner Proxies
-func is_target_tracked() -> bool:
-    return vision_detection_module.get_target_count(true) > 0
+# -------------------------
+# Public API — animation
+# -------------------------
 
 
-func is_target_attackable() -> bool:
-    return reach_detection_module.get_target_count(false) > 0
+func play_animation(state_name: StringName, time_scale: float = 1.0) -> void:
+    if animation_module == null:
+        return
+    animation_module.travel(state_name)
+    animation_module.set_time_scale(time_scale)
 
 
-func get_nearest_tracked_target() -> Node2D:
-    return vision_detection_module.get_closest_target(true)
+func set_facing_direction(direction: Vector2, state_name: StringName) -> void:
+    if animation_module == null:
+        return
+    animation_module.face_direction(direction)
+    animation_module.set_blend_position(direction, state_name)
 
 
-func get_nearest_attackable_target() -> Node2D:
-    return reach_detection_module.get_closest_target(false)
+# -------------------------
+# Public API — perception proxies
+# -------------------------
 
 
-## State Machine
-func get_current_state() -> ArmyState:
-    return state_machine.current_state
+## True when the player is inside aggro range (line-of-sight checked)
+func is_player_in_aggro_range() -> bool:
+    if aggro_detection == null:
+        return false
+
+    return aggro_detection.get_target_count(true) > 0
 
 
-## --- Unique Functions ---
-func get_distance_to_start() -> float:
+## True when the player has moved OUTSIDE the deaggro zone
+## Use this as the chase exit condition to prevent oscillation
+func is_player_outside_deaggro_range() -> bool:
+    if deaggro_detection == null:
+        return true
+
+    return deaggro_detection.get_target_count(false) == 0
+
+
+## True when the player is close enough to attack
+func is_player_in_reach() -> bool:
+    if reach_detection == null:
+        return false
+    return reach_detection.get_target_count(false) > 0
+
+
+func get_nearest_aggro_target() -> Node2D:
+    if aggro_detection == null:
+        return null
+    return aggro_detection.get_closest_target(true)
+
+
+func get_nearest_reachable_target() -> Node2D:
+    if reach_detection == null:
+        return null
+    return reach_detection.get_closest_target(false)
+
+
+# -------------------------
+# Public API — misc
+# -------------------------
+
+
+func get_distance_to_home() -> float:
     return global_position.distance_to(home_position)

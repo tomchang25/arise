@@ -208,8 +208,6 @@ func _spawn_entry(entry: LootDropEntry, amount: int, spawn_ctx: SpawnContext) ->
         instance.queue_free()
         return null
 
-    Debug.log("Spawned loot: entry=%s amount=%d instance=%s" % [entry, amount, instance])
-
     return instance
 
 

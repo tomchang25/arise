@@ -31,6 +31,7 @@ Debug="*uid://l63h0afxdmif"
 [debug]
 
 settings/stdout/print_fps=true
+gdscript/warnings/unused_signal=0
 
 [display]
 

@@ -37,7 +37,7 @@ func execute(anchor: Node2D, ctx: SpawnContext) -> Node:
         Debug.warn("SpawnPackedSceneAction: failed to instantiate scene")
         return null
 
-    parent.add_child(instance)
+    parent.call_deferred("add_child", instance)
 
     if instance is Node2D:
         var node_2d := instance as Node2D

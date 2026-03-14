@@ -1,7 +1,8 @@
 extends EnemyState
 
-@export var follow_threshold: float = 250
-var animation_state: String = Enemy.AnimationState.MOVE
+## How far the enemy can wander from home_position before giving up the chase.
+## Acts as a leash — independent from the deaggro detection radius.
+@export var leash_distance: float = 300.0
 
 
 func _init() -> void:
@@ -9,20 +10,31 @@ func _init() -> void:
 
 
 func _enter() -> void:
-    enemy.play_animation(animation_state, 1.5)
+    enemy.play_animation(Enemy.ANIM_MOVE, 1.5)
 
 
 func _update(_delta: float) -> void:
-    if not enemy.is_target_tracked() or enemy.get_distance_to_start() > follow_threshold:
+    # Exit condition 1: player left the deaggro detection zone
+    if enemy.is_player_outside_deaggro_range():
         change_state(EnemyStateId.BACK)
         return
 
-    if enemy.is_target_attackable():
+    # Exit condition 2: enemy strayed too far from its spawn point (leash)
+    if enemy.get_distance_to_home() > leash_distance:
+        change_state(EnemyStateId.LEASH_BACK)
+        return
+
+    # Transition: close enough to attack
+    if enemy.is_player_in_reach():
         change_state(EnemyStateId.ATTACK)
         return
 
-    var target = enemy.get_nearest_tracked_target()
-
+    # Move toward player
+    var target := enemy.get_nearest_aggro_target()
     if target:
-        enemy.move_to_position(target.global_position, enemy.chase_speed, enemy.reach_range / 2)
-        enemy.set_facing_direction(enemy.global_position.direction_to(target.global_position), animation_state)
+        var stop_dist := 0.0
+        if enemy.reach_detection:
+            stop_dist = enemy.reach_detection.radius * 0.5
+
+        enemy.move_to_position(target.global_position, enemy.chase_speed, stop_dist)
+        enemy.set_facing_direction(enemy.global_position.direction_to(target.global_position), Enemy.ANIM_MOVE)

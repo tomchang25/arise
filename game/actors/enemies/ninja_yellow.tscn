@@ -1,0 +1,223 @@
+[gd_scene format=3 uid="uid://buchtmrw1gbrr"]
+
+[ext_resource type="Script" uid="uid://bmdh4vf3luco6" path="res://game/actors/enemies/enemy.gd" id="1_enemy"]
+[ext_resource type="Resource" uid="uid://cvbx3q36wf4kx" path="res://game/actors/enemies/presets/ninja_yellow_stats.tres" id="2_0sh5i"]
+[ext_resource type="Material" uid="uid://4sxc1efucw5k" path="res://common/rendering/shaders/dynamic_color_overlay.tres" id="3_overlay"]
+[ext_resource type="Texture2D" uid="uid://6hy07tgfpu8b" path="res://game/actors/enemies/assets/ninja_yellow.png" id="4_6jhws"]
+[ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/gameplay/combat/hurtbox/hurtbox.gd" id="5_hurtbox"]
+[ext_resource type="AnimationLibrary" uid="uid://yx2utmx2c56c" path="res://game/actors/enemies/presets/ninja_animations.res" id="6_0sh5i"]
+[ext_resource type="Script" uid="uid://bb4mbrq1u7pl" path="res://common/gameplay/combat/combat_module.gd" id="6_combat"]
+[ext_resource type="AnimationNodeBlendTree" uid="uid://bkrdvp8xidai6" path="res://game/actors/enemies/presets/ninja_animation_node_blend_tree.tres" id="6_td03u"]
+[ext_resource type="Script" uid="uid://d1yimk3mk35ag" path="res://common/gameplay/combat/attack/melee_attack_module.gd" id="7_melee"]
+[ext_resource type="Script" uid="uid://dpi3inldik0ho" path="res://common/gameplay/combat/damage_receiver/damage_receiver_module.gd" id="8_dmgreceiver"]
+[ext_resource type="Script" uid="uid://duxq84e027el0" path="res://common/gameplay/combat/hit_feedback/hit_feedback_module.gd" id="9_hitfeedback"]
+[ext_resource type="Script" uid="uid://6jeesy7iltw" path="res://common/gameplay/combat/damage_number/damage_number_module.gd" id="10_dmgnum"]
+[ext_resource type="PackedScene" uid="uid://qhqm7usjk4s4" path="res://common/gameplay/combat/damage_number/damage_number.tscn" id="11_dmgnum_scene"]
+[ext_resource type="PackedScene" uid="uid://c5uu71l3jwxu6" path="res://common/rendering/vfx/one_shot_hit_particles.tscn" id="12_hit_vfx"]
+[ext_resource type="PackedScene" uid="uid://duohq0xpsyv1" path="res://common/rendering/vfx/explosion.tscn" id="13_death_vfx"]
+[ext_resource type="Resource" uid="uid://vp7463hsmyw0" path="res://common/audio/presets/sfx/default_damaged_audio.tres" id="14_sfx_damaged"]
+[ext_resource type="Resource" uid="uid://xsccf58mw7d5" path="res://common/audio/presets/sfx/default_blocked_audio.tres" id="15_sfx_blocked"]
+[ext_resource type="Resource" uid="uid://csppceje2neh5" path="res://common/audio/presets/sfx/default_died_audio.tres" id="16_sfx_died"]
+[ext_resource type="Script" uid="uid://hyy86fs5b0fs" path="res://common/gameplay/detection/detection_module.gd" id="17_detection"]
+[ext_resource type="Script" uid="uid://w30s7yqi1p3d" path="res://common/gameplay/movement/movement_module.gd" id="18_movement"]
+[ext_resource type="Script" uid="uid://ds7jcv6cdv02p" path="res://common/gameplay/navigation/navigation_module.gd" id="19_navigation"]
+[ext_resource type="Script" uid="uid://dldqypakv40re" path="res://common/gameplay/animation/animation_module.gd" id="20_animmod"]
+[ext_resource type="PackedScene" uid="uid://d0tswwb1d3smv" path="res://common/gameplay/health_bar/health_bar.tscn" id="22_healthbar"]
+[ext_resource type="Script" uid="uid://i1ibypyr38xv" path="res://common/gameplay/loot/loot_drop_module.gd" id="23_lootdrop"]
+[ext_resource type="Resource" uid="uid://bq584j3uqsyau" path="res://common/gameplay/loot/data/slime_drop_profile.tres" id="25_com4q"]
+[ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/framework/state_machine/state_machine.gd" id="25_statemachine"]
+[ext_resource type="Script" uid="uid://ixpqntb22d76" path="res://game/actors/enemies/state/enemy_idle.gd" id="26_idle"]
+[ext_resource type="Script" uid="uid://v0ips7afnj6" path="res://game/actors/enemies/state/enemy_wander.gd" id="27_wander"]
+[ext_resource type="Script" uid="uid://btduv83t3tnr" path="res://game/actors/enemies/state/enemy_chase.gd" id="28_chase"]
+[ext_resource type="Script" uid="uid://dq7gm11wvwn6m" path="res://game/actors/enemies/state/enemy_attack.gd" id="29_attack"]
+[ext_resource type="Script" uid="uid://og75stne3wma" path="res://game/actors/enemies/state/enemy_back.gd" id="30_back"]
+[ext_resource type="Script" uid="uid://62t58yuad5go" path="res://game/actors/enemies/state/enemy_leash_back.gd" id="31_0sh5i"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_body"]
+radius = 4.0
+height = 10.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_hurtbox"]
+radius = 6.0
+height = 16.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_com4q"]
+radius = 160.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_s0wni"]
+radius = 280.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_whv5l"]
+radius = 40.0
+
+[node name="NinjaYellow" type="CharacterBody2D" unique_id=1130231603 node_paths=PackedStringArray("hurtbox", "damage_receiver", "hit_feedback", "damage_number", "health_bar", "combat_module", "aggro_detection", "deaggro_detection", "reach_detection", "movement_module", "navigation_module", "animation_module", "loot_drop", "state_machine") groups=["enemies"]]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("1_enemy")
+stats = ExtResource("2_0sh5i")
+hurtbox = NodePath("Hurtbox")
+damage_receiver = NodePath("Module/DamageReceiverModule")
+hit_feedback = NodePath("Module/HitFeedbackModule")
+damage_number = NodePath("Module/DamageNumberModule")
+health_bar = NodePath("Module/HealthBar")
+combat_module = NodePath("Module/CombatModule")
+aggro_detection = NodePath("Module/AggroDetection")
+deaggro_detection = NodePath("Module/DeaggroDetection")
+reach_detection = NodePath("Module/ReachDetection")
+movement_module = NodePath("Module/MovementModule")
+navigation_module = NodePath("Module/NavigationModule")
+animation_module = NodePath("Module/AnimationModule")
+loot_drop = NodePath("Module/LootDropModule")
+state_machine = NodePath("StateMachine")
+
+[node name="Sprite" type="Sprite2D" parent="." unique_id=1693742817]
+material = ExtResource("3_overlay")
+position = Vector2(0, -6)
+texture = ExtResource("4_6jhws")
+hframes = 4
+vframes = 7
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1490549208]
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_body")
+
+[node name="Hurtbox" type="Area2D" parent="." unique_id=1309115120]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("5_hurtbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=1190342164]
+position = Vector2(0, -6)
+shape = SubResource("CapsuleShape2D_hurtbox")
+debug_color = Color(0.639216, 0.529412, 0, 0.329412)
+
+[node name="Visual" type="Node2D" parent="." unique_id=498823766]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Visual" unique_id=530492983]
+libraries/ = ExtResource("6_0sh5i")
+
+[node name="AnimationTree" type="AnimationTree" parent="Visual" unique_id=1171785439]
+tree_root = ExtResource("6_td03u")
+anim_player = NodePath("../AnimationPlayer")
+parameters/StateMachine/Attack/blend_position = Vector2(0, 0)
+parameters/StateMachine/Move/blend_position = Vector2(0, 0)
+parameters/TimeScale/scale = 1.0
+
+[node name="Module" type="Node2D" parent="." unique_id=1489298462]
+
+[node name="HealthBar" parent="Module" unique_id=243798542 instance=ExtResource("22_healthbar")]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -12.0
+offset_top = 4.0
+offset_right = 12.0
+offset_bottom = 8.0
+grow_horizontal = 2
+
+[node name="CombatModule" type="Node2D" parent="Module" unique_id=614963320 node_paths=PackedStringArray("melee_attack")]
+position = Vector2(0, -6)
+script = ExtResource("6_combat")
+melee_attack = NodePath("MeleeAttackModule")
+
+[node name="MeleeAttackModule" type="Node2D" parent="Module/CombatModule" unique_id=240177820]
+script = ExtResource("7_melee")
+
+[node name="DamageReceiverModule" type="Node" parent="Module" unique_id=1150826965 node_paths=PackedStringArray("hurtbox")]
+script = ExtResource("8_dmgreceiver")
+stats = ExtResource("2_0sh5i")
+hurtbox = NodePath("../../Hurtbox")
+
+[node name="HitFeedbackModule" type="Node" parent="Module" unique_id=631790900 node_paths=PackedStringArray("damage_receiver", "movement_module")]
+script = ExtResource("9_hitfeedback")
+damage_receiver = NodePath("../DamageReceiverModule")
+movement_module = NodePath("../MovementModule")
+hit_particles_scene = ExtResource("12_hit_vfx")
+death_particles_scene = ExtResource("13_death_vfx")
+damaged_audio = ExtResource("14_sfx_damaged")
+blocked_audio = ExtResource("15_sfx_blocked")
+died_audio = ExtResource("16_sfx_died")
+
+[node name="DamageNumberModule" type="Node" parent="Module" unique_id=1101572308 node_paths=PackedStringArray("damage_receiver")]
+script = ExtResource("10_dmgnum")
+damage_receiver = NodePath("../DamageReceiverModule")
+damage_number_scene = ExtResource("11_dmgnum_scene")
+
+[node name="AggroDetection" type="Area2D" parent="Module" unique_id=821828178]
+position = Vector2(0, -6)
+collision_layer = 0
+monitorable = false
+script = ExtResource("17_detection")
+radius = 160.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Module/AggroDetection" unique_id=957994283]
+shape = SubResource("CircleShape2D_com4q")
+debug_color = Color(0, 0.6, 0.1764706, 0.23529412)
+
+[node name="DeaggroDetection" type="Area2D" parent="Module" unique_id=837214786]
+position = Vector2(0, -6)
+collision_layer = 0
+monitorable = false
+script = ExtResource("17_detection")
+radius = 280.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DeaggroDetection" unique_id=2022225881]
+shape = SubResource("CircleShape2D_s0wni")
+debug_color = Color(0.8627451, 0.23529412, 0.69803923, 0.23921569)
+
+[node name="ReachDetection" type="Area2D" parent="Module" unique_id=430639735]
+position = Vector2(0, -6)
+collision_layer = 0
+monitorable = false
+script = ExtResource("17_detection")
+radius = 40.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Module/ReachDetection" unique_id=1152141690]
+shape = SubResource("CircleShape2D_whv5l")
+
+[node name="MovementModule" type="Node" parent="Module" unique_id=265278886 node_paths=PackedStringArray("character")]
+script = ExtResource("18_movement")
+character = NodePath("../..")
+
+[node name="NavigationModule" type="Node2D" parent="Module" unique_id=105493594 node_paths=PackedStringArray("character", "movement", "navigation_agent")]
+script = ExtResource("19_navigation")
+character = NodePath("../..")
+movement = NodePath("../MovementModule")
+navigation_agent = NodePath("NavigationAgent2D")
+arrive_distance = 5.0
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="Module/NavigationModule" unique_id=1036614070]
+target_desired_distance = 5.0
+radius = 4.0
+
+[node name="AnimationModule" type="Node" parent="Module" unique_id=2098592232 node_paths=PackedStringArray("actor", "animation_tree")]
+script = ExtResource("20_animmod")
+actor = NodePath("../..")
+animation_tree = NodePath("../../Visual/AnimationTree")
+
+[node name="LootDropModule" type="Node" parent="Module" unique_id=583686892 node_paths=PackedStringArray("owner_node")]
+script = ExtResource("23_lootdrop")
+owner_node = NodePath("../..")
+drop_profile = ExtResource("25_com4q")
+
+[node name="StateMachine" type="Node" parent="." unique_id=166535569 node_paths=PackedStringArray("initial_state")]
+script = ExtResource("25_statemachine")
+initial_state = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="StateMachine" unique_id=824543003]
+script = ExtResource("26_idle")
+
+[node name="Wander" type="Node" parent="StateMachine" unique_id=634392146]
+script = ExtResource("27_wander")
+
+[node name="Chase" type="Node" parent="StateMachine" unique_id=58470279]
+script = ExtResource("28_chase")
+
+[node name="Attack" type="Node" parent="StateMachine" unique_id=478504038]
+script = ExtResource("29_attack")
+
+[node name="Back" type="Node" parent="StateMachine" unique_id=1469795797]
+script = ExtResource("30_back")
+
+[node name="LeashBack" type="Node" parent="StateMachine" unique_id=1385443946]
+script = ExtResource("31_0sh5i")

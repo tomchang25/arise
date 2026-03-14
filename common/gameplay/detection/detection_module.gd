@@ -19,6 +19,10 @@ var _collision_shape: CollisionShape2D
 var _entities_in_range: Array[Node2D] = []
 
 
+func _init() -> void:
+    monitorable = false
+
+
 func _ready() -> void:
     _setup_collision_shape()
     _set_collision_radius(radius)
