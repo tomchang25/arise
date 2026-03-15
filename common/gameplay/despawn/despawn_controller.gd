@@ -27,6 +27,11 @@ var _spawn_registry := SpawnRegistry.new()
 var _timer: float = 0.0
 
 
+func _ready() -> void:
+    if use_distance_limit and tracked_target == null:
+        Debug.warn("DespawnController: use_distance_limit is true but tracked_target is not assigned")
+
+
 func _process(delta: float) -> void:
     if Engine.is_editor_hint():
         return

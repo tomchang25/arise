@@ -1,52 +1,11 @@
 [gd_scene format=4 uid="uid://ch5n44exbs13"]
 
 [ext_resource type="Script" uid="uid://wwdx87yx36ol" path="res://stage/testbeds/encounter_testbed/encounter_testbed.gd" id="1_n5j61"]
-[ext_resource type="Script" uid="uid://dj6711ko5fxis" path="res://common/gameplay/spawning/tables/weighted_encounter_entry.gd" id="2_0gb3s"]
 [ext_resource type="TileSet" uid="uid://b41stnir1xvrs" path="res://stage/tilesets/dungeon_tile_set.tres" id="2_di8kp"]
+[ext_resource type="Resource" uid="uid://6r5ylb7tltkb" path="res://stage/systems/test_weighted_encounter_table.tres" id="2_t1lg5"]
 [ext_resource type="PackedScene" uid="uid://i0w72n7e6is8" path="res://stage/systems/player_with_camera.tscn" id="3_3sdsp"]
-[ext_resource type="Script" uid="uid://dqd4tlipj2ii8" path="res://common/gameplay/spawning/tables/enemy_group_profile.gd" id="3_b3t0i"]
-[ext_resource type="Script" uid="uid://4agufvpi7c62" path="res://common/gameplay/spawning/tables/group_member_entry.gd" id="4_nsv7u"]
-[ext_resource type="PackedScene" uid="uid://31x7n43mme6c" path="res://game/actors/enemies/types/ninja/ninja_red.tscn" id="5_h2g67"]
-[ext_resource type="PackedScene" uid="uid://buchtmrw1gbrr" path="res://game/actors/enemies/types/ninja/ninja_yellow.tscn" id="6_fl0gb"]
-[ext_resource type="PackedScene" uid="uid://cssols6rmii6m" path="res://game/actors/enemies/enemy_group/enemy_group.tscn" id="7_3knaj"]
 [ext_resource type="Script" uid="uid://bwm8u3xypysu8" path="res://common/gameplay/despawn/despawn_controller.gd" id="7_nsv7u"]
-[ext_resource type="Script" uid="uid://dvuoe3baa8v5s" path="res://common/gameplay/spawning/tables/encounter_profile.gd" id="8_2jjd3"]
-[ext_resource type="Script" uid="uid://cw41kmidn3k8s" path="res://common/gameplay/spawning/tables/weighted_encounter_table.gd" id="9_4sdgr"]
 [ext_resource type="Script" uid="uid://qonxf7sblp5f" path="res://common/gameplay/encounter/encounter_controller.gd" id="12_nsv7u"]
-[ext_resource type="PackedScene" uid="uid://djodnob72wufg" path="res://common/gameplay/spawning/points/warning_spawn_point.tscn" id="13_h2g67"]
-
-[sub_resource type="Resource" id="Resource_dni14"]
-script = ExtResource("4_nsv7u")
-scene = ExtResource("5_h2g67")
-max_count = 4
-metadata/_custom_type_script = "uid://4agufvpi7c62"
-
-[sub_resource type="Resource" id="Resource_vym0u"]
-script = ExtResource("4_nsv7u")
-scene = ExtResource("6_fl0gb")
-max_count = 2
-metadata/_custom_type_script = "uid://4agufvpi7c62"
-
-[sub_resource type="Resource" id="Resource_0d5wg"]
-script = ExtResource("3_b3t0i")
-group_scene = ExtResource("7_3knaj")
-entries = Array[ExtResource("4_nsv7u")]([SubResource("Resource_dni14"), SubResource("Resource_vym0u")])
-metadata/_custom_type_script = "uid://dqd4tlipj2ii8"
-
-[sub_resource type="Resource" id="Resource_e1d75"]
-script = ExtResource("8_2jjd3")
-groups = Array[ExtResource("3_b3t0i")]([SubResource("Resource_0d5wg")])
-metadata/_custom_type_script = "uid://dvuoe3baa8v5s"
-
-[sub_resource type="Resource" id="Resource_hjxer"]
-script = ExtResource("2_0gb3s")
-encounter = SubResource("Resource_e1d75")
-metadata/_custom_type_script = "uid://dj6711ko5fxis"
-
-[sub_resource type="Resource" id="Resource_6cbgd"]
-script = ExtResource("9_4sdgr")
-entries = Array[ExtResource("2_0gb3s")]([SubResource("Resource_hjxer")])
-metadata/_custom_type_script = "uid://cw41kmidn3k8s"
 
 [node name="EncounterTestbed" type="Node2D" unique_id=535920825 node_paths=PackedStringArray("player", "player_spawn", "enemies_root", "debug_label", "encounter_controller", "spawn_origin")]
 script = ExtResource("1_n5j61")
@@ -54,7 +13,7 @@ player = NodePath("Player")
 player_spawn = NodePath("PlayerSpawn")
 enemies_root = NodePath("EnemiesRoot")
 debug_label = NodePath("UI/DebugLabel")
-encounter_table = SubResource("Resource_6cbgd")
+encounter_table = ExtResource("2_t1lg5")
 encounter_controller = NodePath("EncounterController")
 spawn_origin = NodePath("PlayerSpawn")
 
@@ -92,7 +51,6 @@ position = Vector2(-2.481, 0)
 script = ExtResource("12_nsv7u")
 enemies_root = NodePath("../EnemiesRoot")
 despawn_manager = NodePath("../DespawnController")
-warning_point_scene = ExtResource("13_h2g67")
 print_debug_log = true
 metadata/_custom_type_script = "uid://qonxf7sblp5f"
 
@@ -101,6 +59,10 @@ script = ExtResource("7_nsv7u")
 tracked_target = NodePath("../Player")
 draw_debug = true
 metadata/_custom_type_script = "uid://bwm8u3xypysu8"
+
+[node name="VFX" type="Node2D" parent="." unique_id=1892059835 groups=["damage_number"]]
+
+[node name="Pickups" type="Node2D" parent="." unique_id=1499861591 groups=["loot_root"]]
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=1569385614]
 

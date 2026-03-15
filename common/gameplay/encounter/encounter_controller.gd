@@ -10,7 +10,7 @@ signal encounter_cleared
 @export var despawn_manager: DespawnController
 
 @export_group("Warning Spawn")
-@export var warning_point_scene: PackedScene
+@export var warning_point_scene: PackedScene = preload("uid://djodnob72wufg")
 
 @export_group("Debug")
 @export var print_debug_log := false
