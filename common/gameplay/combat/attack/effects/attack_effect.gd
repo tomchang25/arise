@@ -8,7 +8,7 @@ var targets_hit_count: int = 0
 var hitbox: Hitbox
 
 
-func setup(info: AttackInfo) -> void:
+func setup(info: AttackData) -> void:
     self.max_targets = info.max_targets
     _setup_lifetime(info.attack_lifetime)
 

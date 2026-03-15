@@ -78,7 +78,7 @@ func _get_flash_time_from_invuln() -> float:
     return min(t * 1.2, t + 0.1)
 
 
-func _on_damaged(_amount: float, _new_hp: float, info: AttackInfo) -> void:
+func _on_damaged(_amount: float, _new_hp: float, info: AttackData) -> void:
     if not info:
         return
 
@@ -96,12 +96,12 @@ func _on_damaged(_amount: float, _new_hp: float, info: AttackInfo) -> void:
         _play_audio_event(damaged_audio)
 
 
-func _on_blocked(_info: AttackInfo) -> void:
+func _on_blocked(_info: AttackData) -> void:
     if enabled_sfx and blocked_audio:
         _play_audio_event(blocked_audio)
 
 
-func _on_died(info: AttackInfo) -> void:
+func _on_died(info: AttackData) -> void:
     if enabled_particles:
         _spawn_death_particles(info)
 
@@ -112,15 +112,15 @@ func _on_died(info: AttackInfo) -> void:
 # -------------------------
 # Particles
 # -------------------------
-func _spawn_hit_particles(info: AttackInfo) -> void:
+func _spawn_hit_particles(info: AttackData) -> void:
     _spawn_particles(hit_particles_scene, hit_particles_color, hit_particles_scale, info)
 
 
-func _spawn_death_particles(info: AttackInfo) -> void:
+func _spawn_death_particles(info: AttackData) -> void:
     _spawn_particles(death_particles_scene, death_particles_color, death_particles_scale, info, true)
 
 
-func _spawn_particles(scene: PackedScene, color: Color, scale_amount: float, info: AttackInfo, force_world: bool = false) -> void:
+func _spawn_particles(scene: PackedScene, color: Color, scale_amount: float, info: AttackData, force_world: bool = false) -> void:
     if scene == null:
         return
 
@@ -175,7 +175,7 @@ func _spawn_particles(scene: PackedScene, color: Color, scale_amount: float, inf
 # -------------------------
 # Knockback
 # -------------------------
-func _apply_knockback(info: AttackInfo) -> void:
+func _apply_knockback(info: AttackData) -> void:
     if info == null:
         return
 
@@ -201,7 +201,7 @@ func _apply_knockback(info: AttackInfo) -> void:
         (owner as RigidBody2D).apply_impulse(impulse)
 
 
-func _resolve_knockback_dir(info: AttackInfo) -> Vector2:
+func _resolve_knockback_dir(info: AttackData) -> Vector2:
     var dir := info.knockback_dir
 
     if dir != Vector2.ZERO:
@@ -331,7 +331,7 @@ func _play_audio_event(ev: AudioEvent) -> void:
 # -------------------------
 # Internal
 # -------------------------
-func _attack_dir(info: AttackInfo) -> Vector2:
+func _attack_dir(info: AttackData) -> Vector2:
     if info == null:
         return Vector2.RIGHT
 

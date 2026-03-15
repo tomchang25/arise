@@ -78,7 +78,7 @@ func reset_dummy() -> void:
     stats.health = stats.current_max_health
 
 
-func _on_died(_info: AttackInfo) -> void:
+func _on_died(_info: AttackData) -> void:
     if not reset_on_death:
         return
     await get_tree().create_timer(max(0.0, reset_delay)).timeout

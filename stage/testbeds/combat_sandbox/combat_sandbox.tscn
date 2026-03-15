@@ -2,17 +2,52 @@
 
 [ext_resource type="PackedScene" uid="uid://bmlww50h5ia4c" path="res://game/actors/dummies/dummy.tscn" id="1_gwppr"]
 [ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="2_e6476"]
-[ext_resource type="Resource" uid="uid://b4ur0pnoptiel" path="res://stage/testbeds/combat_sandbox/combat_test_stats.tres" id="2_qohqq"]
+[ext_resource type="Script" uid="uid://cccsb1q10xsbl" path="res://stage/testbeds/combat_sandbox/combat_test_player.gd" id="2_qohqq"]
 [ext_resource type="PackedScene" uid="uid://dhjvr7458gxu0" path="res://game/destroyables/plant_props/plant_props.tscn" id="3_4r8qm"]
 [ext_resource type="Script" uid="uid://d1yimk3mk35ag" path="res://common/gameplay/combat/attack/melee_attack_module.gd" id="3_lq0vo"]
+[ext_resource type="Texture2D" uid="uid://cm2c6n0ytikey" path="res://icon.svg" id="3_p6c2e"]
 [ext_resource type="Script" uid="uid://clpk26ghev2ij" path="res://stage/testbeds/combat_sandbox/combat_sandbox.gd" id="3_rbd4g"]
+[ext_resource type="Script" uid="uid://w30s7yqi1p3d" path="res://common/gameplay/movement/movement_module.gd" id="4_depyq"]
+[ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/gameplay/combat/hurtbox/hurtbox.gd" id="4_tn4ao"]
+[ext_resource type="PackedScene" uid="uid://327801cur3pj" path="res://common/gameplay/combat/attack/effects/mini_slash_attack_effect.tscn" id="7_0j4o1"]
 [ext_resource type="Script" uid="uid://bb4mbrq1u7pl" path="res://common/gameplay/combat/combat_module.gd" id="7_qohqq"]
+[ext_resource type="Script" uid="uid://x10bxi1qicvw" path="res://common/gameplay/combat/attack/projectile_attack_module.gd" id="7_tn4ao"]
+[ext_resource type="Script" uid="uid://cvejhd0v4uma4" path="res://common/gameplay/combat/attack/contact_attack_module.gd" id="8_0j4o1"]
+[ext_resource type="Script" uid="uid://co1s16xd7omkk" path="res://common/gameplay/combat/hitbox/hitbox.gd" id="9_8fuiv"]
+[ext_resource type="PackedScene" uid="uid://vpxne6o7pihf" path="res://common/gameplay/combat/projectiles/projectile.tscn" id="9_g7xgt"]
+[ext_resource type="Script" uid="uid://cotesmqht2t6j" path="res://common/gameplay/combat/attack/charge_attack_module.gd" id="10_g7xgt"]
+
+[sub_resource type="Resource" id="Resource_jvb2d"]
+script = ExtResource("2_e6476")
+weapon_damage = 100.0
+primary_attack_scene = ExtResource("7_0j4o1")
+secondary_delivery_type = 1
+secondary_attack_scene = ExtResource("9_g7xgt")
+metadata/_custom_type_script = "uid://bkgf2cii3bfri"
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jcp4x"]
+size = Vector2(24, 24)
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_tcbmc"]
+radius = 6.0
+
+[sub_resource type="Resource" id="Resource_4r8qm"]
+resource_local_to_scene = true
+script = ExtResource("2_e6476")
+faction = 1
+health = 1000.0
+mana = 100.0
+base_max_health = 1000.0
+base_damage = 0.0
+base_defense = 25.0
+invuln_time = 0.0
 
 [sub_resource type="Resource" id="Resource_qohqq"]
 resource_local_to_scene = true
 script = ExtResource("2_e6476")
 faction = 1
 health = 1000.0
+mana = 100.0
 base_max_health = 1000.0
 base_damage = 0.0
 base_defense = 25.0
@@ -23,6 +58,7 @@ resource_local_to_scene = true
 script = ExtResource("2_e6476")
 faction = 1
 health = 1000.0
+mana = 100.0
 base_max_health = 1000.0
 base_damage = 0.0
 base_defense = 25.0
@@ -33,6 +69,7 @@ resource_local_to_scene = true
 script = ExtResource("2_e6476")
 faction = 1
 health = 1000.0
+mana = 100.0
 base_max_health = 1000.0
 base_damage = 0.0
 base_defense = 25.0
@@ -43,6 +80,7 @@ resource_local_to_scene = true
 script = ExtResource("2_e6476")
 faction = 1
 health = 1000.0
+mana = 100.0
 base_max_health = 1000.0
 base_damage = 0.0
 base_defense = 25.0
@@ -53,6 +91,7 @@ resource_local_to_scene = true
 script = ExtResource("2_e6476")
 faction = 1
 health = 1000.0
+mana = 100.0
 base_max_health = 1000.0
 base_damage = 0.0
 base_defense = 25.0
@@ -63,6 +102,7 @@ resource_local_to_scene = true
 script = ExtResource("2_e6476")
 faction = 1
 health = 1000.0
+mana = 100.0
 base_max_health = 1000.0
 base_damage = 0.0
 base_defense = 25.0
@@ -73,6 +113,7 @@ resource_local_to_scene = true
 script = ExtResource("2_e6476")
 faction = 1
 health = 1000.0
+mana = 100.0
 base_max_health = 1000.0
 base_damage = 0.0
 base_defense = 25.0
@@ -83,6 +124,7 @@ resource_local_to_scene = true
 script = ExtResource("2_e6476")
 faction = 1
 health = 1000.0
+mana = 100.0
 base_max_health = 1000.0
 base_damage = 0.0
 base_defense = 25.0
@@ -93,6 +135,7 @@ resource_local_to_scene = true
 script = ExtResource("2_e6476")
 faction = 1
 health = 1000.0
+mana = 100.0
 base_max_health = 1000.0
 base_damage = 0.0
 base_defense = 25.0
@@ -103,6 +146,7 @@ resource_local_to_scene = true
 script = ExtResource("2_e6476")
 faction = 1
 health = 1000.0
+mana = 100.0
 base_max_health = 1000.0
 base_damage = 0.0
 base_defense = 25.0
@@ -113,6 +157,7 @@ resource_local_to_scene = true
 script = ExtResource("2_e6476")
 faction = 1
 health = 1000.0
+mana = 100.0
 base_max_health = 1000.0
 base_damage = 0.0
 base_defense = 25.0
@@ -123,6 +168,7 @@ resource_local_to_scene = true
 script = ExtResource("2_e6476")
 faction = 1
 health = 1000.0
+mana = 100.0
 base_max_health = 1000.0
 base_damage = 0.0
 base_defense = 25.0
@@ -133,6 +179,7 @@ resource_local_to_scene = true
 script = ExtResource("2_e6476")
 faction = 1
 health = 1000.0
+mana = 100.0
 base_max_health = 1000.0
 base_damage = 0.0
 base_defense = 25.0
@@ -143,6 +190,7 @@ resource_local_to_scene = true
 script = ExtResource("2_e6476")
 faction = 1
 health = 1000.0
+mana = 100.0
 base_max_health = 1000.0
 base_damage = 0.0
 base_defense = 25.0
@@ -153,6 +201,7 @@ resource_local_to_scene = true
 script = ExtResource("2_e6476")
 faction = 1
 health = 1000.0
+mana = 100.0
 base_max_health = 1000.0
 base_damage = 0.0
 base_defense = 25.0
@@ -163,36 +212,86 @@ resource_local_to_scene = true
 script = ExtResource("2_e6476")
 faction = 1
 health = 1000.0
-base_max_health = 1000.0
-base_damage = 0.0
-base_defense = 25.0
-invuln_time = 0.0
-
-[sub_resource type="Resource" id="Resource_jvb2d"]
-resource_local_to_scene = true
-script = ExtResource("2_e6476")
-faction = 1
-health = 1000.0
+mana = 100.0
 base_max_health = 1000.0
 base_damage = 0.0
 base_defense = 25.0
 invuln_time = 0.5
 
-[node name="CombatSandbox" type="Node2D" unique_id=1694751769 node_paths=PackedStringArray("combat", "dummy_container")]
+[node name="CombatSandbox" type="Node2D" unique_id=1694751769 node_paths=PackedStringArray("player", "player_spawn", "debug_label")]
 script = ExtResource("3_rbd4g")
-combat = NodePath("CombatModule")
-dummy_container = NodePath("Dummies")
-stats = ExtResource("2_qohqq")
+player = NodePath("CombatTestPlayer")
+player_spawn = NodePath("PlayerSpawn")
+debug_label = NodePath("DebugLabel")
 
-[node name="CombatModule" type="Node2D" parent="." unique_id=418949023 node_paths=PackedStringArray("melee_attack")]
-position = Vector2(160, 90)
+[node name="CombatTestPlayer" type="CharacterBody2D" parent="." unique_id=427751575 node_paths=PackedStringArray("combat_module", "movement_module")]
+position = Vector2(160, 80)
+script = ExtResource("2_qohqq")
+combat_module = NodePath("Module/CombatModule")
+movement_module = NodePath("Module/MovementModule")
+
+[node name="Sprite2D" type="Sprite2D" parent="CombatTestPlayer" unique_id=2126791749]
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("3_p6c2e")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CombatTestPlayer" unique_id=2007775794]
+
+[node name="Hurtbox" type="Area2D" parent="CombatTestPlayer" unique_id=1996046541]
+script = ExtResource("4_tn4ao")
+metadata/_custom_type_script = "uid://dby4p11qhtin7"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CombatTestPlayer/Hurtbox" unique_id=209328870]
+
+[node name="Module" type="Node2D" parent="CombatTestPlayer" unique_id=257680739]
+
+[node name="MovementModule" type="Node" parent="CombatTestPlayer/Module" unique_id=2047818316 node_paths=PackedStringArray("character")]
+script = ExtResource("4_depyq")
+character = NodePath("../..")
+metadata/_custom_type_script = "uid://w30s7yqi1p3d"
+
+[node name="CombatModule" type="Node2D" parent="CombatTestPlayer/Module" unique_id=418949023 node_paths=PackedStringArray("melee_attack", "projectile_attack", "contact_attack", "charge_attack")]
 script = ExtResource("7_qohqq")
+stats = SubResource("Resource_jvb2d")
 melee_attack = NodePath("MeleeAttackModule")
+projectile_attack = NodePath("ProjectileAttackModule")
+contact_attack = NodePath("ContactAttackModule")
+charge_attack = NodePath("ChargeAttackModule")
 metadata/_custom_type_script = "uid://bb4mbrq1u7pl"
 
-[node name="MeleeAttackModule" type="Node2D" parent="CombatModule" unique_id=465471090]
+[node name="MeleeAttackModule" type="Node2D" parent="CombatTestPlayer/Module/CombatModule" unique_id=465471090]
 script = ExtResource("3_lq0vo")
 metadata/_custom_type_script = "uid://d1yimk3mk35ag"
+
+[node name="ProjectileAttackModule" type="Node2D" parent="CombatTestPlayer/Module/CombatModule" unique_id=1919784478]
+script = ExtResource("7_tn4ao")
+metadata/_custom_type_script = "uid://x10bxi1qicvw"
+
+[node name="ContactAttackModule" type="Node2D" parent="CombatTestPlayer/Module/CombatModule" unique_id=775896549 node_paths=PackedStringArray("hitbox", "owner_hurtbox")]
+script = ExtResource("8_0j4o1")
+hitbox = NodePath("Hitbox")
+owner_hurtbox = NodePath("../../../Hurtbox")
+metadata/_custom_type_script = "uid://cvejhd0v4uma4"
+
+[node name="Hitbox" type="Area2D" parent="CombatTestPlayer/Module/CombatModule/ContactAttackModule" unique_id=682812903]
+script = ExtResource("9_8fuiv")
+metadata/_custom_type_script = "uid://co1s16xd7omkk"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CombatTestPlayer/Module/CombatModule/ContactAttackModule/Hitbox" unique_id=318765651]
+shape = SubResource("RectangleShape2D_jcp4x")
+
+[node name="ChargeAttackModule" type="Node2D" parent="CombatTestPlayer/Module/CombatModule" unique_id=610390810 node_paths=PackedStringArray("hitbox")]
+script = ExtResource("10_g7xgt")
+hitbox = NodePath("Hitbox")
+metadata/_custom_type_script = "uid://cotesmqht2t6j"
+
+[node name="Hitbox" type="Area2D" parent="CombatTestPlayer/Module/CombatModule/ChargeAttackModule" unique_id=1126348464]
+position = Vector2(13, 0)
+script = ExtResource("9_8fuiv")
+metadata/_custom_type_script = "uid://co1s16xd7omkk"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CombatTestPlayer/Module/CombatModule/ChargeAttackModule/Hitbox" unique_id=2085869207]
+shape = SubResource("CapsuleShape2D_tcbmc")
+debug_color = Color(0.93333334, 0.6, 1, 0.44705883)
 
 [node name="Dummies" type="Node2D" parent="." unique_id=1558802149]
 
@@ -200,71 +299,79 @@ metadata/_custom_type_script = "uid://d1yimk3mk35ag"
 
 [node name="Dummy" parent="Dummies/NonInvul" unique_id=325473665 instance=ExtResource("1_gwppr")]
 position = Vector2(69.00003, 85.98491)
-stats = SubResource("Resource_qohqq")
+stats = SubResource("Resource_4r8qm")
 
 [node name="Dummy2" parent="Dummies/NonInvul" unique_id=306738905 instance=ExtResource("1_gwppr")]
 position = Vector2(69.0825, 93.70788)
-stats = SubResource("Resource_bfrcn")
+stats = SubResource("Resource_qohqq")
 
 [node name="Dummy3" parent="Dummies/NonInvul" unique_id=1043095412 instance=ExtResource("1_gwppr")]
 position = Vector2(68.9979, 94.350235)
-stats = SubResource("Resource_1rvjf")
+stats = SubResource("Resource_bfrcn")
 
 [node name="Dummy4" parent="Dummies/NonInvul" unique_id=799420082 instance=ExtResource("1_gwppr")]
 position = Vector2(68.99797, 94.350235)
-stats = SubResource("Resource_h72e5")
+stats = SubResource("Resource_1rvjf")
 
 [node name="Dummy5" parent="Dummies/NonInvul" unique_id=837342492 instance=ExtResource("1_gwppr")]
 position = Vector2(68.99797, 94.350235)
-stats = SubResource("Resource_wbeks")
+stats = SubResource("Resource_h72e5")
 
 [node name="Dummy6" parent="Dummies/NonInvul" unique_id=503751286 instance=ExtResource("1_gwppr")]
 position = Vector2(68.99797, 94.350235)
-stats = SubResource("Resource_w5oj6")
+stats = SubResource("Resource_wbeks")
 
 [node name="Dummy7" parent="Dummies/NonInvul" unique_id=222138037 instance=ExtResource("1_gwppr")]
 position = Vector2(68.99797, 94.350235)
-stats = SubResource("Resource_p6c2e")
+stats = SubResource("Resource_w5oj6")
 
 [node name="Dummy8" parent="Dummies/NonInvul" unique_id=1428631832 instance=ExtResource("1_gwppr")]
 position = Vector2(68.99797, 94.350235)
-stats = SubResource("Resource_depyq")
+stats = SubResource("Resource_p6c2e")
 
 [node name="Dummy9" parent="Dummies/NonInvul" unique_id=1136566114 instance=ExtResource("1_gwppr")]
 position = Vector2(68.99797, 94.350235)
-stats = SubResource("Resource_tn4ao")
+stats = SubResource("Resource_depyq")
 
 [node name="Dummy10" parent="Dummies/NonInvul" unique_id=690299477 instance=ExtResource("1_gwppr")]
 position = Vector2(68.99797, 94.350235)
-stats = SubResource("Resource_0j4o1")
+stats = SubResource("Resource_tn4ao")
 
 [node name="Dummy11" parent="Dummies/NonInvul" unique_id=887256525 instance=ExtResource("1_gwppr")]
 position = Vector2(68.99797, 94.350235)
-stats = SubResource("Resource_8fuiv")
+stats = SubResource("Resource_0j4o1")
 
 [node name="Dummy12" parent="Dummies/NonInvul" unique_id=147312387 instance=ExtResource("1_gwppr")]
 position = Vector2(68.99797, 94.350235)
-stats = SubResource("Resource_g7xgt")
+stats = SubResource("Resource_8fuiv")
 
 [node name="Dummy13" parent="Dummies/NonInvul" unique_id=1260704261 instance=ExtResource("1_gwppr")]
 position = Vector2(68.99797, 94.350235)
-stats = SubResource("Resource_jcp4x")
+stats = SubResource("Resource_g7xgt")
 
 [node name="Dummy14" parent="Dummies/NonInvul" unique_id=238103415 instance=ExtResource("1_gwppr")]
 position = Vector2(68.99797, 94.350235)
-stats = SubResource("Resource_tcbmc")
+stats = SubResource("Resource_jcp4x")
 
 [node name="Dummy15" parent="Dummies/NonInvul" unique_id=1193245695 instance=ExtResource("1_gwppr")]
 position = Vector2(69.00142, 95.23142)
-stats = SubResource("Resource_h5sn3")
+stats = SubResource("Resource_tcbmc")
 
 [node name="Dummy16" parent="Dummies/NonInvul" unique_id=1760809791 instance=ExtResource("1_gwppr")]
 position = Vector2(69.00142, 95.25759)
-stats = SubResource("Resource_n7eg0")
+stats = SubResource("Resource_h5sn3")
 
 [node name="Dummy2" parent="Dummies" unique_id=1726157216 instance=ExtResource("1_gwppr")]
 position = Vector2(235, 86)
-stats = SubResource("Resource_jvb2d")
+stats = SubResource("Resource_n7eg0")
 
 [node name="PlantProps" parent="Dummies" unique_id=117392384 instance=ExtResource("3_4r8qm")]
 position = Vector2(121, 51)
+
+[node name="PlayerSpawn" type="Marker2D" parent="." unique_id=249083965]
+position = Vector2(160, 80)
+
+[node name="DebugLabel" type="Label" parent="." unique_id=900413226]
+offset_right = 40.0
+offset_bottom = 22.0
+theme_override_font_sizes/font_size = 8

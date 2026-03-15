@@ -10,7 +10,7 @@ extends AttackEffect
 # var velocity: Vector2 = Vector2.ZERO
 
 
-func setup(info: AttackInfo) -> void:
+func setup(info: AttackData) -> void:
     super.setup(info)
 
     if hitbox:

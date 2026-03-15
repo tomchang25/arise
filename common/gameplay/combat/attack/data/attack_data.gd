@@ -1,11 +1,15 @@
-class_name AttackInfo
+class_name AttackData
 extends RefCounted
 
-enum DeliveryType { MELEE, PROJECTILE }
+enum DeliveryType { MELEE, PROJECTILE, CONTACT, CHARGE }
 
 var slot: int = -1
 var delivery_type: int = DeliveryType.MELEE
-var effect_scene: PackedScene = null
+
+## The scene to instantiate for fire-and-forget delivery types.
+## Melee expects an AttackEffect, Projectile expects a Projectile scene.
+## Ignored by Contact and Charge — they manage their own hitboxes.
+var attack_scene: PackedScene = null
 
 var base_damage: float = 0.0
 var rolled_damage: float = 0.0

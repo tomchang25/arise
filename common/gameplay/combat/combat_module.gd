@@ -2,27 +2,44 @@ class_name CombatModule
 extends Node2D
 
 @export var stats: Stats
+
+@export_group("Fire Executors")
 @export var melee_attack: MeleeAttackModule
 @export var projectile_attack: ProjectileAttackModule
+
+@export_group("Persistent Executors")
+@export var contact_attack: ContactAttackModule
+@export var charge_attack: ChargeAttackModule
+
+# -------------------------
+# Lifecycle
+# -------------------------
 
 
 func _ready() -> void:
     if not melee_attack:
         melee_attack = find_child("MeleeAttackModule", true, false)
 
-    if not melee_attack:
-        melee_attack = MeleeAttackModule.new()
-        add_child(melee_attack)
-
     if not projectile_attack:
         projectile_attack = find_child("ProjectileAttackModule", true, false)
 
-    if not projectile_attack:
-        projectile_attack = ProjectileAttackModule.new()
-        add_child(projectile_attack)
+    if not contact_attack:
+        contact_attack = find_child("ContactAttackModule", true, false)
+
+    if not charge_attack:
+        charge_attack = find_child("ChargeAttackModule", true, false)
 
 
-func perform_attack(slot: Stats.AttackSlot, target_position: Vector2) -> void:
+# -------------------------
+# Fire-and-forget API
+# -------------------------
+
+
+## Execute a one-shot attack toward target_position.
+## auto_end=true starts the cooldown immediately.
+## Pass auto_end=false and call end_attack(slot) from an animation_finished
+## signal to defer the cooldown until the animation completes.
+func perform_attack(slot: Stats.AttackSlot, target_position: Vector2, auto_end: bool = true) -> void:
     if stats == null:
         push_error("CombatModule: stats is not set")
         return
@@ -31,27 +48,75 @@ func perform_attack(slot: Stats.AttackSlot, target_position: Vector2) -> void:
     if attack_range <= 0.0:
         return
 
-    var origin := global_position
-    var distance := origin.distance_to(target_position)
-
+    var distance := global_position.distance_to(target_position)
     if distance > attack_range + 0.01:
         push_warning("CombatModule: target out of range. (%s > %s)" % [distance, attack_range])
         return
 
-    var info := _build_attack_info(slot, target_position)
-    if info == null:
+    var data := _build_attack_data(slot, target_position)
+    if data == null:
         return
 
-    var executor := _get_executor_for(info.delivery_type)
+    var executor := _get_fire_executor_for(data.delivery_type)
     if executor == null:
-        push_error("CombatModule: no executor for delivery_type %s" % info.delivery_type)
+        push_error("CombatModule: no fire executor for delivery_type %s" % data.delivery_type)
         return
 
     if not executor.can_attack():
         return
 
-    executor.execute_attack(target_position, info)
-    executor.end_attack()
+    executor.execute_attack(target_position, data)
+
+    if auto_end:
+        executor.end_attack()
+
+
+## Start the cooldown for a slot's fire executor.
+## Call this from an animation_finished signal when using auto_end=false.
+func end_attack(slot: Stats.AttackSlot) -> void:
+    var executor := _get_fire_executor_for(_get_delivery_type(slot))
+    if executor:
+        executor.end_attack()
+
+
+# -------------------------
+# Persistent API
+# -------------------------
+
+
+## Enable the persistent hitbox for the given slot.
+## direction is used by ChargeAttackModule to orient the front-face hitbox.
+## Ignored by ContactAttackModule.
+func activate_attack(slot: Stats.AttackSlot, direction: Vector2 = Vector2.RIGHT) -> void:
+    if stats == null:
+        push_error("CombatModule: stats is not set")
+        return
+
+    var data := _build_attack_data(slot, global_position + direction)
+    if data == null:
+        return
+
+    var executor := _get_persistent_executor_for(data.delivery_type)
+    if executor == null:
+        push_error("CombatModule: no persistent executor for delivery_type %s" % data.delivery_type)
+        return
+
+    if executor is ChargeAttackModule:
+        executor.facing_direction = direction
+
+    executor.activate_attack(data)
+
+
+## Disable the persistent hitbox for the given slot.
+func deactivate_attack(slot: Stats.AttackSlot) -> void:
+    var executor := _get_persistent_executor_for(_get_delivery_type(slot))
+    if executor:
+        executor.deactivate_attack()
+
+
+# -------------------------
+# Common API
+# -------------------------
 
 
 func get_attack_range(slot: Stats.AttackSlot) -> float:
@@ -71,64 +136,96 @@ func get_attack_origin() -> Vector2:
     return global_position
 
 
-func _get_executor_for(delivery_type: int) -> AttackModule:
+# -------------------------
+# Internal Helpers
+# -------------------------
+
+
+func _get_delivery_type(slot: Stats.AttackSlot) -> int:
+    if stats == null:
+        return -1
+
+    match slot:
+        Stats.AttackSlot.PRIMARY:
+            return stats.primary_delivery_type
+        Stats.AttackSlot.SECONDARY:
+            return stats.secondary_delivery_type
+        _:
+            return -1
+
+
+func _get_fire_executor_for(delivery_type: int) -> FireAttackModule:
     match delivery_type:
-        AttackInfo.DeliveryType.MELEE:
+        AttackData.DeliveryType.MELEE:
             return melee_attack
-        AttackInfo.DeliveryType.PROJECTILE:
+        AttackData.DeliveryType.PROJECTILE:
             return projectile_attack
         _:
             return null
 
 
-func _build_attack_info(slot: Stats.AttackSlot, target_position: Vector2) -> AttackInfo:
-    var info := AttackInfo.new()
-    info.slot = slot
-    info.source_position = global_position
-    info.target_factions = _build_target_factions()
+func _get_persistent_executor_for(delivery_type: int) -> PersistentAttackModule:
+    match delivery_type:
+        AttackData.DeliveryType.CONTACT:
+            return contact_attack
+        AttackData.DeliveryType.CHARGE:
+            return charge_attack
+        _:
+            return null
+
+
+func _build_attack_data(slot: Stats.AttackSlot, target_position: Vector2) -> AttackData:
+    var data := AttackData.new()
+    data.slot = slot
+    data.source_position = global_position
+    data.target_factions = _build_target_factions()
 
     var damage_multiplier := 1.0
     var damage_variance := 0.0
     var crit_bonus := 0.0
-    var effect_scene: PackedScene = null
+    var attack_scene: PackedScene = null
 
     match slot:
         Stats.AttackSlot.PRIMARY:
-            info.delivery_type = stats.primary_delivery_type
-            effect_scene = stats.primary_effect_scene
+            data.delivery_type = stats.primary_delivery_type
+            attack_scene = stats.primary_attack_scene
             damage_multiplier = stats.primary_damage_multiplier
             damage_variance = stats.primary_damage_variance
             crit_bonus = stats.primary_crit_bonus
-            info.knockback_force = stats.primary_knockback
-            info.attack_lifetime = stats.primary_lifetime
-            info.max_targets = stats.primary_max_targets
+            data.knockback_force = stats.primary_knockback
+            data.attack_lifetime = stats.primary_lifetime
+            data.max_targets = stats.primary_max_targets
 
         Stats.AttackSlot.SECONDARY:
-            info.delivery_type = stats.secondary_delivery_type
-            effect_scene = stats.secondary_effect_scene
+            data.delivery_type = stats.secondary_delivery_type
+            attack_scene = stats.secondary_attack_scene
             damage_multiplier = stats.secondary_damage_multiplier
             damage_variance = stats.secondary_damage_variance
             crit_bonus = stats.secondary_crit_bonus
-            info.knockback_force = stats.secondary_knockback
-            info.attack_lifetime = stats.secondary_lifetime
-            info.max_targets = stats.secondary_max_targets
+            data.knockback_force = stats.secondary_knockback
+            data.attack_lifetime = stats.secondary_lifetime
+            data.max_targets = stats.secondary_max_targets
 
         _:
             push_warning("CombatModule: unsupported attack slot %s" % slot)
             return null
 
-    if effect_scene == null:
-        push_warning("CombatModule: no effect_scene set for slot %s" % slot)
+    # attack_scene is only required for fire-and-forget delivery types.
+    # Contact and Charge manage their own hitboxes — no scene needed.
+    var needs_attack_scene := data.delivery_type == AttackData.DeliveryType.MELEE or data.delivery_type == AttackData.DeliveryType.PROJECTILE
+
+    if needs_attack_scene and attack_scene == null:
+        push_warning("CombatModule: no attack_scene set for slot %s" % slot)
         return null
 
-    info.effect_scene = effect_scene
-    info.base_damage = stats.current_damage * damage_multiplier
-    info.rolled_damage = _roll_damage(info.base_damage, damage_variance)
-    info.is_crit = _roll_crit(stats.current_crit_chance + crit_bonus)
-    info.final_damage = info.rolled_damage
+    data.attack_scene = attack_scene
+    data.base_damage = stats.current_damage * damage_multiplier
+    data.rolled_damage = _roll_damage(data.base_damage, damage_variance)
+    data.is_crit = _roll_crit(stats.current_crit_chance + crit_bonus)
+    data.final_damage = data.rolled_damage
 
-    if info.is_crit:
-        info.final_damage *= stats.current_crit_multiplier
+    if data.is_crit:
+        data.final_damage *= stats.current_crit_multiplier
 
     var dir := target_position - global_position
     if dir.length_squared() <= 0.0001:
@@ -136,9 +233,9 @@ func _build_attack_info(slot: Stats.AttackSlot, target_position: Vector2) -> Att
     else:
         dir = dir.normalized()
 
-    info.knockback_dir = dir
+    data.knockback_dir = dir
 
-    return info
+    return data
 
 
 func _build_target_factions() -> Array:

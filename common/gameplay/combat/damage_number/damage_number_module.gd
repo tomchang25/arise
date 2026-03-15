@@ -46,7 +46,7 @@ func _ready() -> void:
         damage_receiver.damaged.connect(_on_damaged)
 
 
-func _on_damaged(amount: float, _new_health: float, info: AttackInfo) -> void:
+func _on_damaged(amount: float, _new_health: float, info: AttackData) -> void:
     if not enabled:
         return
 
@@ -59,7 +59,7 @@ func _on_damaged(amount: float, _new_health: float, info: AttackInfo) -> void:
     spawn_damage_number(amount, info)
 
 
-func spawn_damage_number(amount: float, info: AttackInfo = null) -> void:
+func spawn_damage_number(amount: float, info: AttackData = null) -> void:
     if not enabled:
         return
 
@@ -127,8 +127,10 @@ func _resolve_spawn_parent() -> Node:
     var tree = get_tree()
 
     if not spawn_group.is_empty():
-        if tree:
-            return tree.get_first_node_in_group(spawn_group)
+        var group_node := tree.get_first_node_in_group(spawn_group)
+
+        if is_instance_valid(group_node):
+            return group_node
 
     if tree:
         return tree.current_scene

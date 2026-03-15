@@ -85,8 +85,8 @@ const BASE_LEVEL_XP_INCREMENT_PER_LEVEL: float = 50.0
         recalculate_stats()
 
 @export_group("Primary Attack")
-@export var primary_delivery_type: AttackInfo.DeliveryType = AttackInfo.DeliveryType.MELEE
-@export var primary_effect_scene: PackedScene = null
+@export var primary_delivery_type: AttackData.DeliveryType = AttackData.DeliveryType.MELEE
+@export var primary_attack_scene: PackedScene = null
 @export var primary_attack_range: float = 30.0:
     set(value):
         primary_attack_range = value
@@ -100,8 +100,8 @@ const BASE_LEVEL_XP_INCREMENT_PER_LEVEL: float = 50.0
 @export var primary_max_targets: int = 1
 
 @export_group("Secondary Attack")
-@export var secondary_delivery_type: AttackInfo.DeliveryType = AttackInfo.DeliveryType.MELEE
-@export var secondary_effect_scene: PackedScene = null
+@export var secondary_delivery_type: AttackData.DeliveryType = AttackData.DeliveryType.MELEE
+@export var secondary_attack_scene: PackedScene = null
 @export var secondary_attack_range: float = 60.0:
     set(value):
         secondary_attack_range = value

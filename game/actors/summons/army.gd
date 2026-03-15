@@ -91,7 +91,7 @@ func _setup_health_component() -> void:
 #     hitbox.damaged.connect(_on_damaged)
 
 
-func _on_damaged(attack_info: AttackInfo) -> void:
+func _on_damaged(attack_info: AttackData) -> void:
     health_component.apply_damage(attack_info)
 
 

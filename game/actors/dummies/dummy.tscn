@@ -421,8 +421,17 @@ metadata/_custom_type_script = "uid://dpi3inldik0ho"
 
 [node name="DamageNumberModule" type="Node" parent="Module" unique_id=2029211950 node_paths=PackedStringArray("damage_receiver")]
 script = ExtResource("8_1y3fw")
+enabled = null
 damage_receiver = NodePath("../DamageReceiverModule")
 damage_number_scene = ExtResource("9_ko0iv")
+spawn_group = null
+height_offset = null
+random_x_offset = null
+minimum_damage_to_show = null
+show_zero_damage = null
+enabled_throttle = null
+max_spawns_per_frame = null
+max_active_numbers = null
 metadata/_custom_type_script = "uid://6jeesy7iltw"
 
 [node name="HitFeedbackModule" type="Node" parent="Module" unique_id=1318286615 node_paths=PackedStringArray("damage_receiver", "movement_module")]

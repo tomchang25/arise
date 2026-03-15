@@ -18,7 +18,7 @@ signal hit_enemy
 var collision_node: CollisionShape2D
 var interval_timer: Timer
 
-var attack_info: AttackInfo:
+var attack_info: AttackData:
     set(value):
         attack_info = value
         if is_inside_tree():

@@ -1,7 +1,18 @@
 class_name EnemyState
 extends State
 
-enum EnemyStateId { NULL = -1, IDLE = 0, WANDER = 1, CHASE = 2, ATTACK = 3, BACK = 4, LEASH_BACK = 5 }
+enum EnemyStateId {
+    NULL = -1,
+    IDLE = 0,
+    WANDER = 1,
+    CHASE = 2,
+    ATTACK = 3,
+    BACK = 4,
+    LEASH_BACK = 5,
+    CHARGE_WINDUP = 6,
+    CHARGE = 7,
+    CHARGE_RECOVERY = 8,
+}
 
 var enemy: Enemy
 

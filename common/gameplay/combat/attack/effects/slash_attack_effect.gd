@@ -20,7 +20,7 @@ extends AttackEffect
 # @export var swing_sfx_window_sec := 0.05
 
 
-func setup(info: AttackInfo) -> void:
+func setup(info: AttackData) -> void:
     super.setup(info)
 
     if hitbox:

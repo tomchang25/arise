@@ -1,9 +1,9 @@
 class_name DamageReceiverModule
 extends Node
 
-signal damaged(amount: float, new_health: float, info: AttackInfo)
-signal blocked(info: AttackInfo)
-signal died(info: AttackInfo)
+signal damaged(amount: float, new_health: float, info: AttackData)
+signal blocked(info: AttackData)
+signal died(info: AttackData)
 
 @export var enabled: bool = true
 @export var stats: Stats
@@ -32,7 +32,7 @@ func _auto_wire() -> void:
             hurtbox.get_hit.connect(_on_hurtbox_hit)
 
 
-func _on_hurtbox_hit(info: AttackInfo) -> void:
+func _on_hurtbox_hit(info: AttackData) -> void:
     if not enabled or not stats or not info:
         push_warning("DamageReceiverModule: _on_hurtbox_hit: invalid arguments")
         return
@@ -53,7 +53,7 @@ func _on_hurtbox_hit(info: AttackInfo) -> void:
         push_warning("DamageReceiverModule: _on_hurtbox_hit: invalid target factions")
         return
 
-    # 2) compute damage (snapshot damage from AttackInfo)
+    # 2) compute damage (snapshot damage from AttackData)
     var raw := info.final_damage
     var final_damage := raw - (stats.current_defense * defense_scaling)
     final_damage = max(final_damage, clamp_min_damage)

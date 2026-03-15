@@ -195,13 +195,13 @@ func _bind_reach_detection() -> void:
 # -------------------------
 
 
-func _on_damaged(_amount: float, _new_health: float, _info: AttackInfo) -> void:
+func _on_damaged(_amount: float, _new_health: float, _info: AttackData) -> void:
     if sprite and sprite.material and stats:
         var ratio := (1.0 - (stats.health / stats.current_max_health)) * 0.5
         sprite.material.set_shader_parameter("overlay_amount", ratio)
 
 
-func _on_died(_info: AttackInfo) -> void:
+func _on_died(_info: AttackData) -> void:
     if loot_drop:
         loot_drop.drop_loot()
     queue_free()

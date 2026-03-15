@@ -1,72 +1,242 @@
+class_name CombatSandbox
 extends Node2D
 
-const KEY_HEAL := KEY_H
-const KEY_RESET := KEY_R
+# -------------------------
+# Actions (auto-registered if missing)
+# -------------------------
 
-@export var combat: CombatModule
-@export var dummy_container: Node
+const ACTION_RESET_ALL := &"test_reset_all"
+const ACTION_HEAL_ALL := &"test_heal_all"
+const ACTION_KILL_GROUP := &"test_kill_group"
+const ACTION_TOGGLE_INVULN := &"test_toggle_invuln"
+const ACTION_CONTACT_ATTACK := &"test_contact_attack"
 
-@export_group("Damage Presets")
-@export var heal_amount := 500.0
+# -------------------------
+# Exports
+# -------------------------
 
-@export var stats: Stats:
-    set(value):
-        stats = value
-        stats.setup_stats()
+@export_group("Scene References")
+@export var player: CombatTestPlayer
+@export var solo_dummy: Dummy
+@export var dummy_group_root: Node2D
+@export var player_spawn: Marker2D
+@export var debug_label: Label
 
-        if is_inside_tree():
-            combat.stats = stats
+@export_group("Dummy Group Spawn")
+@export var dummy_scene: PackedScene
+@export var group_count: int = 6
+@export var group_radius: float = 60.0
+@export var group_center: Marker2D
+
+@export_group("Dummy Stats")
+@export var dummy_max_health: float = 1000.0
+@export var dummy_defense: float = 0.0
+@export var dummy_invuln_time: float = 0.0
+
+# -------------------------
+# Runtime state
+# -------------------------
+
+var _invuln_enabled: bool = false
+var _group_dummies: Array[Dummy] = []
+
+# -------------------------
+# Lifecycle
+# -------------------------
 
 
 func _ready() -> void:
-    if not combat:
-        combat = find_child("CombatModule", true, false) as CombatModule
-
-    stats.setup_stats()
-    combat.stats = stats
+    _ensure_actions()
+    _apply_spawn_positions()
+    _spawn_dummy_group()
+    _apply_dummy_stats()
 
 
 func _process(_delta: float) -> void:
-    var mouse_pos := get_global_mouse_position()
+    _update_debug_label()
 
-    if Input.is_action_pressed("mouse_left"):
-        combat.perform_attack(Stats.AttackSlot.PRIMARY, mouse_pos)
 
-    if Input.is_action_pressed("mouse_right"):
-        combat.perform_attack(Stats.AttackSlot.SECONDARY, mouse_pos)
-
-    if Input.is_key_pressed(KEY_HEAL):
-        _heal_all()
-
-    if Input.is_key_pressed(KEY_RESET):
+func _unhandled_input(event: InputEvent) -> void:
+    if event.is_action_pressed(ACTION_RESET_ALL):
         _reset_all()
+        get_viewport().set_input_as_handled()
+
+    elif event.is_action_pressed(ACTION_HEAL_ALL):
+        _heal_all()
+        get_viewport().set_input_as_handled()
+
+    elif event.is_action_pressed(ACTION_KILL_GROUP):
+        _kill_group()
+        get_viewport().set_input_as_handled()
+
+    elif event.is_action_pressed(ACTION_TOGGLE_INVULN):
+        _toggle_invuln()
+        get_viewport().set_input_as_handled()
 
 
-func _heal_all():
-    if not dummy_container:
+# -------------------------
+# Testbed controls
+# -------------------------
+
+
+func _reset_all() -> void:
+    if player and player_spawn:
+        player.reset_position(player_spawn.global_position)
+
+    _reset_dummy(solo_dummy)
+
+    for dummy in _group_dummies:
+        if is_instance_valid(dummy):
+            dummy.reset_dummy()
+
+
+func _heal_all() -> void:
+    _heal_dummy(solo_dummy)
+
+    for dummy in _group_dummies:
+        if is_instance_valid(dummy):
+            dummy.heal(dummy_max_health)
+
+
+func _kill_group() -> void:
+    for dummy in _group_dummies:
+        if is_instance_valid(dummy) and dummy.stats:
+            dummy.stats.health = 0.0
+
+
+func _toggle_invuln() -> void:
+    _invuln_enabled = not _invuln_enabled
+    var invuln := dummy_invuln_time if not _invuln_enabled else 99999.0
+
+    _set_dummy_invuln(solo_dummy, invuln)
+
+    for dummy in _group_dummies:
+        if is_instance_valid(dummy) and dummy.stats:
+            dummy.stats.invuln_time = invuln
+
+
+# -------------------------
+# Dummy setup
+# -------------------------
+
+
+func _spawn_dummy_group() -> void:
+    if dummy_scene == null or dummy_group_root == null:
         return
 
-    _heal_recursive(dummy_container)
+    _group_dummies.clear()
+
+    var center := group_center.global_position if group_center else dummy_group_root.global_position
+
+    for i in range(group_count):
+        var angle := TAU * i / float(group_count)
+        var offset := Vector2(cos(angle), sin(angle)) * group_radius
+
+        var dummy := dummy_scene.instantiate() as Dummy
+        if dummy == null:
+            push_error("CombatSandbox: dummy_scene does not instantiate to Dummy")
+            continue
+
+        dummy_group_root.add_child(dummy)
+        dummy.global_position = center + offset
+        _group_dummies.append(dummy)
 
 
-func _heal_recursive(node: Node) -> void:
-    for child in node.get_children():
-        if child.has_method("heal"):
-            child.heal(heal_amount)
+func _apply_dummy_stats() -> void:
+    _configure_dummy(solo_dummy)
 
-        _heal_recursive(child)
+    for dummy in _group_dummies:
+        if is_instance_valid(dummy):
+            _configure_dummy(dummy)
 
 
-func _reset_all():
-    if not dummy_container:
+func _configure_dummy(dummy: Dummy) -> void:
+    if dummy == null or dummy.stats == null:
         return
 
-    _reset_recursive(dummy_container)
+    dummy.stats.base_max_health = dummy_max_health
+    dummy.stats.base_defense = dummy_defense
+    dummy.stats.invuln_time = dummy_invuln_time
+    dummy.stats.setup_stats()
+    dummy.stats.health = dummy.stats.current_max_health
 
 
-func _reset_recursive(node: Node) -> void:
-    for child in node.get_children():
-        if child.has_method("reset_dummy"):
-            child.reset_dummy()
+func _apply_spawn_positions() -> void:
+    if player and player_spawn:
+        player.global_position = player_spawn.global_position
 
-        _reset_recursive(child)
+
+func _reset_dummy(dummy: Dummy) -> void:
+    if dummy == null:
+        return
+    dummy.reset_dummy()
+
+
+func _heal_dummy(dummy: Dummy) -> void:
+    if dummy == null:
+        return
+    dummy.heal(dummy_max_health)
+
+
+func _set_dummy_invuln(dummy: Dummy, value: float) -> void:
+    if dummy == null or dummy.stats == null:
+        return
+    dummy.stats.invuln_time = value
+
+
+# -------------------------
+# HUD
+# -------------------------
+
+
+func _update_debug_label() -> void:
+    if debug_label == null:
+        return
+
+    var solo_hp := "—"
+    if solo_dummy and solo_dummy.stats:
+        solo_hp = "%.0f / %.0f" % [solo_dummy.stats.health, solo_dummy.stats.current_max_health]
+
+    var group_alive := _group_dummies.filter(func(d): return is_instance_valid(d) and d.stats and d.stats.health > 0).size()
+
+    debug_label.text = (
+        "\n"
+        . join(
+            [
+                "[R]   Reset all",
+                "[H]   Heal all",
+                "[K]   Kill group",
+                "[I]   Toggle invuln  (%s)" % ("ON" if _invuln_enabled else "off"),
+                "[Q]   Hold — contact attack",
+                "",
+                "LMB   Primary attack",
+                "RMB   Secondary attack",
+                "",
+                "Solo dummy HP:  %s" % solo_hp,
+                "Group alive:    %d / %d" % [group_alive, group_count],
+            ]
+        )
+    )
+
+
+# -------------------------
+# Action registration
+# -------------------------
+
+
+func _ensure_actions() -> void:
+    _ensure_key_action(ACTION_RESET_ALL, KEY_R)
+    _ensure_key_action(ACTION_HEAL_ALL, KEY_H)
+    _ensure_key_action(ACTION_KILL_GROUP, KEY_K)
+    _ensure_key_action(ACTION_TOGGLE_INVULN, KEY_I)
+    _ensure_key_action(ACTION_CONTACT_ATTACK, KEY_Q)
+
+
+func _ensure_key_action(action: StringName, keycode: Key) -> void:
+    if InputMap.has_action(action):
+        return
+
+    InputMap.add_action(action)
+    var event := InputEventKey.new()
+    event.physical_keycode = keycode
+    InputMap.action_add_event(action, event)
