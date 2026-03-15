@@ -28,7 +28,7 @@ func _ready() -> void:
 
 
 # -------------------------
-# Member registry (called by spawner)
+# Member registry (called by SpawnEnemyGroupAction)
 # -------------------------
 
 
@@ -38,7 +38,6 @@ func register_member(enemy: Enemy) -> void:
 
     _members.append(enemy)
 
-    # Listen for death so we can deregister and check depletion
     if enemy.damage_receiver and not enemy.damage_receiver.died.is_connected(_on_member_died.bind(enemy)):
         enemy.damage_receiver.died.connect(_on_member_died.bind(enemy))
 

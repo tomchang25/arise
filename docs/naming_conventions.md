@@ -210,7 +210,49 @@ DetectionModule
 
 ---
 
-# 10. Actor Naming
+# 10. Controller Naming
+
+Standalone runtime nodes that make ongoing decisions follow this pattern:
+
+```
+<feature>_controller.gd
+```
+
+Examples:
+
+```
+encounter_controller.gd
+open_map_encounter_controller.gd
+despawn_controller.gd
+```
+
+Classes use:
+
+```
+<Feature>Controller
+```
+
+Examples:
+
+```
+EncounterController
+OpenMapEncounterController
+DespawnController
+```
+
+Use **Controller** when the node:
+- Has its own lifecycle (starts, ticks, stops)
+- Makes active decisions each frame or in response to events
+- Coordinates one or more systems without being attached to a specific actor
+
+Do **not** use Controller for:
+- Modules attached to actors → use `<Feature>Module`
+- Passive data containers or registries → use a descriptive noun (`SpawnRegistry`, `EventBus`)
+- Global autoloads → use `<Feature>Manager` or a descriptive noun
+
+---
+
+# 11. Actor Naming
 
 Actors use the actor name as the folder name.
 
@@ -230,21 +272,22 @@ player/
 ├ player.tscn
 ├ state/
 ├ data/
-└ assets/
+└ art/
 ```
 
 ---
 
 # Summary
 
-| Type | Style |
-|-----|------|
-| Files | snake_case |
-| Classes | PascalCase |
-| Variables | snake_case |
-| Functions | snake_case |
-| Signals | snake_case |
-| Constants | UPPER_SNAKE_CASE |
-| Enums | PascalCase + UPPER_SNAKE_CASE |
-| Nodes | PascalCase |
-| Modules | `<feature>_module` |
+| Type | Style | Example |
+|---|---|---|
+| Files | snake_case | `movement_module.gd` |
+| Classes | PascalCase | `MovementModule` |
+| Variables | snake_case | `attack_range` |
+| Functions | snake_case | `apply_damage()` |
+| Signals | snake_case | `health_changed` |
+| Constants | UPPER_SNAKE_CASE | `MAX_HEALTH` |
+| Enums | PascalCase + UPPER_SNAKE_CASE | `AttackType.MELEE` |
+| Nodes | PascalCase | `HealthBar` |
+| Modules | `<feature>_module` | `MovementModule` |
+| Controllers | `<feature>_controller` | `EncounterController` |

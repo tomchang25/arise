@@ -2,9 +2,8 @@
 
 [ext_resource type="Script" uid="uid://bmdh4vf3luco6" path="res://game/actors/enemies/enemy.gd" id="1_owdjj"]
 [ext_resource type="Material" uid="uid://4sxc1efucw5k" path="res://common/rendering/shaders/dynamic_color_overlay.tres" id="2_nnul2"]
-[ext_resource type="Script" uid="uid://boqrgdnjxi8n8" path="res://game/actors/enemies/enemy_data.gd" id="2_u2ujg"]
+[ext_resource type="Resource" uid="uid://rq5f7puwasyb" path="res://game/actors/enemies/types/ninja/ninja_red_data.tres" id="2_owdjj"]
 [ext_resource type="Texture2D" uid="uid://c7rvngvjpf2nr" path="res://game/actors/enemies/types/ninja/assets/ninja_red.png" id="3_u2ujg"]
-[ext_resource type="Resource" uid="uid://rcfcludclv0l" path="res://game/actors/enemies/presets/ninja_red_stats.tres" id="3_uqcqm"]
 [ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/gameplay/combat/hurtbox/hurtbox.gd" id="4_uqcqm"]
 [ext_resource type="AnimationLibrary" uid="uid://yx2utmx2c56c" path="res://game/actors/enemies/presets/ninja_animations.res" id="5_5nspd"]
 [ext_resource type="AnimationNodeBlendTree" uid="uid://bkrdvp8xidai6" path="res://game/actors/enemies/presets/ninja_animation_node_blend_tree.tres" id="6_0edjs"]
@@ -35,13 +34,6 @@
 [ext_resource type="Script" uid="uid://og75stne3wma" path="res://game/actors/enemies/state/enemy_back.gd" id="32_ny68v"]
 [ext_resource type="Script" uid="uid://62t58yuad5go" path="res://game/actors/enemies/state/enemy_leash_back.gd" id="33_xl1nx"]
 
-[sub_resource type="Resource" id="Resource_5nspd"]
-resource_local_to_scene = true
-script = ExtResource("2_u2ujg")
-stats = ExtResource("3_uqcqm")
-drop_profile = ExtResource("26_bwxes")
-metadata/_custom_type_script = "uid://boqrgdnjxi8n8"
-
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_lvn57"]
 radius = 2.0
 height = 8.0
@@ -56,20 +48,20 @@ faction = 1
 mana = 100.0
 base_defense = 0.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_ec4te"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_nnul2"]
 radius = 100.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_bmxtr"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_u2ujg"]
 radius = 280.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_ajjfc"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_uqcqm"]
 radius = 100.0
 
 [node name="Ninja_red" type="CharacterBody2D" unique_id=1967515506 node_paths=PackedStringArray("hurtbox", "damage_receiver", "hit_feedback", "damage_number", "health_bar", "combat_module", "aggro_detection", "deaggro_detection", "reach_detection", "movement_module", "navigation_module", "animation_module", "loot_drop", "state_machine") groups=["enemies"]]
 collision_layer = 2
 collision_mask = 2
 script = ExtResource("1_owdjj")
-data = SubResource("Resource_5nspd")
+data = ExtResource("2_owdjj")
 hurtbox = NodePath("Hurtbox")
 damage_receiver = NodePath("Module/DamageReceiverModule")
 hit_feedback = NodePath("Module/HitFeedbackModule")
@@ -138,7 +130,7 @@ monitorable = false
 script = ExtResource("11_qo6mv")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/AggroDetection" unique_id=225246358]
-shape = SubResource("CircleShape2D_ec4te")
+shape = SubResource("CircleShape2D_nnul2")
 debug_color = Color(0, 0.6, 0.1764706, 0.23529412)
 
 [node name="DeaggroDetection" type="Area2D" parent="Module/DetectionPivot" unique_id=204165240]
@@ -148,7 +140,7 @@ script = ExtResource("11_qo6mv")
 radius = 280.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/DeaggroDetection" unique_id=259466445]
-shape = SubResource("CircleShape2D_bmxtr")
+shape = SubResource("CircleShape2D_u2ujg")
 debug_color = Color(0.8627451, 0.23529412, 0.69803923, 0.23921569)
 
 [node name="ReachDetection" type="Area2D" parent="Module/DetectionPivot" unique_id=1588738871]
@@ -157,7 +149,7 @@ monitorable = false
 script = ExtResource("11_qo6mv")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/ReachDetection" unique_id=131652439]
-shape = SubResource("CircleShape2D_ajjfc")
+shape = SubResource("CircleShape2D_uqcqm")
 
 [node name="HealthBar" parent="Module" unique_id=1388357074 instance=ExtResource("12_ux7vx")]
 anchors_preset = 5
@@ -199,7 +191,6 @@ script = ExtResource("23_eq4dg")
 character = NodePath("../..")
 movement = NodePath("../MovementModule")
 navigation_agent = NodePath("NavigationAgent2D")
-arrive_distance = 5.0
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="Module/NavigationModule" unique_id=2033484485]
 target_desired_distance = 5.0

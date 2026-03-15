@@ -2,8 +2,8 @@ class_name PlayerMoveState
 extends State
 
 @export var actor: Player
-@export var walk_speed: float = 100.0
-@export var run_speed: float = 180.0
+@export var walk_speed: float = 180.0
+@export var run_speed: float = 240.0
 @export var idle_grace_time: float = 0.08
 
 var _idle_timer := 0.0

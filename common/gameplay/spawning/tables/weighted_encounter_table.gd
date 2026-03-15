@@ -4,7 +4,7 @@ extends Resource
 @export var entries: Array[WeightedEncounterEntry] = []
 
 
-func pick_encounter(rng: RandomNumberGenerator = null) -> EnemyEncounterProfile:
+func pick_encounter(rng: RandomNumberGenerator = null) -> EncounterProfile:
     if entries.is_empty():
         return null
 

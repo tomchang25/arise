@@ -1,7 +1,8 @@
+@tool
 class_name OpenMapEncounterController
 extends Node2D
 
-signal encounter_spawned(spawned_nodes: Array[Node])
+signal group_spawned(group: EnemyGroup)
 signal spawn_blocked
 signal pacing_tick
 
@@ -13,11 +14,11 @@ signal pacing_tick
 
 @export_group("Dependencies")
 @export var player: Node2D
-@export var spawn_parent: Node
-@export var despawn_manager: StageSpawnDespawnManager
+@export var despawn_controller: DespawnController
 
-@export_group("Spawn")
-@export var spawn_action: SpawnAction
+@export_group("Encounter")
+@export var encounter_controller: EncounterController
+@export var encounter_table: WeightedEncounterTable
 
 @export_group("Pacing")
 @export var auto_start := true
@@ -53,11 +54,9 @@ signal pacing_tick
 @export var draw_debug := false
 
 var _rng := RandomNumberGenerator.new()
-var _spawn_registry := SpawnRegistry.new()
 var _spawn_timer := 0.0
 var _ramp_timer := 0.0
 var _started := false
-var _pending_spawn_count := 0
 
 # -------------------------
 # Lifecycle
@@ -68,6 +67,9 @@ func _ready() -> void:
     _rng.randomize()
     _spawn_timer = initial_spawn_cooldown
     _ramp_timer = target_count_ramp_interval
+
+    if encounter_controller != null:
+        encounter_controller.group_spawned.connect(_on_group_spawned)
 
     if auto_start:
         start()
@@ -84,8 +86,6 @@ func _process(delta: float) -> void:
 
     if player == null:
         return
-
-    _cleanup_tracked_spawned()
 
     if scale_target_count_over_time:
         _tick_target_ramp(delta)
@@ -110,7 +110,7 @@ func _draw() -> void:
     if player == null:
         return
 
-    var local_center := player.global_position
+    var local_center := to_local(player.global_position)
 
     draw_arc(local_center, min_spawn_distance, 0.0, TAU, 64, Color.YELLOW, 2.0)
     draw_arc(local_center, max_spawn_distance, 0.0, TAU, 64, Color.ORANGE, 2.0)
@@ -169,20 +169,18 @@ func force_spawn_once(count: int = 1) -> void:
 
 
 func get_active_count() -> int:
-    _cleanup_tracked_spawned()
-    return _spawn_registry.get_valid_count()
-
-
-func get_pending_count() -> int:
-    return _pending_spawn_count
+    if encounter_controller == null:
+        return 0
+    return encounter_controller.get_active_group_count()
 
 
 func get_total_reserved_count() -> int:
-    return get_active_count() + _pending_spawn_count
+    return get_active_count()
 
 
 func clear_tracked_invalid() -> void:
-    _cleanup_tracked_spawned()
+    if encounter_controller != null:
+        encounter_controller._cleanup_invalid()
 
 
 # -------------------------
@@ -227,12 +225,12 @@ func _can_spawn() -> bool:
         Debug.invalid("OpenMapEncounterController: player is null")
         return false
 
-    if not is_instance_valid(spawn_parent):
-        Debug.invalid("OpenMapEncounterController: spawn_parent is null or freed")
+    if encounter_controller == null:
+        Debug.invalid("OpenMapEncounterController: encounter_controller is null")
         return false
 
-    if spawn_action == null:
-        Debug.invalid("OpenMapEncounterController: spawn_action is null")
+    if encounter_table == null:
+        Debug.invalid("OpenMapEncounterController: encounter_table is null")
         return false
 
     return true
@@ -249,51 +247,32 @@ func _schedule_spawn_batch(count: int) -> int:
             continue
 
         var spawn_position := spawn_position_variant as Vector2
-        _pending_spawn_count += 1
         scheduled_count += 1
-        _spawn_with_warning(spawn_position)
+        _spawn_encounter_at(spawn_position)
 
     return scheduled_count
 
 
-func _spawn_with_warning(spawned_global_position: Vector2) -> void:
-    var ctx := SpawnContext.new()
-    (
-        ctx
-        . setup(
-            spawn_parent,
-            _rng.randi(),
-            self,
-            {
-                "player": player,
-                "spawn_position": spawned_global_position,
-                "controller": self,
-            }
-        )
-    )
+func _spawn_encounter_at(spawn_position: Vector2) -> void:
+    var rng := RandomNumberGenerator.new()
+    rng.seed = _rng.randi()
 
-    var request := SpawnRequest.new()
-    request.setup_warning(spawn_action, spawned_global_position, ctx)
-
-    var result := await request.execute()
-
-    _pending_spawn_count = maxi(_pending_spawn_count - 1, 0)
-
-    if not is_instance_valid(self):
-        return
-
-    if not result.success:
+    var profile := encounter_table.pick_encounter(rng)
+    if profile == null:
         if print_debug_log:
-            print("[OpenMapEncounterController] warning spawn failed: %s" % result.blocked_reason)
+            print("[OpenMapEncounterController] encounter roll returned null")
         return
 
-    if not result.has_node():
-        if print_debug_log:
-            print("[OpenMapEncounterController] spawn result success but node is invalid")
-        return
+    var valid_groups := profile.get_valid_groups()
+    var positions: Array[Vector2] = []
+    for _i in range(valid_groups.size()):
+        positions.append(spawn_position)
 
-    _register_spawn_result(result)
-    encounter_spawned.emit([result.spawned_node])
+    encounter_controller.spawn_encounter(profile, spawn_position, positions)
+
+
+func _on_group_spawned(group: EnemyGroup) -> void:
+    group_spawned.emit(group)
 
 
 func _find_spawn_position() -> Variant:
@@ -331,24 +310,6 @@ func _build_spawn_position_validator() -> SpawnPositionValidator:
     return validator
 
 
-func _register_spawn_result(result: SpawnResult) -> void:
-    if result == null:
-        return
-
-    if not result.has_node():
-        return
-
-    var node := result.spawned_node
-    _spawn_registry.register_node(node)
-
-    if despawn_manager != null:
-        despawn_manager.register_spawned(node)
-
-
-func _cleanup_tracked_spawned() -> void:
-    _spawn_registry.cleanup_invalid()
-
-
 func _tick_target_ramp(delta: float) -> void:
     if target_count_ramp_interval <= 0.0:
         return
@@ -365,5 +326,3 @@ func _stop_runtime_state() -> void:
     _started = false
     _spawn_timer = initial_spawn_cooldown
     _ramp_timer = target_count_ramp_interval
-    _pending_spawn_count = 0
-    _cleanup_tracked_spawned()
