@@ -13,7 +13,6 @@ const ACTION_RESET_PLAYER := "test_reset_player"
 @export var dummy_spawn: Marker2D
 @export var player_spawn: Marker2D
 @export var debug_label: Label
-# @export var loot_world_spawner: LootWorldSpawner
 
 @export_group("Debug")
 @export var print_hotkey_log := true

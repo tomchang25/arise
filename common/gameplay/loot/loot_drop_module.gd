@@ -129,34 +129,12 @@ func drop_loot() -> void:
 
 
 func _build_spawn_context() -> SpawnContext:
-    var parent: Node = null
-
-    if not spawn_parent_group.is_empty():
-        var tree := get_tree()
-        if tree != null:
-            parent = tree.get_first_node_in_group(spawn_parent_group)
-
-    if parent == null:
-        Debug.warn("LootDropModule: group '%s' not found, falling back to current_scene" % spawn_parent_group)
-        var tree := get_tree()
-        if tree != null:
-            parent = tree.current_scene
-
+    var parent := SpawnContext.resolve_spawn_parent(spawn_parent_group, self)
     if parent == null:
         return null
 
     var spawn_ctx := SpawnContext.new()
-    (
-        spawn_ctx
-        . setup(
-            parent,
-            0,
-            owner_node,
-            {
-                "spawn_reason": "loot_drop",
-            }
-        )
-    )
+    spawn_ctx.setup(parent, 0, owner_node, {"spawn_reason": "loot_drop"})
     return spawn_ctx
 
 
@@ -216,7 +194,6 @@ func _spawn_entry(entry: LootDropEntry, amount: int, spawn_ctx: SpawnContext) ->
 
     var spawn_action := SpawnPackedSceneAction.new()
     spawn_action.scene = entry.pickup_scene
-    spawn_action.parent_mode = SpawnAction.ParentMode.CTX_SPAWN_PARENT
     spawn_action.use_anchor_position = true
     spawn_action.use_anchor_rotation = false
     spawn_action.random_rotation = false

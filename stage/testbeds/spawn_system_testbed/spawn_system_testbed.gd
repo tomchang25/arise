@@ -4,7 +4,6 @@ const ACTION_SPAWN_FROM_POINT := "test_spawn_from_point"
 const ACTION_SPAWN_FROM_WARNING_POINT := "test_spawn_from_warning_point"
 const ACTION_SPAWN_FROM_EXECUTOR := "test_spawn_from_executor"
 const ACTION_SPAWN_FROM_WEIGHTED_TABLE := "test_spawn_from_weighted_table"
-const ACTION_ROLL_ENCOUNTER := "test_roll_encounter"
 const ACTION_CLEAR_SPAWNED := "test_clear_spawned"
 const ACTION_RESET_COUNTERS := "test_reset_spawn_counters"
 
@@ -19,7 +18,6 @@ const ACTION_RESET_COUNTERS := "test_reset_spawn_counters"
 @export_group("Spawn Data")
 @export var direct_spawn_scene: PackedScene
 @export var weighted_scene_table: WeightedSceneTable
-@export var encounter_table: WeightedEncounterTable
 
 @export_group("Debug")
 @export var auto_wire_scene_refs := true
@@ -33,7 +31,6 @@ var _spawn_count_point: int = 0
 var _spawn_count_warning: int = 0
 var _spawn_count_executor: int = 0
 var _spawn_count_weighted: int = 0
-var _last_encounter_text := "n/a"
 var _last_mouse_position := Vector2.ZERO
 
 # -------------------------
@@ -47,7 +44,6 @@ func _ready() -> void:
     if auto_wire_scene_refs:
         _auto_wire_scene_refs()
 
-    _wire_spawn_points()
     _update_debug_text()
 
 
@@ -74,11 +70,6 @@ func _unhandled_input(event: InputEvent) -> void:
 
     if event.is_action_pressed(ACTION_SPAWN_FROM_WEIGHTED_TABLE):
         _on_spawn_from_weighted_table_pressed()
-        get_viewport().set_input_as_handled()
-        return
-
-    if event.is_action_pressed(ACTION_ROLL_ENCOUNTER):
-        _on_roll_encounter_pressed()
         get_viewport().set_input_as_handled()
         return
 
@@ -156,7 +147,7 @@ func _on_spawn_from_executor_pressed() -> void:
         }
     )
 
-    var spawned := SpawnExecutor.execute_at_position(action, spawn_position, spawned_root, ctx)
+    var spawned := SpawnExecutor.execute_at_position(action, spawn_position, ctx)
     _apply_spawn_debug(spawned, "executor_%s" % _spawn_count_executor)
 
     _spawn_count_executor += 1
@@ -176,7 +167,6 @@ func _on_spawn_from_weighted_table_pressed() -> void:
 
     var action := SpawnFromWeightedTableAction.new()
     action.table = weighted_scene_table
-    action.parent_mode = SpawnAction.ParentMode.CTX_SPAWN_PARENT
     action.use_anchor_position = true
     action.use_anchor_rotation = false
     action.random_rotation = true
@@ -191,32 +181,6 @@ func _on_spawn_from_weighted_table_pressed() -> void:
 
     if print_hotkey_log:
         Debug.log("Spawn from WeightedSceneTable via SpawnExecutor")
-
-
-func _on_roll_encounter_pressed() -> void:
-    if encounter_table == null:
-        Debug.invalid("encounter_table is null")
-        _last_encounter_text = "encounter_table=null"
-        return
-
-    var ctx := _build_context(default_seed + 4000 + Time.get_ticks_msec(), {})
-
-    var encounter := encounter_table.pick_encounter(ctx.get_rng())
-    if encounter == null:
-        _last_encounter_text = "roll=null"
-    else:
-        _last_encounter_text = (
-            "size=%s-%s radius=%s unit_entries=%s"
-            % [
-                encounter.min_size,
-                encounter.max_size,
-                encounter.spawn_radius,
-                encounter.unit_entries.size(),
-            ]
-        )
-
-    if print_hotkey_log:
-        Debug.log("Roll encounter -> %s" % _last_encounter_text)
 
 
 func _on_clear_spawned_pressed() -> void:
@@ -236,7 +200,6 @@ func _on_reset_counters_pressed() -> void:
     _spawn_count_warning = 0
     _spawn_count_executor = 0
     _spawn_count_weighted = 0
-    _last_encounter_text = "n/a"
 
     if print_hotkey_log:
         Debug.log("Spawn counters reset")
@@ -291,11 +254,6 @@ func _auto_wire_scene_refs() -> void:
         )
 
 
-func _wire_spawn_points() -> void:
-    if spawn_point != null:
-        spawn_point.spawn_parent = spawned_root
-
-
 func _build_direct_action(scatter_radius: float, enable_random_rotation: bool) -> SpawnPackedSceneAction:
     if direct_spawn_scene == null:
         Debug.invalid("direct_spawn_scene is null")
@@ -303,7 +261,6 @@ func _build_direct_action(scatter_radius: float, enable_random_rotation: bool) -
 
     var action := SpawnPackedSceneAction.new()
     action.scene = direct_spawn_scene
-    action.parent_mode = SpawnAction.ParentMode.CTX_SPAWN_PARENT
     action.use_anchor_position = true
     action.use_anchor_rotation = false
     action.random_rotation = enable_random_rotation
@@ -319,16 +276,15 @@ func _build_context(ctx_seed: int, extra_metadata: Dictionary) -> SpawnContext:
 
 func _spawn_from_runtime_warning_point(target_global_position: Vector2, action: SpawnAction, ctx: SpawnContext) -> Node:
     if warning_spawn_point_scene != null:
-        return await SpawnWarningExecutor.execute_at_position(warning_spawn_point_scene, action, target_global_position, spawned_root, ctx)
+        return await SpawnWarningExecutor.execute_at_position(warning_spawn_point_scene, action, target_global_position, ctx)
 
     var runtime_point := _instantiate_runtime_warning_point()
     if runtime_point == null:
         Debug.invalid("warning_spawn_point_scene and warning_spawn_point are both invalid")
         return null
 
-    spawned_root.add_child(runtime_point)
+    ctx.spawn_parent.add_child(runtime_point)
     runtime_point.global_position = target_global_position
-    runtime_point.spawn_parent = spawned_root
     runtime_point.setup(action, ctx)
 
     return await runtime_point.start()
@@ -376,7 +332,6 @@ func _update_debug_text() -> void:
                 "[2] Spawn from Warning flow",
                 "[3] Spawn from Executor (mouse global position)",
                 "[4] Spawn from WeightedSceneTable",
-                "[5] Roll WeightedEncounterTable",
                 "[C] Clear Spawned",
                 "[R] Reset Counters",
                 "",
@@ -386,7 +341,6 @@ func _update_debug_text() -> void:
                 "warning_spawns=%s" % _spawn_count_warning,
                 "executor_spawns=%s" % _spawn_count_executor,
                 "weighted_spawns=%s" % _spawn_count_weighted,
-                "last_encounter=%s" % _last_encounter_text,
             ]
         )
     )
@@ -397,7 +351,6 @@ func _ensure_test_actions() -> void:
     _ensure_key_action(ACTION_SPAWN_FROM_WARNING_POINT, KEY_2)
     _ensure_key_action(ACTION_SPAWN_FROM_EXECUTOR, KEY_3)
     _ensure_key_action(ACTION_SPAWN_FROM_WEIGHTED_TABLE, KEY_4)
-    _ensure_key_action(ACTION_ROLL_ENCOUNTER, KEY_5)
     _ensure_key_action(ACTION_CLEAR_SPAWNED, KEY_C)
     _ensure_key_action(ACTION_RESET_COUNTERS, KEY_R)
 

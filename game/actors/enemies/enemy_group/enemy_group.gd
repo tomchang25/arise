@@ -94,7 +94,7 @@ func is_depleted() -> bool:
 # -------------------------
 
 
-func _on_member_died(_info: AttackInfo, enemy: Enemy) -> void:
+func _on_member_died(_info: AttackData, enemy: Enemy) -> void:
     unregister_member(enemy)
 
 

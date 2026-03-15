@@ -37,8 +37,6 @@ func _ready() -> void:
 
     _spawn_action = SpawnPackedSceneAction.new()
     _spawn_action.scene = damage_number_scene
-    _spawn_action.parent_mode = SpawnAction.ParentMode.GROUP_NAME if not spawn_group.is_empty() else SpawnAction.ParentMode.CTX_SPAWN_PARENT
-    _spawn_action.parent_group = spawn_group
     _spawn_action.use_anchor_position = true
     _spawn_action.use_anchor_rotation = false
 
@@ -66,11 +64,16 @@ func spawn_damage_number(amount: float, info: AttackData = null) -> void:
     if _spawn_action == null:
         return
 
-    var spawn_position := _get_spawn_position()
-    var spawn_parent := _resolve_spawn_parent()
+    var spawn_parent := SpawnContext.resolve_spawn_parent(spawn_group, self)
+    if not is_instance_valid(spawn_parent):
+        push_warning("DamageNumberModule: could not resolve a valid spawn parent.")
+        return
+
+    var ctx := SpawnContext.new()
+    ctx.setup(spawn_parent, 0, self)
 
     var request := SpawnRequest.new()
-    request.setup_direct(_spawn_action, spawn_position, spawn_parent, self)
+    request.setup_direct(_spawn_action, _get_spawn_position(), ctx)
 
     var result := await request.execute()
     if not result.success:
@@ -104,8 +107,8 @@ func _can_spawn_now() -> bool:
     if _spawned_this_frame >= max_spawns_per_frame:
         return false
 
-    var parent := _resolve_spawn_parent()
-    if parent != null and parent.get_child_count() >= max_active_numbers:
+    var spawn_parent := SpawnContext.resolve_spawn_parent(spawn_group, self)
+    if is_instance_valid(spawn_parent) and spawn_parent.get_child_count() >= max_active_numbers:
         return false
 
     return true
@@ -121,21 +124,6 @@ func _sync_frame_counter() -> void:
     if current_frame != _last_spawn_frame:
         _last_spawn_frame = current_frame
         _spawned_this_frame = 0
-
-
-func _resolve_spawn_parent() -> Node:
-    var tree = get_tree()
-
-    if not spawn_group.is_empty():
-        var group_node := tree.get_first_node_in_group(spawn_group)
-
-        if is_instance_valid(group_node):
-            return group_node
-
-    if tree:
-        return tree.current_scene
-
-    return null
 
 
 func _get_spawn_position() -> Vector2:

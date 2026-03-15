@@ -11,7 +11,6 @@
 [ext_resource type="Script" uid="uid://i1ibypyr38xv" path="res://common/gameplay/loot/loot_drop_module.gd" id="6_k88kd"]
 [ext_resource type="Resource" uid="uid://bq584j3uqsyau" path="res://game/actors/enemies/types/slime/data/slime_drop_profile.tres" id="7_15q8n"]
 [ext_resource type="Script" uid="uid://ce4d3x6pliud6" path="res://common/gameplay/pickup_collector/pickup_collector_module.gd" id="8_6me2w"]
-[ext_resource type="Script" uid="uid://c7mn7ck86mw1b" path="res://common/gameplay/loot/loot_world_spawner.gd" id="12_6me2w"]
 [ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="12_4022q"]
 
 [sub_resource type="Resource" id="Resource_csgi8"]
@@ -63,11 +62,10 @@ loot_drop_module = NodePath("LootDropModule")
 [node name="Sprite2D" type="Sprite2D" parent="World/Dummy" unique_id=1569473651]
 texture = ExtResource("3_8nrjs")
 
-[node name="LootDropModule" type="Node" parent="World/Dummy" unique_id=839276780 node_paths=PackedStringArray("owner_node", "spawn_parent")]
+[node name="LootDropModule" type="Node" parent="World/Dummy" unique_id=839276780 node_paths=PackedStringArray("owner_node")]
 script = ExtResource("6_k88kd")
 owner_node = NodePath("..")
 drop_profile = ExtResource("7_15q8n")
-spawn_parent = NodePath("../../PickupsRoot")
 metadata/_custom_type_script = "uid://i1ibypyr38xv"
 
 [node name="Player" type="CharacterBody2D" parent="World" unique_id=1763129613 node_paths=PackedStringArray("pickup_collector_module") groups=["player"]]
@@ -98,11 +96,6 @@ metadata/_custom_type_script = "uid://ce4d3x6pliud6"
 shape = SubResource("CircleShape2D_4022q")
 
 [node name="PickupsRoot" type="Node2D" parent="World" unique_id=386017114]
-
-[node name="LootWorldSpawner" type="Node" parent="World" unique_id=1099653096 node_paths=PackedStringArray("world_root")]
-script = ExtResource("12_6me2w")
-world_root = NodePath("..")
-metadata/_custom_type_script = "uid://c7mn7ck86mw1b"
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1061476745]
 

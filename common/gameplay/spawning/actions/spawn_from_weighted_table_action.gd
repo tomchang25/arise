@@ -3,11 +3,6 @@ extends SpawnAction
 
 @export var table: WeightedSceneTable
 
-@export_group("Parent")
-@export var parent_mode: ParentMode = ParentMode.CTX_SPAWN_PARENT
-@export var parent_path: NodePath
-@export var parent_group: String = ""
-
 @export_group("Transform")
 @export var use_anchor_position: bool = true
 @export var use_anchor_rotation: bool = false
@@ -23,16 +18,16 @@ func execute(anchor: Node2D, ctx: SpawnContext) -> Node:
         Debug.warn("SpawnFromWeightedTableAction: table is null")
         return null
 
-    var rng := ctx.get_rng() if ctx != null else null
-    var picked_scene := table.pick_scene(rng)
+    if ctx == null:
+        Debug.warn("SpawnFromWeightedTableAction: ctx is null")
+        return null
+
+    var picked_scene := table.pick_scene(ctx.get_rng())
     if picked_scene == null:
         return null
 
     var packed_scene_action := SpawnPackedSceneAction.new()
     packed_scene_action.scene = picked_scene
-    packed_scene_action.parent_mode = parent_mode
-    packed_scene_action.parent_path = parent_path
-    packed_scene_action.parent_group = parent_group
     packed_scene_action.use_anchor_position = use_anchor_position
     packed_scene_action.use_anchor_rotation = use_anchor_rotation
     packed_scene_action.random_rotation = random_rotation

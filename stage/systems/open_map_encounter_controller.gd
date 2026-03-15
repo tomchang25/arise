@@ -1,4 +1,3 @@
-@tool
 class_name OpenMapEncounterController
 extends Node2D
 
@@ -228,8 +227,8 @@ func _can_spawn() -> bool:
         Debug.invalid("OpenMapEncounterController: player is null")
         return false
 
-    if spawn_parent == null:
-        Debug.invalid("OpenMapEncounterController: spawn_parent is null")
+    if not is_instance_valid(spawn_parent):
+        Debug.invalid("OpenMapEncounterController: spawn_parent is null or freed")
         return false
 
     if spawn_action == null:
@@ -258,18 +257,23 @@ func _schedule_spawn_batch(count: int) -> int:
 
 
 func _spawn_with_warning(spawned_global_position: Vector2) -> void:
+    var ctx := SpawnContext.new()
+    (
+        ctx
+        . setup(
+            spawn_parent,
+            _rng.randi(),
+            self,
+            {
+                "player": player,
+                "spawn_position": spawned_global_position,
+                "controller": self,
+            }
+        )
+    )
+
     var request := SpawnRequest.new()
-    request.action = spawn_action
-    request.global_position = spawned_global_position
-    request.spawn_parent = spawn_parent
-    request.use_warning_spawn = true
-    request.source_node = self
-    request.rng_seed = _rng.randi()
-    request.metadata = {
-        "player": player,
-        "spawn_position": spawned_global_position,
-        "controller": self,
-    }
+    request.setup_warning(spawn_action, spawned_global_position, ctx)
 
     var result := await request.execute()
 

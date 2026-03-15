@@ -3,11 +3,6 @@ extends SpawnAction
 
 @export var scene: PackedScene
 
-@export_group("Parent")
-@export var parent_mode: ParentMode = ParentMode.CTX_SPAWN_PARENT
-@export var parent_path: NodePath
-@export var parent_group: String = ""
-
 @export_group("Transform")
 @export var use_anchor_position: bool = true
 @export var use_anchor_rotation: bool = false
@@ -27,9 +22,8 @@ func execute(anchor: Node2D, ctx: SpawnContext) -> Node:
         Debug.warn("SpawnPackedSceneAction: anchor is null")
         return null
 
-    var parent := resolve_parent(anchor, ctx, parent_mode, parent_path, parent_group)
-    if parent == null:
-        Debug.warn("SpawnPackedSceneAction: parent is null")
+    if ctx == null or not is_instance_valid(ctx.spawn_parent):
+        Debug.warn("SpawnPackedSceneAction: ctx.spawn_parent is null or freed")
         return null
 
     var instance := scene.instantiate()
@@ -37,11 +31,11 @@ func execute(anchor: Node2D, ctx: SpawnContext) -> Node:
         Debug.warn("SpawnPackedSceneAction: failed to instantiate scene")
         return null
 
-    parent.call_deferred("add_child", instance)
+    ctx.spawn_parent.call_deferred("add_child", instance)
 
     if instance is Node2D:
         var node_2d := instance as Node2D
-        var rng := ctx.get_rng() if ctx != null else null
+        var rng := ctx.get_rng()
 
         var target_position := anchor.global_position
 
@@ -55,17 +49,8 @@ func execute(anchor: Node2D, ctx: SpawnContext) -> Node:
             node_2d.global_position = target_position
 
         if random_rotation:
-            node_2d.global_rotation = _random_rotation(rng)
+            node_2d.global_rotation = rng.randf_range(0.0, TAU)
         elif use_anchor_rotation:
             node_2d.global_rotation = anchor.global_rotation
 
     return instance
-
-
-func _random_rotation(rng: RandomNumberGenerator = null) -> float:
-    if rng != null:
-        return rng.randf_range(0.0, TAU)
-
-    var fallback_rng := RandomNumberGenerator.new()
-    fallback_rng.randomize()
-    return fallback_rng.randf_range(0.0, TAU)

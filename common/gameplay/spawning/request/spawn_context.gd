@@ -1,8 +1,8 @@
 class_name SpawnContext
 extends RefCounted
 
-@export var rng_seed: int = 0
-@export var metadata: Dictionary = {}
+var rng_seed: int = 0
+var metadata: Dictionary = {}
 
 var spawn_parent: Node
 var source_node: Node
@@ -27,3 +27,27 @@ func get_rng() -> RandomNumberGenerator:
             _rng.randomize()
 
     return _rng
+
+
+# Resolves a spawn parent from a group name, falling back to current_scene.
+# Always uses is_instance_valid so freed Object(null) nodes are rejected.
+static func resolve_spawn_parent(spawn_group: String, source: Node = null) -> Node:
+    var tree: SceneTree
+
+    if source != null and is_instance_valid(source):
+        tree = source.get_tree()
+    else:
+        tree = Engine.get_main_loop() as SceneTree
+
+    if tree == null:
+        return null
+
+    if not spawn_group.is_empty():
+        var group_node := tree.get_first_node_in_group(spawn_group)
+
+        if is_instance_valid(group_node):
+            return group_node
+
+        Debug.warn("SpawnContext: spawn_group '%s' not found, falling back to current_scene" % spawn_group)
+
+    return tree.current_scene
