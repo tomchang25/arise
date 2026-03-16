@@ -299,39 +299,9 @@ profile = composition, table = independent roll bucket, entry = base reward row,
 - [ ]  **Difficulty scaling** - scale enemy stats or counts per round
 - [ ]  **Multi-round config** - drive multiple rounds from one resource
 - [ ]  **Boss encounter integration** - dedicated boss round type
-
----
-
-## Open Map Encounter System
-
-### Core Features
-
-- [x]  **OpenMapEncounterController** - runtime controller for open-world encounters
-- [x]  **Weighted encounter tables** - encounter profiles selected randomly
-- [x]  **Pacing rules** - max active encounters, spawn cooldown
-- [x]  **Encounter lifecycle** - tracked from spawn to completion
-- [x]  **Camera-safe placement** - no spawn inside camera view
-- [x]  **Player proximity guard** - minimum spawn distance enforced
-
-### Encounter Control
-
-- [x]  **Active encounter cap** - limit simultaneous encounters
-- [x]  **Completion detection** - encounter removed when enemies defeated
-- [x]  **Spawn gating** - delay when too many active
-- [x]  **Cooldown** - prevent rapid spawn bursts
-
-### Robustness
-
-- [x]  **Validate encounter tables** - empty or invalid tables caught
-- [x]  **Fail-safe cancellation** - invalid spawn positions cancelled cleanly
-
-### Future Features
-
 - [ ]  **Encounter difficulty scaling**
 - [ ]  **Biome-based encounter tables**
-- [ ]  **Player progression modifiers**
-- [ ]  **Dynamic event encounters**
-- [ ]  **Boss encounter controller**
+- [ ]  **Partial kill credit** - if player killed at least one member before group despawns, count as a depleted group (or award fractional credit) rather than silently discarding
 
 ---
 
@@ -357,6 +327,7 @@ profile = composition, table = independent roll bucket, entry = base reward row,
 ### Pending Cleanup
 
 - [ ]  **Cooldown to Stats** - move per-slot cooldown values out of attack module into Stats
+- [ ]  **Whiff / hit SFX split** - slash_audio fires on swing regardless of hit; add on-hit SFX path separate from the swing SFX
 - [ ]  **Primary / secondary separation** - each slot drives its own executor without shared state bleed
 - [ ]  **Attack origin verification** - finalize attack origin placement for all actors
 - [ ]  **Legacy driver retirement** - verify all old attack components removed after migration
@@ -486,22 +457,23 @@ Detection currently collects Hurtbox owners in range. Faction filtering is calle
 
 ---
 
-## Communication Module
+## Alert Module
 
 ### Core Features
 
-- [x]  **CommunicationModule** - exists
-- [x]  **Ally broadcast** - group-based alert propagation
-- [x]  **Range-limited receive** - range filter on incoming alerts
-- [x]  **Owner callback** - optional callback on receive
+- [x]  **FactionAlertModule** - exists at `common/gameplay/ai/`
+- [x]  **Faction group broadcast** - alert_allies() calls tree group by faction_group string
+- [x]  **Range-limited receive** - on_broadcast_received() filters by distance to broadcast origin
+- [x]  **Owner callback** - calls handle_external_target() on owner if method exists
 
 ### Pending
 
-- [ ]  **Replace prototype** - current group broadcast is minimal; replace with final system design
+- [ ]  **Replace prototype** - group string broadcast is fragile; replace with proper faction-aware system
 - [ ]  **Visibility integration** - integrate with shared visibility / target knowledge rules
-- [ ]  **Standardize consumption** - how enemies / armies act on received external targets
+- [ ]  **Standardize consumption** - define how enemies and armies act on received external targets
+- [ ]  **Faction coupling** - faction_group is a raw string; should derive from owner Stats.faction
 
-Communication module is prototype-level. It is not the final system.
+FactionAlertModule is prototype-level. It is not the final system.
 
 ---
 
