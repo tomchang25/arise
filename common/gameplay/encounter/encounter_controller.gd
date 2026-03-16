@@ -39,6 +39,9 @@ var _groups_killed: int = 0
 var _spawn_timer: float = 0.0
 var _rng := RandomNumberGenerator.new()
 
+var _pending_spawns: int = 0
+var _force_kill_pending: bool = false
+
 ## Assign a callable from outside to resolve spawn positions.
 ## Signature: func() -> Variant  (returns Vector2 or null)
 ## Example: encounter_controller.spawn_position_resolver = _find_spawn_position
@@ -100,11 +103,29 @@ func end() -> void:
     _spawn_timer = 0.0
     _groups_to_kill = 0
     _groups_killed = 0
+    _pending_spawns = 0
+    _force_kill_pending = false
     _clear_all_groups()
 
 
 func is_active() -> bool:
     return _state == EncounterState.ROUND_ACTIVE
+
+
+## Force-kills all active groups and any group still under a warning spawn point.
+## Safe to call at any time — does not affect round state or kill counts.
+func force_kill_all() -> void:
+    _cleanup_invalid()
+    for group in _active_groups:
+        group.force_kill()
+    _active_groups.clear()
+
+    # If spawns are mid-warning, mark them so they self-destruct on arrival.
+    if _pending_spawns > 0:
+        _force_kill_pending = true
+
+    if print_debug_log:
+        Debug.log("EncounterController: force_kill_all — active cleared, pending=%s" % _pending_spawns)
 
 
 ## Forces an immediate pacing tick regardless of the spawn timer.
@@ -149,17 +170,18 @@ func _run_pacing_tick() -> void:
 
     var active := _active_groups.size()
 
-    if active >= _config.target_active_groups:
+    if _is_kill_budget_exhausted():
         return
 
-    # Budget exhausted — wait for remaining groups to be killed
-    if _is_kill_budget_exhausted():
+    # Within budget: only spawn if below the concurrent cap.
+    if active >= _config.target_active_groups:
         return
 
     var needed := _config.target_active_groups - active
     var budget_left := _kill_budget_remaining()
     var count := mini(needed, _config.max_spawn_per_tick)
 
+    # In wave mode, never queue more groups than the remaining budget allows.
     if budget_left >= 0:
         count = mini(count, budget_left)
 
@@ -169,13 +191,23 @@ func _run_pacing_tick() -> void:
 
 func _is_kill_budget_exhausted() -> bool:
     if _groups_to_kill < 0:
+        # Endless round — never exhausted.
         return false
-    # Stop spawning once (killed + currently active) reaches the budget
-    return (_groups_killed + _active_groups.size()) >= _groups_to_kill
+    if _config.spawn_beyond_budget:
+        # Extermination mode: keep spawning past the budget so enemies are always
+        # available to kill. Only stop once kills strictly exceed the budget.
+        return _groups_killed >= _groups_to_kill
+    else:
+        # Wave mode: hard stop once (killed + active) reaches the budget.
+        # Player must clear remaining stragglers themselves.
+        return (_groups_killed + _active_groups.size()) >= _groups_to_kill
 
 
 func _kill_budget_remaining() -> int:
     if _groups_to_kill < 0:
+        return -1
+    if _config.spawn_beyond_budget:
+        # Extermination mode: budget is soft — remaining is unbounded.
         return -1
     return _groups_to_kill - (_groups_killed + _active_groups.size())
 
@@ -188,13 +220,18 @@ func _check_round_cleared() -> void:
     if _groups_to_kill < 0:
         return
 
-    # Round clears only when required kills are reached AND no active groups remain
-    if _groups_killed < _groups_to_kill:
+    if not _is_kill_budget_exhausted():
         return
 
-    _cleanup_invalid()
-    if not _active_groups.is_empty():
-        return
+    if _config.spawn_beyond_budget:
+        # Extermination mode: kills exceeded the budget — signal immediately.
+        # Caller decides whether to clean up remaining active groups via force_kill_all().
+        pass
+    else:
+        # Wave mode: budget is reached but player must clear remaining stragglers.
+        _cleanup_invalid()
+        if not _active_groups.is_empty():
+            return
 
     _state = EncounterState.ROUND_CLEARED
     round_cleared.emit()
@@ -231,6 +268,7 @@ func _spawn_group(group_profile: EnemyGroupProfile) -> void:
         Debug.warn("EncounterController: could not resolve spawn position")
         return
 
+    _pending_spawns += 1
     var action := SpawnEnemyGroupAction.new()
     action.profile = group_profile
 
@@ -239,12 +277,21 @@ func _spawn_group(group_profile: EnemyGroupProfile) -> void:
 
     var spawned := await SpawnWarningExecutor.execute_at_position(warning_point_scene, action, position, ctx)
 
+    _pending_spawns -= 1
+
     if not is_instance_valid(self):
         return
 
     var group := spawned as EnemyGroup
     if group == null:
         Debug.warn("EncounterController: warning spawn did not return an EnemyGroup")
+        return
+
+    # A force_kill_all() was called while this spawn was mid-warning — kill on arrival.
+    if _force_kill_pending:
+        group.force_kill()
+        if _pending_spawns == 0:
+            _force_kill_pending = false
         return
 
     _active_groups.append(group)

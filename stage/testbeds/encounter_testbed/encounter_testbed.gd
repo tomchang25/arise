@@ -163,10 +163,14 @@ func _on_round_cleared() -> void:
     if print_hotkey_log:
         Debug.log("Demo: round cleared")
 
-    # Demo just auto-advances. A real run scene would handle objectives/timer here
-    # before calling start_next_round().
-    if encounter_controller != null:
-        encounter_controller.start_next_round()
+    encounter_controller.force_kill_all()
+
+    for i in range(3, 0, -1):
+        if print_hotkey_log:
+            Debug.log("Demo: next round in %d..." % i)
+        await get_tree().create_timer(1.0).timeout
+
+    encounter_controller.start_next_round()
 
 
 # -------------------------

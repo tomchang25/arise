@@ -10,7 +10,6 @@
 [ext_resource type="PackedScene" uid="uid://cssols6rmii6m" path="res://game/actors/enemies/enemy_group/enemy_group.tscn" id="6_4sdgr"]
 [ext_resource type="Script" uid="uid://dqd4tlipj2ii8" path="res://common/gameplay/spawning/tables/enemy_group_profile.gd" id="7_dni14"]
 [ext_resource type="Script" uid="uid://bwm8u3xypysu8" path="res://common/gameplay/despawn/despawn_controller.gd" id="7_nsv7u"]
-[ext_resource type="PackedScene" uid="uid://c3lbfkun8lbca" path="res://game/actors/enemies/types/slime/blue_slime.tscn" id="8_vym0u"]
 [ext_resource type="Script" uid="uid://sgjwmvk38ykj" path="res://common/gameplay/encounter/encounter_group_table.gd" id="9_0d5wg"]
 [ext_resource type="Script" uid="uid://bs5epdft4ockv" path="res://common/gameplay/encounter/encounter_config.gd" id="10_e1d75"]
 [ext_resource type="Script" uid="uid://qonxf7sblp5f" path="res://common/gameplay/encounter/encounter_controller.gd" id="12_nsv7u"]
@@ -37,35 +36,19 @@ metadata/_custom_type_script = "uid://dqd4tlipj2ii8"
 script = ExtResource("2_h2g67")
 group_profile = SubResource("Resource_qx3ah")
 
-[sub_resource type="Resource" id="Resource_jvo6r"]
-script = ExtResource("3_fl0gb")
-scene = ExtResource("8_vym0u")
-min_count = 2
-max_count = 2
-metadata/_custom_type_script = "uid://4agufvpi7c62"
-
-[sub_resource type="Resource" id="Resource_8rba6"]
-script = ExtResource("7_dni14")
-group_scene = ExtResource("6_4sdgr")
-entries = Array[ExtResource("3_fl0gb")]([SubResource("Resource_jvo6r")])
-metadata/_custom_type_script = "uid://dqd4tlipj2ii8"
-
-[sub_resource type="Resource" id="Resource_2omge"]
-script = ExtResource("2_h2g67")
-group_profile = SubResource("Resource_8rba6")
-
 [sub_resource type="Resource" id="Resource_0lof2"]
 script = ExtResource("9_0d5wg")
-entries = Array[ExtResource("2_h2g67")]([SubResource("Resource_65bb3"), SubResource("Resource_2omge")])
+entries = Array[ExtResource("2_h2g67")]([SubResource("Resource_65bb3")])
 
 [sub_resource type="Resource" id="Resource_3gmku"]
 script = ExtResource("10_e1d75")
 group_table = SubResource("Resource_0lof2")
-groups_per_round = 3
-target_active_groups = 2
+groups_per_round = 4
+spawn_beyond_budget = true
+target_active_groups = 10
 max_spawn_per_tick = 4
 
-[node name="Demo" type="Node2D" unique_id=535920825 node_paths=PackedStringArray("player", "player_spawn", "enemies_root", "debug_label", "encounter_controller", "despawn_controller")]
+[node name="EncounterTestbed" type="Node2D" unique_id=535920825 node_paths=PackedStringArray("player", "player_spawn", "enemies_root", "debug_label", "encounter_controller", "despawn_controller")]
 script = ExtResource("1_n5j61")
 player = NodePath("Player")
 player_spawn = NodePath("PlayerSpawn")

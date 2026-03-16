@@ -90,6 +90,15 @@ func is_depleted() -> bool:
     return _living_count <= 0
 
 
+## Immediately frees all living members and this group node.
+## Does not emit group_depleted — use this for forced cleanup, not natural death.
+func force_kill() -> void:
+    for member in get_alive_members():
+        member.queue_free()
+
+    queue_free()
+
+
 # -------------------------
 # Internal
 # -------------------------
