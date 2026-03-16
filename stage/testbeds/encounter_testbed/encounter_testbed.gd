@@ -4,9 +4,10 @@ extends Node2D
 # Hotkeys
 # -------------------------
 
-const ACTION_SPAWN_ENCOUNTER := "test_spawn_encounter"
-const ACTION_CLEAR_GROUPS := "test_clear_groups"
-const ACTION_RESET_PLAYER := "test_reset_player"
+const ACTION_FORCE_SPAWN := "demo_force_spawn"
+const ACTION_CLEAR := "demo_clear"
+const ACTION_RESET_PLAYER := "demo_reset_player"
+const ACTION_TOGGLE := "demo_toggle"
 
 # -------------------------
 # Exports
@@ -18,19 +19,29 @@ const ACTION_RESET_PLAYER := "test_reset_player"
 @export var enemies_root: Node2D
 @export var debug_label: Label
 
-@export_group("Encounter")
-@export var encounter_table: WeightedEncounterTable
+@export_group("Controllers")
 @export var encounter_controller: EncounterController
+@export var despawn_controller: DespawnController
+
+@export_group("Encounter")
+@export var encounter_config: EncounterConfig
 
 @export_group("Spawn Placement")
-@export var spawn_origin: Marker2D
-@export var min_spawn_distance: float = 120.0
-@export var max_spawn_distance: float = 400.0
-@export var placement_attempts: int = 12
+@export var min_spawn_distance := 120.0
+@export var max_spawn_distance := 480.0
+@export var placement_attempts := 12
+@export var use_rect_bounds := true
+@export var world_rect := Rect2(Vector2(-800.0, -800.0), Vector2(1600.0, 1600.0))
+@export var exclude_near_player := true
+@export var player_safe_radius := 160.0
 
 @export_group("Debug")
 @export var auto_wire := true
 @export var print_hotkey_log := true
+
+# -------------------------
+# Internal State
+# -------------------------
 
 var _rng := RandomNumberGenerator.new()
 
@@ -48,9 +59,14 @@ func _ready() -> void:
 
     if encounter_controller != null:
         encounter_controller.group_spawned.connect(_on_group_spawned)
-        encounter_controller.encounter_cleared.connect(_on_encounter_cleared)
+        encounter_controller.round_cleared.connect(_on_round_cleared)
+        encounter_controller.encounter_started.connect(_on_encounter_started)
 
     _update_debug_label()
+
+    if encounter_config != null and encounter_controller != null:
+        encounter_controller.spawn_position_resolver = _find_spawn_position
+        encounter_controller.start(encounter_config)
 
 
 func _process(_delta: float) -> void:
@@ -58,18 +74,23 @@ func _process(_delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-    if event.is_action_pressed(ACTION_SPAWN_ENCOUNTER):
-        _on_spawn_encounter_pressed()
+    if event.is_action_pressed(ACTION_FORCE_SPAWN):
+        _on_force_spawn_pressed()
         get_viewport().set_input_as_handled()
         return
 
-    if event.is_action_pressed(ACTION_CLEAR_GROUPS):
-        _on_clear_groups_pressed()
+    if event.is_action_pressed(ACTION_CLEAR):
+        _on_clear_pressed()
         get_viewport().set_input_as_handled()
         return
 
     if event.is_action_pressed(ACTION_RESET_PLAYER):
         _on_reset_player_pressed()
+        get_viewport().set_input_as_handled()
+        return
+
+    if event.is_action_pressed(ACTION_TOGGLE):
+        _on_toggle_pressed()
         get_viewport().set_input_as_handled()
         return
 
@@ -79,50 +100,44 @@ func _unhandled_input(event: InputEvent) -> void:
 # -------------------------
 
 
-func _on_spawn_encounter_pressed() -> void:
-    if encounter_table == null:
-        Debug.invalid("EncounterTestbed: encounter_table is null")
-        return
-
+func _on_force_spawn_pressed() -> void:
     if encounter_controller == null:
-        Debug.invalid("EncounterTestbed: encounter_controller is null")
         return
-
-    var rng := RandomNumberGenerator.new()
-    rng.seed = _rng.randi()
-
-    var profile := encounter_table.pick_encounter(rng)
-    if profile == null:
-        Debug.warn("EncounterTestbed: encounter roll returned null")
-        return
-
-    var valid_groups := profile.get_valid_groups()
-    var positions: Array[Vector2] = []
-    for _i in range(valid_groups.size()):
-        positions.append(_pick_spawn_position())
-
-    encounter_controller.spawn_encounter(profile, _get_origin(), positions)
+    encounter_controller.force_tick()
 
     if print_hotkey_log:
-        Debug.log("EncounterTestbed: spawning encounter with %s groups" % valid_groups.size())
+        Debug.log("Demo: force spawn")
 
 
-func _on_clear_groups_pressed() -> void:
+func _on_clear_pressed() -> void:
     if encounter_controller != null:
-        encounter_controller.clear_all_groups()
+        encounter_controller.end()
 
     if print_hotkey_log:
-        Debug.log("EncounterTestbed: cleared all groups")
+        Debug.log("Demo: cleared")
 
 
 func _on_reset_player_pressed() -> void:
     if player == null or player_spawn == null:
         return
-
     player.global_position = player_spawn.global_position
 
     if print_hotkey_log:
-        Debug.log("EncounterTestbed: player reset")
+        Debug.log("Demo: player reset")
+
+
+func _on_toggle_pressed() -> void:
+    if encounter_controller == null:
+        return
+
+    if encounter_controller.is_active():
+        encounter_controller.end()
+        if print_hotkey_log:
+            Debug.log("Demo: encounter stopped")
+    else:
+        encounter_controller.start(encounter_config)
+        if print_hotkey_log:
+            Debug.log("Demo: encounter started")
 
 
 # -------------------------
@@ -130,45 +145,64 @@ func _on_reset_player_pressed() -> void:
 # -------------------------
 
 
+func _on_encounter_started() -> void:
+    if print_hotkey_log:
+        Debug.log("Demo: encounter started")
+
+
 func _on_group_spawned(group: EnemyGroup) -> void:
+    # Register with despawn controller as soon as a group lands
+    if despawn_controller != null:
+        despawn_controller.register_spawned(group)
+
     if print_hotkey_log:
-        Debug.log("EncounterTestbed: group spawned — members=%s" % group.get_member_count())
+        Debug.log("Demo: group spawned — members=%s" % group.get_member_count())
 
 
-func _on_encounter_cleared() -> void:
+func _on_round_cleared() -> void:
     if print_hotkey_log:
-        Debug.log("EncounterTestbed: encounter cleared")
+        Debug.log("Demo: round cleared")
+
+    # Demo just auto-advances. A real run scene would handle objectives/timer here
+    # before calling start_next_round().
+    if encounter_controller != null:
+        encounter_controller.start_next_round()
+
+
+# -------------------------
+# Placement
+# -------------------------
+
+
+func _find_spawn_position() -> Variant:
+    if player == null:
+        return null
+
+    var validator := _build_spawn_validator()
+
+    return SpawnPositionFinder.find_position_in_annulus(player.global_position, min_spawn_distance, max_spawn_distance, validator, _rng, placement_attempts)
+
+
+func _build_spawn_validator() -> SpawnPositionValidator:
+    var validator := SpawnPositionValidator.new()
+
+    if is_inside_tree():
+        validator.world_2d = get_world_2d()
+
+    validator.use_play_area_rect = use_rect_bounds
+    validator.play_area_rect = world_rect
+
+    validator.use_excluded_radius = exclude_near_player and player != null and player_safe_radius > 0.0
+    if player != null:
+        validator.excluded_center = player.global_position
+    validator.excluded_radius = player_safe_radius
+
+    return validator
 
 
 # -------------------------
 # Internal Helpers
 # -------------------------
-
-
-func _get_origin() -> Vector2:
-    if spawn_origin != null:
-        return spawn_origin.global_position
-    if player != null:
-        return player.global_position
-    return Vector2.ZERO
-
-
-func _pick_spawn_position() -> Vector2:
-    var origin := _get_origin()
-
-    if player != null:
-        var validator := SpawnPositionValidator.new()
-        if is_inside_tree():
-            validator.world_2d = get_world_2d()
-        validator.use_excluded_radius = true
-        validator.excluded_center = player.global_position
-        validator.excluded_radius = min_spawn_distance
-
-        var found: Variant = SpawnPositionFinder.find_position_in_annulus(origin, min_spawn_distance, max_spawn_distance, validator, _rng, placement_attempts)
-        if found != null:
-            return found as Vector2
-
-    return origin + SpatialRandomUtils.random_point_in_circle(Vector2.ZERO, max_spawn_distance, _rng)
 
 
 func _auto_wire() -> void:
@@ -181,11 +215,11 @@ func _auto_wire() -> void:
     if enemies_root == null:
         enemies_root = get_node_or_null("World/EnemiesRoot") as Node2D
 
-    if spawn_origin == null:
-        spawn_origin = get_node_or_null("World/SpawnOrigin") as Marker2D
-
     if encounter_controller == null:
         encounter_controller = get_node_or_null("World/EncounterController") as EncounterController
+
+    if despawn_controller == null:
+        despawn_controller = get_node_or_null("World/DespawnController") as DespawnController
 
     if debug_label == null:
         debug_label = get_node_or_null("UI/DebugLabel") as Label
@@ -197,29 +231,39 @@ func _update_debug_label() -> void:
 
     var active_groups := 0
     var active_members := 0
+    var groups_killed := 0
+    var groups_to_kill := -1
+
     if encounter_controller != null:
         active_groups = encounter_controller.get_active_group_count()
         active_members = encounter_controller.get_active_member_count()
+        groups_killed = encounter_controller._groups_killed
+        groups_to_kill = encounter_controller._groups_to_kill
+
+    var budget_str := "%s" % groups_to_kill if groups_to_kill >= 0 else "∞"
 
     debug_label.text = (
         "\n"
         . join(
             [
-                "[1] Spawn Encounter",
-                "[C] Clear Groups",
+                "[F] Force Spawn",
+                "[C] Clear",
                 "[R] Reset Player",
+                "[T] Toggle",
                 "",
                 "active_groups=%s" % active_groups,
                 "active_members=%s" % active_members,
+                "killed=%s / budget=%s" % [groups_killed, budget_str],
             ]
         )
     )
 
 
 func _ensure_test_actions() -> void:
-    _ensure_key_action(ACTION_SPAWN_ENCOUNTER, KEY_1)
-    _ensure_key_action(ACTION_CLEAR_GROUPS, KEY_C)
+    _ensure_key_action(ACTION_FORCE_SPAWN, KEY_F)
+    _ensure_key_action(ACTION_CLEAR, KEY_C)
     _ensure_key_action(ACTION_RESET_PLAYER, KEY_R)
+    _ensure_key_action(ACTION_TOGGLE, KEY_T)
 
 
 func _ensure_key_action(action_name: StringName, keycode: Key) -> void:
@@ -227,7 +271,6 @@ func _ensure_key_action(action_name: StringName, keycode: Key) -> void:
         return
 
     InputMap.add_action(action_name)
-
     var input_event := InputEventKey.new()
     input_event.physical_keycode = keycode
     InputMap.action_add_event(action_name, input_event)

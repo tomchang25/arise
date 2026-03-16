@@ -1,8 +1,11 @@
 class_name EnemyGroup
 extends Node2D
 
-## Emitted when the last living member dies.
+## Emitted when every member died via their died signal — player cleared the group.
 signal group_depleted
+
+## Emitted when the group is removed for any other reason — despawn, queue_free, etc.
+signal group_removed
 
 ## Emitted whenever the member list changes (for minimap or UI).
 signal members_changed
@@ -15,6 +18,8 @@ signal members_changed
 var spawn_pivot: Vector2 = Vector2.ZERO
 
 var _members: Array[Enemy] = []
+var _living_count: int = 0
+var _was_depleted: bool = false
 
 # -------------------------
 # Lifecycle
@@ -27,6 +32,12 @@ func _ready() -> void:
     spawn_pivot = global_position
 
 
+func _notification(what: int) -> void:
+    if what == NOTIFICATION_PREDELETE:
+        if not _was_depleted:
+            group_removed.emit()
+
+
 # -------------------------
 # Member registry (called by SpawnEnemyGroupAction)
 # -------------------------
@@ -37,21 +48,12 @@ func register_member(enemy: Enemy) -> void:
         return
 
     _members.append(enemy)
+    _living_count += 1
 
-    if enemy.damage_receiver and not enemy.damage_receiver.died.is_connected(_on_member_died.bind(enemy)):
-        enemy.damage_receiver.died.connect(_on_member_died.bind(enemy))
+    if not enemy.died.is_connected(_on_member_died.bind(enemy)):
+        enemy.died.connect(_on_member_died.bind(enemy))
 
     members_changed.emit()
-
-
-func unregister_member(enemy: Enemy) -> void:
-    var idx := _members.find(enemy)
-    if idx == -1:
-        return
-
-    _members.remove_at(idx)
-    members_changed.emit()
-    _check_depleted()
 
 
 # -------------------------
@@ -81,11 +83,11 @@ func get_alive_members() -> Array[Enemy]:
 
 
 func get_member_count() -> int:
-    return get_alive_members().size()
+    return _living_count
 
 
 func is_depleted() -> bool:
-    return get_alive_members().is_empty()
+    return _living_count <= 0
 
 
 # -------------------------
@@ -94,10 +96,14 @@ func is_depleted() -> bool:
 
 
 func _on_member_died(_info: AttackData, enemy: Enemy) -> void:
-    unregister_member(enemy)
+    var idx := _members.find(enemy)
+    if idx != -1:
+        _members.remove_at(idx)
 
+    _living_count -= 1
+    members_changed.emit()
 
-func _check_depleted() -> void:
-    if is_depleted():
+    if _living_count <= 0:
+        _was_depleted = true
         group_depleted.emit()
         queue_free()

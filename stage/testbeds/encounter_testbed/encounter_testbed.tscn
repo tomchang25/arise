@@ -2,20 +2,78 @@
 
 [ext_resource type="Script" uid="uid://wwdx87yx36ol" path="res://stage/testbeds/encounter_testbed/encounter_testbed.gd" id="1_n5j61"]
 [ext_resource type="TileSet" uid="uid://b41stnir1xvrs" path="res://stage/tilesets/dungeon_tile_set.tres" id="2_di8kp"]
-[ext_resource type="Resource" uid="uid://6r5ylb7tltkb" path="res://stage/systems/test_weighted_encounter_table.tres" id="2_t1lg5"]
+[ext_resource type="Script" uid="uid://bnght76nweh38" path="res://common/gameplay/encounter/encounter_group_entry.gd" id="2_h2g67"]
 [ext_resource type="PackedScene" uid="uid://i0w72n7e6is8" path="res://stage/systems/player_with_camera.tscn" id="3_3sdsp"]
+[ext_resource type="Script" uid="uid://4agufvpi7c62" path="res://common/gameplay/spawning/tables/group_member_entry.gd" id="3_fl0gb"]
+[ext_resource type="PackedScene" uid="uid://31x7n43mme6c" path="res://game/actors/enemies/types/ninja/ninja_red.tscn" id="4_3knaj"]
+[ext_resource type="PackedScene" uid="uid://buchtmrw1gbrr" path="res://game/actors/enemies/types/ninja/ninja_yellow.tscn" id="5_2jjd3"]
+[ext_resource type="PackedScene" uid="uid://cssols6rmii6m" path="res://game/actors/enemies/enemy_group/enemy_group.tscn" id="6_4sdgr"]
+[ext_resource type="Script" uid="uid://dqd4tlipj2ii8" path="res://common/gameplay/spawning/tables/enemy_group_profile.gd" id="7_dni14"]
 [ext_resource type="Script" uid="uid://bwm8u3xypysu8" path="res://common/gameplay/despawn/despawn_controller.gd" id="7_nsv7u"]
+[ext_resource type="PackedScene" uid="uid://c3lbfkun8lbca" path="res://game/actors/enemies/types/slime/blue_slime.tscn" id="8_vym0u"]
+[ext_resource type="Script" uid="uid://sgjwmvk38ykj" path="res://common/gameplay/encounter/encounter_group_table.gd" id="9_0d5wg"]
+[ext_resource type="Script" uid="uid://bs5epdft4ockv" path="res://common/gameplay/encounter/encounter_config.gd" id="10_e1d75"]
 [ext_resource type="Script" uid="uid://qonxf7sblp5f" path="res://common/gameplay/encounter/encounter_controller.gd" id="12_nsv7u"]
 
-[node name="EncounterTestbed" type="Node2D" unique_id=535920825 node_paths=PackedStringArray("player", "player_spawn", "enemies_root", "debug_label", "encounter_controller", "spawn_origin")]
+[sub_resource type="Resource" id="Resource_w1f0a"]
+script = ExtResource("3_fl0gb")
+scene = ExtResource("4_3knaj")
+max_count = 4
+metadata/_custom_type_script = "uid://4agufvpi7c62"
+
+[sub_resource type="Resource" id="Resource_3mdkm"]
+script = ExtResource("3_fl0gb")
+scene = ExtResource("5_2jjd3")
+max_count = 2
+metadata/_custom_type_script = "uid://4agufvpi7c62"
+
+[sub_resource type="Resource" id="Resource_qx3ah"]
+script = ExtResource("7_dni14")
+group_scene = ExtResource("6_4sdgr")
+entries = Array[ExtResource("3_fl0gb")]([SubResource("Resource_w1f0a"), SubResource("Resource_3mdkm")])
+metadata/_custom_type_script = "uid://dqd4tlipj2ii8"
+
+[sub_resource type="Resource" id="Resource_65bb3"]
+script = ExtResource("2_h2g67")
+group_profile = SubResource("Resource_qx3ah")
+
+[sub_resource type="Resource" id="Resource_jvo6r"]
+script = ExtResource("3_fl0gb")
+scene = ExtResource("8_vym0u")
+min_count = 2
+max_count = 2
+metadata/_custom_type_script = "uid://4agufvpi7c62"
+
+[sub_resource type="Resource" id="Resource_8rba6"]
+script = ExtResource("7_dni14")
+group_scene = ExtResource("6_4sdgr")
+entries = Array[ExtResource("3_fl0gb")]([SubResource("Resource_jvo6r")])
+metadata/_custom_type_script = "uid://dqd4tlipj2ii8"
+
+[sub_resource type="Resource" id="Resource_2omge"]
+script = ExtResource("2_h2g67")
+group_profile = SubResource("Resource_8rba6")
+
+[sub_resource type="Resource" id="Resource_0lof2"]
+script = ExtResource("9_0d5wg")
+entries = Array[ExtResource("2_h2g67")]([SubResource("Resource_65bb3"), SubResource("Resource_2omge")])
+
+[sub_resource type="Resource" id="Resource_3gmku"]
+script = ExtResource("10_e1d75")
+group_table = SubResource("Resource_0lof2")
+groups_per_round = 3
+target_active_groups = 2
+max_spawn_per_tick = 4
+
+[node name="Demo" type="Node2D" unique_id=535920825 node_paths=PackedStringArray("player", "player_spawn", "enemies_root", "debug_label", "encounter_controller", "despawn_controller")]
 script = ExtResource("1_n5j61")
 player = NodePath("Player")
 player_spawn = NodePath("PlayerSpawn")
 enemies_root = NodePath("EnemiesRoot")
 debug_label = NodePath("UI/DebugLabel")
-encounter_table = ExtResource("2_t1lg5")
 encounter_controller = NodePath("EncounterController")
-spawn_origin = NodePath("PlayerSpawn")
+despawn_controller = NodePath("DespawnController")
+encounter_config = SubResource("Resource_3gmku")
 
 [node name="Tilemaps" type="Node2D" parent="." unique_id=606999450]
 
@@ -43,30 +101,29 @@ tile_set = ExtResource("2_di8kp")
 [node name="Player" parent="." unique_id=143015393 instance=ExtResource("3_3sdsp")]
 position = Vector2(-2.481, 0)
 
-[node name="PlayerSpawn" type="Marker2D" parent="." unique_id=1259496878]
+[node name="PlayerSpawn" type="Marker2D" parent="." unique_id=1923300736]
 
-[node name="EnemiesRoot" type="Node2D" parent="." unique_id=995698064]
+[node name="EnemiesRoot" type="Node2D" parent="." unique_id=1162309402]
 
-[node name="EncounterController" type="Node" parent="." unique_id=595978499 node_paths=PackedStringArray("enemies_root", "despawn_manager")]
+[node name="EncounterController" type="Node" parent="." unique_id=349715817 node_paths=PackedStringArray("enemies_root")]
 script = ExtResource("12_nsv7u")
 enemies_root = NodePath("../EnemiesRoot")
-despawn_manager = NodePath("../DespawnController")
-print_debug_log = true
 metadata/_custom_type_script = "uid://qonxf7sblp5f"
 
-[node name="DespawnController" type="Node2D" parent="." unique_id=66690167 node_paths=PackedStringArray("tracked_target")]
+[node name="DespawnController" type="Node2D" parent="." unique_id=544527338 node_paths=PackedStringArray("tracked_target")]
 script = ExtResource("7_nsv7u")
 tracked_target = NodePath("../Player")
 draw_debug = true
 metadata/_custom_type_script = "uid://bwm8u3xypysu8"
 
-[node name="VFX" type="Node2D" parent="." unique_id=1892059835 groups=["damage_number"]]
+[node name="VFX" type="Node2D" parent="." unique_id=1853950831 groups=["damage_number", "loot_root"]]
 
-[node name="Pickups" type="Node2D" parent="." unique_id=1499861591 groups=["loot_root"]]
+[node name="Pickups" type="Node2D" parent="." unique_id=1638146363 groups=["loot_root"]]
 
-[node name="UI" type="CanvasLayer" parent="." unique_id=1569385614]
+[node name="UI" type="CanvasLayer" parent="." unique_id=450744058]
 
-[node name="DebugLabel" type="Label" parent="UI" unique_id=420336616]
+[node name="DebugLabel" type="Label" parent="UI" unique_id=2106146148]
 offset_right = 40.0
 offset_bottom = 22.0
 theme_override_font_sizes/font_size = 6
+metadata/_edit_use_anchors_ = true

@@ -5,9 +5,9 @@ extends Node2D
 # -------------------------
 
 const ACTION_FORCE_SPAWN := "demo_force_spawn"
-const ACTION_CLEAR_GROUPS := "demo_clear_groups"
+const ACTION_CLEAR := "demo_clear"
 const ACTION_RESET_PLAYER := "demo_reset_player"
-const ACTION_TOGGLE_SPAWN := "demo_toggle_spawn"
+const ACTION_TOGGLE := "demo_toggle"
 
 # -------------------------
 # Exports
@@ -24,25 +24,14 @@ const ACTION_TOGGLE_SPAWN := "demo_toggle_spawn"
 @export var despawn_controller: DespawnController
 
 @export_group("Encounter")
-@export var encounter_table: WeightedEncounterTable
-
-@export_group("Pacing")
-@export var auto_start := true
-@export var target_active_count := 10
-@export var max_active_count := 20
-@export var max_spawn_per_tick := 4
-@export var spawn_interval := 1.5
-@export var initial_spawn_cooldown := 0.25
-@export var respawn_when_below_target := true
+@export var encounter_config: EncounterConfig
 
 @export_group("Spawn Placement")
 @export var min_spawn_distance := 120.0
 @export var max_spawn_distance := 480.0
-@export var placement_attempts_per_enemy := 12
+@export var placement_attempts := 12
 @export var use_rect_bounds := true
 @export var world_rect := Rect2(Vector2(-800.0, -800.0), Vector2(1600.0, 1600.0))
-
-@export_group("Player Exclusion")
 @export var exclude_near_player := true
 @export var player_safe_radius := 160.0
 
@@ -55,8 +44,6 @@ const ACTION_TOGGLE_SPAWN := "demo_toggle_spawn"
 # -------------------------
 
 var _rng := RandomNumberGenerator.new()
-var _spawn_timer := 0.0
-var _started := false
 
 # -------------------------
 # Lifecycle
@@ -65,8 +52,6 @@ var _started := false
 
 func _ready() -> void:
     _rng.randomize()
-    _spawn_timer = initial_spawn_cooldown
-
     _ensure_test_actions()
 
     if auto_wire:
@@ -74,16 +59,17 @@ func _ready() -> void:
 
     if encounter_controller != null:
         encounter_controller.group_spawned.connect(_on_group_spawned)
-        encounter_controller.encounter_cleared.connect(_on_encounter_cleared)
-
-    if auto_start:
-        _started = true
+        encounter_controller.round_cleared.connect(_on_round_cleared)
+        encounter_controller.encounter_started.connect(_on_encounter_started)
 
     _update_debug_label()
 
+    if encounter_config != null and encounter_controller != null:
+        encounter_controller.spawn_position_resolver = _find_spawn_position
+        encounter_controller.start(encounter_config)
 
-func _process(delta: float) -> void:
-    _tick_spawning(delta)
+
+func _process(_delta: float) -> void:
     _update_debug_label()
 
 
@@ -93,8 +79,8 @@ func _unhandled_input(event: InputEvent) -> void:
         get_viewport().set_input_as_handled()
         return
 
-    if event.is_action_pressed(ACTION_CLEAR_GROUPS):
-        _on_clear_groups_pressed()
+    if event.is_action_pressed(ACTION_CLEAR):
+        _on_clear_pressed()
         get_viewport().set_input_as_handled()
         return
 
@@ -103,8 +89,8 @@ func _unhandled_input(event: InputEvent) -> void:
         get_viewport().set_input_as_handled()
         return
 
-    if event.is_action_pressed(ACTION_TOGGLE_SPAWN):
-        _on_toggle_spawn_pressed()
+    if event.is_action_pressed(ACTION_TOGGLE):
+        _on_toggle_pressed()
         get_viewport().set_input_as_handled()
         return
 
@@ -115,35 +101,43 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _on_force_spawn_pressed() -> void:
-    _run_pacing_tick(true)
+    if encounter_controller == null:
+        return
+    encounter_controller.force_tick()
 
     if print_hotkey_log:
-        Debug.log("Demo: force spawn triggered")
+        Debug.log("Demo: force spawn")
 
 
-func _on_clear_groups_pressed() -> void:
+func _on_clear_pressed() -> void:
     if encounter_controller != null:
-        encounter_controller.clear_all_groups()
+        encounter_controller.end()
 
     if print_hotkey_log:
-        Debug.log("Demo: cleared all groups")
+        Debug.log("Demo: cleared")
 
 
 func _on_reset_player_pressed() -> void:
     if player == null or player_spawn == null:
         return
-
     player.global_position = player_spawn.global_position
 
     if print_hotkey_log:
         Debug.log("Demo: player reset")
 
 
-func _on_toggle_spawn_pressed() -> void:
-    _started = not _started
+func _on_toggle_pressed() -> void:
+    if encounter_controller == null:
+        return
 
-    if print_hotkey_log:
-        Debug.log("Demo: spawning %s" % ("started" if _started else "stopped"))
+    if encounter_controller.is_active():
+        encounter_controller.end()
+        if print_hotkey_log:
+            Debug.log("Demo: encounter stopped")
+    else:
+        encounter_controller.start(encounter_config)
+        if print_hotkey_log:
+            Debug.log("Demo: encounter started")
 
 
 # -------------------------
@@ -151,80 +145,28 @@ func _on_toggle_spawn_pressed() -> void:
 # -------------------------
 
 
+func _on_encounter_started() -> void:
+    if print_hotkey_log:
+        Debug.log("Demo: encounter started")
+
+
 func _on_group_spawned(group: EnemyGroup) -> void:
+    # Register with despawn controller as soon as a group lands
+    if despawn_controller != null:
+        despawn_controller.register_spawned(group)
+
     if print_hotkey_log:
         Debug.log("Demo: group spawned — members=%s" % group.get_member_count())
 
 
-func _on_encounter_cleared() -> void:
+func _on_round_cleared() -> void:
     if print_hotkey_log:
-        Debug.log("Demo: encounter cleared")
+        Debug.log("Demo: round cleared")
 
-
-# -------------------------
-# Pacing
-# -------------------------
-
-
-func _tick_spawning(delta: float) -> void:
-    if not _started or player == null:
-        return
-
-    _spawn_timer -= delta
-    if _spawn_timer > 0.0:
-        return
-
-    _spawn_timer = maxf(spawn_interval, 0.01)
-    _run_pacing_tick(false)
-
-
-func _run_pacing_tick(force: bool) -> void:
-    if not _can_spawn():
-        return
-
-    var active_count := _get_active_count()
-
-    if not force:
-        if not respawn_when_below_target:
-            return
-        if active_count >= max_active_count:
-            return
-        if active_count >= target_active_count:
-            return
-
-    var needed := target_active_count - active_count
-    var allowed := max_active_count - active_count
-    var spawn_count := mini(mini(needed, allowed), max_spawn_per_tick)
-
-    if force:
-        spawn_count = max_spawn_per_tick
-
-    if spawn_count <= 0:
-        return
-
-    _schedule_spawn_batch(spawn_count)
-
-
-func _can_spawn() -> bool:
-    if player == null:
-        Debug.invalid("Demo: player is null")
-        return false
-
-    if encounter_controller == null:
-        Debug.invalid("Demo: encounter_controller is null")
-        return false
-
-    if encounter_table == null:
-        Debug.invalid("Demo: encounter_table is null")
-        return false
-
-    return true
-
-
-func _get_active_count() -> int:
-    if encounter_controller == null:
-        return 0
-    return encounter_controller.get_active_group_count()
+    # Demo just auto-advances. A real run scene would handle objectives/timer here
+    # before calling start_next_round().
+    if encounter_controller != null:
+        encounter_controller.start_next_round()
 
 
 # -------------------------
@@ -232,47 +174,16 @@ func _get_active_count() -> int:
 # -------------------------
 
 
-func _schedule_spawn_batch(count: int) -> void:
-    for _i in range(count):
-        var spawn_pos_variant: Variant = _find_spawn_position()
-        if spawn_pos_variant == null:
-            if print_hotkey_log:
-                Debug.log("Demo: failed to find spawn position")
-            continue
-
-        _spawn_encounter_at(spawn_pos_variant as Vector2)
-
-
-func _spawn_encounter_at(spawn_position: Vector2) -> void:
-    var rng := RandomNumberGenerator.new()
-    rng.seed = _rng.randi()
-
-    var profile := encounter_table.pick_encounter(rng)
-    if profile == null:
-        if print_hotkey_log:
-            Debug.log("Demo: encounter roll returned null")
-        return
-
-    var valid_groups := profile.get_valid_groups()
-    var positions: Array[Vector2] = []
-    for _i in range(valid_groups.size()):
-        positions.append(spawn_position)
-
-    encounter_controller.spawn_encounter(profile, spawn_position, positions)
-
-
 func _find_spawn_position() -> Variant:
     if player == null:
         return null
 
-    var validator := _build_spawn_position_validator()
+    var validator := _build_spawn_validator()
 
-    return SpawnPositionFinder.find_position_in_annulus(
-        player.global_position, min_spawn_distance, max_spawn_distance, validator, _rng, placement_attempts_per_enemy
-    )
+    return SpawnPositionFinder.find_position_in_annulus(player.global_position, min_spawn_distance, max_spawn_distance, validator, _rng, placement_attempts)
 
 
-func _build_spawn_position_validator() -> SpawnPositionValidator:
+func _build_spawn_validator() -> SpawnPositionValidator:
     var validator := SpawnPositionValidator.new()
 
     if is_inside_tree():
@@ -320,23 +231,29 @@ func _update_debug_label() -> void:
 
     var active_groups := 0
     var active_members := 0
+    var groups_killed := 0
+    var groups_to_kill := -1
+
     if encounter_controller != null:
         active_groups = encounter_controller.get_active_group_count()
         active_members = encounter_controller.get_active_member_count()
+        groups_killed = encounter_controller._groups_killed
+        groups_to_kill = encounter_controller._groups_to_kill
+
+    var budget_str := "%s" % groups_to_kill if groups_to_kill >= 0 else "∞"
 
     debug_label.text = (
         "\n"
         . join(
             [
                 "[F] Force Spawn",
-                "[C] Clear Groups",
+                "[C] Clear",
                 "[R] Reset Player",
-                "[T] Toggle Spawning",
+                "[T] Toggle",
                 "",
-                "spawning=%s" % ("on" if _started else "off"),
                 "active_groups=%s" % active_groups,
                 "active_members=%s" % active_members,
-                "active=%s / target=%s" % [active_groups, target_active_count],
+                "killed=%s / budget=%s" % [groups_killed, budget_str],
             ]
         )
     )
@@ -344,9 +261,9 @@ func _update_debug_label() -> void:
 
 func _ensure_test_actions() -> void:
     _ensure_key_action(ACTION_FORCE_SPAWN, KEY_F)
-    _ensure_key_action(ACTION_CLEAR_GROUPS, KEY_C)
+    _ensure_key_action(ACTION_CLEAR, KEY_C)
     _ensure_key_action(ACTION_RESET_PLAYER, KEY_R)
-    _ensure_key_action(ACTION_TOGGLE_SPAWN, KEY_T)
+    _ensure_key_action(ACTION_TOGGLE, KEY_T)
 
 
 func _ensure_key_action(action_name: StringName, keycode: Key) -> void:
@@ -354,7 +271,6 @@ func _ensure_key_action(action_name: StringName, keycode: Key) -> void:
         return
 
     InputMap.add_action(action_name)
-
     var input_event := InputEventKey.new()
     input_event.physical_keycode = keycode
     InputMap.action_add_event(action_name, input_event)

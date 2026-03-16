@@ -3,6 +3,7 @@ class_name Enemy
 extends CharacterBody2D
 
 signal navigation_finished
+signal died(info: AttackData)
 
 # -------------------------
 # Exports
@@ -201,7 +202,8 @@ func _on_damaged(_amount: float, _new_health: float, _info: AttackData) -> void:
         sprite.material.set_shader_parameter("overlay_amount", ratio)
 
 
-func _on_died(_info: AttackData) -> void:
+func _on_died(info: AttackData) -> void:
+    died.emit(info)
     if loot_drop:
         loot_drop.drop_loot()
     queue_free()
