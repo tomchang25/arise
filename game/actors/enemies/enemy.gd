@@ -251,11 +251,6 @@ func perform_attack(target_pos: Vector2) -> void:
     if combat_module == null:
         return
 
-    var origin := reach_detection.global_position if reach_detection else global_position
-    var attack_range := combat_module.get_attack_range(Stats.AttackSlot.PRIMARY)
-    if origin.distance_to(target_pos) > attack_range:
-        return
-
     combat_module.perform_attack(Stats.AttackSlot.PRIMARY, target_pos)
 
 

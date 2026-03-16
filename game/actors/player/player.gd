@@ -76,7 +76,6 @@ const ANIM_ATTACK: StringName = &"Attack"
 
 var stats: Stats
 
-var _attack_requested := false
 var _dodge_requested := false
 
 # -------------------------
@@ -110,9 +109,7 @@ func _draw() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-    if event.is_action_pressed("attack"):
-        _attack_requested = true
-    elif event.is_action_pressed("dodge"):
+    if event.is_action_pressed("dodge"):
         _dodge_requested = true
 
 
@@ -344,9 +341,7 @@ func is_run_pressed() -> bool:
 
 
 func consume_attack_request() -> bool:
-    var requested := _attack_requested
-    _attack_requested = false
-    return requested
+    return Input.is_action_pressed("attack")
 
 
 func consume_dodge_request() -> bool:
@@ -430,10 +425,7 @@ func get_attack_origin() -> Vector2:
 func perform_attack(target_pos: Vector2, slot: Stats.AttackSlot = Stats.AttackSlot.PRIMARY) -> void:
     if combat_module == null:
         return
-    var origin := reach_detection.global_position if reach_detection else global_position
-    var atk_range := combat_module.get_attack_range(slot)
-    if atk_range > 0.0 and origin.distance_to(target_pos) > atk_range:
-        return
+
     combat_module.perform_attack(slot, target_pos)
 
 

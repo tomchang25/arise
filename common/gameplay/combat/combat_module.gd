@@ -50,8 +50,10 @@ func perform_attack(slot: Stats.AttackSlot, target_position: Vector2, auto_end: 
 
     var distance := global_position.distance_to(target_position)
     if distance > attack_range + 0.01:
-        push_warning("CombatModule: target out of range. (%s > %s)" % [distance, attack_range])
-        return
+        Debug.warn("CombatModule: target out of range. (%s > %s)" % [distance, attack_range])
+
+        var dir := (target_position - global_position).normalized()
+        target_position = global_position + dir * attack_range
 
     var data := _build_attack_data(slot, target_position)
     if data == null:
