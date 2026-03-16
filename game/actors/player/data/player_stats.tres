@@ -6,12 +6,13 @@
 
 [resource]
 script = ExtResource("2_87lid")
-mana = 100.0
+health = 50.0
 weapon_damage = 100.0
 primary_attack_scene = ExtResource("1_pcc23")
 primary_attack_range = 50.0
 primary_damage_multiplier = 1.8
 primary_knockback = 100.0
+primary_max_targets = -1
 secondary_delivery_type = 1
 secondary_attack_scene = ExtResource("3_87lid")
 secondary_attack_range = 100.0

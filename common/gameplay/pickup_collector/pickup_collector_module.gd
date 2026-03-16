@@ -6,6 +6,8 @@ signal pickup_entered(pickup: BasePickup)
 signal pickup_exited(pickup: BasePickup)
 signal pickup_collected(pickup: BasePickup)
 
+const PICKUP_MASK := 1 << 31
+
 @export var enabled := true:
     set(value):
         enabled = value
@@ -34,6 +36,11 @@ var _pickups_in_range: Array[BasePickup] = []
 # -------------------------
 # Lifecycle
 # -------------------------
+
+
+func _init() -> void:
+    collision_layer = 0
+    collision_mask = PICKUP_MASK
 
 
 func _ready() -> void:
@@ -352,7 +359,7 @@ func _stop_runtime_state() -> void:
 func _on_area_entered(area: Area2D) -> void:
     if not enabled:
         return
-    Debug.debug("pickup_entered: %s" % [area.name])
+
     if area is BasePickup:
         _add_pickup(area)
 

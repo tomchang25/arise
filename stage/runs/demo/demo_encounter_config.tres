@@ -1,0 +1,173 @@
+[gd_resource type="Resource" script_class="EncounterConfig" format=3 uid="uid://bh3bhwgvnoheu"]
+
+[ext_resource type="Script" uid="uid://bnght76nweh38" path="res://common/gameplay/encounter/encounter_group_entry.gd" id="1_l6dtp"]
+[ext_resource type="Script" uid="uid://4agufvpi7c62" path="res://common/gameplay/spawning/tables/group_member_entry.gd" id="2_hkh4f"]
+[ext_resource type="Script" uid="uid://bmdh4vf3luco6" path="res://game/actors/enemies/enemy.gd" id="3_inpjd"]
+[ext_resource type="Resource" uid="uid://rq5f7puwasyb" path="res://game/actors/enemies/types/ninja/ninja_red_data.tres" id="4_rokny"]
+[ext_resource type="Material" uid="uid://4sxc1efucw5k" path="res://common/rendering/shaders/dynamic_color_overlay.tres" id="5_stvld"]
+[ext_resource type="Texture2D" uid="uid://c7rvngvjpf2nr" path="res://game/actors/enemies/types/ninja/assets/ninja_red.png" id="6_fy2km"]
+[ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/gameplay/combat/hurtbox/hurtbox.gd" id="7_fj5wn"]
+[ext_resource type="AnimationLibrary" uid="uid://yx2utmx2c56c" path="res://game/actors/enemies/presets/ninja_animations.res" id="8_paih3"]
+[ext_resource type="AnimationNodeBlendTree" uid="uid://bkrdvp8xidai6" path="res://game/actors/enemies/presets/ninja_animation_node_blend_tree.tres" id="9_o4g5n"]
+[ext_resource type="Script" uid="uid://bb4mbrq1u7pl" path="res://common/gameplay/combat/combat_module.gd" id="10_t3ofc"]
+[ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="11_ke0po"]
+[ext_resource type="Script" uid="uid://d1yimk3mk35ag" path="res://common/gameplay/combat/attack/melee_attack_module.gd" id="12_rx6l5"]
+[ext_resource type="Script" uid="uid://hyy86fs5b0fs" path="res://common/gameplay/detection/detection_module.gd" id="13_g41u5"]
+[ext_resource type="PackedScene" uid="uid://d0tswwb1d3smv" path="res://common/gameplay/health_bar/health_bar.tscn" id="14_crvgy"]
+[ext_resource type="Script" uid="uid://dpi3inldik0ho" path="res://common/gameplay/combat/damage_receiver/damage_receiver_module.gd" id="15_57jbl"]
+[ext_resource type="Script" uid="uid://duxq84e027el0" path="res://common/gameplay/combat/hit_feedback/hit_feedback_module.gd" id="16_wnpbr"]
+[ext_resource type="PackedScene" uid="uid://c5uu71l3jwxu6" path="res://common/rendering/vfx/one_shot_hit_particles.tscn" id="17_lvkr2"]
+[ext_resource type="PackedScene" uid="uid://duohq0xpsyv1" path="res://common/rendering/vfx/explosion.tscn" id="18_62785"]
+[ext_resource type="Resource" uid="uid://vp7463hsmyw0" path="res://common/audio/presets/sfx/default_damaged_audio.tres" id="19_gi42y"]
+[ext_resource type="Resource" uid="uid://xsccf58mw7d5" path="res://common/audio/presets/sfx/default_blocked_audio.tres" id="20_h42l1"]
+[ext_resource type="Resource" uid="uid://csppceje2neh5" path="res://common/audio/presets/sfx/default_died_audio.tres" id="21_4vgxe"]
+[ext_resource type="Script" uid="uid://6jeesy7iltw" path="res://common/gameplay/combat/damage_number/damage_number_module.gd" id="22_vc7q2"]
+[ext_resource type="PackedScene" uid="uid://qhqm7usjk4s4" path="res://common/gameplay/combat/damage_number/damage_number.tscn" id="23_0qr81"]
+[ext_resource type="Script" uid="uid://w30s7yqi1p3d" path="res://common/gameplay/movement/movement_module.gd" id="24_y1ipo"]
+[ext_resource type="Script" uid="uid://ds7jcv6cdv02p" path="res://common/gameplay/navigation/navigation_module.gd" id="25_pgg8n"]
+[ext_resource type="Script" uid="uid://dldqypakv40re" path="res://common/gameplay/animation/animation_module.gd" id="26_qgiu3"]
+[ext_resource type="Script" uid="uid://i1ibypyr38xv" path="res://common/gameplay/loot/loot_drop_module.gd" id="27_jltph"]
+[ext_resource type="Resource" uid="uid://bq584j3uqsyau" path="res://game/actors/enemies/types/slime/data/slime_drop_profile.tres" id="28_a7pfh"]
+[ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/framework/state_machine/state_machine.gd" id="29_bfn5s"]
+[ext_resource type="Script" uid="uid://ixpqntb22d76" path="res://game/actors/enemies/state/enemy_idle.gd" id="30_kr1xs"]
+[ext_resource type="Script" uid="uid://v0ips7afnj6" path="res://game/actors/enemies/state/enemy_wander.gd" id="31_d767n"]
+[ext_resource type="Script" uid="uid://btduv83t3tnr" path="res://game/actors/enemies/state/enemy_chase.gd" id="32_dxnlf"]
+[ext_resource type="Script" uid="uid://dq7gm11wvwn6m" path="res://game/actors/enemies/state/enemy_attack.gd" id="33_d0p6n"]
+[ext_resource type="Script" uid="uid://og75stne3wma" path="res://game/actors/enemies/state/enemy_back.gd" id="34_wrguf"]
+[ext_resource type="Script" uid="uid://62t58yuad5go" path="res://game/actors/enemies/state/enemy_leash_back.gd" id="35_oadwq"]
+[ext_resource type="Resource" uid="uid://b64y8nvhivbkw" path="res://game/actors/enemies/types/ninja/ninja_yellow_data.tres" id="36_d6tar"]
+[ext_resource type="Texture2D" uid="uid://6hy07tgfpu8b" path="res://game/actors/enemies/types/ninja/assets/ninja_yellow.png" id="37_e0v7a"]
+[ext_resource type="Resource" uid="uid://cvbx3q36wf4kx" path="res://game/actors/enemies/presets/ninja_yellow_stats.tres" id="38_mf64i"]
+[ext_resource type="Script" uid="uid://cscr8c257tepu" path="res://game/actors/enemies/enemy_group/enemy_group.gd" id="39_ot0t8"]
+[ext_resource type="Script" uid="uid://dqd4tlipj2ii8" path="res://common/gameplay/spawning/tables/enemy_group_profile.gd" id="40_hsid8"]
+[ext_resource type="Script" uid="uid://sgjwmvk38ykj" path="res://common/gameplay/encounter/encounter_group_table.gd" id="44_oy635"]
+[ext_resource type="Script" uid="uid://bs5epdft4ockv" path="res://common/gameplay/encounter/encounter_config.gd" id="45_ylq1s"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_lvn57"]
+radius = 2.0
+height = 8.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_wj0qn"]
+radius = 6.0
+height = 16.0
+
+[sub_resource type="Resource" id="Resource_0edjs"]
+script = ExtResource("11_ke0po")
+faction = 1
+mana = 100.0
+base_defense = 0.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_nnul2"]
+radius = 100.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_u2ujg"]
+radius = 280.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_uqcqm"]
+radius = 100.0
+
+[sub_resource type="PackedScene" id="PackedScene_ua674"]
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"id_paths": [PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array()],
+"names": PackedStringArray("Ninja_red", "CharacterBody2D", "enemies", "collision_layer", "collision_mask", "script", "data", "hurtbox", "damage_receiver", "hit_feedback", "damage_number", "health_bar", "combat_module", "aggro_detection", "deaggro_detection", "reach_detection", "movement_module", "navigation_module", "animation_module", "loot_drop", "state_machine", "Sprite", "Sprite2D", "material", "position", "texture", "hframes", "vframes", "CollisionShape2D", "CollisionShape2D", "rotation", "shape", "Hurtbox", "Area2D", "collision_layer", "collision_mask", "script", "metadata/_custom_type_script", "CollisionShape2D", "CollisionShape2D", "position", "shape", "debug_color", "Visual", "Node2D", "AnimationPlayer", "AnimationPlayer", "libraries/", "AnimationTree", "AnimationTree", "tree_root", "anim_player", "parameters/StateMachine/Attack/blend_position", "parameters/StateMachine/Move/blend_position", "parameters/TimeScale/scale", "Module", "Node2D", "DetectionPivot", "Marker2D", "position", "CombatModule", "Node2D", "script", "stats", "melee_attack", "MeleeAttackModule", "Node2D", "script", "AggroDetection", "Area2D", "collision_layer", "monitorable", "script", "CollisionShape2D", "CollisionShape2D", "shape", "debug_color", "DeaggroDetection", "Area2D", "collision_layer", "monitorable", "script", "radius", "CollisionShape2D", "CollisionShape2D", "shape", "debug_color", "ReachDetection", "Area2D", "collision_layer", "monitorable", "script", "CollisionShape2D", "CollisionShape2D", "shape", "HealthBar", "anchors_preset", "anchor_left", "anchor_right", "offset_left", "offset_top", "offset_right", "offset_bottom", "grow_horizontal", "stats", "DamageReceiverModule", "Node", "script", "stats", "hurtbox", "HitFeedbackModule", "Node", "script", "damage_receiver", "movement_module", "hit_particles_scene", "death_particles_scene", "damaged_audio", "blocked_audio", "died_audio", "DamageNumberModule", "Node", "script", "damage_receiver", "damage_number_scene", "MovementModule", "Node", "script", "character", "NavigationModule", "Node2D", "script", "character", "movement", "navigation_agent", "NavigationAgent2D", "NavigationAgent2D", "target_desired_distance", "radius", "AnimationModule", "Node", "script", "actor", "animation_tree", "LootDropModule", "Node", "script", "owner_node", "drop_profile", "StateMachine", "Node", "script", "initial_state", "Idle", "Node", "script", "Wander", "Node", "script", "Chase", "Node", "script", "Attack", "Node", "script", "Back", "Node", "script", "LeashBack", "Node", "script"),
+"node_count": 34,
+"node_ids": PackedInt32Array(1967515506, 158715791, 895179018, 550981385, 111103750, 1556727938, 1331579641, 1400571417, 457160387, 102638325, 1482874132, 34710419, 1334854310, 225246358, 204165240, 259466445, 1588738871, 131652439, 1388357074, 1491145643, 924852354, 80133805, 496097567, 89508045, 2033484485, 1984737623, 466401832, 199281186, 63485168, 1090323500, 805872939, 631258317, 1286103539, 1203683208),
+"node_paths": [NodePath("."), NodePath("."), NodePath("."), NodePath("./Hurtbox"), NodePath("."), NodePath("./Visual"), NodePath("./Visual"), NodePath("."), NodePath("./Module"), NodePath("./Module/DetectionPivot"), NodePath("./Module/DetectionPivot/CombatModule"), NodePath("./Module/DetectionPivot"), NodePath("./Module/DetectionPivot/AggroDetection"), NodePath("./Module/DetectionPivot"), NodePath("./Module/DetectionPivot/DeaggroDetection"), NodePath("./Module/DetectionPivot"), NodePath("./Module/DetectionPivot/ReachDetection"), NodePath("./Module"), NodePath("./Module"), NodePath("./Module"), NodePath("./Module"), NodePath("./Module"), NodePath("./Module"), NodePath("./Module/NavigationModule"), NodePath("./Module"), NodePath("./Module"), NodePath("."), NodePath("./StateMachine"), NodePath("./StateMachine"), NodePath("./StateMachine"), NodePath("./StateMachine"), NodePath("./StateMachine"), NodePath("./StateMachine")],
+"nodes": PackedInt32Array(-1, -1, 1, 0, -1, 18, 3, 0, 4, 1, 5, 2, 6, 3, 1073741831, 4, 1073741832, 5, 1073741833, 6, 1073741834, 7, 1073741835, 8, 1073741836, 9, 1073741837, 10, 1073741838, 11, 1073741839, 12, 1073741840, 13, 1073741841, 14, 1073741842, 15, 1073741843, 16, 1073741844, 17, 1, 2, 1073741824, 0, 22, 21, -1, 5, 23, 18, 24, 19, 25, 20, 26, 21, 27, 22, 0, 1073741825, 0, 29, 28, -1, 2, 30, 23, 31, 24, 0, 1073741826, 0, 33, 32, -1, 4, 34, 25, 35, 26, 36, 27, 37, 28, 0, 1073741827, 0, 39, 38, -1, 3, 40, 29, 41, 30, 42, 31, 0, 1073741828, 0, 44, 43, -1, 0, 0, 1073741829, 0, 46, 45, -1, 1, 47, 32, 0, 1073741830, 0, 49, 48, -1, 5, 50, 33, 51, 34, 52, 35, 53, 36, 54, 37, 0, 1073741831, 0, 56, 55, -1, 0, 0, 1073741832, 0, 58, 57, -1, 1, 59, 38, 0, 1073741833, 0, 61, 60, -1, 3, 62, 39, 63, 40, 1073741888, 41, 0, 1073741834, 0, 66, 65, -1, 1, 67, 42, 0, 1073741835, 0, 69, 68, -1, 3, 70, 43, 71, 44, 72, 45, 0, 1073741836, 0, 74, 73, -1, 2, 75, 46, 76, 47, 0, 1073741837, 0, 78, 77, -1, 4, 79, 48, 80, 49, 81, 50, 82, 51, 0, 1073741838, 0, 84, 83, -1, 2, 85, 52, 86, 53, 0, 1073741839, 0, 88, 87, -1, 3, 89, 54, 90, 55, 91, 56, 0, 1073741840, 0, 93, 92, -1, 1, 94, 57, 0, 1073741841, 0, 2147483647, 95, 58, 9, 96, 59, 97, 60, 98, 61, 99, 62, 100, 63, 101, 64, 102, 65, 103, 66, 104, 67, 0, 1073741842, 0, 106, 105, -1, 3, 107, 68, 108, 69, 1073741933, 70, 0, 1073741843, 0, 111, 110, -1, 8, 112, 71, 1073741937, 72, 1073741938, 73, 115, 74, 116, 75, 117, 76, 118, 77, 119, 78, 0, 1073741844, 0, 121, 120, -1, 3, 122, 79, 1073741947, 80, 124, 81, 0, 1073741845, 0, 126, 125, -1, 2, 127, 82, 1073741952, 83, 0, 1073741846, 0, 130, 129, -1, 4, 131, 84, 1073741956, 85, 1073741957, 86, 1073741958, 87, 0, 1073741847, 0, 136, 135, -1, 2, 137, 88, 138, 89, 0, 1073741848, 0, 140, 139, -1, 3, 141, 90, 1073741966, 91, 1073741967, 92, 0, 1073741849, 0, 145, 144, -1, 3, 146, 93, 1073741971, 94, 148, 95, 0, 1073741850, 0, 150, 149, -1, 2, 151, 96, 1073741976, 97, 0, 1073741851, 0, 154, 153, -1, 1, 155, 98, 0, 1073741852, 0, 157, 156, -1, 1, 158, 99, 0, 1073741853, 0, 160, 159, -1, 1, 161, 100, 0, 1073741854, 0, 163, 162, -1, 1, 164, 101, 0, 1073741855, 0, 166, 165, -1, 1, 167, 102, 0, 1073741856, 0, 169, 168, -1, 1, 170, 103, 0),
+"variants": [2, 2, ExtResource("3_inpjd"), ExtResource("4_rokny"), NodePath("Hurtbox"), NodePath("Module/DamageReceiverModule"), NodePath("Module/HitFeedbackModule"), NodePath("Module/DamageNumberModule"), NodePath("Module/HealthBar"), NodePath("Module/DetectionPivot/CombatModule"), NodePath("Module/DetectionPivot/AggroDetection"), NodePath("Module/DetectionPivot/DeaggroDetection"), NodePath("Module/DetectionPivot/ReachDetection"), NodePath("Module/MovementModule"), NodePath("Module/NavigationModule"), NodePath("Module/AnimationModule"), NodePath("Module/LootDropModule"), NodePath("StateMachine"), ExtResource("5_stvld"), Vector2(0, -6), ExtResource("6_fy2km"), 4, 7, 1.5708, SubResource("CapsuleShape2D_lvn57"), 2, 0, ExtResource("7_fj5wn"), "uid://dby4p11qhtin7", Vector2(0, -6), SubResource("CapsuleShape2D_wj0qn"), Color(0.639216, 0.529412, 0, 0.329412), ExtResource("8_paih3"), ExtResource("9_o4g5n"), NodePath("../AnimationPlayer"), Vector2(0, 0), Vector2(0, 0), 1.0, Vector2(0, -6), ExtResource("10_t3ofc"), SubResource("Resource_0edjs"), NodePath("MeleeAttackModule"), ExtResource("12_rx6l5"), 0, false, ExtResource("13_g41u5"), SubResource("CircleShape2D_nnul2"), Color(0, 0.6, 0.1764706, 0.23529412), 0, false, ExtResource("13_g41u5"), 280.0, SubResource("CircleShape2D_u2ujg"), Color(0.8627451, 0.23529412, 0.69803923, 0.23921569), 0, false, ExtResource("13_g41u5"), SubResource("CircleShape2D_uqcqm"), ExtResource("14_crvgy"), 5, 0.5, 0.5, -12.0, 4.0, 12.0, 8.0, 2, SubResource("Resource_0edjs"), ExtResource("15_57jbl"), SubResource("Resource_0edjs"), NodePath("../../Hurtbox"), ExtResource("16_wnpbr"), NodePath("../DamageReceiverModule"), NodePath("../MovementModule"), ExtResource("17_lvkr2"), ExtResource("18_62785"), ExtResource("19_gi42y"), ExtResource("20_h42l1"), ExtResource("21_4vgxe"), ExtResource("22_vc7q2"), NodePath("../DamageReceiverModule"), ExtResource("23_0qr81"), ExtResource("24_y1ipo"), NodePath("../.."), ExtResource("25_pgg8n"), NodePath("../.."), NodePath("../MovementModule"), NodePath("NavigationAgent2D"), 5.0, 4.0, ExtResource("26_qgiu3"), NodePath("../.."), NodePath("../../Visual/AnimationTree"), ExtResource("27_jltph"), NodePath("../.."), ExtResource("28_a7pfh"), ExtResource("29_bfn5s"), NodePath("Idle"), ExtResource("30_kr1xs"), ExtResource("31_d767n"), ExtResource("32_dxnlf"), ExtResource("33_d0p6n"), ExtResource("34_wrguf"), ExtResource("35_oadwq")],
+"version": 3
+}
+
+[sub_resource type="Resource" id="Resource_47j4r"]
+script = ExtResource("2_hkh4f")
+scene = SubResource("PackedScene_ua674")
+max_count = 4
+metadata/_custom_type_script = "uid://4agufvpi7c62"
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_body"]
+radius = 4.0
+height = 10.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_hurtbox"]
+radius = 6.0
+height = 16.0
+
+[sub_resource type="Resource" id="Resource_o2dk8"]
+resource_local_to_scene = true
+script = ExtResource("11_ke0po")
+faction = 1
+health = 80.0
+mana = 100.0
+base_max_health = 80.0
+base_damage = 8.0
+base_defense = 5.0
+invuln_time = 0.01
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_1fkcb"]
+radius = 160.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_172fl"]
+radius = 280.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_qwant"]
+radius = 40.0
+
+[sub_resource type="PackedScene" id="PackedScene_2km0h"]
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"id_paths": [PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array()],
+"names": PackedStringArray("NinjaYellow", "CharacterBody2D", "enemies", "collision_layer", "collision_mask", "script", "data", "hurtbox", "damage_receiver", "hit_feedback", "damage_number", "health_bar", "combat_module", "aggro_detection", "deaggro_detection", "reach_detection", "movement_module", "navigation_module", "animation_module", "loot_drop", "state_machine", "Sprite", "Sprite2D", "material", "position", "texture", "hframes", "vframes", "CollisionShape2D", "CollisionShape2D", "rotation", "shape", "Hurtbox", "Area2D", "collision_layer", "collision_mask", "script", "CollisionShape2D", "CollisionShape2D", "position", "shape", "debug_color", "Visual", "Node2D", "AnimationPlayer", "AnimationPlayer", "libraries/", "AnimationTree", "AnimationTree", "tree_root", "anim_player", "parameters/StateMachine/Attack/blend_position", "parameters/StateMachine/Move/blend_position", "parameters/TimeScale/scale", "Module", "Node2D", "HealthBar", "anchors_preset", "anchor_left", "anchor_right", "offset_left", "offset_top", "offset_right", "offset_bottom", "grow_horizontal", "stats", "CombatModule", "Node2D", "position", "script", "stats", "melee_attack", "MeleeAttackModule", "Node2D", "script", "DamageReceiverModule", "Node", "script", "stats", "hurtbox", "HitFeedbackModule", "Node", "script", "damage_receiver", "movement_module", "hit_particles_scene", "death_particles_scene", "damaged_audio", "blocked_audio", "died_audio", "DamageNumberModule", "Node", "script", "damage_receiver", "damage_number_scene", "AggroDetection", "Area2D", "position", "collision_layer", "monitorable", "script", "radius", "CollisionShape2D", "CollisionShape2D", "shape", "debug_color", "DeaggroDetection", "Area2D", "position", "collision_layer", "monitorable", "script", "radius", "CollisionShape2D", "CollisionShape2D", "shape", "debug_color", "ReachDetection", "Area2D", "position", "collision_layer", "monitorable", "script", "radius", "CollisionShape2D", "CollisionShape2D", "shape", "MovementModule", "Node", "script", "character", "NavigationModule", "Node2D", "script", "character", "movement", "navigation_agent", "NavigationAgent2D", "NavigationAgent2D", "target_desired_distance", "radius", "AnimationModule", "Node", "script", "actor", "animation_tree", "LootDropModule", "Node", "script", "owner_node", "drop_profile", "StateMachine", "Node", "script", "initial_state", "Idle", "Node", "script", "Wander", "Node", "script", "Chase", "Node", "script", "Attack", "Node", "script", "Back", "Node", "script", "LeashBack", "Node", "script"),
+"node_count": 33,
+"node_ids": PackedInt32Array(1130231603, 1693742817, 1490549208, 1309115120, 1190342164, 498823766, 530492983, 1171785439, 1489298462, 243798542, 614963320, 240177820, 1150826965, 631790900, 1101572308, 821828178, 957994283, 837214786, 2022225881, 430639735, 1152141690, 265278886, 105493594, 1036614070, 2098592232, 583686892, 166535569, 824543003, 634392146, 58470279, 478504038, 1469795797, 1385443946),
+"node_paths": [NodePath("."), NodePath("."), NodePath("."), NodePath("./Hurtbox"), NodePath("."), NodePath("./Visual"), NodePath("./Visual"), NodePath("."), NodePath("./Module"), NodePath("./Module"), NodePath("./Module/CombatModule"), NodePath("./Module"), NodePath("./Module"), NodePath("./Module"), NodePath("./Module"), NodePath("./Module/AggroDetection"), NodePath("./Module"), NodePath("./Module/DeaggroDetection"), NodePath("./Module"), NodePath("./Module/ReachDetection"), NodePath("./Module"), NodePath("./Module"), NodePath("./Module/NavigationModule"), NodePath("./Module"), NodePath("./Module"), NodePath("."), NodePath("./StateMachine"), NodePath("./StateMachine"), NodePath("./StateMachine"), NodePath("./StateMachine"), NodePath("./StateMachine"), NodePath("./StateMachine")],
+"nodes": PackedInt32Array(-1, -1, 1, 0, -1, 18, 3, 0, 4, 1, 5, 2, 6, 3, 1073741831, 4, 1073741832, 5, 1073741833, 6, 1073741834, 7, 1073741835, 8, 1073741836, 9, 1073741837, 10, 1073741838, 11, 1073741839, 12, 1073741840, 13, 1073741841, 14, 1073741842, 15, 1073741843, 16, 1073741844, 17, 1, 2, 1073741824, 0, 22, 21, -1, 5, 23, 18, 24, 19, 25, 20, 26, 21, 27, 22, 0, 1073741825, 0, 29, 28, -1, 2, 30, 23, 31, 24, 0, 1073741826, 0, 33, 32, -1, 3, 34, 25, 35, 26, 36, 27, 0, 1073741827, 0, 38, 37, -1, 3, 39, 28, 40, 29, 41, 30, 0, 1073741828, 0, 43, 42, -1, 0, 0, 1073741829, 0, 45, 44, -1, 1, 46, 31, 0, 1073741830, 0, 48, 47, -1, 5, 49, 32, 50, 33, 51, 34, 52, 35, 53, 36, 0, 1073741831, 0, 55, 54, -1, 0, 0, 1073741832, 0, 2147483647, 56, 37, 9, 57, 38, 58, 39, 59, 40, 60, 41, 61, 42, 62, 43, 63, 44, 64, 45, 65, 46, 0, 1073741833, 0, 67, 66, -1, 4, 68, 47, 69, 48, 70, 49, 1073741895, 50, 0, 1073741834, 0, 73, 72, -1, 1, 74, 51, 0, 1073741835, 0, 76, 75, -1, 3, 77, 52, 78, 53, 1073741903, 54, 0, 1073741836, 0, 81, 80, -1, 8, 82, 55, 1073741907, 56, 1073741908, 57, 85, 58, 86, 59, 87, 60, 88, 61, 89, 62, 0, 1073741837, 0, 91, 90, -1, 3, 92, 63, 1073741917, 64, 94, 65, 0, 1073741838, 0, 96, 95, -1, 5, 97, 66, 98, 67, 99, 68, 100, 69, 101, 70, 0, 1073741839, 0, 103, 102, -1, 2, 104, 71, 105, 72, 0, 1073741840, 0, 107, 106, -1, 5, 108, 73, 109, 74, 110, 75, 111, 76, 112, 77, 0, 1073741841, 0, 114, 113, -1, 2, 115, 78, 116, 79, 0, 1073741842, 0, 118, 117, -1, 5, 119, 80, 120, 81, 121, 82, 122, 83, 123, 84, 0, 1073741843, 0, 125, 124, -1, 1, 126, 85, 0, 1073741844, 0, 128, 127, -1, 2, 129, 86, 1073741954, 87, 0, 1073741845, 0, 132, 131, -1, 4, 133, 88, 1073741958, 89, 1073741959, 90, 1073741960, 91, 0, 1073741846, 0, 138, 137, -1, 2, 139, 92, 140, 93, 0, 1073741847, 0, 142, 141, -1, 3, 143, 94, 1073741968, 95, 1073741969, 96, 0, 1073741848, 0, 147, 146, -1, 3, 148, 97, 1073741973, 98, 150, 99, 0, 1073741849, 0, 152, 151, -1, 2, 153, 100, 1073741978, 101, 0, 1073741850, 0, 156, 155, -1, 1, 157, 102, 0, 1073741851, 0, 159, 158, -1, 1, 160, 103, 0, 1073741852, 0, 162, 161, -1, 1, 163, 104, 0, 1073741853, 0, 165, 164, -1, 1, 166, 105, 0, 1073741854, 0, 168, 167, -1, 1, 169, 106, 0, 1073741855, 0, 171, 170, -1, 1, 172, 107, 0),
+"variants": [2, 0, ExtResource("3_inpjd"), ExtResource("36_d6tar"), NodePath("Hurtbox"), NodePath("Module/DamageReceiverModule"), NodePath("Module/HitFeedbackModule"), NodePath("Module/DamageNumberModule"), NodePath("Module/HealthBar"), NodePath("Module/CombatModule"), NodePath("Module/AggroDetection"), NodePath("Module/DeaggroDetection"), NodePath("Module/ReachDetection"), NodePath("Module/MovementModule"), NodePath("Module/NavigationModule"), NodePath("Module/AnimationModule"), NodePath("Module/LootDropModule"), NodePath("StateMachine"), ExtResource("5_stvld"), Vector2(0, -6), ExtResource("37_e0v7a"), 4, 7, 1.5708, SubResource("CapsuleShape2D_body"), 2, 0, ExtResource("7_fj5wn"), Vector2(0, -6), SubResource("CapsuleShape2D_hurtbox"), Color(0.639216, 0.529412, 0, 0.329412), ExtResource("8_paih3"), ExtResource("9_o4g5n"), NodePath("../AnimationPlayer"), Vector2(0, 0), Vector2(0, 0), 1.0, ExtResource("14_crvgy"), 5, 0.5, 0.5, -12.0, 4.0, 12.0, 8.0, 2, SubResource("Resource_o2dk8"), Vector2(0, -6), ExtResource("10_t3ofc"), ExtResource("38_mf64i"), NodePath("MeleeAttackModule"), ExtResource("12_rx6l5"), ExtResource("15_57jbl"), ExtResource("38_mf64i"), NodePath("../../Hurtbox"), ExtResource("16_wnpbr"), NodePath("../DamageReceiverModule"), NodePath("../MovementModule"), ExtResource("17_lvkr2"), ExtResource("18_62785"), ExtResource("19_gi42y"), ExtResource("20_h42l1"), ExtResource("21_4vgxe"), ExtResource("22_vc7q2"), NodePath("../DamageReceiverModule"), ExtResource("23_0qr81"), Vector2(0, -6), 0, false, ExtResource("13_g41u5"), 160.0, SubResource("CircleShape2D_1fkcb"), Color(0, 0.6, 0.1764706, 0.23529412), Vector2(0, -6), 0, false, ExtResource("13_g41u5"), 280.0, SubResource("CircleShape2D_172fl"), Color(0.8627451, 0.23529412, 0.69803923, 0.23921569), Vector2(0, -6), 0, false, ExtResource("13_g41u5"), 40.0, SubResource("CircleShape2D_qwant"), ExtResource("24_y1ipo"), NodePath("../.."), ExtResource("25_pgg8n"), NodePath("../.."), NodePath("../MovementModule"), NodePath("NavigationAgent2D"), 5.0, 4.0, ExtResource("26_qgiu3"), NodePath("../.."), NodePath("../../Visual/AnimationTree"), ExtResource("27_jltph"), NodePath("../.."), ExtResource("28_a7pfh"), ExtResource("29_bfn5s"), NodePath("Idle"), ExtResource("30_kr1xs"), ExtResource("31_d767n"), ExtResource("32_dxnlf"), ExtResource("33_d0p6n"), ExtResource("34_wrguf"), ExtResource("35_oadwq")],
+"version": 3
+}
+
+[sub_resource type="Resource" id="Resource_76gxa"]
+script = ExtResource("2_hkh4f")
+scene = SubResource("PackedScene_2km0h")
+max_count = 2
+metadata/_custom_type_script = "uid://4agufvpi7c62"
+
+[sub_resource type="PackedScene" id="PackedScene_s6cxp"]
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"id_paths": [PackedInt32Array()],
+"names": PackedStringArray("EnemyGroup", "Node2D", "script", "WaitTimer", "Timer", "autostart"),
+"node_count": 2,
+"node_ids": PackedInt32Array(0, 0),
+"node_paths": [NodePath(".")],
+"nodes": PackedInt32Array(-1, -1, 1, 0, -1, 1, 2, 0, 0, 1073741824, 0, 4, 3, -1, 1, 5, 1, 0),
+"variants": [ExtResource("39_ot0t8"), true],
+"version": 3
+}
+
+[sub_resource type="Resource" id="Resource_cejx2"]
+script = ExtResource("40_hsid8")
+group_scene = SubResource("PackedScene_s6cxp")
+entries = Array[ExtResource("2_hkh4f")]([SubResource("Resource_47j4r"), SubResource("Resource_76gxa")])
+metadata/_custom_type_script = "uid://dqd4tlipj2ii8"
+
+[sub_resource type="Resource" id="Resource_ovujv"]
+script = ExtResource("1_l6dtp")
+group_profile = SubResource("Resource_cejx2")
+
+[sub_resource type="Resource" id="Resource_pay2w"]
+script = ExtResource("44_oy635")
+entries = Array[ExtResource("1_l6dtp")]([SubResource("Resource_ovujv")])
+
+[resource]
+script = ExtResource("45_ylq1s")
+group_table = SubResource("Resource_pay2w")
+groups_per_round = 20
+target_active_groups = 10
+max_spawn_per_tick = 4

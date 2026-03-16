@@ -1,7 +1,5 @@
-class_name PlayerMoveState
-extends State
+extends PlayerState
 
-@export var actor: Player
 @export var walk_speed: float = 180.0
 @export var run_speed: float = 240.0
 @export var idle_grace_time: float = 0.08
@@ -9,56 +7,44 @@ extends State
 var _idle_timer := 0.0
 
 
-func _ready() -> void:
-    state_id = Player.StateId.MOVE
+func _init() -> void:
+    state_id = PlayerStateId.MOVE
 
 
 func _enter() -> void:
     _idle_timer = 0.0
 
-    if not actor:
-        return
+    player.play_animation(Player.ANIM_MOVE)
 
-    actor.play_actor_animation(Player.AnimationState.Move, actor.animation_module.get_last_direction() if actor.animation_module else Vector2.DOWN)
+    player.set_facing_direction(player.animation_module.get_last_direction(), Player.ANIM_MOVE)
 
 
 func _physics_update(delta: float) -> void:
-    if not actor:
-        return
-
-    var input_dir := actor.get_move_input()
-    var speed := run_speed if actor.is_run_pressed() else walk_speed
-
-    if actor.movement_module:
-        actor.movement_module.set_manual_mode()
-        actor.movement_module.set_manual_velocity(input_dir.normalized() * speed)
+    var input_dir := player.get_move_input()
+    var speed := run_speed if player.is_run_pressed() else walk_speed
 
     if input_dir != Vector2.ZERO:
-        if actor.animation_module:
-            actor.animation_module.face_direction(input_dir)
-            actor.animation_module.set_blend_position(input_dir, Player.AnimationState.Move)
+        player.set_movement_velocity(input_dir, speed)
+        player.set_facing_direction(input_dir, Player.ANIM_MOVE)
         _idle_timer = 0.0
     else:
+        player.stop_movement()
         _idle_timer += delta
 
 
 func _update(_delta: float) -> void:
-    if not actor:
+    if player.consume_dodge_request():
+        change_state(PlayerStateId.ROLL)
         return
 
-    if actor.consume_dodge_request():
-        change_state(Player.StateId.ROLL)
-        return
-
-    if not actor.is_run_pressed():
-        if actor.consume_attack_request() or actor.has_auto_attack_target():
-            change_state(Player.StateId.ATTACK)
+    if not player.is_run_pressed():
+        if player.consume_attack_request() or player.has_auto_attack_target():
+            change_state(PlayerStateId.ATTACK)
             return
 
     if _idle_timer >= idle_grace_time:
-        change_state(Player.StateId.IDLE)
+        change_state(PlayerStateId.IDLE)
 
 
 func _exit() -> void:
-    if actor and actor.movement_module:
-        actor.movement_module.stop_manual_motion()
+    player.stop_movement()

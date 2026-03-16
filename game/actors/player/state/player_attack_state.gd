@@ -1,64 +1,52 @@
-class_name PlayerAttackState
-extends State
+extends PlayerState
 
-@export var actor: Player
 @export var attack_move_speed: float = 40.0
 @export var attack_slot: Stats.AttackSlot = Stats.AttackSlot.PRIMARY
 
 var _attack_direction: Vector2 = Vector2.DOWN
 
 
-func _ready() -> void:
-    state_id = Player.StateId.ATTACK
+func _init() -> void:
+    state_id = PlayerStateId.ATTACK
 
 
 func _enter() -> void:
-    if not actor:
-        return
-
-    var target_pos := actor.get_attack_target_position()
-    _attack_direction = target_pos - actor.global_position
+    var target_pos := player.get_attack_target_position()
+    _attack_direction = target_pos - player.global_position
 
     if _attack_direction == Vector2.ZERO:
-        _attack_direction = actor.get_aim_direction()
-
+        _attack_direction = player.get_aim_direction()
     if _attack_direction == Vector2.ZERO:
         _attack_direction = Vector2.DOWN
 
     _attack_direction = _attack_direction.normalized()
 
-    if not actor.attack_finished.is_connected(_on_attack_finished):
-        actor.attack_finished.connect(_on_attack_finished)
+    if not player.attack_finished.is_connected(_on_attack_finished):
+        player.attack_finished.connect(_on_attack_finished)
 
-    actor.play_actor_animation(Player.AnimationState.Attack, _attack_direction)
-
-    if actor.combat_module:
-        actor.combat_module.perform_attack(attack_slot, target_pos)
+    player.play_animation(Player.ANIM_ATTACK)
+    player.set_facing_direction(_attack_direction, Player.ANIM_ATTACK)
+    player.perform_attack(target_pos, attack_slot)
 
 
 func _physics_update(_delta: float) -> void:
-    if not actor or not actor.movement_module:
-        return
-
-    var input_dir := actor.get_move_input().normalized()
-    actor.movement_module.set_manual_mode()
-    actor.movement_module.set_manual_velocity(input_dir * attack_move_speed)
+    # Allow slight drift while attacking.
+    var input_dir := player.get_move_input()
+    if input_dir != Vector2.ZERO:
+        player.set_movement_velocity(input_dir, attack_move_speed)
+    else:
+        player.stop_movement()
 
 
 func _exit() -> void:
-    if actor and actor.attack_finished.is_connected(_on_attack_finished):
-        actor.attack_finished.disconnect(_on_attack_finished)
+    if player.attack_finished.is_connected(_on_attack_finished):
+        player.attack_finished.disconnect(_on_attack_finished)
 
-    if actor and actor.movement_module:
-        actor.movement_module.stop_manual_motion()
+    player.stop_movement()
 
 
 func _on_attack_finished() -> void:
-    if not actor:
-        change_state(Player.StateId.IDLE)
-        return
-
-    if actor.get_move_input() != Vector2.ZERO:
-        change_state(Player.StateId.MOVE)
+    if player.get_move_input() != Vector2.ZERO:
+        change_state(PlayerStateId.MOVE)
     else:
-        change_state(Player.StateId.IDLE)
+        change_state(PlayerStateId.IDLE)

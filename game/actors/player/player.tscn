@@ -1,13 +1,16 @@
 [gd_scene format=3 uid="uid://dbhtrssgng58f"]
 
 [ext_resource type="Script" uid="uid://4veuxq1h5upn" path="res://game/actors/player/player.gd" id="1_b15sj"]
+[ext_resource type="Script" uid="uid://cfsw4hxa4kn3n" path="res://game/actors/player/data/player_data.gd" id="2_4s16b"]
 [ext_resource type="Resource" uid="uid://dg0jnt6ju4qcl" path="res://game/actors/player/data/player_stats.tres" id="2_64mjj"]
 [ext_resource type="Texture2D" uid="uid://e7rr31b6fwkg" path="res://game/actors/player/assets/player.png" id="2_e6ar1"]
 [ext_resource type="AnimationNodeBlendTree" uid="uid://bam4152vw8gtf" path="res://game/actors/player/data/player_animation_tree.tres" id="3_qa8rf"]
+[ext_resource type="PackedScene" uid="uid://jla2t1i1qafl" path="res://common/gameplay/combat/attack/effects/slash_attack_effect.tscn" id="4_6o7jk"]
 [ext_resource type="Script" uid="uid://d1yimk3mk35ag" path="res://common/gameplay/combat/attack/melee_attack_module.gd" id="4_jq3dq"]
 [ext_resource type="Script" uid="uid://x10bxi1qicvw" path="res://common/gameplay/combat/attack/projectile_attack_module.gd" id="5_5unbj"]
 [ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/gameplay/combat/hurtbox/hurtbox.gd" id="5_8nq4u"]
 [ext_resource type="Script" uid="uid://b6r7vut6vta3w" path="res://game/actors/player/state/player_idle_state.gd" id="6_2iqu4"]
+[ext_resource type="PackedScene" uid="uid://vpxne6o7pihf" path="res://common/gameplay/combat/projectiles/projectile.tscn" id="6_747sf"]
 [ext_resource type="Script" uid="uid://bb4mbrq1u7pl" path="res://common/gameplay/combat/combat_module.gd" id="8_i5w6q"]
 [ext_resource type="Script" uid="uid://w30s7yqi1p3d" path="res://common/gameplay/movement/movement_module.gd" id="9_1bvv4"]
 [ext_resource type="Script" uid="uid://jtqne3plv0gg" path="res://game/actors/player/state/player_roll_state.gd" id="9_t2ln0"]
@@ -16,7 +19,22 @@
 [ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/framework/state_machine/state_machine.gd" id="11_b15sj"]
 [ext_resource type="Script" uid="uid://chearh86c82uf" path="res://game/actors/player/state/player_attack_state.gd" id="11_klmji"]
 [ext_resource type="Script" uid="uid://dpi3inldik0ho" path="res://common/gameplay/combat/damage_receiver/damage_receiver_module.gd" id="12_i5w6q"]
+[ext_resource type="Script" uid="uid://duxq84e027el0" path="res://common/gameplay/combat/hit_feedback/hit_feedback_module.gd" id="13_41lfd"]
+[ext_resource type="Script" uid="uid://ce4d3x6pliud6" path="res://common/gameplay/pickup_collector/pickup_collector_module.gd" id="13_i5w6q"]
+[ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="14_4s16b"]
 [ext_resource type="Script" uid="uid://csp44dwfwcqu0" path="res://game/actors/player/state/player_move_state.gd" id="14_b15sj"]
+[ext_resource type="PackedScene" uid="uid://c5uu71l3jwxu6" path="res://common/rendering/vfx/one_shot_hit_particles.tscn" id="15_m4n5g"]
+[ext_resource type="PackedScene" uid="uid://duohq0xpsyv1" path="res://common/rendering/vfx/explosion.tscn" id="16_6o7jk"]
+[ext_resource type="Resource" uid="uid://vp7463hsmyw0" path="res://common/audio/presets/sfx/default_damaged_audio.tres" id="17_747sf"]
+[ext_resource type="Resource" uid="uid://xsccf58mw7d5" path="res://common/audio/presets/sfx/default_blocked_audio.tres" id="18_5qatl"]
+[ext_resource type="Resource" uid="uid://csppceje2neh5" path="res://common/audio/presets/sfx/default_died_audio.tres" id="19_qsypv"]
+[ext_resource type="Script" uid="uid://6jeesy7iltw" path="res://common/gameplay/combat/damage_number/damage_number_module.gd" id="20_lje7i"]
+[ext_resource type="PackedScene" uid="uid://qhqm7usjk4s4" path="res://common/gameplay/combat/damage_number/damage_number.tscn" id="21_7c4js"]
+[ext_resource type="PackedScene" uid="uid://d0tswwb1d3smv" path="res://common/gameplay/health_bar/health_bar.tscn" id="23_6xo6p"]
+
+[sub_resource type="Resource" id="Resource_m4n5g"]
+script = ExtResource("2_4s16b")
+stats = ExtResource("2_64mjj")
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_64mjj"]
 radius = 2.0
@@ -338,20 +356,42 @@ _data = {
 radius = 3.0
 height = 14.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_8nq4u"]
+[sub_resource type="Resource" id="Resource_5qatl"]
+script = ExtResource("14_4s16b")
+mana = 100.0
+weapon_damage = 100.0
+primary_attack_scene = ExtResource("4_6o7jk")
+primary_attack_range = 50.0
+primary_damage_multiplier = 1.8
+primary_knockback = 100.0
+primary_max_targets = -1
+secondary_delivery_type = 1
+secondary_attack_scene = ExtResource("6_747sf")
+secondary_attack_range = 100.0
+secondary_damage_multiplier = 1.0
+metadata/_custom_type_script = "uid://bkgf2cii3bfri"
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_qsypv"]
 radius = 50.0
 
-[node name="Player" type="CharacterBody2D" unique_id=1080162393 node_paths=PackedStringArray("movement_module", "animation_module", "combat_module", "detection_module", "damage_receiver", "hurtbox", "state_machine") groups=["player"]]
+[sub_resource type="CircleShape2D" id="CircleShape2D_fxn5h"]
+
+[node name="Player" type="CharacterBody2D" unique_id=1080162393 node_paths=PackedStringArray("sprite", "hurtbox", "damage_receiver", "hit_feedback", "damage_number", "health_bar", "combat_module", "reach_detection", "movement_module", "animation_module", "pickup_collector", "state_machine") groups=["player"]]
 collision_mask = 4
 motion_mode = 1
 script = ExtResource("1_b15sj")
-stats = ExtResource("2_64mjj")
+data = SubResource("Resource_m4n5g")
+sprite = NodePath("Visual/Sprite")
+hurtbox = NodePath("Module/DetectionPivot/Hurtbox")
+damage_receiver = NodePath("Module/DamageReceiverModule")
+hit_feedback = NodePath("Module/HitFeedbackModule")
+damage_number = NodePath("Module/DamageNumberModule")
+health_bar = NodePath("Module/HealthBar")
+combat_module = NodePath("Module/DetectionPivot/CombatModule")
+reach_detection = NodePath("Module/DetectionPivot/DetectionModule")
 movement_module = NodePath("Module/MovementModule")
 animation_module = NodePath("Module/AnimationModule")
-combat_module = NodePath("Module/CombatModule")
-detection_module = NodePath("Module/DetectionModule")
-damage_receiver = NodePath("Module/DamageReceiverModule")
-hurtbox = NodePath("Module/Hurtbox")
+pickup_collector = NodePath("Module/DetectionPivot/PickupCollectorModule")
 state_machine = NodePath("StateMachine")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1649341033]
@@ -383,40 +423,52 @@ parameters/TimeScale/scale = 1.0
 
 [node name="Module" type="Node2D" parent="." unique_id=170022229]
 
-[node name="Hurtbox" type="Area2D" parent="Module" unique_id=101171387]
+[node name="DetectionPivot" type="Marker2D" parent="Module" unique_id=190104149]
 position = Vector2(0, -8)
+
+[node name="Hurtbox" type="Area2D" parent="Module/DetectionPivot" unique_id=101171387]
 collision_mask = 0
 script = ExtResource("5_8nq4u")
 metadata/_edit_group_ = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Module/Hurtbox" unique_id=124425114]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/Hurtbox" unique_id=124425114]
 shape = SubResource("CapsuleShape2D_fxn5h")
 debug_color = Color(1, 0, 0.69803923, 0.41960785)
 
-[node name="CombatModule" type="Node2D" parent="Module" unique_id=1050368959 node_paths=PackedStringArray("melee_attack", "projectile_attack")]
-position = Vector2(0, -8)
+[node name="CombatModule" type="Node2D" parent="Module/DetectionPivot" unique_id=1050368959 node_paths=PackedStringArray("melee_attack", "projectile_attack")]
 script = ExtResource("8_i5w6q")
-stats = ExtResource("2_64mjj")
+stats = SubResource("Resource_5qatl")
 melee_attack = NodePath("MeleeAttackModule")
 projectile_attack = NodePath("ProjectileAttackModule")
 
-[node name="MeleeAttackModule" type="Node2D" parent="Module/CombatModule" unique_id=895088181]
+[node name="MeleeAttackModule" type="Node2D" parent="Module/DetectionPivot/CombatModule" unique_id=895088181]
 script = ExtResource("4_jq3dq")
 
-[node name="ProjectileAttackModule" type="Node2D" parent="Module/CombatModule" unique_id=1808082487]
+[node name="ProjectileAttackModule" type="Node2D" parent="Module/DetectionPivot/CombatModule" unique_id=1808082487]
 script = ExtResource("5_5unbj")
 
-[node name="DetectionModule" type="Area2D" parent="Module" unique_id=2069352823]
-position = Vector2(0, -8)
+[node name="DetectionModule" type="Area2D" parent="Module/DetectionPivot" unique_id=2069352823]
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 script = ExtResource("10_8nq4u")
 radius = 50.0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionModule" unique_id=508858704]
-shape = SubResource("CircleShape2D_8nq4u")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/DetectionModule" unique_id=508858704]
+shape = SubResource("CircleShape2D_qsypv")
 debug_color = Color(0, 0.101960786, 0.69803923, 0.11764706)
+
+[node name="PickupCollectorModule" type="Area2D" parent="Module/DetectionPivot" unique_id=639109990 node_paths=PackedStringArray("owner_body", "inventory_owner", "magnet_shape")]
+script = ExtResource("13_i5w6q")
+owner_body = NodePath("../../..")
+stats = SubResource("Resource_5qatl")
+inventory_owner = NodePath("../../..")
+magnet_shape = NodePath("CollisionShape2D")
+metadata/_custom_type_script = "uid://ce4d3x6pliud6"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/PickupCollectorModule" unique_id=1905794882]
+shape = SubResource("CircleShape2D_fxn5h")
+debug_color = Color(0.20869829, 0.15250799, 0.022646343, 0.41960785)
 
 [node name="MovementModule" type="Node" parent="Module" unique_id=658364954 node_paths=PackedStringArray("character")]
 script = ExtResource("9_1bvv4")
@@ -429,35 +481,49 @@ animation_tree = NodePath("../../Visual/AnimationTree")
 
 [node name="DamageReceiverModule" type="Node" parent="Module" unique_id=1657380889 node_paths=PackedStringArray("hurtbox")]
 script = ExtResource("12_i5w6q")
-stats = ExtResource("2_64mjj")
-hurtbox = NodePath("../Hurtbox")
+stats = SubResource("Resource_5qatl")
+hurtbox = NodePath("../DetectionPivot/Hurtbox")
+
+[node name="HitFeedbackModule" type="Node" parent="Module" unique_id=1072170173 node_paths=PackedStringArray("damage_receiver")]
+script = ExtResource("13_41lfd")
+stats = SubResource("Resource_5qatl")
+damage_receiver = NodePath("../DamageReceiverModule")
+hit_particles_scene = ExtResource("15_m4n5g")
+death_particles_scene = ExtResource("16_6o7jk")
+damaged_audio = ExtResource("17_747sf")
+blocked_audio = ExtResource("18_5qatl")
+died_audio = ExtResource("19_qsypv")
+
+[node name="DamageNumberModule" type="Node" parent="Module" unique_id=1073684129 node_paths=PackedStringArray("damage_receiver")]
+script = ExtResource("20_lje7i")
+damage_receiver = NodePath("../DamageReceiverModule")
+damage_number_scene = ExtResource("21_7c4js")
+
+[node name="HealthBar" parent="Module" unique_id=857941001 instance=ExtResource("23_6xo6p")]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -12.0
+offset_top = 4.0
+offset_right = 12.0
+offset_bottom = 8.0
+grow_horizontal = 2
+stats = SubResource("Resource_5qatl")
 
 [node name="StateMachine" type="Node" parent="." unique_id=54803581 node_paths=PackedStringArray("initial_state")]
 script = ExtResource("11_b15sj")
-initial_state = NodePath("PlayerIdleState")
+initial_state = NodePath("Idle")
 
-[node name="PlayerIdleState" type="Node" parent="StateMachine" unique_id=1390090809 node_paths=PackedStringArray("actor")]
+[node name="Idle" type="Node" parent="StateMachine" unique_id=1748923165]
 script = ExtResource("6_2iqu4")
-actor = NodePath("../..")
-state_id = 0
-metadata/_custom_type_script = "uid://b6r7vut6vta3w"
 
-[node name="PlayerMoveState" type="Node" parent="StateMachine" unique_id=958880817 node_paths=PackedStringArray("actor")]
+[node name="Move" type="Node" parent="StateMachine" unique_id=2054879999]
 script = ExtResource("14_b15sj")
-actor = NodePath("../..")
-state_id = 1
-metadata/_custom_type_script = "uid://csp44dwfwcqu0"
 
-[node name="PlayerAttackState" type="Node" parent="StateMachine" unique_id=426952359 node_paths=PackedStringArray("actor")]
+[node name="Attack" type="Node" parent="StateMachine" unique_id=571506085]
 script = ExtResource("11_klmji")
-actor = NodePath("../..")
-state_id = 2
-metadata/_custom_type_script = "uid://chearh86c82uf"
 
-[node name="PlayerRollState" type="Node" parent="StateMachine" unique_id=1969032798 node_paths=PackedStringArray("actor")]
+[node name="Roll" type="Node" parent="StateMachine" unique_id=748385512]
 script = ExtResource("9_t2ln0")
-actor = NodePath("../..")
-state_id = 3
-metadata/_custom_type_script = "uid://jtqne3plv0gg"
 
 [connection signal="animation_changed" from="Visual/AnimationPlayer" to="." method="_on_animation_player_animation_changed"]

@@ -1,38 +1,29 @@
-class_name PlayerIdleState
-extends State
-
-@export var actor: Player
+extends PlayerState
 
 
-func _ready() -> void:
-    state_id = Player.StateId.IDLE
+func _init() -> void:
+    state_id = PlayerStateId.IDLE
 
 
 func _enter() -> void:
-    if not actor:
-        return
+    player.stop_movement()
 
-    if actor.movement_module:
-        actor.movement_module.stop_manual_motion()
-
-    actor.play_actor_animation(Player.AnimationState.Idle, actor.animation_module.get_last_direction() if actor.animation_module else Vector2.DOWN)
+    player.play_animation(Player.ANIM_IDLE)
+    player.set_facing_direction(player.animation_module.get_last_direction(), Player.ANIM_IDLE)
 
 
 func _update(_delta: float) -> void:
-    if not actor:
+    if player.consume_attack_request():
+        change_state(PlayerStateId.ATTACK)
         return
 
-    if actor.consume_attack_request():
-        change_state(Player.StateId.ATTACK)
+    if player.consume_dodge_request():
+        change_state(PlayerStateId.ROLL)
         return
 
-    if actor.consume_dodge_request():
-        change_state(Player.StateId.ROLL)
+    if player.has_auto_attack_target():
+        change_state(PlayerStateId.ATTACK)
         return
 
-    if actor.has_auto_attack_target():
-        change_state(Player.StateId.ATTACK)
-        return
-
-    if actor.get_move_input() != Vector2.ZERO:
-        change_state(Player.StateId.MOVE)
+    if player.get_move_input() != Vector2.ZERO:
+        change_state(PlayerStateId.MOVE)
