@@ -2,6 +2,127 @@
 
 ---
 
+# Combat System
+
+## Combat Module
+
+### Core Features
+- [x]  **CombatModule** - dedicated module exists
+- [x]  **Fire-and-forget API** - perform_attack(slot, target_position, auto_end)
+- [x]  **Persistent API** - activate_attack(slot, dir) / deactivate_attack(slot)
+- [x]  **Attack slot routing** - PRIMARY and SECONDARY slots supported
+- [x]  **AttackData build** - delivery_type, damage roll, crit roll, target_factions, knockback built per slot
+- [x]  **MeleeAttackModule** - fire-and-forget melee executor
+- [x]  **ProjectileAttackModule** - fire-and-forget projectile executor
+- [x]  **ContactAttackModule** - persistent contact hitbox executor
+- [x]  **ChargeAttackModule** - persistent charge hitbox executor
+- [x]  **Cooldown base** - FireAttackModule.locked + cooldown_timer handles locking
+- [x]  **auto_end flag** - defer end_attack() to animation_finished if needed
+- [x]  **Range validation** - target clamped to attack range when out of range
+
+### Pending
+- [ ]  **Cooldown to Stats** - move per-slot cooldown values out of attack module into Stats
+- [ ]  **Whiff / hit SFX split** - slash_audio fires on swing regardless of hit; add on-hit SFX path separate from the swing SFX
+- [ ]  **Primary / secondary separation** - each slot drives its own executor without shared state bleed
+- [ ]  **Attack origin verification** - finalize attack origin placement for all actors
+- [ ]  **Legacy driver retirement** - verify all old attack components removed after migration
+
+Four delivery types are fully wired: MELEE, PROJECTILE, CONTACT, CHARGE. Contact and Charge manage their own hitboxes and do not require an attack_scene.
+
+---
+
+## Projectile
+
+### Core Features
+- [x]  **Projectile entity** - runtime entity exists, separate from attack effect
+- [x]  **Movement / collision cleanup** - handled in projectile lifecycle
+- [x]  **ProjectileAttackEffect hookup** - wired
+
+### Pending
+- [ ]  **Richer hit policy** - per-target hit dedup, pierce count, bounce if needed later
+
+---
+
+## Hitbox Module
+
+### Core Features
+- [x]  **Hitbox module** - exists as reusable module
+- [x]  **Faction-driven collision mask** - collision layers set from AttackData.target_factions
+- [x]  **Repeated damage interval** - optional pulse timer for persistent hitboxes
+- [x]  **Shape injection** - custom CollisionShape2D injectable
+- [x]  **Hit pipeline** - receive_hit forwarded into Hurtbox
+
+### Pending
+- [ ]  **Duplicate-hit policy** - per-target or per-attack dedup if needed
+- [ ]  **Faction coverage audit** - verify all required factions covered
+
+---
+
+## Hurtbox Module
+
+### Core Features
+- [x]  **Hurtbox module** - exists as reusable module
+- [x]  **Stats-driven collision** - collision layer set from owner Stats.faction
+- [x]  **Enabled toggle** - disable to make actor temporarily unhittable
+- [x]  **Signal handoff** - get_hit(attack_info) emitted into DamageReceiverModule
+
+### Pending
+- [ ]  **Actor binding audit** - verify all actors auto-bind owner stats consistently
+- [ ]  **Ad-hoc damage removal** - remove any remaining direct damage paths that bypass hurtbox
+
+---
+
+## DamageReceiver Module
+
+### Core Features
+- [x]  **DamageReceiverModule** - dedicated module exists
+- [x]  **Hurtbox auto-wire** - listens to hurtbox.get_hit signal
+- [x]  **Invulnerability gate** - i-frames prevent repeated damage
+- [x]  **Defense scaling** - incoming damage reduced by stats.current_defense
+- [x]  **Minimum damage clamp** - floor of 1 applied
+- [x]  **Faction validation** - rejects hits from non-target factions
+- [x]  **Signals** - damaged(amount, new_health, info), blocked(info), died(info)
+
+### Pending
+- [ ]  **All-actor audit** - verify all actors receive damage only through this module
+- [ ]  **Blocked semantics** - clarify non-damage hits vs invuln hits
+- [ ]  **Direct mutation removal** - remove any remaining stats.health writes outside this module
+
+DamageReceiverModule is the canonical damage entry point. Direct stats.health mutation elsewhere should be removed.
+
+---
+
+## HitFeedback Module
+
+### Core Features
+- [x]  **HitFeedbackModule** - dedicated module exists
+- [x]  **Knockback** - apply_knockback() driven by AttackData.knockback_force and knockback_dir
+- [x]  **Flash effect** - shader overlay driven by damage events
+- [x]  **Shader target** - configurable visual target node
+- [x]  **Hit particles** - one-shot GPUParticles2D at owner position, rotated by attack direction
+- [x]  **Death particles** - separate particle config for death feedback
+- [x]  **Particle color / scale override** - configurable per actor
+- [x]  **MovementModule integration** - knockback applied via movement_module.apply_knockback if available
+
+### Pending
+- [ ]  **Damage receiver hookup audit** - confirm signal chain complete across all actors
+- [ ]  **Event-only guarantee** - flash / knockback / particles driven from damage signals only
+- [ ]  **Death feedback consistency** - standardize across dummy, enemy, destroyable
+
+---
+
+## Damage Numbers
+
+### Core Features
+- [x]  **DamageNumber** - module / scene logic exists
+- [x]  **Crit style** - separate visual for crits
+- [x]  **Pop / float / fade** - animation implemented
+
+### Pending
+- [ ]  **Manager / aggregation layer** - throttle, merge nearby numbers, priority system
+
+---
+
 # Refactored Modules
 
 ## Stats System
@@ -305,112 +426,7 @@ profile = composition, table = independent roll bucket, entry = base reward row,
 
 ---
 
-# Unmanaged Modules
-
-## Combat Module
-
-### Core Features
-
-- [x]  **CombatModule** - dedicated module exists
-- [x]  **Fire-and-forget API** - perform_attack(slot, target_position, auto_end)
-- [x]  **Persistent API** - activate_attack(slot, dir) / deactivate_attack(slot)
-- [x]  **Attack slot routing** - PRIMARY and SECONDARY slots supported
-- [x]  **AttackData build** - delivery_type, damage roll, crit roll, target_factions, knockback built per slot
-- [x]  **MeleeAttackModule** - fire-and-forget melee executor
-- [x]  **ProjectileAttackModule** - fire-and-forget projectile executor
-- [x]  **ContactAttackModule** - persistent contact hitbox executor
-- [x]  **ChargeAttackModule** - persistent charge hitbox executor
-- [x]  **Cooldown base** - FireAttackModule.locked + cooldown_timer handles locking
-- [x]  **auto_end flag** - defer end_attack() to animation_finished if needed
-- [x]  **Range validation** - target clamped to attack range when out of range
-
-### Pending Cleanup
-
-- [ ]  **Cooldown to Stats** - move per-slot cooldown values out of attack module into Stats
-- [ ]  **Whiff / hit SFX split** - slash_audio fires on swing regardless of hit; add on-hit SFX path separate from the swing SFX
-- [ ]  **Primary / secondary separation** - each slot drives its own executor without shared state bleed
-- [ ]  **Attack origin verification** - finalize attack origin placement for all actors
-- [ ]  **Legacy driver retirement** - verify all old attack components removed after migration
-
-Four delivery types are fully wired: MELEE, PROJECTILE, CONTACT, CHARGE. Contact and Charge manage their own hitboxes and do not require an attack_scene.
-
----
-
-## HitFeedback Module
-
-### Core Features
-
-- [x]  **HitFeedbackModule** - dedicated module exists
-- [x]  **Knockback** - apply_knockback() driven by AttackData.knockback_force and knockback_dir
-- [x]  **Flash effect** - shader overlay driven by damage events
-- [x]  **Shader target** - configurable visual target node
-- [x]  **Hit particles** - one-shot GPUParticles2D at owner position, rotated by attack direction
-- [x]  **Death particles** - separate particle config for death feedback
-- [x]  **Particle color / scale override** - configurable per actor
-- [x]  **MovementModule integration** - knockback applied via movement_module.apply_knockback if available
-
-### Pending
-
-- [ ]  **Damage receiver hookup audit** - confirm signal chain complete across all actors
-- [ ]  **Event-only guarantee** - flash / knockback / particles driven from damage signals only
-- [ ]  **Death feedback consistency** - standardize across dummy, enemy, destroyable
-
----
-
-## DamageReceiver Module
-
-### Core Features
-
-- [x]  **DamageReceiverModule** - dedicated module exists
-- [x]  **Hurtbox auto-wire** - listens to hurtbox.get_hit signal
-- [x]  **Invulnerability gate** - i-frames prevent repeated damage
-- [x]  **Defense scaling** - incoming damage reduced by stats.current_defense
-- [x]  **Minimum damage clamp** - floor of 1 applied
-- [x]  **Faction validation** - rejects hits from non-target factions
-- [x]  **Signals** - damaged(amount, new_health, info), blocked(info), died(info)
-
-### Pending
-
-- [ ]  **All-actor audit** - verify all actors receive damage only through this module
-- [ ]  **Blocked semantics** - clarify non-damage hits vs invuln hits
-- [ ]  **Direct mutation removal** - remove any remaining stats.health writes outside this module
-
-DamageReceiverModule is the canonical damage entry point. Direct stats.health mutation elsewhere should be removed.
-
----
-
-## Hitbox Module
-
-### Core Features
-
-- [x]  **Hitbox module** - exists as reusable module
-- [x]  **Faction-driven collision mask** - collision layers set from AttackData.target_factions
-- [x]  **Repeated damage interval** - optional pulse timer for persistent hitboxes
-- [x]  **Shape injection** - custom CollisionShape2D injectable
-- [x]  **Hit pipeline** - receive_hit forwarded into Hurtbox
-
-### Pending
-
-- [ ]  **Duplicate-hit policy** - per-target or per-attack dedup if needed
-- [ ]  **Faction coverage audit** - verify all required factions covered
-
----
-
-## Hurtbox Module
-
-### Core Features
-
-- [x]  **Hurtbox module** - exists as reusable module
-- [x]  **Stats-driven collision** - collision layer set from owner Stats.faction
-- [x]  **Enabled toggle** - disable to make actor temporarily unhittable
-- [x]  **Signal handoff** - get_hit(attack_info) emitted into DamageReceiverModule
-
-### Pending
-
-- [ ]  **Actor binding audit** - verify all actors auto-bind owner stats consistently
-- [ ]  **Ad-hoc damage removal** - remove any remaining direct damage paths that bypass hurtbox
-
----
+# Umanaged
 
 ## Detection Module
 
@@ -496,20 +512,6 @@ Placement is partially refactored. SpawnContext and SpawnPoint are real and usab
 
 ---
 
-## Damage Numbers
-
-### Core Features
-
-- [x]  **DamageNumber** - module / scene logic exists
-- [x]  **Crit style** - separate visual for crits
-- [x]  **Pop / float / fade** - animation implemented
-
-### Pending
-
-- [ ]  **Manager / aggregation layer** - throttle, merge nearby numbers, priority system
-
----
-
 ## Audio
 
 ### Core System
@@ -534,16 +536,6 @@ Placement is partially refactored. SpawnContext and SpawnPoint are real and usab
 - [ ]  **Positional follow target** - audio source that tracks a node
 - [ ]  **Audio debug overlay**
 - [ ]  **Editor validation** - warn on empty stream list *(low priority)*
-
----
-
-## Hit Feedback
-
-### Core Features
-
-- [x]  **Enemy hit VFX** - particles on hit
-- [x]  **Enemy hit SFX** - audio event on hit
-- [x]  **Damage flash** - shader overlay on damage
 
 ---
 
@@ -783,13 +775,11 @@ Placement is partially refactored. SpawnContext and SpawnPoint are real and usab
 - [ ]  **Command execution** - parse and dispatch console commands
 
 ---
+# Actor
 
-# Player
-
-## Player Actor
+## Player
 
 ### Module Migration
-
 - [x]  **MovementModule** - wired, set_manual_mode() on bind
 - [x]  **AnimationModule** - wired, actor bound, animation_finished bridged
 - [x]  **CombatModule** - wired, stats bound, perform_attack() used in attack state
@@ -800,8 +790,7 @@ Placement is partially refactored. SpawnContext and SpawnPoint are real and usab
 - [x]  **PickupCollectorModule** - wired, owner_body and stats assigned
 - [ ]  **Legacy retirement** - _legacy/animation, _legacy/detectbox, _legacy/enemy_scanner, _legacy/movement still present in repo; not yet deleted
 
-### Player StateMachine
-
+### State Machine
 - [x]  **Idle state** - implemented (player_idle_state.gd)
 - [x]  **Move state** - walk / run, idle grace timer (player_move_state.gd)
 - [x]  **Attack state** - perform_attack() called, attack_finished used (player_attack_state.gd)
@@ -812,18 +801,18 @@ Player FSM is functionally complete for the demo. All four states are implemente
 
 ---
 
-# Enemy
+## Enemy
 
-## Enemy Actor
+### Module Migration
+- [x]  **CombatModule** - wired
+- [x]  **MovementModule** - wired
+- [x]  **NavigationModule** - wired
+- [x]  **AnimationModule** - wired
+- [x]  **DetectionModule** - wired, separate nodes for aggro / deaggro / reach ranges
+- [x]  **DamageReceiverModule** - wired
+- [x]  **HitFeedbackModule** - wired
 
-### Core
-
-- [x]  **Module system migration** - CombatModule, MovementModule, NavigationModule, AnimationModule, DetectionModule, DamageReceiverModule, HitFeedbackModule all wired
-- [x]  **Aggro / deaggro / reach ranges** - separate DetectionModule nodes for each range
-- [x]  **Robust state transitions** - states use module APIs
-
-### Enemy State Machine
-
+### State Machine
 - [x]  **Idle** - implemented
 - [x]  **Chase** - implemented, uses follow_target_node()
 - [x]  **Back** - implemented
@@ -834,18 +823,14 @@ Player FSM is functionally complete for the demo. All four states are implemente
 - [x]  **Charge Recovery** - stun duration, resumes chase or back (enemy_charge_recovery.gd)
 
 ### Future Work
-
 - [ ]  **Data-driven setup** - import / export enemy config and auto-attach to modules
 - [ ]  **Beehave migration** - replace FSM with Beehave behavior trees
 
 ---
 
-# Armies (Summons)
+## Armies (Summons)
 
-## Army Actor
-
-### Current State (Legacy — not yet migrated)
-
+### Module Migration (Legacy — not yet migrated)
 - [ ]  **MovementModule** - still uses legacy BaseMovement (_legacy/movement/base_movement.gd)
 - [ ]  **AnimationModule** - still uses legacy BaseAnimation
 - [ ]  **DetectionModule** - still uses legacy EnemyScanner
@@ -853,14 +838,12 @@ Player FSM is functionally complete for the demo. All four states are implemente
 - [ ]  **ArmyHandler** - manages unit registration, shared vision, grid slots; functional but tied to legacy internals
 
 ### Target Migration
-
 - [ ]  **Replace BaseMovement** - wire MovementModule
 - [ ]  **Replace BaseAnimation** - wire AnimationModule
 - [ ]  **Replace EnemyScanner** - wire DetectionModule
 - [ ]  **Wire CombatModule** - verify attack module per army type
 
 ### Summon System (not yet built)
-
 - [ ]  **Summon input** - press 1–4 to summon, Shift+1–4 to cancel, C to reset stack
 - [ ]  **Soul cost** - consume Stats.souls on summon
 - [ ]  **Cooldown / cast time** - per summon slot
@@ -868,23 +851,12 @@ Player FSM is functionally complete for the demo. All four states are implemente
 - [ ]  **Summon slot config** - which slots are unlocked
 - [ ]  **Summon limits** - cap per army type
 
-Army is the least migrated actor. The full legacy component stack (BaseMovement, BaseAnimation, EnemyScanner) is still live. ArmyHandler grid system works but depends on legacy army internals.
-
----
-
-## AI / Group Control
-
-### Enemy AI
-
-- [ ]  **Chase audit** - verify all enemies use follow_target_node() not direct pathfinding calls
-- [ ]  **Attack range gate** - enemy stops navigation cleanly when entering reach range
-- [ ]  **Navigation stop on attack** - confirm path motion stops before attack executes
-
 ### Army / Formation
-
 - [ ]  **Controller-side slot assignment** - group movement uses assigned grid slots, not follow-to-center
 - [ ]  **move_to(slot_position)** - army units navigate to assigned slot position
 - [ ]  **Standalone army controller** - if formation logic grows beyond ArmyHandler
+
+Army is the least migrated actor. The full legacy component stack (BaseMovement, BaseAnimation, EnemyScanner) is still live. ArmyHandler grid system works but depends on legacy army internals.
 
 ---
 
@@ -901,14 +873,7 @@ Army is the least migrated actor. The full legacy component stack (BaseMovement,
 
 ---
 
-## Optional Non-Core Modules
-
-### Projectile Base
-
-- [x]  **Projectile entity** - runtime entity exists, separate from attack effect
-- [x]  **Movement / collision cleanup** - handled in projectile lifecycle
-- [x]  **ProjectileAttackEffect hookup** - wired
-- [ ]  **Richer hit policy** - per-target hit dedup, pierce count, bounce if needed later
+# Optional Non-Core Modules
 
 ---
 
