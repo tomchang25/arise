@@ -407,11 +407,9 @@ func _build_attack_data(def: AttackDefinition, target_position: Vector2 = Vector
 
     elif def is ProjectileAttackDefinition:
         data.delivery_type = AttackData.DeliveryType.PROJECTILE
-        if def.attack_scene == null:
-            push_warning("CombatModule: ProjectileAttackDefinition has no attack_scene")
-            return null
         data.attack_scene = def.attack_scene
         data.attack_lifetime = def.lifetime
+        data.travel_distance = def.travel_distance  # ← add this
 
     elif def is AttachedAttackDefinition:
         data.delivery_type = AttackData.DeliveryType.ATTACHED

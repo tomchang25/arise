@@ -49,6 +49,8 @@ var knockback_force: float = 0.0
 ## ATTACHED           → persistent, knockback_source is a live node.
 var delivery_type: int = DeliveryType.PLACE
 
+var travel_distance: float = 0.0
+
 
 func apply_knockback_source(source: Node2D, target_pos: Vector2) -> void:
     match delivery_type:

@@ -2,8 +2,6 @@ class_name Projectile
 extends CharacterBody2D
 
 @export_group("Despawn")
-## How long the projectile can travel before despawning. Always active.
-@export var lifetime: float = 3.0
 
 ## Maximum travel distance before despawning. 0 = disabled.
 @export var max_distance: float = 0.0
@@ -34,7 +32,8 @@ func setup(data: AttackData, new_dir: Vector2, new_speed: float) -> void:
     rotate(direction.angle())
 
     _origin = global_position
-    _lifetime_timer = lifetime
+    _lifetime_timer = data.attack_lifetime
+    max_distance = data.travel_distance  # ← add this
 
     attack_effect = $ProjectileAttackEffect
     attack_effect.setup(data)
