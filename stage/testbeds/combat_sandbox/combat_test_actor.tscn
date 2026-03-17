@@ -27,6 +27,7 @@ metadata/_custom_type_script = "uid://bkgf2cii3bfri"
 [sub_resource type="Resource" id="Resource_6rd2i"]
 script = ExtResource("9_eothi")
 attack_scene = ExtResource("10_rut13")
+knockback = 100.0
 metadata/_custom_type_script = "uid://dqbwdw1d7k7tu"
 
 [sub_resource type="Resource" id="Resource_k6bne"]
@@ -34,6 +35,7 @@ script = ExtResource("9_eothi")
 delivery_type = 1
 attack_scene = ExtResource("11_ov0ts")
 attack_range = 100.0
+knockback = 100.0
 metadata/_custom_type_script = "uid://dqbwdw1d7k7tu"
 
 [sub_resource type="Resource" id="Resource_n12qf"]
@@ -122,6 +124,7 @@ collision_mask = 0
 monitorable = false
 script = ExtResource("10_gu8my")
 damage_interval = 1.0
+clear_records_on_exit = null
 metadata/_custom_type_script = "uid://co1s16xd7omkk"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/CombatModule/ChargeHitbox" unique_id=870832541]
@@ -134,6 +137,7 @@ collision_mask = 0
 monitorable = false
 script = ExtResource("10_gu8my")
 damage_interval = 1.0
+clear_records_on_exit = null
 metadata/_custom_type_script = "uid://co1s16xd7omkk"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/CombatModule/ContactHitbox" unique_id=1880057068]

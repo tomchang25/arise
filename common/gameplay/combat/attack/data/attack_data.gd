@@ -45,5 +45,19 @@ var knockback_dir: Vector2 = Vector2.ZERO
 ## knockback direction as (self → knockback_source) at hit time.
 ## Takes priority over knockback_dir in HitFeedbackModule.
 var knockback_source: Node2D = null
-
 var knockback_force: float = 0.0
+
+
+func apply_knockback_source(source: Node2D, target_pos: Vector2) -> void:
+    match delivery_type:
+        DeliveryType.CONTACT:
+            # Victim resolves direction at hit time: (victim → source).
+            knockback_source = source
+
+        DeliveryType.MELEE, DeliveryType.PROJECTILE:
+            # Bake direction now — source position is reliable at spawn time.
+            var dir := target_pos - source.global_position
+            knockback_dir = dir.normalized() if dir.length_squared() > 0.0001 else Vector2.RIGHT
+
+        _:
+            push_warning("AttackData: unknown delivery_type %d, knockback dir not set" % delivery_type)

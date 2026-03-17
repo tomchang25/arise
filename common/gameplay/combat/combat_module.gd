@@ -378,8 +378,6 @@ func _build_attack_data(def: AttackDefinition, target_position: Vector2 = Vector
     data.target_factions = _build_target_factions()
     data.delivery_type = def.delivery_type
 
-    var is_persistent := def.delivery_type == AttackData.DeliveryType.CONTACT
-
     var needs_attack_scene := def.delivery_type == AttackData.DeliveryType.MELEE or def.delivery_type == AttackData.DeliveryType.PROJECTILE
 
     if needs_attack_scene and def.attack_scene == null:
@@ -396,17 +394,7 @@ func _build_attack_data(def: AttackDefinition, target_position: Vector2 = Vector
     data.attack_lifetime = def.lifetime
     data.max_targets = def.max_targets
 
-    if is_persistent:
-        # Contact attacks don't have a travel direction — victim resolves
-        # knockback direction from knockback_source at hit time.
-        data.knockback_source = self
-    else:
-        var dir := target_position - global_position
-        if dir.length_squared() <= 0.0001:
-            dir = Vector2.RIGHT
-        else:
-            dir = dir.normalized()
-        data.knockback_dir = dir
+    data.apply_knockback_source(self, target_position)
 
     return data
 
