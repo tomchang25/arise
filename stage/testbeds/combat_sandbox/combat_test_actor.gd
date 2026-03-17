@@ -6,8 +6,8 @@ extends CharacterBody2D
 ##
 ## Weapon layout (set via CombatModule.weapons in the scene):
 ##   weapons[0]  — fire weapon  (attacks[0] = melee/slash, attacks[1] = projectile)
-##   weapons[1]  — charge weapon (attacks[0] = charge hitbox)
-##   weapons[2]  — contact weapon (attacks[0] = contact body hitbox, always active)
+##   weapons[1]  — contact weapon (attacks[0] = contact body hitbox, always active)
+##   weapons[2]  — charge weapon (attacks[0] = charge hitbox)
 
 # -------------------------
 # Input actions
@@ -31,11 +31,10 @@ const ACTION_CHARGE := &"test_charge"
 @export_group("Weapon Indices")
 ## Index of the fire weapon (slash + projectile) in CombatModule.weapons.
 @export var fire_weapon_index: int = 0
-## Index of the charge weapon in CombatModule.weapons.
-@export var charge_weapon_index: int = 1
 ## Index of the contact (body) weapon in CombatModule.weapons.
-@export var contact_weapon_index: int = 2
-
+@export var contact_weapon_index: int = 1
+## Index of the charge weapon in CombatModule.weapons.
+@export var charge_weapon_index: int = 2
 # -------------------------
 # Runtime state
 # -------------------------

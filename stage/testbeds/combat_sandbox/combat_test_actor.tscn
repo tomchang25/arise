@@ -11,7 +11,10 @@
 [ext_resource type="Script" uid="uid://dqbwdw1d7k7tu" path="res://common/gameplay/combat/attack/data/attack_definition.gd" id="9_eothi"]
 [ext_resource type="Script" uid="uid://co1s16xd7omkk" path="res://common/gameplay/combat/hitbox/hitbox.gd" id="10_gu8my"]
 [ext_resource type="PackedScene" uid="uid://jla2t1i1qafl" path="res://common/gameplay/combat/attack/effects/slash_attack_effect.tscn" id="10_rut13"]
+[ext_resource type="Script" uid="uid://dxe0yv70mfrn4" path="res://common/gameplay/combat/attack/data/place_attack_definition.gd" id="11_6rd2i"]
 [ext_resource type="PackedScene" uid="uid://vpxne6o7pihf" path="res://common/gameplay/combat/projectiles/projectile.tscn" id="11_ov0ts"]
+[ext_resource type="Script" uid="uid://b44chxi8qaq70" path="res://common/gameplay/combat/attack/data/projectile_attack_definition.gd" id="13_k6bne"]
+[ext_resource type="Script" uid="uid://cmr6ual45tdij" path="res://common/gameplay/combat/attack/data/attached_attack_definition.gd" id="14_k6bne"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ov0ts"]
 
@@ -24,46 +27,26 @@ mana = 100.0
 base_damage = 100.0
 metadata/_custom_type_script = "uid://bkgf2cii3bfri"
 
-[sub_resource type="Resource" id="Resource_6rd2i"]
-script = ExtResource("9_eothi")
+[sub_resource type="Resource" id="Resource_t4ipe"]
+script = ExtResource("11_6rd2i")
 attack_scene = ExtResource("10_rut13")
-knockback = 100.0
-metadata/_custom_type_script = "uid://dqbwdw1d7k7tu"
 
-[sub_resource type="Resource" id="Resource_k6bne"]
-script = ExtResource("9_eothi")
-delivery_type = 1
+[sub_resource type="Resource" id="Resource_pqotf"]
+script = ExtResource("13_k6bne")
 attack_scene = ExtResource("11_ov0ts")
-knockback = 100.0
-lifetime = 0.0
-metadata/_custom_type_script = "uid://dqbwdw1d7k7tu"
 
 [sub_resource type="Resource" id="Resource_n12qf"]
 script = ExtResource("8_pqotf")
-attacks = Array[ExtResource("9_eothi")]([SubResource("Resource_6rd2i"), SubResource("Resource_k6bne")])
+attacks = Array[ExtResource("9_eothi")]([SubResource("Resource_t4ipe"), SubResource("Resource_pqotf")])
 metadata/_custom_type_script = "uid://i2xvg4o1geuj"
 
-[sub_resource type="Resource" id="Resource_04wdt"]
-script = ExtResource("9_eothi")
-delivery_type = 2
-damage_multiplier = 2.0
-knockback = 200.0
-metadata/_custom_type_script = "uid://dqbwdw1d7k7tu"
+[sub_resource type="Resource" id="Resource_k6bne"]
+script = ExtResource("14_k6bne")
+knockback = 100.0
 
 [sub_resource type="Resource" id="Resource_8p6t3"]
 script = ExtResource("8_pqotf")
-attacks = Array[ExtResource("9_eothi")]([SubResource("Resource_04wdt")])
-metadata/_custom_type_script = "uid://i2xvg4o1geuj"
-
-[sub_resource type="Resource" id="Resource_tu1f5"]
-script = ExtResource("9_eothi")
-delivery_type = 2
-knockback = 100.0
-metadata/_custom_type_script = "uid://dqbwdw1d7k7tu"
-
-[sub_resource type="Resource" id="Resource_nj1f3"]
-script = ExtResource("8_pqotf")
-attacks = Array[ExtResource("9_eothi")]([SubResource("Resource_tu1f5")])
+attacks = Array[ExtResource("9_eothi")]([SubResource("Resource_k6bne")])
 metadata/_custom_type_script = "uid://i2xvg4o1geuj"
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_tcbmc"]
@@ -113,8 +96,8 @@ debug_color = Color(0.71200997, 0.47619218, 0.2637897, 0.41960785)
 [node name="CombatModule" type="Node2D" parent="Module" unique_id=1154835967 node_paths=PackedStringArray("hitbox_slots")]
 script = ExtResource("6_k6bne")
 stats = SubResource("Resource_jvb2d")
-weapons = Array[ExtResource("8_pqotf")]([SubResource("Resource_n12qf"), SubResource("Resource_8p6t3"), SubResource("Resource_nj1f3")])
-hitbox_slots = [NodePath("ChargeHitbox"), NodePath("ContactHitbox")]
+weapons = Array[ExtResource("8_pqotf")]([SubResource("Resource_n12qf"), SubResource("Resource_8p6t3"), SubResource("Resource_8p6t3")])
+hitbox_slots = [NodePath("ContactHitbox"), NodePath("ChargeHitbox")]
 metadata/_custom_type_script = "uid://bb4mbrq1u7pl"
 
 [node name="ChargeHitbox" type="Area2D" parent="Module/CombatModule" unique_id=1068131780]
@@ -123,7 +106,7 @@ collision_layer = 0
 collision_mask = 0
 monitorable = false
 script = ExtResource("10_gu8my")
-damage_interval = 1.0
+damage_interval = 0.2
 metadata/_custom_type_script = "uid://co1s16xd7omkk"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/CombatModule/ChargeHitbox" unique_id=870832541]

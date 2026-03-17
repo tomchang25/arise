@@ -120,12 +120,13 @@ func perform_attack(weapon_index: int, attack_index: int, target_position: Vecto
     if not fire.can_attack():
         return
 
-    var effective_range := get_attack_range(weapon_index, attack_index)
-    var distance := global_position.distance_to(target_position)
-    if distance > effective_range + 0.01:
-        Debug.warn("CombatModule: target out of range (%.1f > %.1f)" % [distance, effective_range])
-        var dir := (target_position - global_position).normalized()
-        target_position = global_position + dir * effective_range
+    if atk_executor is MeleeAttackModule:
+        var effective_range := get_attack_range(weapon_index, attack_index)
+        var distance := global_position.distance_to(target_position)
+        if distance > effective_range + 0.01:
+            Debug.warn("CombatModule: target out of range (%.1f > %.1f)" % [distance, effective_range])
+            var dir := (target_position - global_position).normalized()
+            target_position = global_position + dir * effective_range
 
     var def := executor.weapon.attacks[attack_index] as AttackDefinition
     var data := _build_attack_data(def, target_position)
@@ -240,8 +241,8 @@ func set_weapon_enabled(weapon_index: int, value: bool) -> void:
 
 
 ## Returns the effective attack range for the given weapon/attack.
-## If a range override is active, that value is returned instead of the
-## AttackDefinition base value.
+## If a range override is active, that value is returned instead.
+## Only PlaceAttackDefinition carries a range — Projectile and Attached return 0.
 func get_attack_range(weapon_index: int, attack_index: int = 0) -> float:
     var key := _range_key(weapon_index, attack_index)
     if _range_overrides.has(key):
@@ -254,7 +255,11 @@ func get_attack_range(weapon_index: int, attack_index: int = 0) -> float:
     if attack_index >= executor.weapon.attacks.size():
         return 0.0
 
-    return executor.weapon.attacks[attack_index].attack_range
+    var def := executor.weapon.attacks[attack_index]
+    if def is PlaceAttackDefinition:
+        return def.attack_range
+
+    return 0.0
 
 
 ## Set a runtime range override for a specific weapon/attack.
@@ -317,30 +322,27 @@ func _build_executor(weapon_index: int, weapon: WeaponData) -> void:
 
 
 func _spawn_executor(def: AttackDefinition) -> Object:
-    match def.delivery_type:
-        AttackData.DeliveryType.MELEE:
-            var m := MeleeAttackModule.new()
-            m.setup(def.cooldown)
-            return m
+    if def is PlaceAttackDefinition:
+        var m := MeleeAttackModule.new()
+        m.setup(def.cooldown)
+        return m
 
-        AttackData.DeliveryType.PROJECTILE:
-            var m := ProjectileAttackModule.new()
-            m.setup(def.cooldown, def.projectile_speed)
-            return m
+    if def is ProjectileAttackDefinition:
+        var m := ProjectileAttackModule.new()
+        m.setup(def.cooldown, def.projectile_speed)
+        return m
 
-        AttackData.DeliveryType.CONTACT:
-            # Persistent hitbox — geometry and orientation are owned by AnimationPlayer on the scene.
-            var m := ContactAttackModule.new()
-            var slot := _claim_hitbox_slot()
-            if slot == null:
-                push_error("CombatModule: no hitbox slot available for CONTACT attack")
-            else:
-                m.setup(slot)
-            return m
+    if def is AttachedAttackDefinition:
+        var m := ContactAttackModule.new()
+        var slot := _claim_hitbox_slot()
+        if slot == null:
+            push_error("CombatModule: no hitbox slot available for Attached attack")
+        else:
+            m.setup(slot)
+        return m
 
-        _:
-            push_error("CombatModule: unknown delivery_type %d" % def.delivery_type)
-            return null
+    push_error("CombatModule: unrecognised AttackDefinition subclass: %s" % def.get_class())
+    return null
 
 
 func _claim_hitbox_slot() -> Hitbox:
@@ -381,6 +383,11 @@ func _get_attack_executor(weapon_executor: WeaponExecutor, attack_index: int) ->
 ## For fire-and-forget types, pass target_position to bake knockback_dir.
 ## For persistent types (CONTACT), omit target_position — knockback_source
 ## is set instead so victims compute direction at hit time.
+## Build AttackData from an AttackDefinition.
+## For fire-and-forget types (Place, Projectile), pass target_position
+## to bake knockback_dir.
+## For Attached, omit target_position — knockback_source is set instead
+## so victims compute direction at hit time.
 func _build_attack_data(def: AttackDefinition, target_position: Vector2 = Vector2.ZERO) -> AttackData:
     if stats == null:
         push_error("CombatModule: stats is null in _build_attack_data")
@@ -388,22 +395,37 @@ func _build_attack_data(def: AttackDefinition, target_position: Vector2 = Vector
 
     var data := AttackData.new()
     data.target_factions = _build_target_factions()
-    data.delivery_type = def.delivery_type
 
-    var needs_attack_scene := def.delivery_type == AttackData.DeliveryType.MELEE or def.delivery_type == AttackData.DeliveryType.PROJECTILE
+    # Resolve delivery type and scene from the concrete definition class.
+    if def is PlaceAttackDefinition:
+        data.delivery_type = AttackData.DeliveryType.PLACE
+        if def.attack_scene == null:
+            push_warning("CombatModule: PlaceAttackDefinition has no attack_scene")
+            return null
+        data.attack_scene = def.attack_scene
+        data.attack_lifetime = def.lifetime
 
-    if needs_attack_scene and def.attack_scene == null:
-        push_warning("CombatModule: no attack_scene on AttackDefinition for delivery_type %d" % def.delivery_type)
+    elif def is ProjectileAttackDefinition:
+        data.delivery_type = AttackData.DeliveryType.PROJECTILE
+        if def.attack_scene == null:
+            push_warning("CombatModule: ProjectileAttackDefinition has no attack_scene")
+            return null
+        data.attack_scene = def.attack_scene
+        data.attack_lifetime = def.lifetime
+
+    elif def is AttachedAttackDefinition:
+        data.delivery_type = AttackData.DeliveryType.ATTACHED
+        # No attack_scene — hitbox is pre-authored in the scene.
+
+    else:
+        push_error("CombatModule: unrecognised AttackDefinition subclass: %s" % def.get_class())
         return null
 
-    data.attack_scene = def.attack_scene
     data.base_damage = stats.current_damage * def.damage_multiplier
     data.rolled_damage = _roll_damage_variance(data.base_damage, def.damage_variance)
     data.is_crit = _roll_crit(stats.current_crit_chance + def.crit_bonus)
     data.crit_multiplier = stats.current_crit_multiplier
-
     data.knockback_force = def.knockback
-    data.attack_lifetime = def.lifetime
     data.max_targets = def.max_targets
 
     data.apply_knockback_source(self, target_position)

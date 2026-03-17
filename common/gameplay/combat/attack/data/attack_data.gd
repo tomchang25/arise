@@ -1,13 +1,10 @@
 class_name AttackData
 extends RefCounted
 
-enum DeliveryType { MELEE, PROJECTILE, CONTACT }
+enum DeliveryType { PLACE, PROJECTILE, ATTACHED }
 
-var delivery_type: int = DeliveryType.MELEE
-
-## The scene to instantiate for fire-and-forget delivery types.
-## Melee expects an AttackEffect scene; Projectile expects a Projectile scene.
-## Ignored by CONTACT — those use a HitboxSlot wired in the scene.
+## The scene to instantiate for fire-and-forget delivery types (Place, Projectile).
+## Not used by Attached — those manage their own hitbox node.
 var attack_scene: PackedScene = null
 
 ## Base damage before variance: stats.current_damage * damage_multiplier
@@ -36,25 +33,30 @@ var attack_lifetime: float = 0.2
 var target_factions: Array = []
 
 ## Pre-baked travel/facing direction of the attack.
-## Set for fire-and-forget types (bullet direction, slash direction).
+## Set for fire-and-forget types (Place, Projectile).
 ## HitFeedbackModule uses this when knockback_source is null.
 var knockback_dir: Vector2 = Vector2.ZERO
 
 ## Live node reference to the attack origin.
-## Set for persistent types (CONTACT) so victims compute
-## knockback direction as (self → knockback_source) at hit time.
+## Set for Attached attacks so victims compute knockback direction
+## as (victim → knockback_source) at hit time.
 ## Takes priority over knockback_dir in HitFeedbackModule.
 var knockback_source: Node2D = null
 var knockback_force: float = 0.0
 
+## Delivery type resolved from the definition class at build time.
+## PLACE / PROJECTILE → fire-and-forget, knockback_dir is baked.
+## ATTACHED           → persistent, knockback_source is a live node.
+var delivery_type: int = DeliveryType.PLACE
+
 
 func apply_knockback_source(source: Node2D, target_pos: Vector2) -> void:
     match delivery_type:
-        DeliveryType.CONTACT:
+        DeliveryType.ATTACHED:
             # Victim resolves direction at hit time: (victim → source).
             knockback_source = source
 
-        DeliveryType.MELEE, DeliveryType.PROJECTILE:
+        DeliveryType.PLACE, DeliveryType.PROJECTILE:
             # Bake direction now — source position is reliable at spawn time.
             var dir := target_pos - source.global_position
             knockback_dir = dir.normalized() if dir.length_squared() > 0.0001 else Vector2.RIGHT
