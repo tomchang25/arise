@@ -10,14 +10,14 @@ extends Resource
 
 ## Required for MELEE and PROJECTILE delivery types.
 ## Melee expects an AttackEffect scene; Projectile expects a Projectile scene.
-## Leave null for CONTACT and CHARGE — those use a HitboxSlot wired in the scene.
+## Leave null for CONTACT those use a HitboxSlot wired in the scene.
 @export var attack_scene: PackedScene = null
 
 @export_group("Range")
 @export var attack_range: float = 40.0
 
 @export_group("Cooldown")
-## Ignored by CONTACT and CHARGE delivery types (they have no cooldown).
+## Ignored by CONTACT delivery types (they have no cooldown).
 @export var cooldown: float = 0.5
 
 @export_group("Damage")

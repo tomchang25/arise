@@ -15,7 +15,6 @@
 - [x]  **MeleeAttackModule** - fire-and-forget melee executor
 - [x]  **ProjectileAttackModule** - fire-and-forget projectile executor
 - [x]  **ContactAttackModule** - persistent contact hitbox executor
-- [x]  **ChargeAttackModule** - persistent charge hitbox executor
 - [x]  **Cooldown base** - FireAttackModule.locked + cooldown_timer handles locking
 - [x]  **auto_end flag** - defer end_attack() to animation_finished if needed
 - [x]  **Range validation** - target clamped to attack range when out of range
