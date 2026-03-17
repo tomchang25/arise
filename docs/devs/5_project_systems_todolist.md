@@ -795,6 +795,7 @@ Placement is partially refactored. SpawnContext and SpawnPoint are real and usab
 - [x]  **Attack state** - perform_attack() called, attack_finished used (player_attack_state.gd)
 - [x]  **Roll state** - roll_finished signal used (player_roll_state.gd)
 - [ ]  **FSM cleanup** - remove direct gameplay calculation and animation control from states; states should only manage transitions and call Player API
+- [ ]  **Animation fit attack_cooldown** - increase timescale to increase animation to make cooldown become REAL Attack cooldown
 
 Player FSM is functionally complete for the demo. All four states are implemented and wired. Legacy _legacy/ folders still exist in repo but Player does not drive gameplay through them. Full deletion is the remaining task.
 
