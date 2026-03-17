@@ -124,7 +124,6 @@ collision_mask = 0
 monitorable = false
 script = ExtResource("10_gu8my")
 damage_interval = 1.0
-clear_records_on_exit = null
 metadata/_custom_type_script = "uid://co1s16xd7omkk"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/CombatModule/ChargeHitbox" unique_id=870832541]
@@ -137,7 +136,6 @@ collision_mask = 0
 monitorable = false
 script = ExtResource("10_gu8my")
 damage_interval = 1.0
-clear_records_on_exit = null
 metadata/_custom_type_script = "uid://co1s16xd7omkk"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/CombatModule/ContactHitbox" unique_id=1880057068]
