@@ -1,6 +1,14 @@
 class_name ProjectileAttackModule
 extends FireAttackModule
 
+## Executes a Projectile-type attack.
+##
+## Spawns an AttackDelivery scene. AttackDelivery owns the lifetime.
+## Motion is handled by child nodes inside the delivery scene (e.g. a
+## Projectile node that drives velocity independently).
+## Speed is injected into those child nodes via setup() if the delivery
+## scene exposes it — CombatModule passes projectile_speed from the definition.
+
 ## Set by CombatModule at spawn time from AttackDefinition.projectile_speed.
 var projectile_speed: float = 500.0
 
@@ -18,12 +26,20 @@ func _execute_attack_logic(_target_position: Vector2, data: AttackData) -> void:
         end_attack()
         return
 
-    var projectile := data.attack_scene.instantiate() as Projectile
-    if projectile == null:
-        push_error("ProjectileAttackModule: attack_scene does not instantiate to Projectile")
+    var delivery := data.attack_scene.instantiate() as AttackDelivery
+    if delivery == null:
+        push_error("ProjectileAttackModule: attack_scene does not instantiate to AttackDelivery")
         end_attack()
         return
 
-    get_tree().current_scene.add_child(projectile)
-    projectile.global_position = global_position
-    projectile.setup(data, data.knockback_dir, projectile_speed)
+    get_tree().current_scene.add_child(delivery)
+    delivery.global_position = global_position
+    delivery.setup(data, self)
+
+    # Start projectile motion.
+    if delivery is ProjectileAttackDelivery:
+        (delivery as ProjectileAttackDelivery).launch(data.knockback_dir, projectile_speed)
+
+    # Fallback: if a custom delivery exposes set_speed(), honour it.
+    elif delivery.has_method("set_speed"):
+        delivery.set_speed(projectile_speed)

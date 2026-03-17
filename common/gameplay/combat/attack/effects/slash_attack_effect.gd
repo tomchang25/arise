@@ -7,17 +7,10 @@ extends AttackEffect
 @export var slash_width: float = 10.0
 @export var segments: int = 20
 
-@onready var line_2d: Line2D = $Line2D
-
 @export_group("SFX")
 @export var slash_audio: AudioEvent = null
 
-# @export var swing_sfx_key: StringName = &"swing"
-# @export var swing_sfx_stream: AudioStream
-# @export var swing_sfx_volume_db: float = 0.0
-# @export var swing_sfx_limited := true
-# @export var swing_sfx_max_per_window := 4
-# @export var swing_sfx_window_sec := 0.05
+@onready var line_2d: Line2D = $Line2D
 
 
 func setup(info: AttackData) -> void:
@@ -26,33 +19,36 @@ func setup(info: AttackData) -> void:
     if hitbox:
         _generate_capsule_shape()
 
-    _play_slash_vfx()
+
+## Called by AttackDelivery with the delivery lifetime as duration.
+func play(duration: float) -> void:
+    _play_slash_vfx(duration)
     _play_slash_sfx()
+
+
+# -------------------------
+# Internal helpers
+# -------------------------
 
 
 func _generate_capsule_shape() -> void:
     if hitbox.shape != null:
         return
 
-    var capsule = CapsuleShape2D.new()
-
-    var theta = deg_to_rad(arc_angle)
-    var chord_length = 2 * radius * sin(theta / 2.0)
-
+    var capsule := CapsuleShape2D.new()
+    var chord_length := 2.0 * radius * sin(deg_to_rad(arc_angle) / 2.0)
     capsule.radius = slash_width
-    capsule.height = chord_length + (slash_width * 2)
-
+    capsule.height = chord_length + (slash_width * 2.0)
     hitbox.shape = capsule
 
 
-func _play_slash_vfx() -> void:
+func _play_slash_vfx(duration: float) -> void:
     line_2d.clear_points()
     line_2d.width = slash_width * 1.5
 
-    var tween = create_tween()
-    tween.tween_method(_update_slash_points, 0.0, 1.0, attack_lifetime * 0.4).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-
-    tween.parallel().tween_property(line_2d, "width", 0.0, attack_lifetime * 0.6).set_delay(attack_lifetime * 0.4).set_trans(Tween.TRANS_SINE)
+    var tween := create_tween()
+    tween.tween_method(_update_slash_points, 0.0, 1.0, duration * 0.4).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+    tween.parallel().tween_property(line_2d, "width", 0.0, duration * 0.6).set_delay(duration * 0.4).set_trans(Tween.TRANS_SINE)
 
 
 func _play_slash_sfx() -> void:
@@ -62,12 +58,10 @@ func _play_slash_sfx() -> void:
 func _update_slash_points(progress: float) -> void:
     line_2d.clear_points()
 
-    var current_total_arc = deg_to_rad(arc_angle) * progress
-    var start_angle = -current_total_arc / 2.0
+    var current_arc := deg_to_rad(arc_angle) * progress
+    var start_angle := -current_arc / 2.0
 
     for i in range(segments + 1):
-        var t = float(i) / segments
-        var angle = start_angle + (current_total_arc * t)
-
-        var point_pos = (Vector2.from_angle(angle) * radius) - Vector2(radius, 0)
-        line_2d.add_point(point_pos)
+        var t := float(i) / segments
+        var angle := start_angle + current_arc * t
+        line_2d.add_point(Vector2.from_angle(angle) * radius - Vector2(radius, 0.0))

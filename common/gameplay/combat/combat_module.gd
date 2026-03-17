@@ -403,17 +403,19 @@ func _build_attack_data(def: AttackDefinition, target_position: Vector2 = Vector
             push_warning("CombatModule: PlaceAttackDefinition has no attack_scene")
             return null
         data.attack_scene = def.attack_scene
+        data.attack_effect_scene = def.attack_effect_scene
         data.attack_lifetime = def.lifetime
 
     elif def is ProjectileAttackDefinition:
         data.delivery_type = AttackData.DeliveryType.PROJECTILE
         data.attack_scene = def.attack_scene
+        data.attack_effect_scene = def.attack_effect_scene
         data.attack_lifetime = def.lifetime
-        data.travel_distance = def.travel_distance  # ← add this
+        data.travel_distance = def.travel_distance
 
     elif def is AttachedAttackDefinition:
         data.delivery_type = AttackData.DeliveryType.ATTACHED
-        # No attack_scene — hitbox is pre-authored in the scene.
+        # No attack_scene or effect_scene — hitbox is pre-authored in the scene.
 
     else:
         push_error("CombatModule: unrecognised AttackDefinition subclass: %s" % def.get_class())

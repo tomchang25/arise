@@ -193,6 +193,9 @@ base_damage = 0.0
 base_defense = 25.0
 invuln_time = 0.5
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_n7eg0"]
+size = Vector2(244, 20)
+
 [node name="CombatSandbox" type="Node2D" unique_id=1694751769 node_paths=PackedStringArray("actor", "solo_dummy", "dummy_group_root", "actor_spawn", "debug_label")]
 script = ExtResource("3_rbd4g")
 actor = NodePath("CombatTestActor")
@@ -288,3 +291,11 @@ offset_bottom = 22.0
 theme_override_font_sizes/font_size = 8
 
 [node name="PickupsNumbers" type="Node2D" parent="." unique_id=715034985 groups=["damage_number", "loot_root"]]
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1762492250]
+position = Vector2(144, 22)
+collision_layer = 4
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=938716536]
+shape = SubResource("RectangleShape2D_n7eg0")

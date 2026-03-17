@@ -12,13 +12,15 @@
 [ext_resource type="Script" uid="uid://co1s16xd7omkk" path="res://common/gameplay/combat/hitbox/hitbox.gd" id="10_gu8my"]
 [ext_resource type="PackedScene" uid="uid://jla2t1i1qafl" path="res://common/gameplay/combat/attack/effects/slash_attack_effect.tscn" id="10_rut13"]
 [ext_resource type="Script" uid="uid://dxe0yv70mfrn4" path="res://common/gameplay/combat/attack/data/place_attack_definition.gd" id="11_6rd2i"]
-[ext_resource type="PackedScene" uid="uid://vpxne6o7pihf" path="res://common/gameplay/combat/projectiles/projectile.tscn" id="11_ov0ts"]
+[ext_resource type="PackedScene" uid="uid://vpxne6o7pihf" path="res://common/gameplay/combat/deliveries/projectile_attack_delivery.tscn" id="11_ov0ts"]
+[ext_resource type="PackedScene" uid="uid://cq28w0fschv5u" path="res://common/gameplay/combat/deliveries/attack_delivery.tscn" id="11_pqotf"]
+[ext_resource type="PackedScene" uid="uid://mo52nt0sxj4w" path="res://common/gameplay/combat/attack/effects/projectile_attack_effect.tscn" id="13_eothi"]
 [ext_resource type="Script" uid="uid://b44chxi8qaq70" path="res://common/gameplay/combat/attack/data/projectile_attack_definition.gd" id="13_k6bne"]
 [ext_resource type="Script" uid="uid://cmr6ual45tdij" path="res://common/gameplay/combat/attack/data/attached_attack_definition.gd" id="14_k6bne"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ov0ts"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_rut13"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_gu8my"]
 radius = 100.0
 
 [sub_resource type="Resource" id="Resource_jvb2d"]
@@ -29,11 +31,13 @@ metadata/_custom_type_script = "uid://bkgf2cii3bfri"
 
 [sub_resource type="Resource" id="Resource_t4ipe"]
 script = ExtResource("11_6rd2i")
-attack_scene = ExtResource("10_rut13")
+attack_scene = ExtResource("11_pqotf")
+attack_effect_scene = ExtResource("10_rut13")
 
 [sub_resource type="Resource" id="Resource_pqotf"]
 script = ExtResource("13_k6bne")
 attack_scene = ExtResource("11_ov0ts")
+attack_effect_scene = ExtResource("13_eothi")
 
 [sub_resource type="Resource" id="Resource_n12qf"]
 script = ExtResource("8_pqotf")
@@ -90,7 +94,7 @@ script = ExtResource("5_6rd2i")
 metadata/_custom_type_script = "uid://hyy86fs5b0fs"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionModule" unique_id=448472772]
-shape = SubResource("CircleShape2D_rut13")
+shape = SubResource("CircleShape2D_gu8my")
 debug_color = Color(0.71200997, 0.47619218, 0.2637897, 0.41960785)
 
 [node name="CombatModule" type="Node2D" parent="Module" unique_id=1154835967 node_paths=PackedStringArray("hitbox_slots")]

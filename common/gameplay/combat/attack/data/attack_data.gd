@@ -7,6 +7,10 @@ enum DeliveryType { PLACE, PROJECTILE, ATTACHED }
 ## Not used by Attached — those manage their own hitbox node.
 var attack_scene: PackedScene = null
 
+## The effect scene to mount inside the delivery at runtime.
+## Instantiated and added as a child of AttackDelivery in setup().
+var attack_effect_scene: PackedScene = null
+
 ## Base damage before variance: stats.current_damage * damage_multiplier
 var base_damage: float = 0.0
 
