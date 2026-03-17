@@ -113,6 +113,10 @@ func perform_attack(weapon_index: int, attack_index: int, target_position: Vecto
         push_error("CombatModule: perform_attack called on a persistent executor (weapon %d, attack %d)" % [weapon_index, attack_index])
         return
 
+    # Executor-level gate — individual attack suppressed (e.g. debuff, charge state).
+    if not fire.enabled:
+        return
+
     if not fire.can_attack():
         return
 
@@ -183,6 +187,10 @@ func activate_attack(weapon_index: int, attack_index: int) -> void:
         push_error("CombatModule: activate_attack called on a fire executor (weapon %d, attack %d)" % [weapon_index, attack_index])
         return
 
+    # Executor-level gate — individual attack suppressed (e.g. debuff, charge state).
+    if not persistent.enabled:
+        return
+
     var def := executor.weapon.attacks[attack_index] as AttackDefinition
     var data := _build_attack_data(def)
     if data == null:
@@ -192,6 +200,8 @@ func activate_attack(weapon_index: int, attack_index: int) -> void:
 
 
 ## Disable the persistent hitbox for the given weapon / attack index.
+## deactivate_attack() bypasses the executor enabled flag intentionally —
+## teardown must always be allowed.
 func deactivate_attack(weapon_index: int, attack_index: int) -> void:
     var executor := _get_weapon_executor(weapon_index)
     if executor == null:
@@ -208,7 +218,10 @@ func deactivate_attack(weapon_index: int, attack_index: int) -> void:
 
 
 ## Enable or disable an entire weapon.
-## Disabling force-deactivates any live persistent hitboxes on that weapon.
+## This gates future perform_attack / activate_attack calls on all executors
+## in this weapon. It does NOT touch any currently live persistent hitboxes —
+## use deactivate_attack() explicitly before disabling if immediate teardown
+## is needed.
 func set_weapon_enabled(weapon_index: int, value: bool) -> void:
     var executor := _get_weapon_executor(weapon_index)
     if executor == null:
@@ -216,10 +229,9 @@ func set_weapon_enabled(weapon_index: int, value: bool) -> void:
 
     executor.enabled = value
 
-    # if not value:
-    #     for atk_executor in executor.attack_executors:
-    #         if atk_executor is PersistentAttackModule:
-    #             (atk_executor as PersistentAttackModule).deactivate_attack()
+    for atk_executor in executor.attack_executors:
+        if atk_executor is PersistentAttackModule:
+            (atk_executor as PersistentAttackModule).enabled = value
 
 
 # -------------------------

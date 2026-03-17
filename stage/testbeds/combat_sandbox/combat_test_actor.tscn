@@ -34,7 +34,6 @@ metadata/_custom_type_script = "uid://dqbwdw1d7k7tu"
 script = ExtResource("9_eothi")
 delivery_type = 1
 attack_scene = ExtResource("11_ov0ts")
-attack_range = 100.0
 knockback = 100.0
 metadata/_custom_type_script = "uid://dqbwdw1d7k7tu"
 

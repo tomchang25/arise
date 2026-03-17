@@ -12,8 +12,6 @@ var hurt_self: bool = false
 ## Only needed when hurt_self is true. Assigned by CombatModule.
 var owner_hurtbox: Hurtbox = null
 
-var _active_data: AttackData = null
-
 # -------------------------
 # Setup
 # -------------------------
@@ -36,14 +34,11 @@ func _activate_logic(data: AttackData) -> void:
         push_error("ContactAttackModule: hitbox is not set")
         return
 
-    _active_data = data
     hitbox.attack_info = data
     hitbox.enabled = true
 
 
 func _deactivate_logic() -> void:
-    _active_data = null
-
     if hitbox:
         hitbox.enabled = false
 
@@ -61,5 +56,5 @@ func _on_hit() -> void:
         push_warning("ContactAttackModule: hurt_self is true but owner_hurtbox is not set")
         return
 
-    if _active_data:
-        owner_hurtbox.receive_hit(_active_data)
+    if _cached_data:
+        owner_hurtbox.receive_hit(_cached_data)

@@ -1,6 +1,11 @@
 class_name FireAttackModule
 extends Node2D
 
+## When false, can_attack() returns false and execute_attack() is a no-op.
+## Set by CombatModule or a buff/debuff system to suppress this executor
+## without tearing down the weapon entirely.
+var enabled: bool = true
+
 ## Cooldown is set by CombatModule at spawn time from AttackDefinition.cooldown.
 ## Do not export this — it is not configured in the inspector.
 var attack_cooldown: float = 0.5
@@ -43,11 +48,14 @@ func setup(cooldown: float) -> void:
 
 
 func can_attack() -> bool:
-    return not locked
+    return enabled and not locked
 
 
 ## Locks the module and dispatches to the subclass implementation.
 func execute_attack(target_position: Vector2, data: AttackData) -> void:
+    if not enabled:
+        return
+
     if locked:
         return
 
