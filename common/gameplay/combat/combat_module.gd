@@ -6,7 +6,7 @@ extends Node2D
 ## Setup:
 ##   1. Assign `stats` (actor's Stats resource).
 ##   2. Assign `hitbox_slots` (pre-authored Hitbox nodes in the scene) for any
-##      CONTACT or CHARGE weapons. Fire-and-forget types need no hitbox slots.
+##      ATTACHED weapons. Fire-and-forget types need no hitbox slots.
 ##   3. Assign `weapons` array (WeaponData resources).
 ##   4. Call setup() — or it is called automatically in _ready().
 ##
@@ -17,7 +17,7 @@ extends Node2D
 ##     end_attack(weapon_index, attack_index)
 ##     can_attack(weapon_index, attack_index) -> bool
 ##
-##   Persistent:
+##   Attached (persistent hitbox):
 ##     activate_attack(weapon_index, attack_index)
 ##     deactivate_attack(weapon_index, attack_index)
 ##
@@ -38,9 +38,9 @@ extends Node2D
 @export var weapons: Array[WeaponData] = []
 
 @export_group("Hitbox Slots")
-## Pre-authored Hitbox nodes for CONTACT and CHARGE attacks.
-## Assigned in order as persistent weapons are set up.
-## Add as many as the actor has persistent attack types.
+## Pre-authored Hitbox nodes for ATTACHED attacks.
+## Assigned in order as attached weapons are set up.
+## Add as many as the actor has attached attack types.
 @export var hitbox_slots: Array[Hitbox] = []
 
 # -------------------------
@@ -50,7 +50,7 @@ extends Node2D
 ## WeaponExecutor instances, index-matched to `weapons`.
 var _weapon_executors: Array[WeaponExecutor] = []
 
-## Next hitbox slot to claim for a persistent executor.
+## Next hitbox slot to claim for an attached executor.
 var _next_hitbox_slot: int = 0
 
 ## Range overrides keyed by "_wi_ai" string (weapon_index + attack_index).
@@ -110,10 +110,9 @@ func perform_attack(weapon_index: int, attack_index: int, target_position: Vecto
 
     var fire := atk_executor as FireAttackModule
     if fire == null:
-        push_error("CombatModule: perform_attack called on a persistent executor (weapon %d, attack %d)" % [weapon_index, attack_index])
+        push_error("CombatModule: perform_attack called on an attached executor (weapon %d, attack %d)" % [weapon_index, attack_index])
         return
 
-    # Executor-level gate — individual attack suppressed (e.g. debuff, charge state).
     if not fire.enabled:
         return
 
@@ -165,11 +164,11 @@ func can_attack(weapon_index: int, attack_index: int) -> bool:
 
 
 # -------------------------
-# Persistent API
+# Attached API
 # -------------------------
 
 
-## Enable the persistent hitbox for the given weapon / attack index.
+## Enable the attached hitbox for the given weapon / attack index.
 func activate_attack(weapon_index: int, attack_index: int) -> void:
     if stats == null:
         push_error("CombatModule: stats is not set")
@@ -183,13 +182,12 @@ func activate_attack(weapon_index: int, attack_index: int) -> void:
     if atk_executor == null:
         return
 
-    var persistent := atk_executor as PersistentAttackModule
-    if persistent == null:
+    var attached := atk_executor as AttachedAttackModule
+    if attached == null:
         push_error("CombatModule: activate_attack called on a fire executor (weapon %d, attack %d)" % [weapon_index, attack_index])
         return
 
-    # Executor-level gate — individual attack suppressed (e.g. debuff, charge state).
-    if not persistent.enabled:
+    if not attached.enabled:
         return
 
     var def := executor.weapon.attacks[attack_index] as AttackDefinition
@@ -197,20 +195,19 @@ func activate_attack(weapon_index: int, attack_index: int) -> void:
     if data == null:
         return
 
-    persistent.activate_attack(data)
+    attached.activate_attack(data)
 
 
-## Disable the persistent hitbox for the given weapon / attack index.
-## deactivate_attack() bypasses the executor enabled flag intentionally —
-## teardown must always be allowed.
+## Disable the attached hitbox for the given weapon / attack index.
+## Bypasses the executor enabled flag — teardown must always be allowed.
 func deactivate_attack(weapon_index: int, attack_index: int) -> void:
     var executor := _get_weapon_executor(weapon_index)
     if executor == null:
         return
 
     var atk_executor := _get_attack_executor(executor, attack_index)
-    if atk_executor is PersistentAttackModule:
-        (atk_executor as PersistentAttackModule).deactivate_attack()
+    if atk_executor is AttachedAttackModule:
+        (atk_executor as AttachedAttackModule).deactivate_attack()
 
 
 # -------------------------
@@ -220,7 +217,7 @@ func deactivate_attack(weapon_index: int, attack_index: int) -> void:
 
 ## Enable or disable an entire weapon.
 ## This gates future perform_attack / activate_attack calls on all executors
-## in this weapon. It does NOT touch any currently live persistent hitboxes —
+## in this weapon. It does NOT touch any currently live attached hitboxes —
 ## use deactivate_attack() explicitly before disabling if immediate teardown
 ## is needed.
 func set_weapon_enabled(weapon_index: int, value: bool) -> void:
@@ -231,8 +228,8 @@ func set_weapon_enabled(weapon_index: int, value: bool) -> void:
     executor.enabled = value
 
     for atk_executor in executor.attack_executors:
-        if atk_executor is PersistentAttackModule:
-            (atk_executor as PersistentAttackModule).enabled = value
+        if atk_executor is AttachedAttackModule:
+            (atk_executor as AttachedAttackModule).enabled = value
 
 
 # -------------------------
@@ -333,7 +330,7 @@ func _spawn_executor(def: AttackDefinition) -> Object:
         return m
 
     if def is AttachedAttackDefinition:
-        var m := ContactAttackModule.new()
+        var m := AttachedAttackModule.new()
         var slot := _claim_hitbox_slot()
         if slot == null:
             push_error("CombatModule: no hitbox slot available for Attached attack")
@@ -347,6 +344,7 @@ func _spawn_executor(def: AttackDefinition) -> Object:
 
 func _claim_hitbox_slot() -> Hitbox:
     if _next_hitbox_slot >= hitbox_slots.size():
+        push_error("CombatModule: ran out of hitbox slots (need at least %d)" % (_next_hitbox_slot + 1))
         return null
 
     var slot := hitbox_slots[_next_hitbox_slot]
@@ -380,12 +378,7 @@ func _get_attack_executor(weapon_executor: WeaponExecutor, attack_index: int) ->
 
 
 ## Build AttackData from an AttackDefinition.
-## For fire-and-forget types, pass target_position to bake knockback_dir.
-## For persistent types (CONTACT), omit target_position — knockback_source
-## is set instead so victims compute direction at hit time.
-## Build AttackData from an AttackDefinition.
-## For fire-and-forget types (Place, Projectile), pass target_position
-## to bake knockback_dir.
+## For fire-and-forget types (Place, Projectile), pass target_position to bake knockback_dir.
 ## For Attached, omit target_position — knockback_source is set instead
 ## so victims compute direction at hit time.
 func _build_attack_data(def: AttackDefinition, target_position: Vector2 = Vector2.ZERO) -> AttackData:
@@ -396,7 +389,6 @@ func _build_attack_data(def: AttackDefinition, target_position: Vector2 = Vector
     var data := AttackData.new()
     data.target_factions = _build_target_factions(def)
 
-    # Resolve delivery type and scene from the concrete definition class.
     if def is PlaceAttackDefinition:
         data.delivery_type = AttackData.DeliveryType.PLACE
         if def.attack_scene == null:
