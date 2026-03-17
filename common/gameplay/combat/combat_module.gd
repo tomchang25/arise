@@ -47,13 +47,13 @@ extends Node2D
 # Runtime state
 # -------------------------
 
-## WeaponExecutor instances, index-matched to `weapons`.
-var _weapon_executors: Array[WeaponExecutor] = []
+## WeaponHandle instances, index-matched to `weapons`.
+var _handles: Array[WeaponHandle] = []
 
-## Next hitbox slot to claim for an attached executor.
+## Next hitbox slot to claim for an Attached executor.
 var _next_hitbox_slot: int = 0
 
-## Range overrides keyed by "_wi_ai" string (weapon_index + attack_index).
+## Range overrides keyed by "wi_ai" string (weapon_index + attack_index).
 ## When a key exists, get_attack_range() returns its value instead of the
 ## AttackDefinition base. Does NOT mutate weapon resources.
 var _range_overrides: Dictionary = {}
@@ -67,14 +67,19 @@ func _ready() -> void:
     setup()
 
 
-## Build all WeaponExecutors from the current `weapons` array.
+## Build all WeaponHandles from the current `weapons` array.
 ## Safe to call again if weapons change at runtime (clears and rebuilds).
 func setup() -> void:
-    _clear_executors()
+    _clear_handles()
     _next_hitbox_slot = 0
 
-    for i in weapons.size():
-        _build_executor(i, weapons[i])
+    for weapon in weapons:
+        var handle := WeaponExecutor.build(weapon, self, hitbox_slots, _next_hitbox_slot)
+        if handle != null:
+            for m in handle.attack_modules:
+                if m is AttachedAttackModule:
+                    _next_hitbox_slot += 1
+        _handles.append(handle)
 
 
 ## Replace the equipped weapons with duplicates of the given array, then rebuild.
@@ -100,26 +105,23 @@ func perform_attack(weapon_index: int, attack_index: int, target_position: Vecto
         push_error("CombatModule: stats is not set")
         return
 
-    var executor := _get_weapon_executor(weapon_index)
-    if executor == null or not executor.enabled:
+    var handle := _get_handle(weapon_index)
+    if handle == null:
         return
 
-    var atk_executor := _get_attack_executor(executor, attack_index)
-    if atk_executor == null:
+    var module := handle.get_module(attack_index)
+    if module == null:
         return
 
-    var fire := atk_executor as FireAttackModule
+    var fire := module as FireAttackModule
     if fire == null:
-        push_error("CombatModule: perform_attack called on an attached executor (weapon %d, attack %d)" % [weapon_index, attack_index])
+        push_error("CombatModule: perform_attack called on an attached module (weapon %d, attack %d)" % [weapon_index, attack_index])
         return
 
-    if not fire.enabled:
+    if not fire.enabled or not fire.can_attack():
         return
 
-    if not fire.can_attack():
-        return
-
-    if atk_executor is MeleeAttackModule:
+    if module is MeleeAttackModule:
         var effective_range := get_attack_range(weapon_index, attack_index)
         var distance := global_position.distance_to(target_position)
         if distance > effective_range + 0.01:
@@ -127,8 +129,8 @@ func perform_attack(weapon_index: int, attack_index: int, target_position: Vecto
             var dir := (target_position - global_position).normalized()
             target_position = global_position + dir * effective_range
 
-    var def := executor.weapon.attacks[attack_index] as AttackDefinition
-    var data := _build_attack_data(def, target_position)
+    var def := handle.get_def(attack_index)
+    var data := AttackData.build(def, stats, self, target_position)
     if data == null:
         return
 
@@ -141,24 +143,24 @@ func perform_attack(weapon_index: int, attack_index: int, target_position: Vecto
 ## Start the cooldown for a fire executor.
 ## Call from animation_finished when using auto_end=false.
 func end_attack(weapon_index: int, attack_index: int) -> void:
-    var executor := _get_weapon_executor(weapon_index)
-    if executor == null:
+    var handle := _get_handle(weapon_index)
+    if handle == null:
         return
 
-    var atk_executor := _get_attack_executor(executor, attack_index)
-    if atk_executor is FireAttackModule:
-        (atk_executor as FireAttackModule).end_attack()
+    var module := handle.get_module(attack_index)
+    if module is FireAttackModule:
+        (module as FireAttackModule).end_attack()
 
 
 ## Returns true if the fire executor is ready to attack.
 func can_attack(weapon_index: int, attack_index: int) -> bool:
-    var executor := _get_weapon_executor(weapon_index)
-    if executor == null or not executor.enabled:
+    var handle := _get_handle(weapon_index)
+    if handle == null:
         return false
 
-    var atk_executor := _get_attack_executor(executor, attack_index)
-    if atk_executor is FireAttackModule:
-        return (atk_executor as FireAttackModule).can_attack()
+    var module := handle.get_module(attack_index)
+    if module is FireAttackModule:
+        return (module as FireAttackModule).can_attack()
 
     return false
 
@@ -174,24 +176,24 @@ func activate_attack(weapon_index: int, attack_index: int) -> void:
         push_error("CombatModule: stats is not set")
         return
 
-    var executor := _get_weapon_executor(weapon_index)
-    if executor == null or not executor.enabled:
+    var handle := _get_handle(weapon_index)
+    if handle == null:
         return
 
-    var atk_executor := _get_attack_executor(executor, attack_index)
-    if atk_executor == null:
+    var module := handle.get_module(attack_index)
+    if module == null:
         return
 
-    var attached := atk_executor as AttachedAttackModule
+    var attached := module as AttachedAttackModule
     if attached == null:
-        push_error("CombatModule: activate_attack called on a fire executor (weapon %d, attack %d)" % [weapon_index, attack_index])
+        push_error("CombatModule: activate_attack called on a fire module (weapon %d, attack %d)" % [weapon_index, attack_index])
         return
 
     if not attached.enabled:
         return
 
-    var def := executor.weapon.attacks[attack_index] as AttackDefinition
-    var data := _build_attack_data(def)
+    var def := handle.get_def(attack_index)
+    var data := AttackData.build(def, stats, self)
     if data == null:
         return
 
@@ -199,15 +201,19 @@ func activate_attack(weapon_index: int, attack_index: int) -> void:
 
 
 ## Disable the attached hitbox for the given weapon / attack index.
-## Bypasses the executor enabled flag — teardown must always be allowed.
+## Bypasses the handle enabled flag — teardown must always be allowed.
 func deactivate_attack(weapon_index: int, attack_index: int) -> void:
-    var executor := _get_weapon_executor(weapon_index)
-    if executor == null:
+    var handle := _get_handle(weapon_index)
+    if handle == null:
         return
 
-    var atk_executor := _get_attack_executor(executor, attack_index)
-    if atk_executor is AttachedAttackModule:
-        (atk_executor as AttachedAttackModule).deactivate_attack()
+    # Use direct array access here — teardown bypasses handle.get_module() enabled guard.
+    if attack_index < 0 or attack_index >= handle.attack_modules.size():
+        return
+
+    var module: Variant = handle.attack_modules[attack_index]
+    if module is AttachedAttackModule:
+        (module as AttachedAttackModule).deactivate_attack()
 
 
 # -------------------------
@@ -216,20 +222,20 @@ func deactivate_attack(weapon_index: int, attack_index: int) -> void:
 
 
 ## Enable or disable an entire weapon.
-## This gates future perform_attack / activate_attack calls on all executors
+## This gates future perform_attack / activate_attack calls on all modules
 ## in this weapon. It does NOT touch any currently live attached hitboxes —
 ## use deactivate_attack() explicitly before disabling if immediate teardown
 ## is needed.
 func set_weapon_enabled(weapon_index: int, value: bool) -> void:
-    var executor := _get_weapon_executor(weapon_index)
-    if executor == null:
+    var handle := _get_handle(weapon_index)
+    if handle == null:
         return
 
-    executor.enabled = value
+    handle.enabled = value
 
-    for atk_executor in executor.attack_executors:
-        if atk_executor is AttachedAttackModule:
-            (atk_executor as AttachedAttackModule).enabled = value
+    for module in handle.attack_modules:
+        if module is AttachedAttackModule:
+            (module as AttachedAttackModule).enabled = value
 
 
 # -------------------------
@@ -245,14 +251,11 @@ func get_attack_range(weapon_index: int, attack_index: int = 0) -> float:
     if _range_overrides.has(key):
         return _range_overrides[key]
 
-    var executor := _get_weapon_executor(weapon_index)
-    if executor == null:
+    var handle := _get_handle(weapon_index)
+    if handle == null:
         return 0.0
 
-    if attack_index >= executor.weapon.attacks.size():
-        return 0.0
-
-    var def := executor.weapon.attacks[attack_index]
+    var def := handle.get_def(attack_index)
     if def is PlaceAttackDefinition:
         return def.attack_range
 
@@ -281,79 +284,7 @@ func get_attack_origin() -> Vector2:
 
 
 # -------------------------
-# Internal — setup helpers
-# -------------------------
-
-
-func _clear_executors() -> void:
-    for we in _weapon_executors:
-        for atk_exec in we.attack_executors:
-            if atk_exec is Node and (atk_exec as Node).is_inside_tree():
-                (atk_exec as Node).queue_free()
-
-    _weapon_executors.clear()
-
-
-func _build_executor(weapon_index: int, weapon: WeaponData) -> void:
-    if weapon == null:
-        push_warning("CombatModule: null WeaponData at index %d" % weapon_index)
-        return
-
-    var we := WeaponExecutor.new()
-    we.weapon = weapon
-
-    for i in weapon.attacks.size():
-        var def := weapon.attacks[i] as AttackDefinition
-        if def == null:
-            push_warning("CombatModule: null AttackDefinition at weapon %d, attack %d" % [weapon_index, i])
-            we.attack_executors.append(null)
-            continue
-
-        var atk_exec := _spawn_executor(def)
-        if atk_exec is Node:
-            add_child(atk_exec as Node)
-
-        we.attack_executors.append(atk_exec)
-
-    _weapon_executors.append(we)
-
-
-func _spawn_executor(def: AttackDefinition) -> Object:
-    if def is PlaceAttackDefinition:
-        var m := MeleeAttackModule.new()
-        m.setup(def.cooldown)
-        return m
-
-    if def is ProjectileAttackDefinition:
-        var m := ProjectileAttackModule.new()
-        m.setup(def.cooldown, def.projectile_speed)
-        return m
-
-    if def is AttachedAttackDefinition:
-        var m := AttachedAttackModule.new()
-        var slot := _claim_hitbox_slot()
-        if slot == null:
-            push_error("CombatModule: no hitbox slot available for Attached attack")
-        else:
-            m.setup(slot)
-        return m
-
-    push_error("CombatModule: unrecognised AttackDefinition subclass: %s" % def.get_class())
-    return null
-
-
-func _claim_hitbox_slot() -> Hitbox:
-    if _next_hitbox_slot >= hitbox_slots.size():
-        push_error("CombatModule: ran out of hitbox slots (need at least %d)" % (_next_hitbox_slot + 1))
-        return null
-
-    var slot := hitbox_slots[_next_hitbox_slot]
-    _next_hitbox_slot += 1
-    return slot
-
-
-# -------------------------
-# Internal — runtime helpers
+# Internal
 # -------------------------
 
 
@@ -361,146 +292,15 @@ func _range_key(weapon_index: int, attack_index: int) -> String:
     return "%d_%d" % [weapon_index, attack_index]
 
 
-func _get_weapon_executor(weapon_index: int) -> WeaponExecutor:
-    if weapon_index < 0 or weapon_index >= _weapon_executors.size():
+func _get_handle(weapon_index: int) -> WeaponHandle:
+    if weapon_index < 0 or weapon_index >= _handles.size():
         push_warning("CombatModule: weapon_index %d out of range" % weapon_index)
         return null
-
-    return _weapon_executors[weapon_index]
-
-
-func _get_attack_executor(weapon_executor: WeaponExecutor, attack_index: int) -> Object:
-    if attack_index < 0 or attack_index >= weapon_executor.attack_executors.size():
-        push_warning("CombatModule: attack_index %d out of range for weapon '%s'" % [attack_index, weapon_executor.weapon.weapon_name])
-        return null
-
-    return weapon_executor.attack_executors[attack_index]
+    return _handles[weapon_index]
 
 
-## Build AttackData from an AttackDefinition.
-## For fire-and-forget types (Place, Projectile), pass target_position to bake knockback_dir.
-## For Attached, omit target_position — knockback_source is set instead
-## so victims compute direction at hit time.
-func _build_attack_data(def: AttackDefinition, target_position: Vector2 = Vector2.ZERO) -> AttackData:
-    if stats == null:
-        push_error("CombatModule: stats is null in _build_attack_data")
-        return null
-
-    var data := AttackData.new()
-    data.target_factions = _build_target_factions(def)
-
-    if def is PlaceAttackDefinition:
-        data.delivery_type = AttackData.DeliveryType.PLACE
-        if def.attack_scene == null:
-            push_warning("CombatModule: PlaceAttackDefinition has no attack_scene")
-            return null
-        data.attack_scene = def.attack_scene
-        data.attack_effect_scene = def.attack_effect_scene
-        data.attack_lifetime = def.lifetime
-
-    elif def is ProjectileAttackDefinition:
-        data.delivery_type = AttackData.DeliveryType.PROJECTILE
-        data.attack_scene = def.attack_scene
-        data.attack_effect_scene = def.attack_effect_scene
-        data.attack_lifetime = def.lifetime
-        data.travel_distance = def.travel_distance
-
-    elif def is AttachedAttackDefinition:
-        data.delivery_type = AttackData.DeliveryType.ATTACHED
-        # No attack_scene or effect_scene — hitbox is pre-authored in the scene.
-
-    else:
-        push_error("CombatModule: unrecognised AttackDefinition subclass: %s" % def.get_class())
-        return null
-
-    data.base_damage = stats.current_damage * def.damage_multiplier
-    data.rolled_damage = _roll_damage_variance(data.base_damage, def.damage_variance)
-    data.is_crit = _roll_crit(stats.current_crit_chance + def.crit_bonus)
-    data.crit_multiplier = stats.current_crit_multiplier
-    data.knockback_force = def.knockback
-    data.max_targets = def.max_targets
-
-    data.damage_interval = def.damage_interval
-    data.clear_records_on_exit = def.clear_records_on_exit
-
-    data.apply_knockback_source(self, target_position)
-
-    return data
-
-
-## Resolves which factions this attack can hit.
-##
-## The result depends on two inputs:
-##   - stats.faction    : the caster's faction (who is firing)
-##   - def.faction_target_type : the intent declared on the AttackDefinition
-##
-## FactionTargetType semantics (all relative to the caster):
-##   HOSTILE_ONLY        — only factions that are hostile to the caster.
-##   HOSTILE_AND_NEUTRAL — hostile factions + NEUTRAL actors.
-##   TEAM_KILLER         — every faction except the caster's own.
-##   ALL                 — every faction, including the caster's own
-##                         (self-damage, traps, indiscriminate AoE).
-func _build_target_factions(def: AttackDefinition) -> Array:
-    var all_factions: Array = [Stats.Faction.PLAYER, Stats.Faction.ENEMY, Stats.Faction.NEUTRAL]
-
-    match def.faction_target_type:
-        AttackDefinition.FactionTargetType.HOSTILE_ONLY:
-            # Original behaviour — only factions hostile to the caster.
-            match stats.faction:
-                Stats.Faction.PLAYER:
-                    return [Stats.Faction.ENEMY]
-                Stats.Faction.ENEMY:
-                    return [Stats.Faction.PLAYER]
-                Stats.Faction.NEUTRAL:
-                    return []
-                _:
-                    return []
-
-        AttackDefinition.FactionTargetType.HOSTILE_AND_NEUTRAL:
-            # Hostile factions + NEUTRAL; never the caster's own faction.
-            match stats.faction:
-                Stats.Faction.PLAYER:
-                    return [Stats.Faction.ENEMY, Stats.Faction.NEUTRAL]
-                Stats.Faction.ENEMY:
-                    return [Stats.Faction.PLAYER, Stats.Faction.NEUTRAL]
-                Stats.Faction.NEUTRAL:
-                    # A neutral caster has no dedicated "hostile" faction,
-                    # so fall back to hitting PLAYER and ENEMY only.
-                    return [Stats.Faction.PLAYER, Stats.Faction.ENEMY]
-                _:
-                    return []
-
-        AttackDefinition.FactionTargetType.ALL:
-            # Indiscriminate — hits everything, including caster's own faction.
-            return all_factions.duplicate()
-
-        _:
-            push_warning("CombatModule: unknown FactionTargetType %d, defaulting to HOSTILE_ONLY" % def.faction_target_type)
-            return _build_target_factions_hostile_only()
-
-
-## Fallback used by the warning path above.
-func _build_target_factions_hostile_only() -> Array:
-    match stats.faction:
-        Stats.Faction.PLAYER:
-            return [Stats.Faction.ENEMY]
-        Stats.Faction.ENEMY:
-            return [Stats.Faction.PLAYER]
-        _:
-            return []
-
-
-## Returns a signed variance offset to add onto base_damage.
-## variance is a 0.0–1.0 fraction of base_damage as the max swing.
-func _roll_damage_variance(base_damage: float, variance: float) -> float:
-    variance = max(variance, 0.0)
-    if variance <= 0.0:
-        return 0.0
-
-    var max_offset := base_damage * variance
-    return randf_range(-max_offset, max_offset)
-
-
-func _roll_crit(chance: float) -> bool:
-    chance = clamp(chance, 0.0, 1.0)
-    return randf() < chance
+func _clear_handles() -> void:
+    for handle in _handles:
+        if handle != null:
+            handle.teardown()
+    _handles.clear()

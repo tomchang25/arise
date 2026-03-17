@@ -17,7 +17,9 @@ var enabled: bool = true:
         enabled = value
         if not enabled:
             _set_hitbox_active(false)
-
+        else:
+            if is_active:
+                _set_hitbox_active(true)
 ## True while the hitbox is logically on.
 ## Read by external systems to query whether this executor is in-flight.
 var is_active: bool = false
