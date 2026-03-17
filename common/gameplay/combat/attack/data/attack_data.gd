@@ -1,8 +1,6 @@
 class_name AttackData
 extends RefCounted
 
-enum DeliveryType { PLACE, PROJECTILE, ATTACHED }
-
 ## The scene to instantiate for fire-and-forget delivery types (Place, Projectile).
 ## Not used by Attached — those manage their own hitbox node.
 var attack_scene: PackedScene = null
@@ -48,11 +46,6 @@ var knockback_dir: Vector2 = Vector2.ZERO
 var knockback_source: Node2D = null
 var knockback_force: float = 0.0
 
-## Delivery type resolved from the definition class at build time.
-## PLACE / PROJECTILE → fire-and-forget, knockback_dir is baked.
-## ATTACHED           → persistent, knockback_source is a live node.
-var delivery_type: int = DeliveryType.PLACE
-
 var travel_distance: float = 0.0
 
 ## Seconds between repeated hits on the same victim while they remain inside the hitbox.
@@ -92,7 +85,6 @@ static func build(def: AttackDefinition, stats: Stats, source: Node2D, target_po
 
     # Delivery type + scene refs
     if def is PlaceAttackDefinition:
-        data.delivery_type = DeliveryType.PLACE
         if def.attack_scene == null:
             push_warning("AttackData.build: PlaceAttackDefinition has no attack_scene")
             return null
@@ -100,15 +92,19 @@ static func build(def: AttackDefinition, stats: Stats, source: Node2D, target_po
         data.attack_effect_scene = def.attack_effect_scene
         data.attack_lifetime = def.lifetime
 
+        _bake_knockback_dir(source, target_position)
+
     elif def is ProjectileAttackDefinition:
-        data.delivery_type = DeliveryType.PROJECTILE
         data.attack_scene = def.attack_scene
         data.attack_effect_scene = def.attack_effect_scene
         data.attack_lifetime = def.lifetime
         data.travel_distance = def.travel_distance
 
+        _bake_knockback_dir(source, target_position)
+
     elif def is AttachedAttackDefinition:
-        data.delivery_type = DeliveryType.ATTACHED
+        data.knockback_source = source
+
         # No attack_scene or effect_scene — hitbox is pre-authored in the scene.
 
     else:
@@ -130,9 +126,6 @@ static func build(def: AttackDefinition, stats: Stats, source: Node2D, target_po
     # Factions
     data.target_factions = _resolve_factions(def, stats)
 
-    # Knockback direction / source
-    data.apply_knockback_source(source, target_position)
-
     return data
 
 
@@ -141,19 +134,9 @@ static func build(def: AttackDefinition, stats: Stats, source: Node2D, target_po
 # -------------------------
 
 
-func apply_knockback_source(source: Node2D, target_pos: Vector2) -> void:
-    match delivery_type:
-        DeliveryType.ATTACHED:
-            # Victim resolves direction at hit time: (victim → source).
-            knockback_source = source
-
-        DeliveryType.PLACE, DeliveryType.PROJECTILE:
-            # Bake direction now — source position is reliable at spawn time.
-            var dir := target_pos - source.global_position
-            knockback_dir = dir.normalized() if dir.length_squared() > 0.0001 else Vector2.RIGHT
-
-        _:
-            push_warning("AttackData: unknown delivery_type %d, knockback dir not set" % delivery_type)
+static func _bake_knockback_dir(source: Node2D, target_position: Vector2) -> Vector2:
+    var dir := target_position - source.global_position
+    return dir.normalized() if dir.length_squared() > 0.0001 else Vector2.RIGHT
 
 
 # -------------------------
