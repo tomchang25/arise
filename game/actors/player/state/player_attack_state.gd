@@ -1,7 +1,12 @@
 extends PlayerState
 
 @export var attack_move_speed: float = 40.0
-@export var attack_slot: Stats.AttackSlot = Stats.AttackSlot.PRIMARY
+
+## Which weapon to fire (index into CombatModule.weapons).
+@export var weapon_index: int = 0
+
+## Which attack within that weapon to fire (index into WeaponData.attacks).
+@export var attack_index: int = 0
 
 var _attack_direction: Vector2 = Vector2.DOWN
 
@@ -11,7 +16,7 @@ func _init() -> void:
 
 
 func _enter() -> void:
-    var target_pos := player.get_attack_target_position()
+    var target_pos := player.get_attack_target_position(weapon_index, attack_index)
     _attack_direction = target_pos - player.global_position
 
     if _attack_direction == Vector2.ZERO:
@@ -26,7 +31,7 @@ func _enter() -> void:
 
     player.play_animation(Player.ANIM_ATTACK)
     player.set_facing_direction(_attack_direction, Player.ANIM_ATTACK)
-    player.perform_attack(target_pos, attack_slot)
+    player.perform_attack(target_pos, weapon_index, attack_index)
 
 
 func _physics_update(_delta: float) -> void:
@@ -46,6 +51,7 @@ func _exit() -> void:
 
 
 func _on_attack_finished() -> void:
+    player.end_attack()
     if player.get_move_input() != Vector2.ZERO:
         change_state(PlayerStateId.MOVE)
     else:

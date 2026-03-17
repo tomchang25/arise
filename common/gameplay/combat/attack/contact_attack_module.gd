@@ -1,25 +1,28 @@
 class_name ContactAttackModule
 extends PersistentAttackModule
 
-## The hitbox covering the actor's body. Wired by the actor in _wire_modules().
-@export var hitbox: Hitbox
+## Assigned by CombatModule at setup time from the actor's HitboxSlots.
+## Not exported — do not wire in the inspector.
+var hitbox: Hitbox = null
 
 ## If true, the actor's own hurtbox also receives the hit on each contact.
-@export var hurt_self: bool = false
+## Wired by CombatModule if needed.
+var hurt_self: bool = false
 
-## The actor's own hurtbox. Only needed when hurt_self is true.
-## Wired by the actor in _wire_modules().
-@export var owner_hurtbox: Hurtbox
+## Only needed when hurt_self is true. Assigned by CombatModule.
+var owner_hurtbox: Hurtbox = null
 
 var _active_data: AttackData = null
 
 # -------------------------
-# Lifecycle
+# Setup
 # -------------------------
 
 
-func _ready() -> void:
-    if hitbox:
+## Called by CombatModule after instantiation to inject the hitbox reference.
+func setup(assigned_hitbox: Hitbox) -> void:
+    hitbox = assigned_hitbox
+    if hitbox and not hitbox.hit_enemy.is_connected(_on_hit):
         hitbox.hit_enemy.connect(_on_hit)
 
 

@@ -19,19 +19,12 @@
 
 ### 本週任務
 
-- [ ]  **Basic UI — 召喚槽 + Soul 顯示**　初始狀態全 disabled；根據 soul 值動態開關召喚槽
 - [ ]  **Basic dialog system**　可被 event 觸發的對話框；支援序列播放即可，不需複雜分支
 - [ ]  Combat system refactor
     - [ ]  4 Attack module
 - [ ]  Try to transform enemy to data-drive
-- [ ]  Allies simple refactor to fit beehave and new module
-- [ ]  **Summon system**　花費 soul 召喚；召喚槽 enable/disable 邏輯
 - [ ]  Summary to doc and todo list
-    - [ ]  Encounter system
-    - [ ]  Despawn controller
-    - [ ]  Spawn system
-    - [ ]  Loot drop and pickups
-    - [ ]  Enemy with data-drive and dynamic generate from EnemyData system
+    - [ ]  Enemy
 
 ---
 
@@ -40,7 +33,10 @@
 **目標：把完整 demo flow 串起來，龍 boss 製作，dialog 內容全部填入**
 
 ### 敵人 / 召喚物製作
-
+- [ ]  **Basic Summons dummy**　Dummy for summons
+- [ ]  **Basic UI — 召喚槽 + Soul 顯示 + Basic 召喚**　初始狀態全 disabled；根據 soul 值動態開關召喚槽 + 召喚
+- [ ]  **Summon system**　花費 soul 召喚；召喚槽 enable/disable 邏輯
+- [ ]  Allies simple refactor to fit beehave and new module
 - [ ]  **2 Enemy types build**　Slime、Skull、Bear 基本攻擊行為
 - [ ]  **3 Summon types build**　Slime、Skull、Bear；設定 summon limits
 

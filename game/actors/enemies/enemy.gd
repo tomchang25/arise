@@ -119,7 +119,7 @@ func _apply_data() -> void:
         stats.setup_stats()
         return
 
-    # Duplicate so each instance owns its own runtime stats
+    # Duplicate so each instance owns its own runtime stats.
     stats = data.stats.duplicate() as Stats
     stats.setup_stats()
 
@@ -129,16 +129,28 @@ func _apply_data() -> void:
     if deaggro_detection and data.deaggro_range > 0.0:
         deaggro_detection.set_collision_radius(data.deaggro_range)
 
+    # Load weapons from data into combat module.
+    if combat_module and data.weapons.size() > 0:
+        combat_module.equip_weapons(data.weapons)
+
 
 func _bind_modules() -> void:
     # --- Combat ---
+    if combat_module:
+        combat_module.stats = stats
+
+    if hurtbox:
+        hurtbox.owner_stats = stats
+
     if damage_receiver:
         damage_receiver.stats = stats
         damage_receiver.hurtbox = hurtbox
 
         if not Engine.is_editor_hint():
-            damage_receiver.damaged.connect(_on_damaged)
-            damage_receiver.died.connect(_on_died)
+            if not damage_receiver.damaged.is_connected(_on_damaged):
+                damage_receiver.damaged.connect(_on_damaged)
+            if not damage_receiver.died.is_connected(_on_died):
+                damage_receiver.died.connect(_on_died)
 
     if hit_feedback:
         hit_feedback.stats = stats
@@ -151,10 +163,7 @@ func _bind_modules() -> void:
     if health_bar:
         health_bar.bind(stats)
 
-    if combat_module:
-        combat_module.stats = stats
-
-    # --- Perception: reach radius is derived from attack range, never manual ---
+    # --- Perception: reach radius from weapon 0 attack 0 range ---
     if not Engine.is_editor_hint():
         _bind_reach_detection()
 
@@ -167,7 +176,8 @@ func _bind_modules() -> void:
         navigation_module.movement = movement_module
 
         if not Engine.is_editor_hint():
-            navigation_module.navigation_finished.connect(_on_navigation_finished)
+            if not navigation_module.navigation_finished.is_connected(_on_navigation_finished):
+                navigation_module.navigation_finished.connect(_on_navigation_finished)
 
     # --- Loot ---
     if loot_drop:
@@ -184,9 +194,9 @@ func _bind_reach_detection() -> void:
         push_warning("Enemy: reach_detection present but combat_module is null — radius not set.")
         return
 
-    var attack_range := combat_module.get_attack_range(Stats.AttackSlot.PRIMARY)
-    if attack_range > 0.0:
-        reach_detection.set_collision_radius(attack_range)
+    var attac_range := combat_module.get_attack_range(0, 0)
+    if attac_range > 0.0:
+        reach_detection.set_collision_radius(attac_range)
     else:
         push_warning("Enemy: attack range returned 0 — reach_detection radius not set.")
 
@@ -244,14 +254,54 @@ func get_path_velocity() -> Vector2:
 # -------------------------
 
 
-## Perform a primary attack toward target_pos via CombatModule.
-## Uses reach_detection.global_position as origin so the range check
-## matches the detection zone, avoiding false out-of-range warnings.
-func perform_attack(target_pos: Vector2) -> void:
+## Perform a fire-and-forget attack toward target_pos.
+## Defaults to weapon 0, attack 0 — the primary attack of the default weapon.
+func perform_attack(target_pos: Vector2, weapon_index: int = 0, attack_index: int = 0, auto_end: bool = true) -> void:
     if combat_module == null:
         return
+    combat_module.perform_attack(weapon_index, attack_index, target_pos, auto_end)
 
-    combat_module.perform_attack(Stats.AttackSlot.PRIMARY, target_pos)
+
+## Signal the combat module that an animation-driven attack has finished.
+func end_attack(weapon_index: int = 0, attack_index: int = 0) -> void:
+    if combat_module == null:
+        return
+    combat_module.end_attack(weapon_index, attack_index)
+
+
+## Returns true if the given weapon/attack is off cooldown and ready to fire.
+func can_attack(weapon_index: int = 0, attack_index: int = 0) -> bool:
+    if combat_module == null:
+        return false
+    return combat_module.can_attack(weapon_index, attack_index)
+
+
+## Enable a persistent hitbox (CONTACT or CHARGE).
+func activate_attack(weapon_index: int = 0, attack_index: int = 0) -> void:
+    if combat_module == null:
+        return
+    combat_module.activate_attack(weapon_index, attack_index)
+
+
+## Disable a persistent hitbox.
+func deactivate_attack(weapon_index: int = 0, attack_index: int = 0) -> void:
+    if combat_module == null:
+        return
+    combat_module.deactivate_attack(weapon_index, attack_index)
+
+
+## Enable or disable an entire weapon by index.
+func set_weapon_enabled(weapon_index: int, value: bool) -> void:
+    if combat_module == null:
+        return
+    combat_module.set_weapon_enabled(weapon_index, value)
+
+
+## Returns the effective attack range for a given weapon/attack.
+func get_attack_range(weapon_index: int = 0, attack_index: int = 0) -> float:
+    if combat_module == null:
+        return 0.0
+    return combat_module.get_attack_range(weapon_index, attack_index)
 
 
 # -------------------------
@@ -273,29 +323,33 @@ func set_facing_direction(direction: Vector2, state_name: StringName) -> void:
     animation_module.set_blend_position(direction, state_name)
 
 
+func get_facing_direction() -> Vector2:
+    if animation_module == null:
+        return Vector2.RIGHT
+    return animation_module.get_last_direction()
+
+
 # -------------------------
 # Public API — perception proxies
 # -------------------------
 
 
-## True when the player is inside aggro range (line-of-sight checked)
+## True when the player is inside aggro range (line-of-sight checked).
 func is_player_in_aggro_range() -> bool:
     if aggro_detection == null:
         return false
-
     return aggro_detection.get_target_count(true) > 0
 
 
-## True when the player has moved OUTSIDE the deaggro zone
-## Use this as the chase exit condition to prevent oscillation
+## True when the player has moved OUTSIDE the deaggro zone.
+## Use this as the chase exit condition to prevent oscillation.
 func is_player_outside_deaggro_range() -> bool:
     if deaggro_detection == null:
         return true
-
     return deaggro_detection.get_target_count(false) == 0
 
 
-## True when the player is close enough to attack
+## True when the player is close enough to attack.
 func is_player_in_reach() -> bool:
     if reach_detection == null:
         return false

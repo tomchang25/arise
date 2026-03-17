@@ -10,7 +10,6 @@ extends Node
 @export var knockback_scale := 1.0
 @export var knockback_velocity_cap := 1200.0
 @export var minimum_knockback_force := 0.0
-@export var ignore_zero_source_position := true
 
 @export_group("Flash")
 @export var enabled_flash := true
@@ -34,7 +33,7 @@ extends Node
 @export var hit_particles_color: Color = Color(0.8, 0.0, 0.0, 1.0)
 @export var death_particles_color: Color = Color(0.8, 0.0, 0.0, 1.0)
 
-## “Size” control: scales the whole particles node (easy + reliable)
+## "Size" control: scales the whole particles node (easy + reliable)
 @export var hit_particles_scale := 1.0
 @export var death_particles_scale := 2.0
 
@@ -86,7 +85,6 @@ func _on_damaged(_amount: float, _new_hp: float, info: AttackData) -> void:
         _apply_knockback(info)
 
     if enabled_flash:
-        # print_debug("DamageReceiverModule: playing flash for %s seconds" % [_get_flash_time_from_invuln()])
         _play_flash(_get_flash_time_from_invuln())
 
     if enabled_particles:
@@ -112,6 +110,8 @@ func _on_died(info: AttackData) -> void:
 # -------------------------
 # Particles
 # -------------------------
+
+
 func _spawn_hit_particles(info: AttackData) -> void:
     _spawn_particles(hit_particles_scene, hit_particles_color, hit_particles_scale, info)
 
@@ -158,8 +158,10 @@ func _spawn_particles(scene: PackedScene, color: Color, scale_amount: float, inf
     particles.scale = Vector2.ONE * max(scale_amount, 0.01)
     particles.color = color
 
-    # Rotate by attack direction (so emission points “forward”)
-    var dir := _attack_dir(info)
+    # Rotate by attack direction (so emission points "forward")
+    var dir := _resolve_hit_dir(info)
+    if dir == Vector2.ZERO:
+        dir = Vector2.RIGHT
     particles.direction = Vector2.RIGHT  # keep a stable local emission axis
     particles.global_rotation = dir.angle()  # rotate the whole system
 
@@ -167,7 +169,6 @@ func _spawn_particles(scene: PackedScene, color: Color, scale_amount: float, inf
     particles.one_shot = true
     particles.emitting = true
 
-    # Auto free
     if not particles.finished.is_connected(particles.queue_free):
         particles.finished.connect(particles.queue_free)
 
@@ -175,6 +176,8 @@ func _spawn_particles(scene: PackedScene, color: Color, scale_amount: float, inf
 # -------------------------
 # Knockback
 # -------------------------
+
+
 func _apply_knockback(info: AttackData) -> void:
     if info == null:
         return
@@ -183,7 +186,7 @@ func _apply_knockback(info: AttackData) -> void:
     if force <= minimum_knockback_force:
         return
 
-    var dir := _resolve_knockback_dir(info)
+    var dir := _resolve_hit_dir(info)
     if dir == Vector2.ZERO:
         return
 
@@ -201,25 +204,11 @@ func _apply_knockback(info: AttackData) -> void:
         (owner as RigidBody2D).apply_impulse(impulse)
 
 
-func _resolve_knockback_dir(info: AttackData) -> Vector2:
-    var dir := info.knockback_dir
-
-    if dir != Vector2.ZERO:
-        return dir.normalized()
-
-    if owner is Node2D:
-        var owner_pos := (owner as Node2D).global_position
-        var from_source := owner_pos - info.source_position
-
-        if from_source != Vector2.ZERO:
-            return from_source.normalized()
-
-    return Vector2.ZERO
-
-
 # -------------------------
 # Flash
 # -------------------------
+
+
 func _play_flash(duration: float) -> void:
     if duration <= 0.0:
         return
@@ -228,13 +217,11 @@ func _play_flash(duration: float) -> void:
         if _cached_targets.is_empty():
             return
 
-    # Kill previous flash
     if _flash_tween and _flash_tween.is_valid():
         _flash_tween.kill()
 
     _flash_tween = create_tween()
 
-    # Collect materials
     var mats: Array[ShaderMaterial] = []
     for t in _cached_targets:
         var sm := t.material as ShaderMaterial
@@ -244,12 +231,10 @@ func _play_flash(duration: float) -> void:
     if mats.is_empty():
         return
 
-    # Set color once
     for m in mats:
         m.set_shader_parameter("overlay_color", flash_color)
         m.set_shader_parameter("overlay_amount", 1.0)
 
-    # Fade red overlay out
     _flash_tween.tween_method(
         func(v: float) -> void:
             for m in mats:
@@ -259,7 +244,6 @@ func _play_flash(duration: float) -> void:
         duration
     )
 
-    # Safety reset
     _flash_tween.tween_callback(
         func():
             for m in mats:
@@ -276,10 +260,8 @@ func _cache_visual_targets() -> void:
     if visuals == null:
         return
 
-    # Prefer sprites (most common). If you want *all* CanvasItems, change this filter.
     _cached_targets = _collect_sprite_items(visuals)
 
-    # Ensure each target has a unique shader material for this actor
     for t in _cached_targets:
         _ensure_hit_shader_material(t)
 
@@ -289,7 +271,6 @@ func _collect_sprite_items(root: Node) -> Array[CanvasItem]:
     for child in root.get_children():
         if child is Sprite2D or child is AnimatedSprite2D:
             out.append(child as CanvasItem)
-        # recurse
         if child.get_child_count() > 0:
             out.append_array(_collect_sprite_items(child))
     return out
@@ -301,26 +282,21 @@ func _ensure_hit_shader_material(ci: CanvasItem) -> void:
 
     var sm: ShaderMaterial = null
 
-    # If it already has our shader material, ensure it's unique (local) and done.
     if ci.material is ShaderMaterial and (ci.material as ShaderMaterial).shader == hit_shader:
         sm = ci.material as ShaderMaterial
     else:
-        # Create a new shader material (won't affect other actors)
         sm = ShaderMaterial.new()
         sm.shader = hit_shader
         ci.material = sm
 
-    # Ensure per-instance uniqueness even if something assigns shared resources later.
     sm.resource_local_to_scene = true
-
-    # # init params
-    # sm.set_shader_parameter("overlay_amount", 0.0)
-    # sm.set_shader_parameter("overlay_color", flash_red)
 
 
 # -------------------------
 # SFX
 # -------------------------
+
+
 func _play_audio_event(ev: AudioEvent) -> void:
     if ev == null:
         return
@@ -331,15 +307,26 @@ func _play_audio_event(ev: AudioEvent) -> void:
 # -------------------------
 # Internal
 # -------------------------
-func _attack_dir(info: AttackData) -> Vector2:
+
+
+## Resolve the direction an attack came from — used for both knockback and particles.
+##
+## Priority:
+##   1. knockback_source (live node — contact attacks). Computed source → victim at hit time.
+##   2. knockback_dir (pre-baked — melee / projectile travel direction).
+##   3. Vector2.ZERO if neither is available.
+func _resolve_hit_dir(info: AttackData) -> Vector2:
     if info == null:
-        return Vector2.RIGHT
+        return Vector2.ZERO
 
-    var dir := info.knockback_dir
-    if dir == Vector2.ZERO and owner is Node2D:
-        dir = ((owner as Node2D).global_position - info.source_position).normalized()
+    # Contact attacks: source node is live — always correct at hit time.
+    if is_instance_valid(info.knockback_source) and owner is Node2D:
+        var dir := ((owner as Node2D).global_position - info.knockback_source.global_position).normalized()
+        if dir != Vector2.ZERO:
+            return dir
 
-    if dir == Vector2.ZERO:
-        dir = Vector2.RIGHT
+    # Fire-and-forget attacks: direction was baked at spawn time.
+    if info.knockback_dir != Vector2.ZERO:
+        return info.knockback_dir.normalized()
 
-    return dir
+    return Vector2.ZERO

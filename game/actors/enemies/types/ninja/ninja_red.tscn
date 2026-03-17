@@ -42,26 +42,31 @@ height = 8.0
 radius = 6.0
 height = 16.0
 
-[sub_resource type="Resource" id="Resource_0edjs"]
+[sub_resource type="Resource" id="Resource_owdjj"]
 script = ExtResource("9_ajjfc")
 faction = 1
+health = 80.0
 mana = 100.0
-base_defense = 0.0
+base_max_health = 80.0
+base_damage = 8.0
+base_defense = 5.0
+invuln_time = 0.01
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_nnul2"]
-radius = 100.0
+radius = 200.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_u2ujg"]
-radius = 280.0
+radius = 300.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_uqcqm"]
 radius = 100.0
 
-[node name="Ninja_red" type="CharacterBody2D" unique_id=1967515506 node_paths=PackedStringArray("hurtbox", "damage_receiver", "hit_feedback", "damage_number", "health_bar", "combat_module", "aggro_detection", "deaggro_detection", "reach_detection", "movement_module", "navigation_module", "animation_module", "loot_drop", "state_machine") groups=["enemies"]]
+[node name="Ninja_red" type="CharacterBody2D" unique_id=1967515506 node_paths=PackedStringArray("sprite", "hurtbox", "damage_receiver", "hit_feedback", "damage_number", "health_bar", "combat_module", "aggro_detection", "deaggro_detection", "reach_detection", "movement_module", "navigation_module", "animation_module", "loot_drop", "state_machine") groups=["enemies"]]
 collision_layer = 2
 collision_mask = 2
 script = ExtResource("1_owdjj")
 data = ExtResource("2_owdjj")
+sprite = NodePath("Sprite")
 hurtbox = NodePath("Hurtbox")
 damage_receiver = NodePath("Module/DamageReceiverModule")
 hit_feedback = NodePath("Module/HitFeedbackModule")
@@ -116,10 +121,9 @@ parameters/TimeScale/scale = 1.0
 [node name="DetectionPivot" type="Marker2D" parent="Module" unique_id=102638325]
 position = Vector2(0, -6)
 
-[node name="CombatModule" type="Node2D" parent="Module/DetectionPivot" unique_id=1482874132 node_paths=PackedStringArray("melee_attack")]
+[node name="CombatModule" type="Node2D" parent="Module/DetectionPivot" unique_id=1482874132]
 script = ExtResource("7_ec4te")
-stats = SubResource("Resource_0edjs")
-melee_attack = NodePath("MeleeAttackModule")
+stats = SubResource("Resource_owdjj")
 
 [node name="MeleeAttackModule" type="Node2D" parent="Module/DetectionPivot/CombatModule" unique_id=34710419]
 script = ExtResource("10_baqnl")
@@ -128,6 +132,7 @@ script = ExtResource("10_baqnl")
 collision_layer = 0
 monitorable = false
 script = ExtResource("11_qo6mv")
+radius = 200.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/AggroDetection" unique_id=225246358]
 shape = SubResource("CircleShape2D_nnul2")
@@ -137,7 +142,7 @@ debug_color = Color(0, 0.6, 0.1764706, 0.23529412)
 collision_layer = 0
 monitorable = false
 script = ExtResource("11_qo6mv")
-radius = 280.0
+radius = 300.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/DeaggroDetection" unique_id=259466445]
 shape = SubResource("CircleShape2D_u2ujg")
@@ -160,15 +165,16 @@ offset_top = 4.0
 offset_right = 12.0
 offset_bottom = 8.0
 grow_horizontal = 2
-stats = SubResource("Resource_0edjs")
+stats = SubResource("Resource_owdjj")
 
 [node name="DamageReceiverModule" type="Node" parent="Module" unique_id=1491145643 node_paths=PackedStringArray("hurtbox")]
 script = ExtResource("13_7pgtx")
-stats = SubResource("Resource_0edjs")
+stats = SubResource("Resource_owdjj")
 hurtbox = NodePath("../../Hurtbox")
 
 [node name="HitFeedbackModule" type="Node" parent="Module" unique_id=924852354 node_paths=PackedStringArray("damage_receiver", "movement_module")]
 script = ExtResource("14_j0b5q")
+stats = SubResource("Resource_owdjj")
 damage_receiver = NodePath("../DamageReceiverModule")
 movement_module = NodePath("../MovementModule")
 hit_particles_scene = ExtResource("15_d5j87")

@@ -45,7 +45,7 @@ const ANIM_ATTACK: StringName = &"Attack"
 # -------------------------
 
 @export_group("Modules — Perception")
-## Detects enemies within attack range — mirrors reach_detection on Enemy.
+## Detects enemies within attack range — used to auto-target nearest enemy.
 @export var reach_detection: DetectionModule
 
 # -------------------------
@@ -99,13 +99,17 @@ func _ready() -> void:
         animation_module.animation_finished.connect(_on_animation_finished)
 
     _connect_stats_signals()
+    _enforce_debug_modes()
     _refresh_reach_range()
 
 
 func _draw() -> void:
-    if not combat_module or not stats:
+    if not combat_module or Engine.is_editor_hint():
         return
-    draw_arc(combat_module.global_position, stats.primary_attack_range, 0, TAU, 64, Color(0, 1, 0), 2.0)
+    # Draw range ring for weapon 0, attack 0 as a debug guide.
+    var attack_range := combat_module.get_attack_range(0, 0)
+    if attack_range > 0.0:
+        draw_arc(combat_module.global_position, attack_range, 0, TAU, 64, Color(0, 1, 0), 2.0)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -129,16 +133,18 @@ func _apply_data() -> void:
         stats = data.stats.duplicate() as Stats
     _ensure_stats()
 
-    # Apply god-mode range override immediately after stats are ready.
-    if not Engine.is_editor_hint():
-        if data.is_max_range_active():
-            var r := data.god_attack_range_override
-            stats.primary_attack_range = r
-            stats.secondary_attack_range = r
-            stats.recalculate_stats()
+    # Load weapons from data into combat module.
+    # equip_weapons() duplicates each entry so runtime overrides don't bleed
+    # back into the source resources, then rebuilds all executors.
+    if combat_module and data.weapons.size() > 0:
+        combat_module.equip_weapons(data.weapons)
 
     if pickup_collector:
         pickup_collector.magnet_range = data.magnet_range
+
+    # Listen for runtime inspector changes to debug flags.
+    if not data.debug_modes_changed.is_connected(_enforce_debug_modes):
+        data.debug_modes_changed.connect(_enforce_debug_modes)
 
 
 func _ensure_stats() -> void:
@@ -194,6 +200,7 @@ func _bind_modules() -> void:
         animation_module.actor = self
 
     # ── Combat ────────────────────────────────────────────────────────────
+    # stats must be bound before setup() runs so _build_attack_data has a stats ref.
     if combat_module:
         combat_module.stats = stats
 
@@ -221,8 +228,7 @@ func _bind_modules() -> void:
         health_bar.bind(stats)
 
     # ── Perception (reach) ────────────────────────────────────────────────
-    if reach_detection and stats:
-        reach_detection.set_collision_radius(stats.primary_attack_range)
+    _refresh_reach_range()
 
     # ── Pickup collector ──────────────────────────────────────────────────
     if pickup_collector:
@@ -247,9 +253,24 @@ func _disconnect_stats_signals() -> void:
         stats.stats_recalculated.disconnect(_on_stats_recalculated)
 
 
+func _connect_data_signals() -> void:
+    if data and not data.debug_modes_changed.is_connected(_enforce_debug_modes):
+        data.debug_modes_changed.connect(_enforce_debug_modes)
+
+
+func _disconnect_data_signals() -> void:
+    if data and data.debug_modes_changed.is_connected(_enforce_debug_modes):
+        data.debug_modes_changed.disconnect(_enforce_debug_modes)
+
+
+## Update reach_detection radius from the effective range of weapon 0, attack 0.
 func _refresh_reach_range() -> void:
-    if reach_detection and stats:
-        reach_detection.set_collision_radius(stats.primary_attack_range)
+    if reach_detection == null or combat_module == null:
+        return
+
+    var attac_range := combat_module.get_attack_range(0, 0)
+    if attac_range > 0.0:
+        reach_detection.set_collision_radius(attac_range)
 
 
 # -------------------------
@@ -257,20 +278,22 @@ func _refresh_reach_range() -> void:
 # -------------------------
 
 
-## Re-applies god-mode range after any stats recalculation.
+## Apply god-mode range override across all weapons and attacks on the combat module.
+## Called on ready and after every stats recalculation.
 func _enforce_debug_modes() -> void:
-    if data == null:
+    if Engine.is_editor_hint():
+        return
+    if data == null or combat_module == null:
         return
 
     if data.is_max_range_active():
         var r := data.god_attack_range_override
-        if stats.primary_attack_range != r or stats.secondary_attack_range != r:
-            stats.primary_attack_range = r
-            stats.secondary_attack_range = r
-            _disconnect_stats_signals()
-            stats.recalculate_stats()
-            _connect_stats_signals()
-            _refresh_reach_range()
+        for wi in combat_module.weapons.size():
+            var weapon := combat_module.weapons[wi]
+            for ai in weapon.attacks.size():
+                combat_module.set_attack_range_override(wi, ai, r)
+    else:
+        combat_module.clear_all_range_overrides()
 
 
 # -------------------------
@@ -341,7 +364,7 @@ func is_run_pressed() -> bool:
 
 
 func consume_attack_request() -> bool:
-    return Input.is_action_pressed("attack")
+    return can_attack() and Input.is_action_pressed("attack")
 
 
 func consume_dodge_request() -> bool:
@@ -409,24 +432,69 @@ func play_actor_animation(state_name: StringName, direction: Vector2 = Vector2.Z
 # -------------------------
 
 
-func get_primary_attack_range() -> float:
-    if not stats:
-        return 0.0
-    return max(stats.primary_attack_range, 0.0)
-
-
 func get_attack_origin() -> Vector2:
     if combat_module:
         return combat_module.get_attack_origin()
     return global_position
 
 
-## Perform an attack toward target_pos — range-checked from reach_detection origin.
-func perform_attack(target_pos: Vector2, slot: Stats.AttackSlot = Stats.AttackSlot.PRIMARY) -> void:
+func can_attack(weapon_index: int = 0, attack_index: int = 0) -> bool:
+    if combat_module == null:
+        return false
+    return combat_module.can_attack(weapon_index, attack_index)
+
+
+## Perform an attack.
+## weapon_index and attack_index map directly to CombatModule's weapon/attack arrays.
+## Defaults to weapon 0, attack 0 — the primary attack of the equipped weapon.
+func perform_attack(target_pos: Vector2, weapon_index: int = 0, attack_index: int = 0, auto_end: bool = false) -> void:
     if combat_module == null:
         return
 
-    combat_module.perform_attack(slot, target_pos)
+    combat_module.perform_attack(weapon_index, attack_index, target_pos, auto_end)
+
+
+## Signal the combat module that an animation-driven attack has finished
+## and the cooldown should now start.
+func end_attack(weapon_index: int = 0, attack_index: int = 0) -> void:
+    if combat_module == null:
+        return
+    combat_module.end_attack(weapon_index, attack_index)
+
+
+## Returns the effective attack range for a given weapon / attack slot.
+## Reflects any active range override (god mode, buffs).
+## Defaults to weapon 0, attack 0.
+func get_attack_range(weapon_index: int = 0, attack_index: int = 0) -> float:
+    if combat_module == null:
+        return 0.0
+    return combat_module.get_attack_range(weapon_index, attack_index)
+
+
+## Set a runtime range override for a specific weapon/attack.
+## Does not modify the WeaponData or AttackDefinition resource.
+## Useful for buffs, debuffs, or temporary ability changes.
+func set_attack_range_override(weapon_index: int, attack_index: int, range_value: float) -> void:
+    if combat_module == null:
+        return
+    combat_module.set_attack_range_override(weapon_index, attack_index, range_value)
+    _refresh_reach_range()
+
+
+## Remove a range override for a specific weapon/attack, restoring its base value.
+func clear_attack_range_override(weapon_index: int, attack_index: int) -> void:
+    if combat_module == null:
+        return
+    combat_module.clear_attack_range_override(weapon_index, attack_index)
+    _refresh_reach_range()
+
+
+## Remove all range overrides, restoring all base AttackDefinition values.
+func clear_all_range_overrides() -> void:
+    if combat_module == null:
+        return
+    combat_module.clear_all_range_overrides()
+    _refresh_reach_range()
 
 
 # -------------------------
@@ -455,7 +523,7 @@ func get_closest_attack_target() -> Node2D:
 
 ## True when there is a valid target in reach.
 func has_auto_attack_target() -> bool:
-    return is_instance_valid(get_nearest_reachable_target())
+    return can_attack() and is_instance_valid(get_nearest_reachable_target())
 
 
 # -------------------------
@@ -467,8 +535,8 @@ func get_mouse_world_position() -> Vector2:
     return get_global_mouse_position()
 
 
-func get_attack_target_position() -> Vector2:
-    var attack_range := get_primary_attack_range()
+func get_attack_target_position(weapon_index: int = 0, attack_index: int = 0) -> Vector2:
+    var attack_range := get_attack_range(weapon_index, attack_index)
     var origin := get_attack_origin()
     var target := get_nearest_reachable_target()
 

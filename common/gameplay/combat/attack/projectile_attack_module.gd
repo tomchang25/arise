@@ -1,20 +1,22 @@
 class_name ProjectileAttackModule
 extends FireAttackModule
 
-@export var projectile_speed: float = 500.0
+## Set by CombatModule at spawn time from AttackDefinition.projectile_speed.
+var projectile_speed: float = 500.0
 
 
-func _execute_attack_logic(target_position: Vector2, data: AttackData) -> void:
+## Called by CombatModule after instantiation.
+## Injects both cooldown (via super) and projectile speed.
+func setup(cooldown: float, speed: float = 500.0) -> void:
+    super.setup(cooldown)
+    projectile_speed = speed
+
+
+func _execute_attack_logic(_target_position: Vector2, data: AttackData) -> void:
     if data.attack_scene == null:
         push_error("ProjectileAttackModule: data.attack_scene is null")
         end_attack()
         return
-
-    var dir := target_position - data.source_position
-    if dir.length_squared() <= 0.0001:
-        dir = Vector2.RIGHT
-    else:
-        dir = dir.normalized()
 
     var projectile := data.attack_scene.instantiate() as Projectile
     if projectile == null:
@@ -23,5 +25,5 @@ func _execute_attack_logic(target_position: Vector2, data: AttackData) -> void:
         return
 
     get_tree().current_scene.add_child(projectile)
-    projectile.global_position = data.source_position
-    projectile.setup(data, dir, projectile_speed)
+    projectile.global_position = global_position
+    projectile.setup(data, data.knockback_dir, projectile_speed)

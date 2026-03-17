@@ -1,0 +1,141 @@
+[gd_scene format=3 uid="uid://bxa0uqjeegh6v"]
+
+[ext_resource type="Script" uid="uid://xr46c1d87fox" path="res://stage/testbeds/combat_sandbox/combat_test_actor.gd" id="1_5ltyh"]
+[ext_resource type="Texture2D" uid="uid://cm2c6n0ytikey" path="res://icon.svg" id="2_t2wgf"]
+[ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/gameplay/combat/hurtbox/hurtbox.gd" id="3_rut13"]
+[ext_resource type="Script" uid="uid://w30s7yqi1p3d" path="res://common/gameplay/movement/movement_module.gd" id="4_ov0ts"]
+[ext_resource type="Script" uid="uid://hyy86fs5b0fs" path="res://common/gameplay/detection/detection_module.gd" id="5_6rd2i"]
+[ext_resource type="Script" uid="uid://bb4mbrq1u7pl" path="res://common/gameplay/combat/combat_module.gd" id="6_k6bne"]
+[ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="7_t4ipe"]
+[ext_resource type="Script" uid="uid://i2xvg4o1geuj" path="res://common/gameplay/combat/attack/data/weapon_data.gd" id="8_pqotf"]
+[ext_resource type="Script" uid="uid://dqbwdw1d7k7tu" path="res://common/gameplay/combat/attack/data/attack_definition.gd" id="9_eothi"]
+[ext_resource type="Script" uid="uid://co1s16xd7omkk" path="res://common/gameplay/combat/hitbox/hitbox.gd" id="10_gu8my"]
+[ext_resource type="PackedScene" uid="uid://jla2t1i1qafl" path="res://common/gameplay/combat/attack/effects/slash_attack_effect.tscn" id="10_rut13"]
+[ext_resource type="PackedScene" uid="uid://vpxne6o7pihf" path="res://common/gameplay/combat/projectiles/projectile.tscn" id="11_ov0ts"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ov0ts"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_rut13"]
+radius = 100.0
+
+[sub_resource type="Resource" id="Resource_jvb2d"]
+script = ExtResource("7_t4ipe")
+mana = 100.0
+base_damage = 100.0
+metadata/_custom_type_script = "uid://bkgf2cii3bfri"
+
+[sub_resource type="Resource" id="Resource_6rd2i"]
+script = ExtResource("9_eothi")
+attack_scene = ExtResource("10_rut13")
+metadata/_custom_type_script = "uid://dqbwdw1d7k7tu"
+
+[sub_resource type="Resource" id="Resource_k6bne"]
+script = ExtResource("9_eothi")
+delivery_type = 1
+attack_scene = ExtResource("11_ov0ts")
+attack_range = 100.0
+metadata/_custom_type_script = "uid://dqbwdw1d7k7tu"
+
+[sub_resource type="Resource" id="Resource_n12qf"]
+script = ExtResource("8_pqotf")
+attacks = Array[ExtResource("9_eothi")]([SubResource("Resource_6rd2i"), SubResource("Resource_k6bne")])
+metadata/_custom_type_script = "uid://i2xvg4o1geuj"
+
+[sub_resource type="Resource" id="Resource_04wdt"]
+script = ExtResource("9_eothi")
+delivery_type = 2
+damage_multiplier = 2.0
+knockback = 200.0
+metadata/_custom_type_script = "uid://dqbwdw1d7k7tu"
+
+[sub_resource type="Resource" id="Resource_8p6t3"]
+script = ExtResource("8_pqotf")
+attacks = Array[ExtResource("9_eothi")]([SubResource("Resource_04wdt")])
+metadata/_custom_type_script = "uid://i2xvg4o1geuj"
+
+[sub_resource type="Resource" id="Resource_tu1f5"]
+script = ExtResource("9_eothi")
+delivery_type = 2
+knockback = 100.0
+metadata/_custom_type_script = "uid://dqbwdw1d7k7tu"
+
+[sub_resource type="Resource" id="Resource_nj1f3"]
+script = ExtResource("8_pqotf")
+attacks = Array[ExtResource("9_eothi")]([SubResource("Resource_tu1f5")])
+metadata/_custom_type_script = "uid://i2xvg4o1geuj"
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_tcbmc"]
+radius = 6.0
+height = 36.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jcp4x"]
+size = Vector2(24, 24)
+
+[node name="CombatTestActor" type="CharacterBody2D" unique_id=94791442 node_paths=PackedStringArray("movement_module", "combat_module", "reach_detection")]
+script = ExtResource("1_5ltyh")
+movement_module = NodePath("Module/MovementModule")
+combat_module = NodePath("Module/CombatModule")
+reach_detection = NodePath("Module/DetectionModule")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=512454808]
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("2_t2wgf")
+
+[node name="Hurtbox" type="Area2D" parent="." unique_id=282193920]
+collision_layer = 0
+collision_mask = 0
+monitoring = false
+script = ExtResource("3_rut13")
+metadata/_custom_type_script = "uid://dby4p11qhtin7"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=1609007870]
+shape = SubResource("CircleShape2D_ov0ts")
+debug_color = Color(0.93333334, 0.6, 0.69803923, 0.41960785)
+
+[node name="Module" type="Node2D" parent="." unique_id=80075155]
+
+[node name="MovementModule" type="Node" parent="Module" unique_id=707978689 node_paths=PackedStringArray("character")]
+script = ExtResource("4_ov0ts")
+character = NodePath("../..")
+metadata/_custom_type_script = "uid://w30s7yqi1p3d"
+
+[node name="DetectionModule" type="Area2D" parent="Module" unique_id=1075716957]
+monitorable = false
+script = ExtResource("5_6rd2i")
+metadata/_custom_type_script = "uid://hyy86fs5b0fs"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionModule" unique_id=448472772]
+shape = SubResource("CircleShape2D_rut13")
+debug_color = Color(0.71200997, 0.47619218, 0.2637897, 0.41960785)
+
+[node name="CombatModule" type="Node2D" parent="Module" unique_id=1154835967 node_paths=PackedStringArray("hitbox_slots")]
+script = ExtResource("6_k6bne")
+stats = SubResource("Resource_jvb2d")
+weapons = Array[ExtResource("8_pqotf")]([SubResource("Resource_n12qf"), SubResource("Resource_8p6t3"), SubResource("Resource_nj1f3")])
+hitbox_slots = [NodePath("ChargeHitbox"), NodePath("ContactHitbox")]
+metadata/_custom_type_script = "uid://bb4mbrq1u7pl"
+
+[node name="ChargeHitbox" type="Area2D" parent="Module/CombatModule" unique_id=1068131780]
+position = Vector2(32, 0)
+collision_layer = 0
+collision_mask = 0
+monitorable = false
+script = ExtResource("10_gu8my")
+damage_interval = 1.0
+metadata/_custom_type_script = "uid://co1s16xd7omkk"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Module/CombatModule/ChargeHitbox" unique_id=870832541]
+shape = SubResource("CapsuleShape2D_tcbmc")
+debug_color = Color(0.93333334, 0.6, 1, 0.44705883)
+
+[node name="ContactHitbox" type="Area2D" parent="Module/CombatModule" unique_id=1897958875]
+collision_layer = 0
+collision_mask = 0
+monitorable = false
+script = ExtResource("10_gu8my")
+damage_interval = 1.0
+metadata/_custom_type_script = "uid://co1s16xd7omkk"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Module/CombatModule/ContactHitbox" unique_id=1880057068]
+shape = SubResource("RectangleShape2D_jcp4x")
+debug_color = Color(0.87375176, 0.19801676, 0.7052903, 0.41960785)

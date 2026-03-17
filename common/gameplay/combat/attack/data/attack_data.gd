@@ -1,25 +1,49 @@
 class_name AttackData
 extends RefCounted
 
-enum DeliveryType { MELEE, PROJECTILE, CONTACT, CHARGE }
+enum DeliveryType { MELEE, PROJECTILE, CONTACT }
 
-var slot: int = -1
 var delivery_type: int = DeliveryType.MELEE
 
 ## The scene to instantiate for fire-and-forget delivery types.
-## Melee expects an AttackEffect, Projectile expects a Projectile scene.
-## Ignored by Contact and Charge — they manage their own hitboxes.
+## Melee expects an AttackEffect scene; Projectile expects a Projectile scene.
+## Ignored by CONTACT — those use a HitboxSlot wired in the scene.
 var attack_scene: PackedScene = null
 
+## Base damage before variance: stats.current_damage * damage_multiplier
 var base_damage: float = 0.0
+
+## Variance roll added on top of base: positive or negative offset
 var rolled_damage: float = 0.0
-var final_damage: float = 0.0
+
+## Whether this hit is a critical strike
 var is_crit: bool = false
+
+## Crit multiplier applied when is_crit is true. Set by CombatModule from stats.
+var crit_multiplier: float = 1.5
+
+## Final damage dealt: (base_damage + rolled_damage) * crit_multiplier if is_crit.
+## This is what DamageReceiverModule reads.
+var final_damage: float:
+    get:
+        var dmg := base_damage + rolled_damage
+        if is_crit:
+            dmg *= crit_multiplier
+        return dmg
 
 var max_targets: int = -1
 var attack_lifetime: float = 0.2
 var target_factions: Array = []
 
-var source_position: Vector2 = Vector2.ZERO
+## Pre-baked travel/facing direction of the attack.
+## Set for fire-and-forget types (bullet direction, slash direction).
+## HitFeedbackModule uses this when knockback_source is null.
 var knockback_dir: Vector2 = Vector2.ZERO
+
+## Live node reference to the attack origin.
+## Set for persistent types (CONTACT) so victims compute
+## knockback direction as (self → knockback_source) at hit time.
+## Takes priority over knockback_dir in HitFeedbackModule.
+var knockback_source: Node2D = null
+
 var knockback_force: float = 0.0

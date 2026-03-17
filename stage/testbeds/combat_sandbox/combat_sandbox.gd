@@ -9,17 +9,16 @@ const ACTION_RESET_ALL := &"test_reset_all"
 const ACTION_HEAL_ALL := &"test_heal_all"
 const ACTION_KILL_GROUP := &"test_kill_group"
 const ACTION_TOGGLE_INVULN := &"test_toggle_invuln"
-const ACTION_CONTACT_ATTACK := &"test_contact_attack"
 
 # -------------------------
 # Exports
 # -------------------------
 
 @export_group("Scene References")
-@export var player: CombatTestPlayer
+@export var actor: CombatTestActor
 @export var solo_dummy: Dummy
 @export var dummy_group_root: Node2D
-@export var player_spawn: Marker2D
+@export var actor_spawn: Marker2D
 @export var debug_label: Label
 
 @export_group("Dummy Group Spawn")
@@ -80,8 +79,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _reset_all() -> void:
-    if player and player_spawn:
-        player.reset_position(player_spawn.global_position)
+    if actor and actor_spawn:
+        actor.reset_position(actor_spawn.global_position)
 
     _reset_dummy(solo_dummy)
 
@@ -162,8 +161,8 @@ func _configure_dummy(dummy: Dummy) -> void:
 
 
 func _apply_spawn_positions() -> void:
-    if player and player_spawn:
-        player.global_position = player_spawn.global_position
+    if actor and actor_spawn:
+        actor.global_position = actor_spawn.global_position
 
 
 func _reset_dummy(dummy: Dummy) -> void:
@@ -199,6 +198,10 @@ func _update_debug_label() -> void:
 
     var group_alive := _group_dummies.filter(func(d): return is_instance_valid(d) and d.stats and d.stats.health > 0).size()
 
+    var charge_state := ""
+    if actor:
+        charge_state = "ON" if actor._charge_active else "off"
+
     debug_label.text = (
         "\n"
         . join(
@@ -207,10 +210,11 @@ func _update_debug_label() -> void:
                 "[H]   Heal all",
                 "[K]   Kill group",
                 "[I]   Toggle invuln  (%s)" % ("ON" if _invuln_enabled else "off"),
-                "[Q]   Hold — contact attack",
                 "",
-                "LMB   Primary attack",
-                "RMB   Secondary attack",
+                "LMB   Slash attack",
+                "RMB   Projectile attack",
+                "[Hold R]  Charge attack  (%s)" % charge_state,
+                "        Contact attack always active",
                 "",
                 "Solo dummy HP:  %s" % solo_hp,
                 "Group alive:    %d / %d" % [group_alive, group_count],
@@ -225,17 +229,15 @@ func _update_debug_label() -> void:
 
 
 func _ensure_actions() -> void:
-    _ensure_key_action(ACTION_RESET_ALL, KEY_R)
+    _ensure_key_action(ACTION_RESET_ALL, KEY_T)
     _ensure_key_action(ACTION_HEAL_ALL, KEY_H)
     _ensure_key_action(ACTION_KILL_GROUP, KEY_K)
     _ensure_key_action(ACTION_TOGGLE_INVULN, KEY_I)
-    _ensure_key_action(ACTION_CONTACT_ATTACK, KEY_Q)
 
 
 func _ensure_key_action(action: StringName, keycode: Key) -> void:
     if InputMap.has_action(action):
         return
-
     InputMap.add_action(action)
     var event := InputEventKey.new()
     event.physical_keycode = keycode

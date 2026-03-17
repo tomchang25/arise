@@ -51,10 +51,10 @@ Four delivery types are fully wired: MELEE, PROJECTILE, CONTACT, CHARGE. Contact
 - [x]  **Repeated damage interval** - optional pulse timer for persistent hitboxes
 - [x]  **Shape injection** - custom CollisionShape2D injectable
 - [x]  **Hit pipeline** - receive_hit forwarded into Hurtbox
+- [x]  **Rewrite persistent hit** - Replace timer/timeout-based persistent attack with a per-victim hit-time array that throttles hits by interval and cleans up records when victims leave the hitbox.
 
 ### Pending
-- [ ]  **Duplicate-hit policy** - per-target or per-attack dedup if needed
-- [ ]  **Faction coverage audit** - verify all required factions covered
+- [ ] **Persistent Hit Optimize** - Add tick-based interval check instead of per-process validation; defer entity removal to on-exit rather than continuously checking for invalid entities
 
 ---
 

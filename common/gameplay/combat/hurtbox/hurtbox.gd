@@ -16,11 +16,14 @@ var owner_stats: Stats:
             _setup_collision_layers()
 
 
+func _init() -> void:
+    monitoring = false
+
+
 func _ready() -> void:
     if not owner_stats and owner.get("stats"):
         owner_stats = owner.stats
 
-    monitorable = false
     set_deferred("monitorable", enabled)
     _setup_collision_layers()
 

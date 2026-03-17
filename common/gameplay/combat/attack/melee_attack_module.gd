@@ -8,12 +8,6 @@ func _execute_attack_logic(target_position: Vector2, data: AttackData) -> void:
         end_attack()
         return
 
-    var dir := target_position - data.source_position
-    if dir.length_squared() <= 0.0001:
-        dir = Vector2.RIGHT
-    else:
-        dir = dir.normalized()
-
     var effect := data.attack_scene.instantiate() as AttackEffect
     if effect == null:
         push_error("MeleeAttackModule: attack_scene does not instantiate to AttackEffect")
@@ -22,10 +16,9 @@ func _execute_attack_logic(target_position: Vector2, data: AttackData) -> void:
 
     get_tree().current_scene.add_child(effect)
     effect.global_position = target_position
-    effect.rotation = dir.angle()
+    effect.rotation = data.knockback_dir.angle()
 
     if data.knockback_force <= 0.0:
         data.knockback_force = data.final_damage * 4.0
 
-    data.knockback_dir = dir
     effect.setup(data)

@@ -11,7 +11,6 @@ signal stats_recalculated
 
 enum BuffableStat { MAX_HEALTH, MAX_MANA, DAMAGE, DEFENSE, SPEED }
 enum Faction { PLAYER, ENEMY, NEUTRAL }
-enum AttackSlot { PRIMARY, SECONDARY, SKILL_1, SKILL_2 }
 
 const BASE_LEVEL_XP: float = 100.0
 const BASE_LEVEL_XP_INCREMENT_PER_LEVEL: float = 50.0
@@ -68,52 +67,6 @@ const BASE_LEVEL_XP_INCREMENT_PER_LEVEL: float = 50.0
         base_crit_multiplier = value
         recalculate_stats()
 
-@export_group("Weapon Layer (temporary merged)")
-@export var weapon_damage: float = 0.0:
-    set(value):
-        weapon_damage = value
-        recalculate_stats()
-
-@export_range(0.0, 1.0, 0.01) var weapon_crit_chance: float = 0.0:
-    set(value):
-        weapon_crit_chance = value
-        recalculate_stats()
-
-@export var weapon_crit_multiplier: float = 0.0:
-    set(value):
-        weapon_crit_multiplier = value
-        recalculate_stats()
-
-@export_group("Primary Attack")
-@export var primary_delivery_type: AttackData.DeliveryType = AttackData.DeliveryType.MELEE
-@export var primary_attack_scene: PackedScene = null
-@export var primary_attack_range: float = 30.0:
-    set(value):
-        primary_attack_range = value
-        recalculate_stats()
-
-@export var primary_damage_multiplier: float = 1.0
-@export_range(0.0, 4.0, 0.01) var primary_damage_variance: float = 0.10
-@export_range(0.0, 4.0, 0.01) var primary_crit_bonus: float = 0.0
-@export var primary_knockback: float = 40.0
-@export var primary_lifetime: float = 0.20
-@export var primary_max_targets: int = 1
-
-@export_group("Secondary Attack")
-@export var secondary_delivery_type: AttackData.DeliveryType = AttackData.DeliveryType.MELEE
-@export var secondary_attack_scene: PackedScene = null
-@export var secondary_attack_range: float = 60.0:
-    set(value):
-        secondary_attack_range = value
-        recalculate_stats()
-
-@export var secondary_damage_multiplier: float = 1.8
-@export_range(0.0, 4.0, 0.01) var secondary_damage_variance: float = 0.15
-@export_range(0.0, 4.0, 0.01) var secondary_crit_bonus: float = 0.05
-@export var secondary_knockback: float = 100.0
-@export var secondary_lifetime: float = 0.25
-@export var secondary_max_targets: int = 2
-
 @export_group("Combat")
 @export var invuln_time: float = 0.08
 
@@ -159,12 +112,12 @@ func setup_stats() -> void:
 func recalculate_stats() -> void:
     current_max_health = base_max_health + ((level - 1) * 10.0)
     current_max_mana = base_max_mana + ((level - 1) * 5.0)
-    current_damage = base_damage + weapon_damage + ((level - 1) * 2.0)
+    current_damage = base_damage + ((level - 1) * 2.0)
     current_defense = base_defense + ((level - 1) * 2.0)
     current_speed = base_speed + ((level - 1) * 0.1)
 
-    current_crit_chance = clamp(base_crit_chance + weapon_crit_chance, 0.0, 1.0)
-    current_crit_multiplier = max(1.0, base_crit_multiplier + weapon_crit_multiplier)
+    current_crit_chance = clamp(base_crit_chance, 0.0, 1.0)
+    current_crit_multiplier = max(1.0, base_crit_multiplier)
 
     health = clamp(health, 0.0, current_max_health)
     mana = clamp(mana, 0.0, current_max_mana)
