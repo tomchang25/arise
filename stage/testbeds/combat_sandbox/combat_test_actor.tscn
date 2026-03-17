@@ -20,7 +20,7 @@
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ov0ts"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_gu8my"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_pqotf"]
 radius = 100.0
 
 [sub_resource type="Resource" id="Resource_jvb2d"]
@@ -94,7 +94,7 @@ script = ExtResource("5_6rd2i")
 metadata/_custom_type_script = "uid://hyy86fs5b0fs"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionModule" unique_id=448472772]
-shape = SubResource("CircleShape2D_gu8my")
+shape = SubResource("CircleShape2D_pqotf")
 debug_color = Color(0.71200997, 0.47619218, 0.2637897, 0.41960785)
 
 [node name="CombatModule" type="Node2D" parent="Module" unique_id=1154835967 node_paths=PackedStringArray("hitbox_slots")]

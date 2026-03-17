@@ -55,6 +55,17 @@ var delivery_type: int = DeliveryType.PLACE
 
 var travel_distance: float = 0.0
 
+## Seconds between repeated hits on the same victim while they remain inside the hitbox.
+## 0 = hit on enter only, never repeat while inside.
+## Forwarded to Hitbox.damage_interval at setup time.
+var damage_interval: float = 0.0
+
+## If true, the victim's hit record is cleared when they exit the hitbox —
+## re-entering will trigger a hit again.
+## If false, a victim hit once is immune for the entire hitbox lifetime.
+## Forwarded to Hitbox.clear_records_on_exit at setup time.
+var clear_records_on_exit: bool = true
+
 
 func apply_knockback_source(source: Node2D, target_pos: Vector2) -> void:
     match delivery_type:

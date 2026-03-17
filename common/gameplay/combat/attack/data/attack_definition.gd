@@ -14,3 +14,12 @@ extends Resource
 @export_group("Hit")
 @export var knockback: float = 40.0
 @export var max_targets: int = 1
+
+## Seconds between repeated hits on the same victim while they remain inside the hitbox.
+## 0 = hit on enter only, never repeat while inside.
+@export var damage_interval: float = 0.0
+
+## If true, the victim's hit record is cleared when they exit the hitbox —
+## re-entering will trigger a hit again.
+## If false, a victim hit once is immune for the entire hitbox lifetime.
+@export var clear_records_on_exit: bool = false

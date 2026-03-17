@@ -14,18 +14,16 @@ extends AttackEffect
 @onready var line_2d: Line2D = $Line2D
 
 
-func setup(info: AttackData) -> void:
-    super.setup(info)
+func setup(data: AttackData) -> void:
+    super.setup(data)
 
     if hitbox:
         _generate_projectile_shape()
 
 
-## Called by AttackDelivery after setup(). Starts the comet VFX.
-## duration matches the delivery lifetime.
+## Called by AttackDelivery with the delivery lifetime as duration.
 func play(duration: float) -> void:
     _play_projectile_vfx(duration)
-    print("FUCK")
 
 
 # -------------------------

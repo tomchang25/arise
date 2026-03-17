@@ -35,6 +35,8 @@ func _activate_logic(data: AttackData) -> void:
         return
 
     hitbox.attack_info = data
+    hitbox.damage_interval = data.damage_interval
+    hitbox.clear_records_on_exit = data.clear_records_on_exit
     hitbox.enabled = true
 
 

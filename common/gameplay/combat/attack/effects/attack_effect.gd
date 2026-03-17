@@ -16,12 +16,14 @@ var targets_hit_count: int = 0
 var hitbox: Hitbox
 
 
-func setup(info: AttackData) -> void:
-    max_targets = info.max_targets
+func setup(data: AttackData) -> void:
+    max_targets = data.max_targets
 
     hitbox = _find_hitbox_child()
     if hitbox:
-        hitbox.attack_info = info
+        hitbox.attack_info = data
+        hitbox.damage_interval = data.damage_interval
+        hitbox.clear_records_on_exit = data.clear_records_on_exit
         hitbox.hit_enemy.connect(_on_enemy_hit)
 
 

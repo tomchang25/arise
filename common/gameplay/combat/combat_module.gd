@@ -428,6 +428,9 @@ func _build_attack_data(def: AttackDefinition, target_position: Vector2 = Vector
     data.knockback_force = def.knockback
     data.max_targets = def.max_targets
 
+    data.damage_interval = def.damage_interval
+    data.clear_records_on_exit = def.clear_records_on_exit
+
     data.apply_knockback_source(self, target_position)
 
     return data

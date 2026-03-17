@@ -13,8 +13,8 @@ extends AttackEffect
 @onready var line_2d: Line2D = $Line2D
 
 
-func setup(info: AttackData) -> void:
-    super.setup(info)
+func setup(data: AttackData) -> void:
+    super.setup(data)
 
     if hitbox:
         _generate_capsule_shape()
