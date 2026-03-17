@@ -33,7 +33,7 @@ func _enter() -> void:
     enemy.stop_movement()
 
     # Enable the charge hitbox.
-    enemy.activate_attack(weapon_index, attack_index, _direction)
+    enemy.activate_attack(weapon_index, attack_index)
 
 
 func _exit() -> void:

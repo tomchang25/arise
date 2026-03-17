@@ -39,6 +39,8 @@ const ACTION_CHARGE := &"test_charge"
 # Runtime state
 # -------------------------
 
+@onready var charge_hitbox: Hitbox = $Module/CombatModule/ChargeHitbox
+
 var stats: Stats
 
 var _charge_active: bool = false
@@ -97,6 +99,7 @@ func _bind_modules() -> void:
 func _physics_process(_delta: float) -> void:
     _handle_movement()
     _handle_charge_toggle()
+    _update_charge_hitbox_aim()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -141,6 +144,16 @@ func _handle_charge_toggle() -> void:
         combat_module.deactivate_attack(charge_weapon_index, 0)
         combat_module.set_weapon_enabled(fire_weapon_index, true)
         combat_module.set_weapon_enabled(contact_weapon_index, true)
+
+
+## Rotates the charge hitbox position and rotation to face the mouse cursor.
+func _update_charge_hitbox_aim() -> void:
+    if charge_hitbox == null:
+        return
+
+    var aim_dir := _get_aim_direction()
+    charge_hitbox.position = aim_dir * charge_hitbox.position.length()
+    charge_hitbox.rotation = aim_dir.angle()
 
 
 # -------------------------
