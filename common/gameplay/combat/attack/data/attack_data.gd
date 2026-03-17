@@ -66,6 +66,8 @@ var damage_interval: float = 0.0
 ## Forwarded to Hitbox.clear_records_on_exit at setup time.
 var clear_records_on_exit: bool = true
 
+var spawn_group: String = "attacks"
+
 # -------------------------
 # Factory
 # -------------------------

@@ -38,6 +38,7 @@ script = ExtResource("12_lje7i")
 attack_scene = ExtResource("11_qsypv")
 attack_effect_scene = ExtResource("4_6o7jk")
 cooldown = 0.01
+max_targets = -1
 metadata/_custom_type_script = "uid://dxe0yv70mfrn4"
 
 [sub_resource type="Resource" id="Resource_7c4js"]
@@ -367,30 +368,18 @@ _data = {
 &"RollUp": SubResource("Animation_ivlxb")
 }
 
-[sub_resource type="Resource" id="Resource_6xo6p"]
-script = ExtResource("14_4s16b")
-mana = 100.0
-base_damage = 100.0
-metadata/_custom_type_script = "uid://bkgf2cii3bfri"
-
-[sub_resource type="Resource" id="Resource_0nwbe"]
-script = ExtResource("12_lje7i")
-attack_scene = ExtResource("11_qsypv")
-attack_effect_scene = ExtResource("4_6o7jk")
-metadata/_custom_type_script = "uid://dxe0yv70mfrn4"
-
-[sub_resource type="Resource" id="Resource_lje7i"]
-script = ExtResource("8_747sf")
-weapon_name = "Sword"
-attacks = Array[ExtResource("9_5qatl")]([SubResource("Resource_0nwbe")])
-metadata/_custom_type_script = "uid://i2xvg4o1geuj"
-
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_fxn5h"]
 radius = 3.0
 height = 14.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_3do8f"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_747sf"]
 radius = 50.0
+
+[sub_resource type="Resource" id="Resource_5qatl"]
+script = ExtResource("14_4s16b")
+mana = 100.0
+base_damage = 100.0
+metadata/_custom_type_script = "uid://bkgf2cii3bfri"
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_fxn5h"]
 radius = 48.0
@@ -447,10 +436,9 @@ position = Vector2(0, -8)
 
 [node name="CombatModule" type="Node2D" parent="Module/DetectionPivot" unique_id=1050368959]
 script = ExtResource("8_i5w6q")
-stats = SubResource("Resource_6xo6p")
-weapons = Array[ExtResource("8_747sf")]([SubResource("Resource_lje7i")])
 
 [node name="Hurtbox" type="Area2D" parent="Module/DetectionPivot" unique_id=101171387]
+collision_layer = 0
 collision_mask = 0
 monitoring = false
 script = ExtResource("5_8nq4u")
@@ -468,7 +456,7 @@ script = ExtResource("10_8nq4u")
 radius = 50.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/DetectionModule" unique_id=508858704]
-shape = SubResource("CircleShape2D_3do8f")
+shape = SubResource("CircleShape2D_747sf")
 debug_color = Color(0, 0.101960786, 0.69803923, 0.11764706)
 
 [node name="PickupCollectorModule" type="Area2D" parent="Module/DetectionPivot" unique_id=639109990 node_paths=PackedStringArray("owner_body", "inventory_owner", "magnet_shape")]
@@ -476,7 +464,7 @@ collision_layer = 0
 collision_mask = 2147483648
 script = ExtResource("13_i5w6q")
 owner_body = NodePath("../../..")
-stats = SubResource("Resource_6xo6p")
+stats = SubResource("Resource_5qatl")
 inventory_owner = NodePath("../../..")
 magnet_shape = NodePath("CollisionShape2D")
 metadata/_custom_type_script = "uid://ce4d3x6pliud6"
@@ -496,12 +484,12 @@ animation_tree = NodePath("../../Visual/AnimationTree")
 
 [node name="DamageReceiverModule" type="Node" parent="Module" unique_id=1657380889 node_paths=PackedStringArray("hurtbox")]
 script = ExtResource("12_i5w6q")
-stats = SubResource("Resource_6xo6p")
+stats = SubResource("Resource_5qatl")
 hurtbox = NodePath("../DetectionPivot/Hurtbox")
 
 [node name="HitFeedbackModule" type="Node" parent="Module" unique_id=1072170173 node_paths=PackedStringArray("damage_receiver")]
 script = ExtResource("13_41lfd")
-stats = SubResource("Resource_6xo6p")
+stats = SubResource("Resource_5qatl")
 damage_receiver = NodePath("../DamageReceiverModule")
 hit_particles_scene = ExtResource("15_m4n5g")
 death_particles_scene = ExtResource("16_6o7jk")
@@ -523,7 +511,7 @@ offset_top = 4.0
 offset_right = 12.0
 offset_bottom = 8.0
 grow_horizontal = 2
-stats = SubResource("Resource_6xo6p")
+stats = SubResource("Resource_5qatl")
 
 [node name="StateMachine" type="Node" parent="." unique_id=54803581 node_paths=PackedStringArray("initial_state")]
 script = ExtResource("11_b15sj")

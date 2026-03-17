@@ -99,7 +99,7 @@ tracked_target = NodePath("../Player")
 draw_debug = true
 metadata/_custom_type_script = "uid://bwm8u3xypysu8"
 
-[node name="VFX" type="Node2D" parent="." unique_id=1853950831 groups=["damage_number", "loot_root"]]
+[node name="VFX" type="Node2D" parent="." unique_id=1853950831 groups=["attacks", "damage_number", "loot_root"]]
 
 [node name="Pickups" type="Node2D" parent="." unique_id=1638146363 groups=["loot_root"]]
 

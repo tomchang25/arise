@@ -91,6 +91,9 @@ func _enter_tree() -> void:
 
 
 func _ready() -> void:
+    if Engine.is_editor_hint():
+        return
+
     _auto_wire_nodes()
     _apply_data()
     _bind_modules()
