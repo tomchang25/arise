@@ -394,7 +394,7 @@ func _build_attack_data(def: AttackDefinition, target_position: Vector2 = Vector
         return null
 
     var data := AttackData.new()
-    data.target_factions = _build_target_factions()
+    data.target_factions = _build_target_factions(def)
 
     # Resolve delivery type and scene from the concrete definition class.
     if def is PlaceAttackDefinition:
@@ -436,14 +436,64 @@ func _build_attack_data(def: AttackDefinition, target_position: Vector2 = Vector
     return data
 
 
-func _build_target_factions() -> Array:
+## Resolves which factions this attack can hit.
+##
+## The result depends on two inputs:
+##   - stats.faction    : the caster's faction (who is firing)
+##   - def.faction_target_type : the intent declared on the AttackDefinition
+##
+## FactionTargetType semantics (all relative to the caster):
+##   HOSTILE_ONLY        — only factions that are hostile to the caster.
+##   HOSTILE_AND_NEUTRAL — hostile factions + NEUTRAL actors.
+##   TEAM_KILLER         — every faction except the caster's own.
+##   ALL                 — every faction, including the caster's own
+##                         (self-damage, traps, indiscriminate AoE).
+func _build_target_factions(def: AttackDefinition) -> Array:
+    var all_factions: Array = [Stats.Faction.PLAYER, Stats.Faction.ENEMY, Stats.Faction.NEUTRAL]
+
+    match def.faction_target_type:
+        AttackDefinition.FactionTargetType.HOSTILE_ONLY:
+            # Original behaviour — only factions hostile to the caster.
+            match stats.faction:
+                Stats.Faction.PLAYER:
+                    return [Stats.Faction.ENEMY]
+                Stats.Faction.ENEMY:
+                    return [Stats.Faction.PLAYER]
+                Stats.Faction.NEUTRAL:
+                    return []
+                _:
+                    return []
+
+        AttackDefinition.FactionTargetType.HOSTILE_AND_NEUTRAL:
+            # Hostile factions + NEUTRAL; never the caster's own faction.
+            match stats.faction:
+                Stats.Faction.PLAYER:
+                    return [Stats.Faction.ENEMY, Stats.Faction.NEUTRAL]
+                Stats.Faction.ENEMY:
+                    return [Stats.Faction.PLAYER, Stats.Faction.NEUTRAL]
+                Stats.Faction.NEUTRAL:
+                    # A neutral caster has no dedicated "hostile" faction,
+                    # so fall back to hitting PLAYER and ENEMY only.
+                    return [Stats.Faction.PLAYER, Stats.Faction.ENEMY]
+                _:
+                    return []
+
+        AttackDefinition.FactionTargetType.ALL:
+            # Indiscriminate — hits everything, including caster's own faction.
+            return all_factions.duplicate()
+
+        _:
+            push_warning("CombatModule: unknown FactionTargetType %d, defaulting to HOSTILE_ONLY" % def.faction_target_type)
+            return _build_target_factions_hostile_only()
+
+
+## Fallback used by the warning path above.
+func _build_target_factions_hostile_only() -> Array:
     match stats.faction:
         Stats.Faction.PLAYER:
-            return [Stats.Faction.ENEMY, Stats.Faction.NEUTRAL]
+            return [Stats.Faction.ENEMY]
         Stats.Faction.ENEMY:
             return [Stats.Faction.PLAYER]
-        Stats.Faction.NEUTRAL:
-            return []
         _:
             return []
 

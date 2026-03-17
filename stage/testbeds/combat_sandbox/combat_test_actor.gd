@@ -18,6 +18,7 @@ const ACTION_CHARGE := &"test_charge"
 # -------------------------
 # Exports
 # -------------------------
+@export var stats: Stats
 
 @export_group("Modules")
 @export var movement_module: MovementModule
@@ -41,8 +42,6 @@ const ACTION_CHARGE := &"test_charge"
 
 @onready var charge_hitbox: Hitbox = $Module/CombatModule/ChargeHitbox
 
-var stats: Stats
-
 var _charge_active: bool = false
 var _last_aim_dir: Vector2 = Vector2.DOWN
 
@@ -53,7 +52,6 @@ var _last_aim_dir: Vector2 = Vector2.DOWN
 
 func _ready() -> void:
     _auto_wire_nodes()
-    _setup_stats()
     _bind_modules()
     _ensure_actions()
 
@@ -68,13 +66,6 @@ func _auto_wire_nodes() -> void:
         combat_module = find_child("CombatModule", true, false) as CombatModule
     if not reach_detection:
         reach_detection = find_child("ReachDetection", true, false) as DetectionModule
-
-
-func _setup_stats() -> void:
-    stats = Stats.new()
-    stats.faction = Stats.Faction.PLAYER
-    stats.base_damage = 100.0
-    stats.setup_stats()
 
 
 func _bind_modules() -> void:
@@ -98,6 +89,7 @@ func _bind_modules() -> void:
 
 func _physics_process(_delta: float) -> void:
     _handle_movement()
+    stats.setup_stats()
     _handle_charge_toggle()
     _update_charge_hitbox_aim()
 
