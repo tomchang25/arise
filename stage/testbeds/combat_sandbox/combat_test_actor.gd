@@ -137,13 +137,11 @@ func _handle_charge_toggle() -> void:
         combat_module.activate_attack(charge_weapon_index, 0)
         combat_module.set_weapon_enabled(fire_weapon_index, false)
         combat_module.set_weapon_enabled(contact_weapon_index, false)
-        print("TEST1")
     elif not want_charge and _charge_active:
         _charge_active = false
         combat_module.deactivate_attack(charge_weapon_index, 0)
         combat_module.set_weapon_enabled(fire_weapon_index, true)
         combat_module.set_weapon_enabled(contact_weapon_index, true)
-        print("TEST2")
 
 
 # -------------------------

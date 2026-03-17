@@ -35,6 +35,7 @@ script = ExtResource("9_eothi")
 delivery_type = 1
 attack_scene = ExtResource("11_ov0ts")
 knockback = 100.0
+lifetime = 0.0
 metadata/_custom_type_script = "uid://dqbwdw1d7k7tu"
 
 [sub_resource type="Resource" id="Resource_n12qf"]
