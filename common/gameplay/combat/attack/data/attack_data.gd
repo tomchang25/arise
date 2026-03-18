@@ -12,8 +12,10 @@ var attack_effect_scene: PackedScene = null
 ## Base damage before variance: stats.current_damage * damage_multiplier
 var base_damage: float = 0.0
 
-## Variance roll added on top of base: positive or negative offset
-var rolled_damage: float = 0.0
+## Variance fraction baked from the definition (e.g. 0.10 = ±10% of base_damage).
+## Rolled fresh on every final_damage read so multi-target and interval hits
+## each get an independent result.
+var damage_variance: float = 0.0
 
 ## Whether this hit is a critical strike
 var is_crit: bool = false
@@ -21,11 +23,11 @@ var is_crit: bool = false
 ## Crit multiplier applied when is_crit is true. Set from stats at build time.
 var crit_multiplier: float = 1.5
 
-## Final damage dealt: (base_damage + rolled_damage) * crit_multiplier if is_crit.
-## This is what DamageReceiverModule reads.
+## Final damage dealt: rolls fresh variance each read so every victim / interval
+## tick gets an independent result. Crit multiplier applied when is_crit is true.
 var final_damage: float:
     get:
-        var dmg := base_damage + rolled_damage
+        var dmg := base_damage + _roll_variance(base_damage, damage_variance)
         if is_crit:
             dmg *= crit_multiplier
         return dmg
@@ -118,7 +120,7 @@ static func build(
 
     # Damage rolls
     data.base_damage = stats.current_damage * def.damage_multiplier
-    data.rolled_damage = _roll_variance(data.base_damage, def.damage_variance)
+    data.damage_variance = def.damage_variance
     data.is_crit = _roll_crit(stats.current_crit_chance + def.crit_bonus)
     data.crit_multiplier = stats.current_crit_multiplier
 

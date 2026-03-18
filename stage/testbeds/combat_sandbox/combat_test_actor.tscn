@@ -33,6 +33,7 @@ radius = 100.0
 script = ExtResource("11_6rd2i")
 attack_scene = ExtResource("11_pqotf")
 attack_effect_scene = ExtResource("10_rut13")
+max_targets = -1
 faction_target_type = 2
 
 [sub_resource type="Resource" id="Resource_pqotf"]
@@ -90,7 +91,6 @@ texture = ExtResource("2_t2wgf")
 collision_mask = 0
 monitoring = false
 script = ExtResource("3_rut13")
-metadata/_custom_type_script = "uid://dby4p11qhtin7"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=1609007870]
 shape = SubResource("CircleShape2D_ov0ts")
@@ -126,7 +126,6 @@ script = ExtResource("10_gu8my")
 damage_interval = 2.0
 clear_records_on_exit = false
 slot_id = &"conatact"
-metadata/_custom_type_script = "uid://co1s16xd7omkk"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/CombatModule/ContactHitbox" unique_id=1880057068]
 shape = SubResource("RectangleShape2D_jcp4x")
@@ -141,7 +140,6 @@ script = ExtResource("10_gu8my")
 damage_interval = 1.0
 clear_records_on_exit = false
 slot_id = &"charge"
-metadata/_custom_type_script = "uid://co1s16xd7omkk"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/CombatModule/ChargeHitbox" unique_id=870832541]
 shape = SubResource("CapsuleShape2D_tcbmc")
