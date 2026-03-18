@@ -4,151 +4,57 @@
 
 # Combat System
 
-## Combat Module
+## Combat and Attack
 
-### Core Features
-- [x]  **CombatModule** - dedicated module exists
-- [x]  **Fire-and-forget API** - perform_attack(slot, target_position, auto_end)
-- [x]  **Persistent API** - activate_attack(slot, dir) / deactivate_attack(slot)
-- [x]  **Attack slot routing** - PRIMARY and SECONDARY slots supported
-- [x]  **AttackData build** - delivery_type, damage roll, crit roll, target_factions, knockback built per slot
-- [x]  **MeleeAttackModule** - fire-and-forget melee executor
-- [x]  **ProjectileAttackModule** - fire-and-forget projectile executor
-- [x]  **ContactAttackModule** - persistent contact hitbox executor
-- [x]  **Cooldown base** - FireAttackModule.locked + cooldown_timer handles locking
-- [x]  **auto_end flag** - defer end_attack() to animation_finished if needed
-- [x]  **Range validation** - target clamped to attack range when out of range
+### **Knockback**
 
-### Pending
-- [ ]  **Cooldown to Stats** - move per-slot cooldown values out of attack module into Stats
-- [ ]  **Whiff / hit SFX split** - slash_audio fires on swing regardless of hit; add on-hit SFX path separate from the swing SFX
-- [ ]  **Primary / secondary separation** - each slot drives its own executor without shared state bleed
-- [ ]  **Attack origin verification** - finalize attack origin placement for all actors
-- [ ]  **Legacy driver retirement** - verify all old attack components removed after migration
+- [ ]  **damage-proportional scaling** — `AttackDefinition.knockback` (and the resulting `AttackData.knockback_force`) should support optional scaling relative to `final_damage`, so heavier hits push further
 
-Four delivery types are fully wired: MELEE, PROJECTILE, CONTACT, CHARGE. Contact and Charge manage their own hitboxes and do not require an attack_scene.
+### **AttackEffect**
 
+- [ ]  Whiff / hit SFX split — slash_audio fires on swing regardless of hit; add on-hit SFX path separate from swing SFX
+
+### **Projectile**
+
+- [ ]  Richer hit policy — no pierce count, bounce, or per-target dedup beyond basic `_hit_times`
+
+## Hit
+
+### **Hitbox**
+
+- [ ]  Persistent hit optimize — `_process` scans `_hit_times` and `get_overlapping_areas()` every frame unconditionally
+
+## Hit Feedback
+
+### **HitFeedback**
+
+- [ ]  Event-only guarantee — flash / knockback / particles not confirmed to be driven from damage signals only across all actors
+
+### **Damage number**
+
+- [ ]  **blocked hit display** — `DamageNumber` should support rendering zero-damage hits (blocked/absorbed) with a distinct color style, separate from the normal and crit styles
+
+## New Attack
+
+### ImmediateAttackDelivery vs DeferredAttackDelivery Refactor
+
+### **AOE AttackEffect**
+
+- [ ]  Continiuoous
+- [ ]  One shot
 ---
 
-## Projectile
+# Data System
 
-### Core Features
-- [x]  **Projectile entity** - runtime entity exists, separate from attack effect
-- [x]  **Movement / collision cleanup** - handled in projectile lifecycle
-- [x]  **ProjectileAttackEffect hookup** - wired
+## Actor Data
 
-### Pending
-- [ ]  **Richer hit policy** - per-target hit dedup, pierce count, bounce if needed later
+### Stats
 
----
-
-## Hitbox Module
-
-### Core Features
-- [x]  **Hitbox module** - exists as reusable module
-- [x]  **Faction-driven collision mask** - collision layers set from AttackData.target_factions
-- [x]  **Repeated damage interval** - optional pulse timer for persistent hitboxes
-- [x]  **Shape injection** - custom CollisionShape2D injectable
-- [x]  **Hit pipeline** - receive_hit forwarded into Hurtbox
-- [x]  **Rewrite persistent hit** - Replace timer/timeout-based persistent attack with a per-victim hit-time array that throttles hits by interval and cleans up records when victims leave the hitbox.
-
-### Pending
-- [ ] **Persistent Hit Optimize** - Add tick-based interval check instead of per-process validation; defer entity removal to on-exit rather than continuously checking for invalid entities
-
----
-
-## Hurtbox Module
-
-### Core Features
-- [x]  **Hurtbox module** - exists as reusable module
-- [x]  **Stats-driven collision** - collision layer set from owner Stats.faction
-- [x]  **Enabled toggle** - disable to make actor temporarily unhittable
-- [x]  **Signal handoff** - get_hit(attack_info) emitted into DamageReceiverModule
-
-### Pending
-- [ ]  **Actor binding audit** - verify all actors auto-bind owner stats consistently
-- [ ]  **Ad-hoc damage removal** - remove any remaining direct damage paths that bypass hurtbox
-
----
-
-## DamageReceiver Module
-
-### Core Features
-- [x]  **DamageReceiverModule** - dedicated module exists
-- [x]  **Hurtbox auto-wire** - listens to hurtbox.get_hit signal
-- [x]  **Invulnerability gate** - i-frames prevent repeated damage
-- [x]  **Defense scaling** - incoming damage reduced by stats.current_defense
-- [x]  **Minimum damage clamp** - floor of 1 applied
-- [x]  **Faction validation** - rejects hits from non-target factions
-- [x]  **Signals** - damaged(amount, new_health, info), blocked(info), died(info)
-
-### Pending
-- [ ]  **All-actor audit** - verify all actors receive damage only through this module
-- [ ]  **Blocked semantics** - clarify non-damage hits vs invuln hits
-- [ ]  **Direct mutation removal** - remove any remaining stats.health writes outside this module
-
-DamageReceiverModule is the canonical damage entry point. Direct stats.health mutation elsewhere should be removed.
-
----
-
-## HitFeedback Module
-
-### Core Features
-- [x]  **HitFeedbackModule** - dedicated module exists
-- [x]  **Knockback** - apply_knockback() driven by AttackData.knockback_force and knockback_dir
-- [x]  **Flash effect** - shader overlay driven by damage events
-- [x]  **Shader target** - configurable visual target node
-- [x]  **Hit particles** - one-shot GPUParticles2D at owner position, rotated by attack direction
-- [x]  **Death particles** - separate particle config for death feedback
-- [x]  **Particle color / scale override** - configurable per actor
-- [x]  **MovementModule integration** - knockback applied via movement_module.apply_knockback if available
-
-### Pending
-- [ ]  **Damage receiver hookup audit** - confirm signal chain complete across all actors
-- [ ]  **Event-only guarantee** - flash / knockback / particles driven from damage signals only
-- [ ]  **Death feedback consistency** - standardize across dummy, enemy, destroyable
-
----
-
-## Damage Numbers
-
-### Core Features
-- [x]  **DamageNumber** - module / scene logic exists
-- [x]  **Crit style** - separate visual for crits
-- [x]  **Pop / float / fade** - animation implemented
-
-### Pending
-- [ ]  **Manager / aggregation layer** - throttle, merge nearby numbers, priority system
+- [ ]  **Buff system** - buff data structure, add/remove API, duration/expire, recalculation integration
 
 ---
 
 # Refactored Modules
-
-## Stats System
-
-### Core Features
-
-- [x]  **Basic attributes** - base_max_health, base_max_mana, base_damage, base_defense, base_speed
-- [x]  **Runtime attributes** - current_* computed values exposed after recalculation
-- [x]  **Stat recalculation** - recalculate_stats() triggered on every base setter
-- [x]  **Damage / health handling** - health setter with signal emit and clamp
-- [x]  **Resource stats support** - health, mana, souls, gold each with change signals
-- [x]  **Weapon layer merged** - weapon_damage, weapon_crit_chance, weapon_crit_multiplier present as temporary merged fields
-- [x]  **Faction enum** - PLAYER, ENEMY, NEUTRAL
-- [x]  **AttackSlot enum** - PRIMARY, SECONDARY, SKILL_1, SKILL_2
-
-### Robustness
-
-- [x]  **Clamp runtime values** - values clamped to valid range on set
-- [x]  **Sync resources after recalculation** - runtime resources kept valid
-- [x]  **Resource helpers** - add / spend / recover via stats setters and signals
-- [x]  **Pickup-driven resource checks** - stats.souls, stats.mana exposed for pickup validation
-
-### Future Features
-
-- [ ]  **Buff system** - buff data structure, add/remove API, duration/expire, recalculation integration
-- [ ]  **Weapon layer separation** - remove temporary weapon fields, drive via proper weapon system
-
 ---
 
 ## Movement Module
@@ -169,7 +75,6 @@ DamageReceiverModule is the canonical damage entry point. Direct stats.health mu
 
 ### Future Features
 
-- [ ]  **Dash / roll override** - temporary movement override during dash / roll
 - [ ]  **Dash-to-destination** - dash toward a point
 - [ ]  **Collision ignore** - ignore actors and optionally world during dash
 - [ ]  **Dash priority** - dash overrides manual / path / knockback cleanly
