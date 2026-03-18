@@ -87,7 +87,6 @@ func _enter_tree() -> void:
     if Engine.is_editor_hint():
         _auto_wire_nodes()
         _connect_stats_signals()
-        _refresh_reach_range()
 
 
 func _ready() -> void:
