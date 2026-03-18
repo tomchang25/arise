@@ -54,7 +54,7 @@ func _execute_attack_logic(_target_position: Vector2, data: AttackData) -> void:
     if not delivery.is_node_ready():
         await delivery.ready
 
-    delivery.setup(data, self)
+    delivery.setup(data)
 
     if delivery is ProjectileAttackDelivery:
         (delivery as ProjectileAttackDelivery).launch(data.knockback_dir, projectile_speed)

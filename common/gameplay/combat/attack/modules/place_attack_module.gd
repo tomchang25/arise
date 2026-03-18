@@ -12,9 +12,6 @@ func _execute_attack_logic(target_position: Vector2, data: AttackData) -> void:
         end_attack()
         return
 
-    if data.knockback_force <= 0.0:
-        data.knockback_force = data.final_damage * 4.0
-
     var action := SpawnPackedSceneAction.new()
     action.scene = data.attack_scene
     action.use_anchor_position = true
@@ -48,4 +45,4 @@ func _execute_attack_logic(target_position: Vector2, data: AttackData) -> void:
         await delivery.ready
 
     delivery.rotation = data.knockback_dir.angle()
-    delivery.setup(data, self)
+    delivery.setup(data)

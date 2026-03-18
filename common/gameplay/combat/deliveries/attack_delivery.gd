@@ -1,6 +1,5 @@
 class_name AttackDelivery
 extends CharacterBody2D
-
 ## Base class for all spawned, fire-and-forget attack instances.
 ##
 ## Responsibilities:
@@ -17,10 +16,6 @@ extends CharacterBody2D
 # Runtime state
 # -------------------------
 
-## The node that spawned this delivery — typically the actor's CombatModule.
-## Retained for future AttackData rebuilding (e.g. live knockback source).
-var origin_source: Node2D = null
-
 var _attack_effect: AttackEffect
 var _lifetime_timer: float = 0.0
 
@@ -29,8 +24,7 @@ var _lifetime_timer: float = 0.0
 # -------------------------
 
 
-func setup(data: AttackData, source: Node2D = null) -> void:
-    origin_source = source
+func setup(data: AttackData) -> void:
     _lifetime_timer = data.attack_lifetime
 
     if data.attack_effect_scene != null:
