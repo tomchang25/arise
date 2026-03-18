@@ -132,8 +132,11 @@
 
 ### 7. Boss 登場
 
+- [ ]  Move camera to altar
 - [ ]  Spawn Dragon boss
+- [ ]  If possible, create a simple summon animation for dragon
 - [ ]  觸發 boss 登場 dialog
+- [ ]  Back camera to player
 
 ### 8. Dragon 展示段落
 
@@ -143,20 +146,19 @@
 ### 9. 玩家 vs Boss
 
 - [ ]  Dragon 攻擊玩家
-- [ ]  玩家 HP 鎖定為 1（無法死亡）
+- [ ]  玩家 min HP 鎖定為 1（無法死亡）
 
 ### 10. Boss 擊敗
 
 - [ ]  玩家擊敗 Dragon
 - [ ]  觸發 Dragon unlock dialog
-
-### 11. 解鎖龍召喚
-
 - [ ]  啟用 Dragon 召喚槽
+- [ ]  Move camera to altar
+- [ ]  Play culprit dialog and play simple evil scene
+- [ ]  Enable chaos spawn mode - Unlimit wave survive while each wave increase difficulty
 
 ### 12. Demo 結尾 — Chaos Mode
 
-- [ ]  解除 HP 鎖定
-- [ ]  啟用 chaos spawn mode（spawn 頻率與範圍逐漸放大）
+- [ ]  解除 undead mode
 - [ ]  玩家可自由召喚 Dragon
 - [ ]  讓玩家盡情屠殺，最後被怪物淹死收場

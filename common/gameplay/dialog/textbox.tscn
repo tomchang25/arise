@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://q8s6q4om4t0m"]
+
+[ext_resource type="Texture2D" uid="uid://i3p3f8n6ncg4" path="res://common/gameplay/dialog/speech_bubble.png" id="1_btsr4"]
+
+[node name="Textbox" type="MarginContainer" unique_id=1179237401]
+offset_right = 32.0
+offset_bottom = 32.0
+
+[node name="NinePatchRect" type="NinePatchRect" parent="." unique_id=1441984065]
+layout_mode = 2
+texture = ExtResource("1_btsr4")
+region_rect = Rect2(0, 0, 48, 48)
+patch_margin_left = 16
+patch_margin_top = 16
+patch_margin_right = 16
+patch_margin_bottom = 16
