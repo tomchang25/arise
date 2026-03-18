@@ -7,7 +7,7 @@ extends RefCounted
 ##
 ## Called by CombatModule.setup(). Never instantiated directly.
 
-static func build(weapon: WeaponData, host: Node, hitbox_slots: Array[Hitbox]) -> WeaponHandle:
+static func build(weapon: WeaponData, host: Node, hitbox_slots: Array[Hitbox], stats: Stats) -> WeaponHandle:
     if weapon == null:
         push_warning("WeaponExecutor: null WeaponData — skipping")
         return null
@@ -22,7 +22,7 @@ static func build(weapon: WeaponData, host: Node, hitbox_slots: Array[Hitbox]) -
             handle.attack_modules.append(null)
             continue
 
-        var module := _spawn_module(def, host, hitbox_slots)
+        var module := _spawn_module(def, host, hitbox_slots, stats)
         handle.attack_modules.append(module)
 
     return handle
@@ -32,16 +32,16 @@ static func build(weapon: WeaponData, host: Node, hitbox_slots: Array[Hitbox]) -
 # -------------------------
 
 
-static func _spawn_module(def: AttackDefinition, host: Node, slots: Array[Hitbox]) -> Object:
+static func _spawn_module(def: AttackDefinition, host: Node, slots: Array[Hitbox], stats: Stats) -> Object:
     if def is PlaceAttackDefinition:
         var m := PlaceAttackModule.new()
-        m.setup(def.cooldown)
+        m.setup(def, stats)
         host.add_child(m)
         return m
 
     if def is ProjectileAttackDefinition:
         var m := ProjectileAttackModule.new()
-        m.setup(def.cooldown, def.projectile_speed)
+        m.setup(def, stats)
         host.add_child(m)
         return m
 
@@ -49,7 +49,7 @@ static func _spawn_module(def: AttackDefinition, host: Node, slots: Array[Hitbox
         var m := AttachedAttackModule.new()
         var slot := _find_hitbox(slots, def.hitbox_slot_id, def)
         if slot != null:
-            m.setup(slot)
+            m.setup(def, stats, slot)
         host.add_child(m)
         return m
 

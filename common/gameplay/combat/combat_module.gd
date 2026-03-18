@@ -53,21 +53,20 @@ var _handles: Array[WeaponHandle] = []
 ## AttackDefinition base. Does NOT mutate weapon resources.
 var _range_overrides: Dictionary = { }
 
-
 # -------------------------
 # Lifecycle
 # -------------------------
-func _ready() -> void:
-    setup()
 
 
 ## Build all WeaponHandles from the current `weapons` array.
 ## Safe to call again if weapons change at runtime (clears and rebuilds).
-func setup() -> void:
+func setup(owner_stats := stats) -> void:
+    stats = owner_stats
+
     _clear_handles()
 
     for weapon in weapons:
-        var handle := WeaponExecutor.build(weapon, self, hitbox_slots)
+        var handle := WeaponExecutor.build(weapon, self, hitbox_slots, stats)
         _handles.append(handle)
 
 
@@ -112,12 +111,7 @@ func perform_attack(weapon_index: int, attack_index: int, target_position: Vecto
             var dir := (target_position - global_position).normalized()
             target_position = global_position + dir * effective_range
 
-    var def := handle.get_def(attack_index)
-    var data := AttackData.build(def, stats, self, target_position)
-    if data == null:
-        return
-
-    module.execute_attack(target_position, data)
+    module.execute_attack(target_position)
 
     if auto_end:
         module.end_attack()
@@ -168,12 +162,7 @@ func activate_attack(weapon_index: int, attack_index: int) -> void:
     if not module.enabled:
         return
 
-    var def := handle.get_def(attack_index)
-    var data := AttackData.build(def, stats, self)
-    if data == null:
-        return
-
-    module.activate_attack(data)
+    module.activate_attack()
 
 
 ## Disable the attached hitbox for the given weapon / attack index.
@@ -234,33 +223,25 @@ func get_attack_range(weapon_index: int, attack_index: int = 0) -> float:
 
 
 ## Set a runtime range override for a specific weapon/attack.
-## Does not mutate the WeaponData or AttackDefinition resource.
-## Pass a negative value to effectively disable range checks (e.g. god mode).
-func set_attack_range_override(weapon_index: int, attack_index: int, range_value: float) -> void:
-    _range_overrides[_range_key(weapon_index, attack_index)] = range_value
+## Does not mutate weapon resources — override is stored separately.
+func set_attack_range_override(weapon_index: int, attack_index: int, value: float) -> void:
+    _range_overrides[_range_key(weapon_index, attack_index)] = value
 
 
-## Remove the override for one weapon/attack, restoring its base AttackDefinition range.
+## Remove the range override for a specific weapon/attack.
+## Restores get_attack_range() to the definition base value.
 func clear_attack_range_override(weapon_index: int, attack_index: int) -> void:
     _range_overrides.erase(_range_key(weapon_index, attack_index))
 
 
-## Remove all range overrides, restoring all base AttackDefinition ranges.
+## Remove all range overrides.
 func clear_all_range_overrides() -> void:
     _range_overrides.clear()
-
-
-func get_attack_origin() -> Vector2:
-    return global_position
 
 
 # -------------------------
 # Internal
 # -------------------------
-func _range_key(weapon_index: int, attack_index: int) -> String:
-    return "%d_%d" % [weapon_index, attack_index]
-
-
 func _get_handle(weapon_index: int) -> WeaponHandle:
     if weapon_index < 0 or weapon_index >= _handles.size():
         push_warning("CombatModule: weapon_index %d out of range" % weapon_index)
@@ -273,3 +254,7 @@ func _clear_handles() -> void:
         if handle != null:
             handle.teardown()
     _handles.clear()
+
+
+func _range_key(weapon_index: int, attack_index: int) -> String:
+    return "%d_%d" % [weapon_index, attack_index]

@@ -1,6 +1,5 @@
 class_name CombatTestActor
 extends CharacterBody2D
-
 ## Sandbox test actor for verifying the combat system.
 ## No state machine — input drives CombatModule directly each frame.
 ##
@@ -74,13 +73,12 @@ func _bind_modules() -> void:
         movement_module.set_manual_mode()
 
     if combat_module:
-        combat_module.stats = stats
+        combat_module.setup(stats)
 
     if reach_detection:
         var attac_range := combat_module.get_attack_range(fire_weapon_index, 0) if combat_module else 50.0
         if attac_range > 0.0:
             reach_detection.set_collision_radius(attac_range)
-
 
 # -------------------------
 # Per-frame input
@@ -147,7 +145,6 @@ func _update_charge_hitbox_aim() -> void:
     charge_hitbox.position = aim_dir * charge_hitbox.position.length()
     charge_hitbox.rotation = aim_dir.angle()
 
-
 # -------------------------
 # Internal helpers
 # -------------------------
@@ -195,7 +192,6 @@ func _get_aim_direction() -> Vector2:
 
     return Vector2.RIGHT
 
-
 # -------------------------
 # Action registration
 # -------------------------
@@ -212,7 +208,6 @@ func _ensure_key_action(action: StringName, keycode: Key) -> void:
     var event := InputEventKey.new()
     event.physical_keycode = keycode
     InputMap.action_add_event(action, event)
-
 
 # -------------------------
 # Public API

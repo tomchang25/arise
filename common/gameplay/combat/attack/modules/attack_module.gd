@@ -22,7 +22,7 @@ var enabled: bool = true:
 func can_attack() -> bool
 
 
-func execute_attack(_target_position: Vector2, _data: AttackData) -> void:
+func execute_attack(_target_position: Vector2) -> void:
     push_warning("%s: execute_attack() is not implemented" % get_class())
 
 
@@ -30,7 +30,7 @@ func end_attack() -> void:
     push_warning("%s: end_attack() is not implemented" % get_class())
 
 
-func activate_attack(_data: AttackData) -> void:
+func activate_attack() -> void:
     push_warning("%s: activate_attack() is not implemented" % get_class())
 
 

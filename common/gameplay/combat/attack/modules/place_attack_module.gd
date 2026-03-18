@@ -5,8 +5,17 @@ extends DetachedAttackModule
 ## Spawns an AttackDelivery at the target position via the spawn system.
 ## AttackDelivery owns the lifetime and instantiates the AttackEffect
 ## from data.attack_effect_scene at runtime.
+##
+## Reads attack_def and owner_stats from DetachedAttackModule (set via setup()).
+## Builds AttackData internally at fire time so it always reflects the current
+## target position and stats.
 
-func _execute_attack_logic(target_position: Vector2, data: AttackData) -> void:
+func _execute_attack_logic(target_position: Vector2) -> void:
+    var data := AttackData.build(attack_def, owner_stats, self, target_position)
+    if data == null:
+        end_attack()
+        return
+
     if data.attack_scene == null:
         push_error("PlaceAttackModule: data.attack_scene is null")
         end_attack()

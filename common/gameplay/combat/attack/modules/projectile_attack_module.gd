@@ -3,20 +3,18 @@ extends DetachedAttackModule
 ## Executes a Projectile-type attack.
 ##
 ## Spawns an AttackDelivery via the spawn system, then launches it.
-## Motion is handled by child nodes inside the delivery scene.
-## Speed is injected after spawn via setup() or set_speed().
+## Motion is handled by ProjectileAttackDelivery.
+##
+## Reads attack_def and owner_stats from DetachedAttackModule (set via setup()).
+## Reads projectile_speed directly from attack_def at fire time — no separate
+## field needed on the module.
 
-## Set by CombatModule at spawn time from AttackDefinition.projectile_speed.
-var projectile_speed: float = 500.0
+func _execute_attack_logic(target_position: Vector2) -> void:
+    var data := AttackData.build(attack_def, owner_stats, self, target_position)
+    if data == null:
+        end_attack()
+        return
 
-
-## Called by CombatModule after instantiation.
-func setup(cooldown: float, speed: float = 500.0) -> void:
-    super.setup(cooldown)
-    projectile_speed = speed
-
-
-func _execute_attack_logic(_target_position: Vector2, data: AttackData) -> void:
     if data.attack_scene == null:
         push_error("ProjectileAttackModule: data.attack_scene is null")
         end_attack()
@@ -56,7 +54,8 @@ func _execute_attack_logic(_target_position: Vector2, data: AttackData) -> void:
 
     delivery.setup(data)
 
+    var speed := (attack_def as ProjectileAttackDefinition).projectile_speed
     if delivery is ProjectileAttackDelivery:
-        (delivery as ProjectileAttackDelivery).launch(data.knockback_dir, projectile_speed)
+        (delivery as ProjectileAttackDelivery).launch(data.knockback_dir, speed)
     elif delivery.has_method("set_speed"):
-        delivery.set_speed(projectile_speed)
+        delivery.set_speed(speed)
