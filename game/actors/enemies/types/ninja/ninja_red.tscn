@@ -50,7 +50,6 @@ mana = 100.0
 base_max_health = 80.0
 base_damage = 8.0
 base_defense = 5.0
-invuln_time = 0.01
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_nnul2"]
 radius = 200.0

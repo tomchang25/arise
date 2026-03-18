@@ -82,7 +82,6 @@ tile_map_data = PackedByteArray("AACw/77/AgAIAAcAAACw/7//AgAIAAcAAACw/8D/AgAIAAc
 tile_set = ExtResource("2_di8kp")
 
 [node name="Player" parent="." unique_id=143015393 instance=ExtResource("3_3sdsp")]
-position = Vector2(-2.481, 0)
 
 [node name="PlayerSpawn" type="Marker2D" parent="." unique_id=1923300736]
 

@@ -105,6 +105,7 @@ func _ready() -> void:
     _enforce_debug_modes()
     _refresh_reach_range()
 
+    queue_redraw()
 
 func _draw() -> void:
     if not combat_module or Engine.is_editor_hint():
@@ -205,7 +206,7 @@ func _bind_modules() -> void:
     # ── Combat ────────────────────────────────────────────────────────────
     # stats must be bound before setup() runs so _build_attack_data has a stats ref.
     if combat_module:
-        combat_module.stats = stats
+        combat_module.setup(stats)
 
     if hurtbox:
         hurtbox.owner_stats = stats
@@ -437,7 +438,7 @@ func play_actor_animation(state_name: StringName, direction: Vector2 = Vector2.Z
 
 func get_attack_origin() -> Vector2:
     if combat_module:
-        return combat_module.get_attack_origin()
+        return combat_module.global_position
     return global_position
 
 
