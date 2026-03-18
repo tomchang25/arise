@@ -1,13 +1,11 @@
 class_name WeaponExecutor
 extends RefCounted
-
 ## Static factory — builds and wires all attack modules for one WeaponData.
 ## Returns a populated WeaponHandle. Holds no state of its own.
 ##
 ## Mirrors SpawnExecutor: pure inputs-in / handle-out, no identity.
 ##
 ## Called by CombatModule.setup(). Never instantiated directly.
-
 
 static func build(weapon: WeaponData, host: Node, hitbox_slots: Array[Hitbox]) -> WeaponHandle:
     if weapon == null:
@@ -29,7 +27,6 @@ static func build(weapon: WeaponData, host: Node, hitbox_slots: Array[Hitbox]) -
 
     return handle
 
-
 # -------------------------
 # Internal
 # -------------------------
@@ -37,7 +34,7 @@ static func build(weapon: WeaponData, host: Node, hitbox_slots: Array[Hitbox]) -
 
 static func _spawn_module(def: AttackDefinition, host: Node, slots: Array[Hitbox]) -> Object:
     if def is PlaceAttackDefinition:
-        var m := MeleeAttackModule.new()
+        var m := PlaceAttackModule.new()
         m.setup(def.cooldown)
         host.add_child(m)
         return m
@@ -62,12 +59,17 @@ static func _spawn_module(def: AttackDefinition, host: Node, slots: Array[Hitbox
 
 static func _find_hitbox(slots: Array[Hitbox], hitbox_slot_id: StringName, def: AttackDefinition) -> Hitbox:
     if hitbox_slot_id == "":
-        push_error("WeaponExecutor: AttachedAttackDefinition has no hitbox_slot_id set (definition: '%s')" % def.resource_path)
+        push_error(
+            "WeaponExecutor: AttachedAttackDefinition has no hitbox_slot_id set (definition: '%s')" % def.resource_path,
+        )
         return null
 
     for slot in slots:
         if slot.slot_id == hitbox_slot_id:
             return slot
 
-    push_error("WeaponExecutor: no Hitbox with slot_id '%s' found in hitbox_slots (definition: '%s')" % [hitbox_slot_id, def.resource_path])
+    push_error(
+        "WeaponExecutor: no Hitbox with slot_id '%s' found in hitbox_slots (definition: '%s')" %
+        [hitbox_slot_id, def.resource_path],
+    )
     return null

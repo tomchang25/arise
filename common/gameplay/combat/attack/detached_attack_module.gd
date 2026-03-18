@@ -1,13 +1,13 @@
-class_name FireAttackModule
+class_name DetachedAttackModule
 extends AttackModule
-## Base for fire-and-forget attack modules (Melee, Projectile, Trap, etc.).
+## Base for detached (fire-and-forget) attack modules (Place, Projectile, Trap, etc.).
 ##
 ## Owns the cooldown timer and locked state. Subclasses override
 ## _execute_attack_logic() to implement delivery-specific behaviour.
 ##
 ## Overrides execute_attack, end_attack, can_attack from AttackModule.
 ## activate_attack / deactivate_attack are not overridden — calls to those
-## on a fire module will warn via the AttackModule base.
+## on a detached module will warn via the AttackModule base.
 
 ## Cooldown is set by CombatModule at spawn time from AttackDefinition.cooldown.
 ## Do not export this — it is not configured in the inspector.
@@ -57,7 +57,7 @@ func execute_attack(target_position: Vector2, data: AttackData) -> void:
         return
 
     if data == null:
-        push_error("FireAttackModule: data is null")
+        push_error("DetachedAttackModule: data is null")
         return
 
     locked = true

@@ -1,6 +1,5 @@
 class_name PlaceAttackDefinition
-extends SpawnAttackDefinition
-
+extends DetachedAttackDefinition
 ## Spawns an AttackEffect scene at the target position and forgets it.
 ## Use for melee slashes, ground slams, point-blank explosions — anything
 ## that places a hitbox at a location and does not need to move.

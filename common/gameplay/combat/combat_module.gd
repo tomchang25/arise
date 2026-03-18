@@ -5,7 +5,7 @@ extends Node2D
 ## Setup:
 ##   1. Assign `stats` (actor's Stats resource).
 ##   2. Assign `hitbox_slots` (pre-authored Hitbox nodes in the scene) for any
-##      ATTACHED weapons. Fire-and-forget types need no hitbox slots.
+##      ATTACHED weapons. Detached types need no hitbox slots.
 ##   3. Assign `weapons` array (WeaponData resources).
 ##   4. Call setup() — or it is called automatically in _ready().
 ##
@@ -103,8 +103,8 @@ func perform_attack(weapon_index: int, attack_index: int, target_position: Vecto
     if not module.enabled or not module.can_attack():
         return
 
-    # Range clamp is melee-specific — only MeleeAttackModule carries an attack_range.
-    if module is MeleeAttackModule:
+    # Range clamp is place-specific — only PlaceAttackModule carries an attack_range.
+    if module is PlaceAttackModule:
         var effective_range := get_attack_range(weapon_index, attack_index)
         var distance := global_position.distance_to(target_position)
         if distance > effective_range + 0.01:

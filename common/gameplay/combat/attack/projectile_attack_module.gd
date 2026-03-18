@@ -1,6 +1,5 @@
 class_name ProjectileAttackModule
-extends FireAttackModule
-
+extends DetachedAttackModule
 ## Executes a Projectile-type attack.
 ##
 ## Spawns an AttackDelivery via the spawn system, then launches it.

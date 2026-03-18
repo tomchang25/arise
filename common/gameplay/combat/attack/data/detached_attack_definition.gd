@@ -1,7 +1,6 @@
-class_name SpawnAttackDefinition
+class_name DetachedAttackDefinition
 extends AttackDefinition
-
-## Base for fire-and-forget delivery types (Place and Projectile).
+## Base for detached (fire-and-forget) delivery types (Place and Projectile).
 ## Do not instantiate this directly — use PlaceAttackDefinition
 ## or ProjectileAttackDefinition.
 

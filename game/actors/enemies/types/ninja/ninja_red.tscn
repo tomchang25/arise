@@ -9,7 +9,7 @@
 [ext_resource type="AnimationNodeBlendTree" uid="uid://bkrdvp8xidai6" path="res://game/actors/enemies/presets/ninja_animation_node_blend_tree.tres" id="6_0edjs"]
 [ext_resource type="Script" uid="uid://bb4mbrq1u7pl" path="res://common/gameplay/combat/combat_module.gd" id="7_ec4te"]
 [ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="9_ajjfc"]
-[ext_resource type="Script" uid="uid://d1yimk3mk35ag" path="res://common/gameplay/combat/attack/melee_attack_module.gd" id="10_baqnl"]
+[ext_resource type="Script" uid="uid://d1yimk3mk35ag" path="res://common/gameplay/combat/attack/place_attack_module.gd" id="10_baqnl"]
 [ext_resource type="Script" uid="uid://hyy86fs5b0fs" path="res://common/gameplay/detection/detection_module.gd" id="11_qo6mv"]
 [ext_resource type="PackedScene" uid="uid://d0tswwb1d3smv" path="res://common/gameplay/health_bar/health_bar.tscn" id="12_ux7vx"]
 [ext_resource type="Script" uid="uid://dpi3inldik0ho" path="res://common/gameplay/combat/damage_receiver/damage_receiver_module.gd" id="13_7pgtx"]

@@ -3,7 +3,7 @@ class_name AttackModule
 extends Node2D
 ## Shared abstract base for all attack module types.
 ##
-## FireAttackModule and AttachedAttackModule both extend this class,
+## DetachedAttackModule and AttachedAttackModule both extend this class,
 ## giving CombatModule a single type to work with — no is-checks needed
 ## for the common API.
 ##

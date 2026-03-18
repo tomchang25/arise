@@ -1,6 +1,5 @@
 class_name ProjectileAttackDefinition
-extends SpawnAttackDefinition
-
+extends DetachedAttackDefinition
 ## Spawns a Projectile scene that carries the hitbox to the target.
 ## The projectile moves autonomously after launch — no further control needed.
 
