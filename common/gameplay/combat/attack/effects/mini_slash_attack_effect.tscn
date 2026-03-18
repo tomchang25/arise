@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cg331ejtl5ts1" path="res://common/gameplay/combat/attack/effects/slash_attack_effect.gd" id="1_bj6wr"]
 [ext_resource type="Resource" uid="uid://d2s4krk5m4bxe" path="res://common/audio/presets/sfx/default_slash_audio.tres" id="2_i2uyk"]
-[ext_resource type="Script" uid="uid://co1s16xd7omkk" path="res://common/gameplay/combat/hitbox/hitbox.gd" id="3_fwmkr"]
+[ext_resource type="Script" uid="uid://co1s16xd7omkk" path="res://common/gameplay/combat/hit_detection/hitbox/hitbox.gd" id="3_fwmkr"]
 
 [sub_resource type="Curve" id="Curve_weeud"]
 _data = [Vector2(0, 0.1), 0.0, 0.0, 0, 0, Vector2(0.4, 0.5), 0.0, 0.0, 0, 0, Vector2(0.6, 0.5), 0.0, 0.0, 0, 0, Vector2(1, 0.1), 0.0, 0.0, 0, 0]

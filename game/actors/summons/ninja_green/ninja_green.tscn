@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://be5rffb7rwigg" path="res://game/actors/summons/army.gd" id="1_13omc"]
 [ext_resource type="Texture2D" uid="uid://dcefsfe6uvtoj" path="res://game/actors/summons/ninja_green/assets/SpriteSheet.png" id="2_tn28i"]
-[ext_resource type="PackedScene" uid="uid://bphvl1tkicrfo" path="res://common/gameplay/combat/hitbox/hitbox.tscn" id="3_igrur"]
+[ext_resource type="PackedScene" uid="uid://bphvl1tkicrfo" path="res://common/gameplay/combat/hit_detection/hitbox/hitbox.tscn" id="3_igrur"]
 [ext_resource type="PackedScene" uid="uid://do052sqt3wjdp" path="res://common/_legacy/detectbox/detectbox.tscn" id="3_lqaih"]
 [ext_resource type="PackedScene" uid="uid://d3g8jgprf7bfw" path="res://common/_legacy/enemy_scanner/enemy_scanner.tscn" id="3_v4ucm"]
 [ext_resource type="PackedScene" uid="uid://bhgm1iqut1i6s" path="res://common/_legacy/pathfinding/pathfinding.tscn" id="7_iga26"]
