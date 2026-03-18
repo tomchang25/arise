@@ -54,8 +54,9 @@ func _execute_attack_logic(target_position: Vector2) -> void:
 
     delivery.setup(data)
 
-    var speed := (attack_def as ProjectileAttackDefinition).projectile_speed
-    if delivery is ProjectileAttackDelivery:
-        (delivery as ProjectileAttackDelivery).launch(data.knockback_dir, speed)
+    var def := attack_def as ProjectileAttackDefinition
+    var speed := def.projectile_speed
+    if delivery is ProjectileDelivery:
+        (delivery as ProjectileDelivery).launch(data.knockback_dir, speed, def.travel_distance)
     elif delivery.has_method("set_speed"):
         delivery.set_speed(speed)

@@ -1,45 +1,44 @@
 class_name AttackDelivery
 extends CharacterBody2D
-## Base class for all spawned, fire-and-forget attack instances.
-##
-## Responsibilities:
-##   1. Lifetime — self-destructs when attack_lifetime expires.
-##   2. Origin source — holds the spawner node for future AttackData rebuilds.
-##   3. Effect instantiation — spawns the AttackEffect from data.attack_effect_scene,
-##      adds it as a child, then calls play(lifetime) on it.
-##
-## The delivery scene itself contains no AttackEffect child in the editor.
-## The effect is always injected at runtime from AttackData, so any delivery
-## scene can be paired with any effect scene via the AttackDefinition.
 
-# -------------------------
-# Runtime state
-# -------------------------
+var lifetime_timer: Timer
 
+var _data: AttackData
 var _attack_effect: AttackEffect
-var _lifetime_timer: float = 0.0
 
-# -------------------------
-# Lifecycle
-# -------------------------
+## If true, stopping the lifetime timer on trigger and wait for
+## _attack_effect to emit "finished" before freeing this delivery.
+var _wait_for_effect: bool = false
 
 
 func setup(data: AttackData) -> void:
-    _lifetime_timer = data.attack_lifetime
-
-    if data.attack_effect_scene != null:
-        _attack_effect = data.attack_effect_scene.instantiate() as AttackEffect
-        if _attack_effect == null:
-            push_error("AttackDelivery: attack_effect_scene does not instantiate to AttackEffect in '%s'" % name)
-        else:
-            add_child(_attack_effect)
-            _attack_effect.setup(data)
-            _attack_effect.play(data.attack_lifetime)
-    else:
-        push_warning("AttackDelivery: no attack_effect_scene in AttackData for '%s'" % name)
+    _data = data
+    _init_lifetime_timer(data.attack_lifetime)
 
 
-func _process(delta: float) -> void:
-    _lifetime_timer -= delta
-    if _lifetime_timer <= 0.0:
-        queue_free()
+func _init_lifetime_timer(duration: float) -> void:
+    lifetime_timer = Timer.new()
+    lifetime_timer.one_shot = true
+    lifetime_timer.wait_time = duration
+    lifetime_timer.connect("timeout", _on_timeout)
+    add_child(lifetime_timer)
+    lifetime_timer.start()
+
+
+func trigger() -> void:
+    _attack_effect = _data.attack_effect_scene.instantiate()
+    if _attack_effect == null:
+        push_error("attack_effect_scene failed to instantiate in: " + name)
+        return
+
+    add_child(_attack_effect)
+    _attack_effect.setup(_data)
+    _attack_effect.play()
+
+    if _wait_for_effect:
+        lifetime_timer.stop()
+        _attack_effect.connect("finished", queue_free)
+
+
+func _on_timeout() -> void:
+    queue_free()

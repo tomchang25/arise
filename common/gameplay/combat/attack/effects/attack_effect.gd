@@ -1,6 +1,5 @@
 class_name AttackEffect
 extends Node2D
-
 ## Responsible for presentation and hitbox hosting only.
 ##
 ## AttackEffect wires the Hitbox and reacts to play() being called by
@@ -9,6 +8,8 @@ extends Node2D
 ## Subclasses override play(duration) to run their VFX and SFX.
 ## duration is provided by AttackDelivery so VFX can scale to lifetime
 ## without the effect needing to know about it directly.
+
+signal finished
 
 var max_targets: int = 1
 var targets_hit_count: int = 0
@@ -29,9 +30,8 @@ func setup(data: AttackData) -> void:
 
 ## Called by AttackDelivery after setup(). Override in subclasses to play VFX/SFX.
 ## duration matches the delivery lifetime — use it to scale tween lengths.
-func play(_duration: float) -> void:
+func play(_duration: float = 0) -> void:
     pass
-
 
 # -------------------------
 # Internal helpers
@@ -44,7 +44,6 @@ func _find_hitbox_child() -> Hitbox:
             return child
     push_error("AttackEffect: no Hitbox child found in '%s'" % name)
     return null
-
 
 # -------------------------
 # Signals / Callbacks

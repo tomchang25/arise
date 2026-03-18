@@ -21,10 +21,9 @@ func setup(data: AttackData) -> void:
 
 
 ## Called by AttackDelivery with the delivery lifetime as duration.
-func play(duration: float) -> void:
+func play(duration: float = 0.2) -> void:
     _play_slash_vfx(duration)
     _play_slash_sfx()
-
 
 # -------------------------
 # Internal helpers
@@ -49,6 +48,9 @@ func _play_slash_vfx(duration: float) -> void:
     var tween := create_tween()
     tween.tween_method(_update_slash_points, 0.0, 1.0, duration * 0.4).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
     tween.parallel().tween_property(line_2d, "width", 0.0, duration * 0.6).set_delay(duration * 0.4).set_trans(Tween.TRANS_SINE)
+
+    await tween.finished
+    finished.emit()
 
 
 func _play_slash_sfx() -> void:

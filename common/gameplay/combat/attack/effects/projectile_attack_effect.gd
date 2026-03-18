@@ -1,6 +1,5 @@
 class_name ProjectileAttackEffect
 extends AttackEffect
-
 ## Visual presentation for a projectile attack.
 ##
 ## Draws a comet-shaped Line2D and injects a CircleShape2D into the Hitbox.
@@ -22,9 +21,8 @@ func setup(data: AttackData) -> void:
 
 
 ## Called by AttackDelivery with the delivery lifetime as duration.
-func play(duration: float) -> void:
+func play(duration: float = 1.0) -> void:
     _play_projectile_vfx(duration)
-
 
 # -------------------------
 # Internal helpers

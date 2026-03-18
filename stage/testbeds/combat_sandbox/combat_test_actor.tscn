@@ -12,10 +12,10 @@
 [ext_resource type="Script" uid="uid://co1s16xd7omkk" path="res://common/gameplay/combat/hit_detection/hitbox/hitbox.gd" id="10_gu8my"]
 [ext_resource type="PackedScene" uid="uid://jla2t1i1qafl" path="res://common/gameplay/combat/attack/effects/slash_attack_effect.tscn" id="10_rut13"]
 [ext_resource type="Script" uid="uid://dxe0yv70mfrn4" path="res://common/gameplay/combat/attack/definitions/place_attack_definition.gd" id="11_6rd2i"]
-[ext_resource type="PackedScene" uid="uid://vpxne6o7pihf" path="res://common/gameplay/combat/deliveries/projectile_attack_delivery.tscn" id="11_ov0ts"]
-[ext_resource type="PackedScene" uid="uid://cq28w0fschv5u" path="res://common/gameplay/combat/deliveries/attack_delivery.tscn" id="11_pqotf"]
+[ext_resource type="PackedScene" uid="uid://cr1lef2eyb6vu" path="res://common/gameplay/combat/deliveries/slash_delivery.tscn" id="11_pqotf"]
 [ext_resource type="PackedScene" uid="uid://mo52nt0sxj4w" path="res://common/gameplay/combat/attack/effects/projectile_attack_effect.tscn" id="13_eothi"]
 [ext_resource type="Script" uid="uid://b44chxi8qaq70" path="res://common/gameplay/combat/attack/definitions/projectile_attack_definition.gd" id="13_k6bne"]
+[ext_resource type="PackedScene" uid="uid://yj56pi16wgud" path="res://common/gameplay/combat/deliveries/projectile_delivery.tscn" id="14_eothi"]
 [ext_resource type="Script" uid="uid://cmr6ual45tdij" path="res://common/gameplay/combat/attack/definitions/attached_attack_definition.gd" id="14_k6bne"]
 
 [sub_resource type="Resource" id="Resource_y8gd8"]
@@ -38,7 +38,7 @@ faction_target_type = 2
 
 [sub_resource type="Resource" id="Resource_pqotf"]
 script = ExtResource("13_k6bne")
-attack_scene = ExtResource("11_ov0ts")
+attack_scene = ExtResource("14_eothi")
 attack_effect_scene = ExtResource("13_eothi")
 
 [sub_resource type="Resource" id="Resource_n12qf"]
