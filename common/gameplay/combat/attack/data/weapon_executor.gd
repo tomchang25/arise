@@ -9,7 +9,7 @@ extends RefCounted
 ## Called by CombatModule.setup(). Never instantiated directly.
 
 
-static func build(weapon: WeaponData, host: Node, hitbox_slots: Array[Hitbox], next_slot: int) -> WeaponHandle:
+static func build(weapon: WeaponData, host: Node, hitbox_slots: Array[Hitbox]) -> WeaponHandle:
     if weapon == null:
         push_warning("WeaponExecutor: null WeaponData — skipping")
         return null
@@ -24,11 +24,8 @@ static func build(weapon: WeaponData, host: Node, hitbox_slots: Array[Hitbox], n
             handle.attack_modules.append(null)
             continue
 
-        var module := _spawn_module(def, host, hitbox_slots, next_slot)
+        var module := _spawn_module(def, host, hitbox_slots)
         handle.attack_modules.append(module)
-
-        if module is AttachedAttackModule:
-            next_slot += 1
 
     return handle
 
@@ -38,7 +35,7 @@ static func build(weapon: WeaponData, host: Node, hitbox_slots: Array[Hitbox], n
 # -------------------------
 
 
-static func _spawn_module(def: AttackDefinition, host: Node, slots: Array[Hitbox], slot_index: int) -> Object:
+static func _spawn_module(def: AttackDefinition, host: Node, slots: Array[Hitbox]) -> Object:
     if def is PlaceAttackDefinition:
         var m := MeleeAttackModule.new()
         m.setup(def.cooldown)
@@ -53,12 +50,24 @@ static func _spawn_module(def: AttackDefinition, host: Node, slots: Array[Hitbox
 
     if def is AttachedAttackDefinition:
         var m := AttachedAttackModule.new()
-        if slot_index >= slots.size():
-            push_error("WeaponExecutor: no hitbox slot available for Attached attack in weapon '%s'" % def.get_class())
-        else:
-            m.setup(slots[slot_index])
+        var slot := _find_hitbox(slots, def.hitbox_slot_id, def)
+        if slot != null:
+            m.setup(slot)
         host.add_child(m)
         return m
 
     push_error("WeaponExecutor: unrecognised AttackDefinition subclass: %s" % def.get_class())
+    return null
+
+
+static func _find_hitbox(slots: Array[Hitbox], hitbox_slot_id: StringName, def: AttackDefinition) -> Hitbox:
+    if hitbox_slot_id == "":
+        push_error("WeaponExecutor: AttachedAttackDefinition has no hitbox_slot_id set (definition: '%s')" % def.resource_path)
+        return null
+
+    for slot in slots:
+        if slot.slot_id == hitbox_slot_id:
+            return slot
+
+    push_error("WeaponExecutor: no Hitbox with slot_id '%s' found in hitbox_slots (definition: '%s')" % [hitbox_slot_id, def.resource_path])
     return null

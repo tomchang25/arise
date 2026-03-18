@@ -16,6 +16,10 @@ signal hit_enemy
 
 @export var clear_records_on_exit := true
 
+## Identifier used by CombatModule to bind this hitbox to an AttachedAttackDefinition.
+## Set this in the inspector to match the slot_id on the corresponding definition.
+@export var slot_id: StringName = ""
+
 var collision_node: CollisionShape2D
 
 var attack_info: AttackData:

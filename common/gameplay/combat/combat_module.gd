@@ -10,6 +10,10 @@ extends Node2D
 ##   3. Assign `weapons` array (WeaponData resources).
 ##   4. Call setup() — or it is called automatically in _ready().
 ##
+## Hitbox binding for ATTACHED attacks:
+##   Each AttachedAttackDefinition must set hitbox_name to match the .name of
+##   its intended Hitbox node in hitbox_slots. Order in hitbox_slots is irrelevant.
+##
 ## API (weapon_index = index in `weapons`, attack_index = index in weapon.attacks):
 ##
 ##   Fire-and-forget:
@@ -39,8 +43,7 @@ extends Node2D
 
 @export_group("Hitbox Slots")
 ## Pre-authored Hitbox nodes for ATTACHED attacks.
-## Assigned in order as attached weapons are set up.
-## Add as many as the actor has attached attack types.
+## Order does not matter — each AttachedAttackDefinition binds by hitbox_name.
 @export var hitbox_slots: Array[Hitbox] = []
 
 # -------------------------
@@ -49,9 +52,6 @@ extends Node2D
 
 ## WeaponHandle instances, index-matched to `weapons`.
 var _handles: Array[WeaponHandle] = []
-
-## Next hitbox slot to claim for an Attached executor.
-var _next_hitbox_slot: int = 0
 
 ## Range overrides keyed by "wi_ai" string (weapon_index + attack_index).
 ## When a key exists, get_attack_range() returns its value instead of the
@@ -71,14 +71,9 @@ func _ready() -> void:
 ## Safe to call again if weapons change at runtime (clears and rebuilds).
 func setup() -> void:
     _clear_handles()
-    _next_hitbox_slot = 0
 
     for weapon in weapons:
-        var handle := WeaponExecutor.build(weapon, self, hitbox_slots, _next_hitbox_slot)
-        if handle != null:
-            for m in handle.attack_modules:
-                if m is AttachedAttackModule:
-                    _next_hitbox_slot += 1
+        var handle := WeaponExecutor.build(weapon, self, hitbox_slots)
         _handles.append(handle)
 
 
