@@ -1,23 +1,24 @@
 class_name FireAttackModule
-extends Node2D
-
-## When false, can_attack() returns false and execute_attack() is a no-op.
-## Set by CombatModule or a buff/debuff system to suppress this executor
-## without tearing down the weapon entirely.
-var enabled: bool = true
+extends AttackModule
+## Base for fire-and-forget attack modules (Melee, Projectile, Trap, etc.).
+##
+## Owns the cooldown timer and locked state. Subclasses override
+## _execute_attack_logic() to implement delivery-specific behaviour.
+##
+## Overrides execute_attack, end_attack, can_attack from AttackModule.
+## activate_attack / deactivate_attack are not overridden — calls to those
+## on a fire module will warn via the AttackModule base.
 
 ## Cooldown is set by CombatModule at spawn time from AttackDefinition.cooldown.
 ## Do not export this — it is not configured in the inspector.
 var attack_cooldown: float = 0.5
-
 var cooldown_timer: Timer
 var locked := false
+
 
 # -------------------------
 # Lifecycle
 # -------------------------
-
-
 func _ready() -> void:
     _setup_timer()
 
@@ -33,8 +34,6 @@ func _setup_timer() -> void:
 # -------------------------
 # Setup
 # -------------------------
-
-
 ## Called by CombatModule after instantiation to inject the cooldown value.
 func setup(cooldown: float) -> void:
     attack_cooldown = max(cooldown, 0.01)
@@ -43,10 +42,8 @@ func setup(cooldown: float) -> void:
 
 
 # -------------------------
-# Common API
+# AttackModule overrides
 # -------------------------
-
-
 func can_attack() -> bool:
     return enabled and not locked
 
@@ -77,7 +74,5 @@ func end_attack() -> void:
 # -------------------------
 # Internal — override in subclasses
 # -------------------------
-
-
 func _execute_attack_logic(_target_position: Vector2, _data: AttackData) -> void:
     pass

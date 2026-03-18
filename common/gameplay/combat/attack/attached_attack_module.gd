@@ -1,45 +1,37 @@
 class_name AttachedAttackModule
-extends Node2D
-
+extends AttackModule
 ## Executor for AttachedAttackDefinition.
 ## Owns a pre-authored Hitbox node wired in by CombatModule at setup time.
-## Activation enables the hitbox; deactivation disables it. That's it.
+## Activation enables the hitbox; deactivation disables it.
+##
+## Overrides activate_attack, deactivate_attack, can_attack from AttackModule.
+## execute_attack / end_attack are not overridden — calls to those on an
+## attached module will warn via the AttackModule base.
 ##
 ## When enabled is set to false while the hitbox is active, the hitbox is
 ## disabled immediately. The hitbox stays off until activate_attack() is
 ## called again — there is no auto-resume.
 
-## When false, activate_attack() is a no-op and the hitbox is disabled immediately.
-var enabled: bool = true:
-    set(value):
-        if enabled == value:
-            return
-        enabled = value
-        if not enabled:
-            _set_hitbox_active(false)
-        else:
-            if is_active:
-                _set_hitbox_active(true)
 ## True while the hitbox is logically on.
 ## Read by external systems to query whether this executor is in-flight.
 var is_active: bool = false
-
 ## Injected by CombatModule at setup time. Never set this in the inspector.
 var hitbox: Hitbox = null
+
 
 # -------------------------
 # Setup
 # -------------------------
-
-
 ## Called by CombatModule after instantiation to inject the hitbox reference.
 func setup(assigned_hitbox: Hitbox) -> void:
     hitbox = assigned_hitbox
 
 
 # -------------------------
-# API
+# AttackModule overrides
 # -------------------------
+func can_attack() -> bool:
+    return enabled and not is_active
 
 
 ## Enable the hitbox with the given attack data.
@@ -73,8 +65,14 @@ func deactivate_attack() -> void:
 # -------------------------
 # Internal
 # -------------------------
-
-
 func _set_hitbox_active(value: bool) -> void:
     if hitbox:
         hitbox.enabled = value
+
+
+func _on_enabled_changed(value: bool) -> void:
+    if not value:
+        _set_hitbox_active(false)
+    else:
+        if is_active:
+            _set_hitbox_active(true)

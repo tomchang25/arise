@@ -10,9 +10,9 @@ var ctx: SpawnContext
 
 
 func setup_direct(
-    request_action: SpawnAction,
-    request_global_position: Vector2,
-    request_ctx: SpawnContext,
+        request_action: SpawnAction,
+        request_global_position: Vector2,
+        request_ctx: SpawnContext,
 ) -> SpawnRequest:
     action = request_action
     global_position = request_global_position
@@ -22,9 +22,9 @@ func setup_direct(
 
 
 func setup_warning(
-    request_action: SpawnAction,
-    request_global_position: Vector2,
-    request_ctx: SpawnContext,
+        request_action: SpawnAction,
+        request_global_position: Vector2,
+        request_ctx: SpawnContext,
 ) -> SpawnRequest:
     action = request_action
     global_position = request_global_position
@@ -45,7 +45,12 @@ func execute() -> SpawnResult:
     var spawned_node: Node = null
 
     if use_warning_spawn:
-        spawned_node = await SpawnWarningExecutor.execute_at_position(DEFAULT_WARNING_SPAWN_POINT_SCENE, action, global_position, ctx)
+        spawned_node = await SpawnWarningExecutor.execute_at_position(
+            DEFAULT_WARNING_SPAWN_POINT_SCENE,
+            action,
+            global_position,
+            ctx,
+        )
     else:
         spawned_node = SpawnExecutor.execute_at_position(action, global_position, ctx)
 

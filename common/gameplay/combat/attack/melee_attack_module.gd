@@ -1,12 +1,10 @@
 class_name MeleeAttackModule
 extends FireAttackModule
-
 ## Executes a Place-type (melee) attack.
 ##
 ## Spawns an AttackDelivery at the target position via the spawn system.
 ## AttackDelivery owns the lifetime and instantiates the AttackEffect
 ## from data.attack_effect_scene at runtime.
-
 
 func _execute_attack_logic(target_position: Vector2, data: AttackData) -> void:
     if data.attack_scene == null:

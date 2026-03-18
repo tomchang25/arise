@@ -72,7 +72,12 @@ var spawn_group: String = "attacks"
 ## knockback_dir from source → target at spawn time.
 ## For Attached, omit target_position — knockback_source is stored instead
 ## so victims compute direction at hit time.
-static func build(def: AttackDefinition, stats: Stats, source: Node2D, target_position: Vector2 = Vector2.ZERO) -> AttackData:
+static func build(
+        def: AttackDefinition,
+        stats: Stats,
+        source: Node2D,
+        target_position: Vector2 = Vector2.ZERO,
+) -> AttackData:
     if def == null:
         push_error("AttackData.build: def is null")
         return null
@@ -92,7 +97,7 @@ static func build(def: AttackDefinition, stats: Stats, source: Node2D, target_po
         data.attack_effect_scene = def.attack_effect_scene
         data.attack_lifetime = def.lifetime
 
-        _bake_knockback_dir(source, target_position)
+        data.knockback_dir = _bake_knockback_dir(source, target_position)
 
     elif def is ProjectileAttackDefinition:
         data.attack_scene = def.attack_scene
@@ -100,7 +105,7 @@ static func build(def: AttackDefinition, stats: Stats, source: Node2D, target_po
         data.attack_lifetime = def.lifetime
         data.travel_distance = def.travel_distance
 
-        _bake_knockback_dir(source, target_position)
+        data.knockback_dir = _bake_knockback_dir(source, target_position)
 
     elif def is AttachedAttackDefinition:
         data.knockback_source = source
@@ -128,7 +133,6 @@ static func build(def: AttackDefinition, stats: Stats, source: Node2D, target_po
 
     return data
 
-
 # -------------------------
 # Knockback
 # -------------------------
@@ -137,7 +141,6 @@ static func build(def: AttackDefinition, stats: Stats, source: Node2D, target_po
 static func _bake_knockback_dir(source: Node2D, target_position: Vector2) -> Vector2:
     var dir := target_position - source.global_position
     return dir.normalized() if dir.length_squared() > 0.0001 else Vector2.RIGHT
-
 
 # -------------------------
 # Internal — build helpers
@@ -164,7 +167,6 @@ static func _resolve_factions(def: AttackDefinition, stats: Stats) -> Array:
                     return [Stats.Faction.PLAYER]
                 _:
                     return []
-
         AttackDefinition.FactionTargetType.HOSTILE_AND_NEUTRAL:
             match stats.faction:
                 Stats.Faction.PLAYER:
@@ -175,12 +177,13 @@ static func _resolve_factions(def: AttackDefinition, stats: Stats) -> Array:
                     return [Stats.Faction.PLAYER, Stats.Faction.ENEMY]
                 _:
                     return []
-
         AttackDefinition.FactionTargetType.ALL:
             return all_factions.duplicate()
-
         _:
-            push_warning("AttackData: unknown FactionTargetType %d, defaulting to HOSTILE_ONLY" % def.faction_target_type)
+            push_warning(
+                "AttackData: unknown FactionTargetType %d, defaulting to HOSTILE_ONLY" %
+                def.faction_target_type,
+            )
             return _resolve_factions_hostile_only(stats)
 
 

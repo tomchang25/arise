@@ -1,6 +1,5 @@
 class_name CombatModule
 extends Node2D
-
 ## Manages all weapons on an actor.
 ##
 ## Setup:
@@ -35,12 +34,10 @@ extends Node2D
 ##     get_attack_range(weapon_index, attack_index) -> float
 
 @export var stats: Stats
-
 @export_group("Weapons")
 ## WeaponData resources to equip on this actor.
 ## Index matches weapon_index used in all API calls.
 @export var weapons: Array[WeaponData] = []
-
 @export_group("Hitbox Slots")
 ## Pre-authored Hitbox nodes for ATTACHED attacks.
 ## Order does not matter — each AttachedAttackDefinition binds by hitbox_name.
@@ -49,20 +46,17 @@ extends Node2D
 # -------------------------
 # Runtime state
 # -------------------------
-
 ## WeaponHandle instances, index-matched to `weapons`.
 var _handles: Array[WeaponHandle] = []
-
 ## Range overrides keyed by "wi_ai" string (weapon_index + attack_index).
 ## When a key exists, get_attack_range() returns its value instead of the
 ## AttackDefinition base. Does NOT mutate weapon resources.
-var _range_overrides: Dictionary = {}
+var _range_overrides: Dictionary = { }
+
 
 # -------------------------
 # Lifecycle
 # -------------------------
-
-
 func _ready() -> void:
     setup()
 
@@ -90,8 +84,6 @@ func equip_weapons(source_weapons: Array[WeaponData]) -> void:
 # -------------------------
 # Fire-and-forget API
 # -------------------------
-
-
 ## Execute a one-shot attack.
 ## auto_end=true starts the cooldown immediately.
 ## Pass auto_end=false and call end_attack() from animation_finished to defer cooldown.
@@ -108,14 +100,10 @@ func perform_attack(weapon_index: int, attack_index: int, target_position: Vecto
     if module == null:
         return
 
-    var fire := module as FireAttackModule
-    if fire == null:
-        push_error("CombatModule: perform_attack called on an attached module (weapon %d, attack %d)" % [weapon_index, attack_index])
+    if not module.enabled or not module.can_attack():
         return
 
-    if not fire.enabled or not fire.can_attack():
-        return
-
+    # Range clamp is melee-specific — only MeleeAttackModule carries an attack_range.
     if module is MeleeAttackModule:
         var effective_range := get_attack_range(weapon_index, attack_index)
         var distance := global_position.distance_to(target_position)
@@ -129,10 +117,10 @@ func perform_attack(weapon_index: int, attack_index: int, target_position: Vecto
     if data == null:
         return
 
-    fire.execute_attack(target_position, data)
+    module.execute_attack(target_position, data)
 
     if auto_end:
-        fire.end_attack()
+        module.end_attack()
 
 
 ## Start the cooldown for a fire executor.
@@ -143,28 +131,26 @@ func end_attack(weapon_index: int, attack_index: int) -> void:
         return
 
     var module := handle.get_module(attack_index)
-    if module is FireAttackModule:
-        (module as FireAttackModule).end_attack()
+    if module != null:
+        module.end_attack()
 
 
-## Returns true if the fire executor is ready to attack.
+## Returns true if the module is ready to attack.
 func can_attack(weapon_index: int, attack_index: int) -> bool:
     var handle := _get_handle(weapon_index)
     if handle == null:
         return false
 
     var module := handle.get_module(attack_index)
-    if module is FireAttackModule:
-        return (module as FireAttackModule).can_attack()
+    if module == null:
+        return false
 
-    return false
+    return module.can_attack()
 
 
 # -------------------------
 # Attached API
 # -------------------------
-
-
 ## Enable the attached hitbox for the given weapon / attack index.
 func activate_attack(weapon_index: int, attack_index: int) -> void:
     if stats == null:
@@ -179,12 +165,7 @@ func activate_attack(weapon_index: int, attack_index: int) -> void:
     if module == null:
         return
 
-    var attached := module as AttachedAttackModule
-    if attached == null:
-        push_error("CombatModule: activate_attack called on a fire module (weapon %d, attack %d)" % [weapon_index, attack_index])
-        return
-
-    if not attached.enabled:
+    if not module.enabled:
         return
 
     var def := handle.get_def(attack_index)
@@ -192,7 +173,7 @@ func activate_attack(weapon_index: int, attack_index: int) -> void:
     if data == null:
         return
 
-    attached.activate_attack(data)
+    module.activate_attack(data)
 
 
 ## Disable the attached hitbox for the given weapon / attack index.
@@ -214,8 +195,6 @@ func deactivate_attack(weapon_index: int, attack_index: int) -> void:
 # -------------------------
 # Weapon enable / disable
 # -------------------------
-
-
 ## Enable or disable an entire weapon.
 ## This gates future perform_attack / activate_attack calls on all modules
 ## in this weapon. It does NOT touch any currently live attached hitboxes —
@@ -229,15 +208,12 @@ func set_weapon_enabled(weapon_index: int, value: bool) -> void:
     handle.enabled = value
 
     for module in handle.attack_modules:
-        if module is AttachedAttackModule:
-            (module as AttachedAttackModule).enabled = value
+        module.enabled = value
 
 
 # -------------------------
 # Range override API
 # -------------------------
-
-
 ## Returns the effective attack range for the given weapon/attack.
 ## If a range override is active, that value is returned instead.
 ## Only PlaceAttackDefinition carries a range — Projectile and Attached return 0.
@@ -281,8 +257,6 @@ func get_attack_origin() -> Vector2:
 # -------------------------
 # Internal
 # -------------------------
-
-
 func _range_key(weapon_index: int, attack_index: int) -> String:
     return "%d_%d" % [weapon_index, attack_index]
 
