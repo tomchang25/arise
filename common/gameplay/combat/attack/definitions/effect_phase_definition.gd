@@ -3,11 +3,11 @@ extends Resource
 ## Defines one phase in a multi-phase attack.
 ##
 ## A phase is the smallest independently timed unit of an attack delivery.
-## Multiple phases are chained together inside an AttackDelivery via PhaseSequencer
-## (Step 2 of the combat improvement plan).
+## Multiple phases are chained together inside an AttackDelivery via PhaseSequencer.
 ##
-## Damage / hit fields here override the parent AttackDefinition's values for this
-## phase only. Set a field to its sentinel (see below) to inherit from the parent.
+## Each phase is fully authoritative over its own hit config — there is no sentinel
+## / inherit system. Every field must be set explicitly. This makes phase behaviour
+## unambiguous and keeps build_phase_override() free of conditional logic.
 ##
 ## Authoring guide
 ## ───────────────
@@ -24,34 +24,31 @@ extends Resource
 ##   then advance without spawning any AttackEffect or Hitbox.
 
 @export_group("Scene")
-
 ## The AttackEffect scene to instantiate for this phase.
 ##
-## Null = VFX-only phase.  The PhaseSequencer waits `lifetime` seconds and advances
-## without spawning any effect or damage hitbox.  Use this for lingering decals,
+## Null = VFX-only phase. The PhaseSequencer waits `lifetime` seconds and advances
+## without spawning any effect or damage hitbox. Use this for lingering decals,
 ## scorch marks, or environmental VFX that should not deal damage.
 @export var effect_scene: PackedScene = null
 
 @export_group("Timing")
-
 ## How long this phase is active before the next phase begins (or the delivery frees).
 ## Must be > 0.
 @export var lifetime: float = 0.2
 
-@export_group("Hit Overrides")
-## Per-phase damage interval override.
-## Seconds between repeated hits on the same victim while inside this phase's Hitbox.
-## Set to -1.0 to inherit from the parent AttackDefinition.
-@export var damage_interval: float = -1.0
+@export_group("Hit")
+## Knockback force applied to victims hit during this phase.
+@export var knockback_force: float = 40.0
 
-## Per-phase max-targets override.
-## Set to -1 to inherit from the parent AttackDefinition.
-@export var max_targets: int = -1
+## Maximum number of victims this phase's hitbox can hit before disabling itself.
+## -1 = unlimited.
+@export var max_targets: int = 1
 
-## Per-phase clear_records_on_exit override.
-## When true, a victim who exits and re-enters the hitbox can be hit again.
-## Matches AttackDefinition.clear_records_on_exit semantics.
-## Set to -1 to inherit from the parent AttackDefinition.
-##
-## -1 = inherit  |  0 = false  |  1 = true
-@export_range(-1, 1, 1) var clear_records_on_exit_override: int = -1
+## Seconds between repeated hits on the same victim while inside this phase's hitbox.
+## 0 = hit on enter only, never repeat while inside.
+@export var damage_interval: float = 0.0
+
+## If true, the victim's hit record is cleared when they exit this phase's hitbox —
+## re-entering will trigger a hit again.
+## If false, a victim hit once is immune for the entire phase lifetime.
+@export var clear_records_on_exit: bool = false

@@ -9,13 +9,12 @@ extends RefCounted
 ## Spawn-time snapshot fields (knockback_dir, target_factions, etc.) are baked
 ## once in build() because they depend on position/faction at the moment of firing.
 ##
-## Step 2 additions
-## ────────────────
-## • phases          — forwarded from DetachedAttackDefinition; non-empty means the
-##                     AttackDelivery should use PhaseSequencer instead of the legacy
-##                     single-effect path.
-## • build_phase_override() — forks this context for one phase, applying per-phase
-##                     overrides without mutating the parent context.
+## Phase flow
+## ──────────
+## • phases         — forwarded from DetachedAttackDefinition; AttackDelivery always
+##                    delegates to PhaseSequencer when this is non-empty.
+## • build_phase_override() — forks this context for one phase. Each phase is fully
+##                    authoritative over its own hit config — no sentinel logic.
 
 # -------------------------
 # Live references
@@ -51,25 +50,21 @@ var target_factions: Array = []
 # Hit config (forwarded to Hitbox)
 # -------------------------
 
-var max_targets: int = -1
+var max_targets: int = 1
 var damage_interval: float = 0.0
-var clear_records_on_exit: bool = true
+var clear_records_on_exit: bool = false
 
 # -------------------------
 # Scene refs (used by AttackEffect / AttackDelivery)
 # -------------------------
 
-## Legacy single-effect path. Non-null when DetachedAttackDefinition.attack_effect_scene
-## is set and phases is empty. PhaseSequencer does not use this field.
 var attack_scene: PackedScene = null
-var attack_effect_scene: PackedScene = null
 var attack_lifetime: float = 0.2
 var travel_distance: float = 0.0
 var spawn_group: String = "attacks"
 
-## Phase array forwarded from DetachedAttackDefinition.phases.
+## Phase array forwarded from DetachedAttackDefinition.
 ## Non-empty → AttackDelivery.trigger() delegates to PhaseSequencer.
-## Empty     → AttackDelivery.trigger() uses the legacy attack_effect_scene path.
 var phases: Array[EffectPhaseDefinition] = []
 
 # -------------------------
@@ -80,7 +75,8 @@ var phases: Array[EffectPhaseDefinition] = []
 ## Build an EffectContext from a definition + live caster context.
 ##
 ## For detached types (Place, Projectile): pass target_position to bake knockback_dir.
-## For Attached: omit target_position — knockback_source is stored instead.
+## For Attached: omit target_position — knockback_source is stored instead and
+## hit config is read directly from the AttachedAttackDefinition.
 static func build(
         def: AttackDefinition,
         stats: Stats,
@@ -116,31 +112,29 @@ static func build(
 
     elif def is AttachedAttackDefinition:
         # No scene refs — hitbox is pre-authored in the actor scene.
+        # Hit config is owned by the definition directly (no phases on attached attacks).
         ctx.knockback_source = source
+        ctx.knockback_force = def.knockback_force
+        ctx.max_targets = def.max_targets
+        ctx.damage_interval = def.damage_interval
+        ctx.clear_records_on_exit = def.clear_records_on_exit
 
     else:
         push_error("EffectContext.build: unrecognised AttackDefinition subclass: %s" % def.get_class())
         return null
 
-    ctx.knockback_force = def.knockback
-    ctx.max_targets = def.max_targets
-    ctx.damage_interval = def.damage_interval
-    ctx.clear_records_on_exit = def.clear_records_on_exit
     ctx.target_factions = _resolve_factions(def, stats)
 
     return ctx
 
 
-## Fork this context for one phase, applying EffectPhaseDefinition overrides.
+## Fork this context for one phase.
 ##
 ## Shared spawn-time data (knockback_dir, target_factions, source_stats, definition)
-## is copied by reference — it was baked at fire time and is identical for all phases.
-## Only the hit-config fields and lifetime are overridden per phase.
+## is copied by reference — baked at fire time and identical for all phases.
 ##
-## Sentinel values on EffectPhaseDefinition mean "inherit from parent":
-##   damage_interval < 0      → use parent ctx value
-##   max_targets     < 0      → use parent ctx value
-##   clear_records_on_exit_override < 0 → use parent ctx value
+## Hit config is read directly from the EffectPhaseDefinition — each phase is
+## fully authoritative, no sentinel / inherit logic.
 func build_phase_override(phase_def: EffectPhaseDefinition) -> EffectContext:
     var phase_ctx := EffectContext.new()
 
@@ -149,27 +143,16 @@ func build_phase_override(phase_def: EffectPhaseDefinition) -> EffectContext:
     phase_ctx.definition = definition
     phase_ctx.knockback_dir = knockback_dir
     phase_ctx.knockback_source = knockback_source
-    phase_ctx.knockback_force = knockback_force
     phase_ctx.target_factions = target_factions
     phase_ctx.attack_scene = attack_scene
     phase_ctx.spawn_group = spawn_group
-
-    # Phase lifetime is always taken from the phase definition.
     phase_ctx.attack_lifetime = phase_def.lifetime
 
-    # Hit config — apply override or inherit from parent.
-    phase_ctx.damage_interval = \
-    phase_def.damage_interval if phase_def.damage_interval >= 0.0 \
-    else damage_interval
-
-    phase_ctx.max_targets = \
-    phase_def.max_targets if phase_def.max_targets >= 0 \
-    else max_targets
-
-    if phase_def.clear_records_on_exit_override < 0:
-        phase_ctx.clear_records_on_exit = clear_records_on_exit
-    else:
-        phase_ctx.clear_records_on_exit = phase_def.clear_records_on_exit_override > 0
+    # Hit config — phase is fully authoritative, read directly.
+    phase_ctx.knockback_force = phase_def.knockback_force
+    phase_ctx.max_targets = phase_def.max_targets
+    phase_ctx.damage_interval = phase_def.damage_interval
+    phase_ctx.clear_records_on_exit = phase_def.clear_records_on_exit
 
     # Phases array is not forwarded — a phase does not recurse.
     phase_ctx.phases = []
