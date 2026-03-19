@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://lmen7iji0h2q" path="res://game/actors/dummies/dummy.gd" id="1_ef5gh"]
 [ext_resource type="Script" uid="uid://boqrgdnjxi8n8" path="res://game/actors/enemies/enemy_data.gd" id="2_6s4ru"]
 [ext_resource type="Texture2D" uid="uid://cfybygt5rk5cf" path="res://game/actors/dummies/assets/noble.png" id="2_ee1ma"]
+[ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="2_ef5gh"]
 [ext_resource type="Script" uid="uid://i2xvg4o1geuj" path="res://common/gameplay/combat/attack/data/weapon_data.gd" id="3_bjyc7"]
 [ext_resource type="Script" uid="uid://dpi3inldik0ho" path="res://common/gameplay/combat/damage_response/damage_receiver_module.gd" id="4_ee1ma"]
 [ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/gameplay/combat/hit_detection/hurtbox/hurtbox.gd" id="5_gllc2"]
@@ -21,8 +22,16 @@
 [ext_resource type="Script" uid="uid://i1ibypyr38xv" path="res://common/gameplay/loot/loot_drop_module.gd" id="19_xl8r2"]
 [ext_resource type="Resource" uid="uid://bq584j3uqsyau" path="res://game/actors/enemies/types/slime/data/slime_drop_profile.tres" id="20_7gd1t"]
 
+[sub_resource type="Resource" id="Resource_bjyc7"]
+script = ExtResource("2_ef5gh")
+faction = 1
+mana = 100.0
+metadata/_custom_type_script = "uid://bkgf2cii3bfri"
+
 [sub_resource type="Resource" id="Resource_gtxs5"]
 script = ExtResource("2_6s4ru")
+stats = SubResource("Resource_bjyc7")
+drop_profile = ExtResource("20_7gd1t")
 metadata/_custom_type_script = "uid://boqrgdnjxi8n8"
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_lvn57"]
@@ -350,13 +359,13 @@ _data = {
 &"RESET": SubResource("Animation_i87wb")
 }
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_6s4ru"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_bjyc7"]
 radius = 200.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_bjyc7"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_gllc2"]
 radius = 300.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_gllc2"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_pgukd"]
 radius = 100.0
 
 [node name="Dummy" type="CharacterBody2D" unique_id=306738905 node_paths=PackedStringArray("hurtbox", "damage_receiver", "hit_feedback", "damage_number", "health_bar", "movement_module") groups=["dummies"]]
@@ -418,7 +427,7 @@ script = ExtResource("6_gllc2")
 radius = 200.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/AggroDetection" unique_id=1347008588]
-shape = SubResource("CircleShape2D_6s4ru")
+shape = SubResource("CircleShape2D_bjyc7")
 debug_color = Color(0, 0.6, 0.1764706, 0.23529412)
 
 [node name="DeaggroDetection" type="Area2D" parent="Module/DetectionPivot" unique_id=182497517]
@@ -428,7 +437,7 @@ script = ExtResource("6_gllc2")
 radius = 300.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/DeaggroDetection" unique_id=1690352482]
-shape = SubResource("CircleShape2D_bjyc7")
+shape = SubResource("CircleShape2D_gllc2")
 debug_color = Color(0.8627451, 0.23529412, 0.69803923, 0.23921569)
 
 [node name="ReachDetection" type="Area2D" parent="Module/DetectionPivot" unique_id=311896403]
@@ -437,7 +446,7 @@ monitorable = false
 script = ExtResource("6_gllc2")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/ReachDetection" unique_id=1240650643]
-shape = SubResource("CircleShape2D_gllc2")
+shape = SubResource("CircleShape2D_pgukd")
 
 [node name="HealthBar" parent="Module" unique_id=568222537 instance=ExtResource("12_6tvbp")]
 anchors_preset = 5

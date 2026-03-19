@@ -3,6 +3,7 @@
 [ext_resource type="Resource" uid="uid://bq584j3uqsyau" path="res://game/actors/enemies/types/slime/data/slime_drop_profile.tres" id="1_ombsu"]
 [ext_resource type="Script" uid="uid://boqrgdnjxi8n8" path="res://game/actors/enemies/enemy_data.gd" id="2_narlh"]
 [ext_resource type="Resource" uid="uid://rcfcludclv0l" path="res://game/actors/enemies/presets/ninja_red_stats.tres" id="3_hd4ht"]
+[ext_resource type="Script" uid="uid://i2xvg4o1geuj" path="res://common/gameplay/combat/attack/data/weapon_data.gd" id="4_5ojgb"]
 
 [resource]
 resource_local_to_scene = true
