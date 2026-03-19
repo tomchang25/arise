@@ -17,7 +17,7 @@
 [ext_resource type="Script" uid="uid://dldqypakv40re" path="res://common/gameplay/animation/animation_module.gd" id="10_tiye0"]
 [ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/framework/state_machine/state_machine.gd" id="11_b15sj"]
 [ext_resource type="Script" uid="uid://chearh86c82uf" path="res://game/actors/player/state/player_attack_state.gd" id="11_klmji"]
-[ext_resource type="PackedScene" uid="uid://cr1lef2eyb6vu" path="res://common/gameplay/combat/deliveries/slash_delivery.tscn" id="12_5qatl"]
+[ext_resource type="PackedScene" uid="uid://cr1lef2eyb6vu" path="res://common/gameplay/combat/attack/deliveries/slash_delivery.tscn" id="12_5qatl"]
 [ext_resource type="Script" uid="uid://dpi3inldik0ho" path="res://common/gameplay/combat/damage_response/damage_receiver_module.gd" id="12_i5w6q"]
 [ext_resource type="Script" uid="uid://dxe0yv70mfrn4" path="res://common/gameplay/combat/attack/definitions/place_attack_definition.gd" id="12_lje7i"]
 [ext_resource type="Script" uid="uid://duxq84e027el0" path="res://common/gameplay/combat/damage_response/hit_feedback_module.gd" id="13_41lfd"]

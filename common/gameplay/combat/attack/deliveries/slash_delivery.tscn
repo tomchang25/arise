@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cr1lef2eyb6vu"]
 
-[ext_resource type="Script" uid="uid://cvs8vnlfparvx" path="res://common/gameplay/combat/deliveries/slash_delivery.gd" id="1_aoxjn"]
+[ext_resource type="Script" uid="uid://cvs8vnlfparvx" path="res://common/gameplay/combat/attack/deliveries/slash_delivery.gd" id="1_aoxjn"]
 
 [node name="SlashDelivery" type="CharacterBody2D" unique_id=78817619]
 collision_layer = 0

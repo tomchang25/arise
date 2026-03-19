@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://bh2lxps8cw66s"]
 
-[ext_resource type="Script" uid="uid://l473hckyjaa" path="res://common/gameplay/combat/deliveries/rpg_delivery.gd" id="1_mg8ju"]
+[ext_resource type="Script" uid="uid://l473hckyjaa" path="res://common/gameplay/combat/attack/deliveries/rpg_delivery.gd" id="1_mg8ju"]
 [ext_resource type="Texture2D" uid="uid://cm2c6n0ytikey" path="res://icon.svg" id="2_2xtuc"]
-[ext_resource type="Script" uid="uid://dgc0y5xwfamvs" path="res://common/gameplay/combat/deliveries/trigger_component.gd" id="3_adtdl"]
+[ext_resource type="Script" uid="uid://dgc0y5xwfamvs" path="res://common/gameplay/combat/attack/deliveries/trigger_component.gd" id="3_adtdl"]
 [ext_resource type="Script" uid="uid://co1s16xd7omkk" path="res://common/gameplay/combat/hit_detection/hitbox/hitbox.gd" id="3_t5m5a"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_g51n4"]
