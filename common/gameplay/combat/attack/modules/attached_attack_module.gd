@@ -2,7 +2,13 @@ class_name AttachedAttackModule
 extends AttackModule
 ## Executor for AttachedAttackDefinition.
 ## Owns a pre-authored Hitbox node wired in by WeaponExecutor at setup time.
-## Activation enables the hitbox with a fresh EffectContext; deactivation disables it.
+##
+## Unified API mapping:
+##   execute_attack(_target_position) → activate_attack()  (target position ignored)
+##   end_attack()                     → deactivate_attack()
+##
+## activate_attack / deactivate_attack remain public for internal use and
+## for WeaponHandle teardown, but callers should prefer execute_attack / end_attack.
 
 var attack_def: AttackDefinition = null
 var owner_stats: Stats = null
@@ -32,9 +38,10 @@ func can_attack() -> bool:
     return enabled and not is_active
 
 
-## Build AttackData and enable the hitbox.
+## Activates the hitbox. target_position is ignored — hitbox is pre-authored on the actor.
+## Build EffectContext and enable the hitbox.
 ## No-op if enabled is false or hitbox is not set.
-func activate_attack() -> void:
+func execute_attack(_target_position: Vector2) -> void:
     if not enabled:
         return
 
@@ -56,10 +63,12 @@ func activate_attack() -> void:
     is_active = true
     _set_hitbox_active(true)
 
-
+## Deactivates the hitbox.
 ## Disable the hitbox.
 ## Always runs regardless of the enabled flag — teardown must never be suppressed.
-func deactivate_attack() -> void:
+
+
+func end_attack() -> void:
     is_active = false
     _set_hitbox_active(false)
 

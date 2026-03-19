@@ -55,7 +55,7 @@ func _ready() -> void:
     _ensure_actions()
 
     # Contact attack is always active — it's a persistent body hitbox.
-    combat_module.activate_attack(contact_weapon_index, 0)
+    combat_module.perform_attack(contact_weapon_index, 0)
 
 
 func _auto_wire_nodes() -> void:
@@ -126,12 +126,12 @@ func _handle_charge_toggle() -> void:
 
     if want_charge and not _charge_active:
         _charge_active = true
-        combat_module.activate_attack(charge_weapon_index, 0)
+        combat_module.perform_attack(charge_weapon_index, 0)
         combat_module.set_weapon_enabled(fire_weapon_index, false)
         combat_module.set_weapon_enabled(contact_weapon_index, false)
     elif not want_charge and _charge_active:
         _charge_active = false
-        combat_module.deactivate_attack(charge_weapon_index, 0)
+        combat_module.end_attack(charge_weapon_index, 0)
         combat_module.set_weapon_enabled(fire_weapon_index, true)
         combat_module.set_weapon_enabled(contact_weapon_index, true)
 
@@ -157,8 +157,8 @@ func _fire_attack(weapon_index: int, attack_index: int) -> void:
         return
 
     var target_pos := _get_target_position(weapon_index, attack_index)
-    combat_module.perform_attack(weapon_index, attack_index, target_pos, true)
-
+    combat_module.perform_attack(weapon_index, attack_index, target_pos)
+    combat_module.end_attack(weapon_index, attack_index)
 
 func _get_target_position(weapon_index: int, attack_index: int) -> Vector2:
     var attac_range := combat_module.get_attack_range(weapon_index, attack_index)

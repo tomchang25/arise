@@ -7,8 +7,14 @@ extends Node2D
 ## giving CombatModule a single type to work with — no is-checks needed
 ## for the common API.
 ##
-## All methods below warn if called on a subclass that did not override them.
-## Subclasses override only the methods relevant to their delivery type.
+## Unified API (both types):
+##   execute_attack(target_position)  — start / activate
+##   end_attack()                     — cooldown / deactivate
+##   can_attack() -> bool             — ready check
+##
+## AttachedAttackModule maps execute_attack → activate and end_attack → deactivate.
+## DetachedAttackModule uses execute_attack for fire-and-forget and end_attack to
+## start the cooldown timer.
 
 var enabled: bool = true:
     set(value):
@@ -28,14 +34,6 @@ func execute_attack(_target_position: Vector2) -> void:
 
 func end_attack() -> void:
     push_warning("%s: end_attack() is not implemented" % get_class())
-
-
-func activate_attack() -> void:
-    push_warning("%s: activate_attack() is not implemented" % get_class())
-
-
-func deactivate_attack() -> void:
-    push_warning("%s: deactivate_attack() is not implemented" % get_class())
 
 
 func _on_enabled_changed(_value: bool) -> void:

@@ -10,19 +10,20 @@ extends Node2D
 ##   4. Call setup() — or it is called automatically in _ready().
 ##
 ## Hitbox binding for ATTACHED attacks:
-##   Each AttachedAttackDefinition must set hitbox_name to match the .name of
+##   Each AttachedAttackDefinition must set hitbox_slot_id to match the slot_id of
 ##   its intended Hitbox node in hitbox_slots. Order in hitbox_slots is irrelevant.
 ##
 ## API (weapon_index = index in `weapons`, attack_index = index in weapon.attacks):
 ##
-##   Fire-and-forget:
+##   Unified attack (works for both detached and attached):
 ##     perform_attack(weapon_index, attack_index, target_position, auto_end)
 ##     end_attack(weapon_index, attack_index)
 ##     can_attack(weapon_index, attack_index) -> bool
 ##
-##   Attached (persistent hitbox):
-##     activate_attack(weapon_index, attack_index)
-##     deactivate_attack(weapon_index, attack_index)
+##   For attached attacks:
+##     perform_attack → activates the hitbox   (target_position ignored)
+##     end_attack     → deactivates the hitbox
+##     auto_end param is ignored for attached attacks
 ##
 ##   Weapon switch:
 ##     set_weapon_enabled(weapon_index, enabled)
@@ -40,7 +41,7 @@ extends Node2D
 @export var weapons: Array[WeaponData] = []
 @export_group("Hitbox Slots")
 ## Pre-authored Hitbox nodes for ATTACHED attacks.
-## Order does not matter — each AttachedAttackDefinition binds by hitbox_name.
+## Order does not matter — each AttachedAttackDefinition binds by hitbox_slot_id.
 @export var hitbox_slots: Array[Hitbox] = []
 
 # -------------------------
@@ -81,12 +82,19 @@ func equip_weapons(source_weapons: Array[WeaponData]) -> void:
 
 
 # -------------------------
-# Fire-and-forget API
+# Attack API
 # -------------------------
-## Execute a one-shot attack.
-## auto_end=true starts the cooldown immediately.
-## Pass auto_end=false and call end_attack() from animation_finished to defer cooldown.
-func perform_attack(weapon_index: int, attack_index: int, target_position: Vector2, auto_end: bool = true) -> void:
+## Execute an attack for any module type.
+##
+## Detached (Projectile, Place, Trap):
+##   Fires once toward target_position.
+##   auto_end=true starts the cooldown immediately.
+##   Pass auto_end=false and call end_attack() from animation_finished to defer cooldown.
+##
+## Attached (persistent hitbox):
+##   Activates the hitbox. target_position and auto_end are ignored.
+##   Call end_attack() to deactivate.
+func perform_attack(weapon_index: int, attack_index: int, target_position: Vector2 = Vector2.ZERO) -> void:
     if stats == null:
         push_error("CombatModule: stats is not set")
         return
@@ -113,19 +121,24 @@ func perform_attack(weapon_index: int, attack_index: int, target_position: Vecto
 
     module.execute_attack(target_position)
 
-    if auto_end:
-        module.end_attack()
 
-
-## Start the cooldown for a fire executor.
-## Call from animation_finished when using auto_end=false.
+## End the attack for the given weapon / attack index.
+##
+## Detached: starts the cooldown timer.
+## Attached: deactivates the hitbox.
+##
+## Uses direct array access to bypass the handle enabled guard —
+## teardown must always be allowed even on a disabled weapon.
 func end_attack(weapon_index: int, attack_index: int) -> void:
     var handle := _get_handle(weapon_index)
     if handle == null:
         return
 
-    var module := handle.get_module(attack_index)
-    if module != null:
+    if attack_index < 0 or attack_index >= handle.attack_modules.size():
+        return
+
+    var module = handle.attack_modules[attack_index]
+    if module:
         module.end_attack()
 
 
@@ -143,52 +156,12 @@ func can_attack(weapon_index: int, attack_index: int) -> bool:
 
 
 # -------------------------
-# Attached API
-# -------------------------
-## Enable the attached hitbox for the given weapon / attack index.
-func activate_attack(weapon_index: int, attack_index: int) -> void:
-    if stats == null:
-        push_error("CombatModule: stats is not set")
-        return
-
-    var handle := _get_handle(weapon_index)
-    if handle == null:
-        return
-
-    var module := handle.get_module(attack_index)
-    if module == null:
-        return
-
-    if not module.enabled:
-        return
-
-    module.activate_attack()
-
-
-## Disable the attached hitbox for the given weapon / attack index.
-## Bypasses the handle enabled flag — teardown must always be allowed.
-func deactivate_attack(weapon_index: int, attack_index: int) -> void:
-    var handle := _get_handle(weapon_index)
-    if handle == null:
-        return
-
-    # Use direct array access here — teardown bypasses handle.get_module() enabled guard.
-    if attack_index < 0 or attack_index >= handle.attack_modules.size():
-        return
-
-    var module: Variant = handle.attack_modules[attack_index]
-    if module is AttachedAttackModule:
-        (module as AttachedAttackModule).deactivate_attack()
-
-
-# -------------------------
 # Weapon enable / disable
 # -------------------------
 ## Enable or disable an entire weapon.
-## This gates future perform_attack / activate_attack calls on all modules
-## in this weapon. It does NOT touch any currently live attached hitboxes —
-## use deactivate_attack() explicitly before disabling if immediate teardown
-## is needed.
+## This gates future perform_attack calls on all modules in this weapon.
+## It does NOT deactivate any currently live attached hitboxes —
+## call end_attack() explicitly before disabling if immediate teardown is needed.
 func set_weapon_enabled(weapon_index: int, value: bool) -> void:
     var handle := _get_handle(weapon_index)
     if handle == null:
