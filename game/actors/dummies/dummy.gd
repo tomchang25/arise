@@ -158,9 +158,35 @@ func reset_dummy() -> void:
 
 
 func _on_died(context: EffectContext) -> void:
-    died.emit(context)
+    # died.emit(context)
 
-    if not reset_on_death:
+    # if not reset_on_death:
+    #     return
+    # await get_tree().create_timer(max(0.0, reset_delay)).timeout
+    # reset_dummy()
+    const SLIME_DEATH_EXPLOSION = preload("uid://dvxy8nfvivevq")
+    var def: PlaceAttackDefinition = SLIME_DEATH_EXPLOSION
+
+    # Build the context — this is all you need to do
+    var explosion_ctx := EffectContext.build(def, stats, self, global_position)
+    if explosion_ctx == null:
         return
-    await get_tree().create_timer(max(0.0, reset_delay)).timeout
-    reset_dummy()
+
+    var action := SpawnPackedSceneAction.new()
+    action.scene = def.attack_scene
+    action.use_anchor_position = true
+
+    var spawn_parent := get_parent()
+    var spawn_ctx := SpawnContext.new()
+    spawn_ctx.setup(spawn_parent, 0, self)
+
+    var request := SpawnRequest.new()
+    request.setup_direct(action, global_position, spawn_ctx)
+    var result: SpawnResult = await request.execute()
+
+    if result.success:
+        var delivery := result.spawned_node as AttackDelivery
+        if delivery and not delivery.is_node_ready():
+            await delivery.ready
+        delivery.setup(explosion_ctx)
+        delivery.trigger()
