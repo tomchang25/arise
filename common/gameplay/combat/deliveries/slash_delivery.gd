@@ -1,6 +1,6 @@
 class_name SlashDelivery
 extends AttackDelivery
 
-func setup(data: AttackData) -> void:
-    super(data)
+func setup(ctx: EffectContext) -> void:
+    super(ctx)
     trigger()

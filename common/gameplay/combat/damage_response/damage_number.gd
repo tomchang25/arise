@@ -84,9 +84,32 @@ func _play_anim(is_crit: bool) -> void:
     _tween = create_tween()
     _tween.set_parallel(true)
 
-    _tween.tween_property(self, "position", end_pos, lifetime).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-    _tween.tween_property(self, "scale", peak_scale, 0.12).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-    _tween.tween_property(self, "scale", Vector2.ONE, lifetime - 0.12).set_delay(0.12).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-    _tween.tween_property(self, "modulate:a", 0.0, lifetime * 0.55).set_delay(lifetime * 0.45).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+    _tween.tween_property(
+        self,
+        "position",
+        end_pos,
+        lifetime,
+    ).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+
+    _tween.tween_property(
+        self,
+        "scale",
+        peak_scale,
+        0.12,
+    ).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+    _tween.tween_property(
+        self,
+        "scale",
+        Vector2.ONE,
+        lifetime - 0.12,
+    ).set_delay(0.12).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+
+    _tween.tween_property(
+        self,
+        "modulate:a",
+        0.0,
+        lifetime * 0.55,
+    ).set_delay(lifetime * 0.45).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 
     _tween.finished.connect(queue_free)

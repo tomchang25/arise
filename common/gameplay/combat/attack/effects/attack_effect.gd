@@ -2,12 +2,11 @@ class_name AttackEffect
 extends Node2D
 ## Responsible for presentation and hitbox hosting only.
 ##
-## AttackEffect wires the Hitbox and reacts to play() being called by
-## AttackDelivery. It owns no timer and never calls queue_free.
+## Wires the Hitbox with an EffectContext and reacts to play() being called.
+## Owns no lifetime timer — that remains on AttackDelivery for now.
+## Never calls queue_free directly.
 ##
-## Subclasses override play(duration) to run their VFX and SFX.
-## duration is provided by AttackDelivery so VFX can scale to lifetime
-## without the effect needing to know about it directly.
+## Subclasses override play(duration) to run VFX and SFX.
 
 signal finished
 
@@ -17,20 +16,20 @@ var targets_hit_count: int = 0
 var hitbox: Hitbox
 
 
-func setup(data: AttackData) -> void:
-    max_targets = data.max_targets
+func setup(ctx: EffectContext) -> void:
+    max_targets = ctx.max_targets
 
     hitbox = _find_hitbox_child()
     if hitbox:
-        hitbox.attack_info = data
-        hitbox.damage_interval = data.damage_interval
-        hitbox.clear_records_on_exit = data.clear_records_on_exit
+        hitbox.context = ctx
+        hitbox.damage_interval = ctx.damage_interval
+        hitbox.clear_records_on_exit = ctx.clear_records_on_exit
         hitbox.hit_enemy.connect(_on_enemy_hit)
 
 
 ## Called by AttackDelivery after setup(). Override in subclasses to play VFX/SFX.
-## duration matches the delivery lifetime — use it to scale tween lengths.
-func play(_duration: float = 0) -> void:
+## duration matches the delivery lifetime so VFX can scale to it.
+func play(_duration: float = 0.0) -> void:
     pass
 
 # -------------------------

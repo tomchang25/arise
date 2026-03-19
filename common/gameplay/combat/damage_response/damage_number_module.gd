@@ -44,7 +44,7 @@ func _ready() -> void:
         damage_receiver.damaged.connect(_on_damaged)
 
 
-func _on_damaged(amount: float, _new_health: float, info: AttackData) -> void:
+func _on_damaged(amount: float, _new_health: float, info: EffectContext) -> void:
     if not enabled:
         return
 
@@ -57,7 +57,7 @@ func _on_damaged(amount: float, _new_health: float, info: AttackData) -> void:
     spawn_damage_number(amount, info)
 
 
-func spawn_damage_number(amount: float, info: AttackData = null) -> void:
+func spawn_damage_number(amount: float, info: EffectContext = null) -> void:
     if not enabled:
         return
 
@@ -84,11 +84,12 @@ func spawn_damage_number(amount: float, info: AttackData = null) -> void:
         push_warning("DamageNumberModule: spawned node is not a DamageNumber.")
         return
 
-    var is_crit := info.is_crit if info != null else false
+    var is_crit := false
+    if info != null and info.source_stats != null and info.definition != null:
+        is_crit = randf() < clamp(info.source_stats.current_crit_chance + info.definition.crit_bonus, 0.0, 1.0)
     number.setup(amount, is_crit)
 
     _register_spawn()
-
 
 # -------------------------
 # Internal

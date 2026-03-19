@@ -4,9 +4,9 @@ extends AttackDelivery
 @export var trigger_area: Area2D
 
 
-func setup(data: AttackData) -> void:
+func setup(ctx: EffectContext) -> void:
     _wait_for_effect = true
-    super(data)
+    super(ctx)
 
     if trigger_area:
         trigger_area.connect("body_entered", _on_body_entered)

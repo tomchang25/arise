@@ -3,39 +3,35 @@ extends DetachedAttackModule
 ## Executes a Projectile-type attack.
 ##
 ## Spawns an AttackDelivery via the spawn system, then launches it.
-## Motion is handled by ProjectileAttackDelivery.
-##
-## Reads attack_def and owner_stats from DetachedAttackModule (set via setup()).
-## Reads projectile_speed directly from attack_def at fire time — no separate
-## field needed on the module.
+## Builds an EffectContext at fire time so live caster stats are captured.
 
 func _execute_attack_logic(target_position: Vector2) -> void:
-    var data := AttackData.build(attack_def, owner_stats, self, target_position)
-    if data == null:
+    var ctx := EffectContext.build(attack_def, owner_stats, self, target_position)
+    if ctx == null:
         end_attack()
         return
 
-    if data.attack_scene == null:
-        push_error("ProjectileAttackModule: data.attack_scene is null")
+    if ctx.attack_scene == null:
+        push_error("ProjectileAttackModule: attack_scene is null in EffectContext")
         end_attack()
         return
 
     var action := SpawnPackedSceneAction.new()
-    action.scene = data.attack_scene
+    action.scene = ctx.attack_scene
     action.use_anchor_position = true
     action.use_anchor_rotation = false
 
-    var spawn_parent := SpawnContext.resolve_spawn_parent(data.spawn_group, self)
+    var spawn_parent := SpawnContext.resolve_spawn_parent(ctx.spawn_group, self)
     if not is_instance_valid(spawn_parent):
         push_error("ProjectileAttackModule: could not resolve a valid spawn parent")
         end_attack()
         return
 
-    var ctx := SpawnContext.new()
-    ctx.setup(spawn_parent, 0, self)
+    var spawn_ctx := SpawnContext.new()
+    spawn_ctx.setup(spawn_parent, 0, self)
 
     var request := SpawnRequest.new()
-    request.setup_direct(action, global_position, ctx)
+    request.setup_direct(action, global_position, spawn_ctx)
 
     var result: SpawnResult = await request.execute()
     if not result.success:
@@ -52,11 +48,11 @@ func _execute_attack_logic(target_position: Vector2) -> void:
     if not delivery.is_node_ready():
         await delivery.ready
 
-    delivery.setup(data)
+    delivery.setup(ctx)
 
     var def := attack_def as ProjectileAttackDefinition
     var speed := def.projectile_speed
     if delivery is ProjectileDelivery:
-        (delivery as ProjectileDelivery).launch(data.knockback_dir, speed, def.travel_distance)
+        (delivery as ProjectileDelivery).launch(ctx.knockback_dir, speed, def.travel_distance)
     elif delivery.has_method("set_speed"):
         delivery.set_speed(speed)

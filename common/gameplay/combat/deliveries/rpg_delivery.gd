@@ -6,9 +6,9 @@ var _direction: Vector2 = Vector2.RIGHT
 var _travel_distance: float = 0.0
 
 
-func setup(data: AttackData) -> void:
+func setup(ctx: EffectContext) -> void:
     _wait_for_effect = true
-    super(data)
+    super(ctx)
 
 
 func launch(direction: Vector2, speed: float, travel_distance: float) -> void:

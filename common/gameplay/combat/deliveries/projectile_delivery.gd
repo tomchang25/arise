@@ -6,8 +6,8 @@ var _direction: Vector2 = Vector2.RIGHT
 var _travel_distance: float = 0.0
 
 
-func setup(data: AttackData) -> void:
-    super(data)
+func setup(ctx: EffectContext) -> void:
+    super(ctx)
     trigger()
 
 

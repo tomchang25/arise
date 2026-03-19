@@ -2,7 +2,7 @@
 class_name Dummy
 extends CharacterBody2D
 
-signal died(info: AttackData)
+signal died(context: EffectContext)
 
 # -------------------------
 # Exports
@@ -84,7 +84,7 @@ func _apply_data() -> void:
     if not data:
         push_error("Dummy has no data.")
         return
-
+    stats = data.stats.duplicate()
     _ensure_stats()
 
     # Load weapons from data into combat module if provided.
@@ -129,6 +129,9 @@ func _inject_stats_events() -> void:
         if not damage_receiver.died.is_connected(_on_died):
             damage_receiver.died.connect(_on_died)
 
+    if hit_feedback:
+        hit_feedback.stats = stats
+
     if health_bar:
         health_bar.bind(stats)
 
@@ -154,8 +157,8 @@ func reset_dummy() -> void:
 # -------------------------
 
 
-func _on_died(info: AttackData) -> void:
-    died.emit(info)
+func _on_died(context: EffectContext) -> void:
+    died.emit(context)
 
     if not reset_on_death:
         return

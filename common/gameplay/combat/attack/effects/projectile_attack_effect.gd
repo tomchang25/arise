@@ -13,8 +13,8 @@ extends AttackEffect
 @onready var line_2d: Line2D = $Line2D
 
 
-func setup(data: AttackData) -> void:
-    super.setup(data)
+func setup(ctx: EffectContext) -> void:
+    super.setup(ctx)
 
     if hitbox:
         _generate_projectile_shape()

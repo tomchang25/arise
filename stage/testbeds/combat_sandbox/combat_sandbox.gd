@@ -48,7 +48,6 @@ func _ready() -> void:
     _ensure_actions()
     _apply_spawn_positions()
     _spawn_dummy_group()
-    _apply_dummy_stats()
 
 
 func _process(_delta: float) -> void:
@@ -71,7 +70,6 @@ func _unhandled_input(event: InputEvent) -> void:
     elif event.is_action_pressed(ACTION_TOGGLE_INVULN):
         _toggle_invuln()
         get_viewport().set_input_as_handled()
-
 
 # -------------------------
 # Testbed controls
@@ -113,7 +111,6 @@ func _toggle_invuln() -> void:
         if is_instance_valid(dummy) and dummy.stats:
             dummy.stats.invuln_time = invuln
 
-
 # -------------------------
 # Dummy setup
 # -------------------------
@@ -141,25 +138,6 @@ func _spawn_dummy_group() -> void:
         _group_dummies.append(dummy)
 
 
-func _apply_dummy_stats() -> void:
-    _configure_dummy(solo_dummy)
-
-    for dummy in _group_dummies:
-        if is_instance_valid(dummy):
-            _configure_dummy(dummy)
-
-
-func _configure_dummy(dummy: Dummy) -> void:
-    if dummy == null or dummy.stats == null:
-        return
-
-    dummy.stats.base_max_health = dummy_max_health
-    dummy.stats.base_defense = dummy_defense
-    dummy.stats.invuln_time = dummy_invuln_time
-    dummy.stats.setup_stats()
-    dummy.stats.health = dummy.stats.current_max_health
-
-
 func _apply_spawn_positions() -> void:
     if actor and actor_spawn:
         actor.global_position = actor_spawn.global_position
@@ -182,7 +160,6 @@ func _set_dummy_invuln(dummy: Dummy, value: float) -> void:
         return
     dummy.stats.invuln_time = value
 
-
 # -------------------------
 # HUD
 # -------------------------
@@ -203,8 +180,7 @@ func _update_debug_label() -> void:
         charge_state = "ON" if actor._charge_active else "off"
 
     debug_label.text = (
-        "\n"
-        . join(
+        "\n".join(
             [
                 "[R]   Reset all",
                 "[H]   Heal all",
@@ -218,10 +194,9 @@ func _update_debug_label() -> void:
                 "",
                 "Solo dummy HP:  %s" % solo_hp,
                 "Group alive:    %d / %d" % [group_alive, group_count],
-            ]
+            ],
         )
     )
-
 
 # -------------------------
 # Action registration

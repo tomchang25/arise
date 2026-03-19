@@ -1,197 +1,9 @@
 [gd_scene format=3 uid="uid://b7ms3y32vrt4m"]
 
 [ext_resource type="PackedScene" uid="uid://bmlww50h5ia4c" path="res://game/actors/dummies/dummy.tscn" id="1_gwppr"]
-[ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="2_e6476"]
 [ext_resource type="PackedScene" uid="uid://bxa0uqjeegh6v" path="res://stage/testbeds/combat_sandbox/combat_test_actor.tscn" id="2_lq0vo"]
 [ext_resource type="PackedScene" uid="uid://dhjvr7458gxu0" path="res://game/destroyables/plant_props/plant_props.tscn" id="3_4r8qm"]
 [ext_resource type="Script" uid="uid://clpk26ghev2ij" path="res://stage/testbeds/combat_sandbox/combat_sandbox.gd" id="3_rbd4g"]
-
-[sub_resource type="Resource" id="Resource_lq0vo"]
-resource_local_to_scene = true
-script = ExtResource("2_e6476")
-faction = 1
-health = 1000.0
-mana = 100.0
-base_max_health = 1000.0
-base_damage = 0.0
-base_defense = 25.0
-invuln_time = 0.0
-
-[sub_resource type="Resource" id="Resource_4r8qm"]
-resource_local_to_scene = true
-script = ExtResource("2_e6476")
-faction = 1
-health = 1000.0
-mana = 100.0
-base_max_health = 1000.0
-base_damage = 0.0
-base_defense = 25.0
-invuln_time = 0.0
-
-[sub_resource type="Resource" id="Resource_qohqq"]
-resource_local_to_scene = true
-script = ExtResource("2_e6476")
-faction = 1
-health = 1000.0
-mana = 100.0
-base_max_health = 1000.0
-base_damage = 0.0
-base_defense = 25.0
-invuln_time = 0.0
-
-[sub_resource type="Resource" id="Resource_bfrcn"]
-resource_local_to_scene = true
-script = ExtResource("2_e6476")
-faction = 1
-health = 1000.0
-mana = 100.0
-base_max_health = 1000.0
-base_damage = 0.0
-base_defense = 25.0
-invuln_time = 0.0
-
-[sub_resource type="Resource" id="Resource_1rvjf"]
-resource_local_to_scene = true
-script = ExtResource("2_e6476")
-faction = 1
-health = 1000.0
-mana = 100.0
-base_max_health = 1000.0
-base_damage = 0.0
-base_defense = 25.0
-invuln_time = 0.0
-
-[sub_resource type="Resource" id="Resource_h72e5"]
-resource_local_to_scene = true
-script = ExtResource("2_e6476")
-faction = 1
-health = 1000.0
-mana = 100.0
-base_max_health = 1000.0
-base_damage = 0.0
-base_defense = 25.0
-invuln_time = 0.0
-
-[sub_resource type="Resource" id="Resource_wbeks"]
-resource_local_to_scene = true
-script = ExtResource("2_e6476")
-faction = 1
-health = 1000.0
-mana = 100.0
-base_max_health = 1000.0
-base_damage = 0.0
-base_defense = 25.0
-invuln_time = 0.0
-
-[sub_resource type="Resource" id="Resource_w5oj6"]
-resource_local_to_scene = true
-script = ExtResource("2_e6476")
-faction = 1
-health = 1000.0
-mana = 100.0
-base_max_health = 1000.0
-base_damage = 0.0
-base_defense = 25.0
-invuln_time = 0.0
-
-[sub_resource type="Resource" id="Resource_p6c2e"]
-resource_local_to_scene = true
-script = ExtResource("2_e6476")
-faction = 1
-health = 1000.0
-mana = 100.0
-base_max_health = 1000.0
-base_damage = 0.0
-base_defense = 25.0
-invuln_time = 0.0
-
-[sub_resource type="Resource" id="Resource_depyq"]
-resource_local_to_scene = true
-script = ExtResource("2_e6476")
-faction = 1
-health = 1000.0
-mana = 100.0
-base_max_health = 1000.0
-base_damage = 0.0
-base_defense = 25.0
-invuln_time = 0.0
-
-[sub_resource type="Resource" id="Resource_tn4ao"]
-resource_local_to_scene = true
-script = ExtResource("2_e6476")
-faction = 1
-health = 1000.0
-mana = 100.0
-base_max_health = 1000.0
-base_damage = 0.0
-base_defense = 25.0
-invuln_time = 0.0
-
-[sub_resource type="Resource" id="Resource_0j4o1"]
-resource_local_to_scene = true
-script = ExtResource("2_e6476")
-faction = 1
-health = 1000.0
-mana = 100.0
-base_max_health = 1000.0
-base_damage = 0.0
-base_defense = 25.0
-invuln_time = 0.0
-
-[sub_resource type="Resource" id="Resource_8fuiv"]
-resource_local_to_scene = true
-script = ExtResource("2_e6476")
-faction = 1
-health = 1000.0
-mana = 100.0
-base_max_health = 1000.0
-base_damage = 0.0
-base_defense = 25.0
-invuln_time = 0.0
-
-[sub_resource type="Resource" id="Resource_g7xgt"]
-resource_local_to_scene = true
-script = ExtResource("2_e6476")
-faction = 1
-health = 1000.0
-mana = 100.0
-base_max_health = 1000.0
-base_damage = 0.0
-base_defense = 25.0
-invuln_time = 0.0
-
-[sub_resource type="Resource" id="Resource_jcp4x"]
-resource_local_to_scene = true
-script = ExtResource("2_e6476")
-faction = 1
-health = 1000.0
-mana = 100.0
-base_max_health = 1000.0
-base_damage = 0.0
-base_defense = 25.0
-invuln_time = 0.0
-
-[sub_resource type="Resource" id="Resource_tcbmc"]
-resource_local_to_scene = true
-script = ExtResource("2_e6476")
-faction = 1
-health = 1000.0
-mana = 100.0
-base_max_health = 1000.0
-base_damage = 0.0
-base_defense = 25.0
-invuln_time = 0.0
-
-[sub_resource type="Resource" id="Resource_h5sn3"]
-resource_local_to_scene = true
-script = ExtResource("2_e6476")
-faction = 1
-health = 1000.0
-mana = 100.0
-base_max_health = 1000.0
-base_damage = 0.0
-base_defense = 25.0
-invuln_time = 0.5
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_n7eg0"]
 size = Vector2(244, 20)
@@ -213,71 +25,54 @@ position = Vector2(155, 91)
 
 [node name="Dummy" parent="Dummies/NonInvul" unique_id=325473665 instance=ExtResource("1_gwppr")]
 position = Vector2(69.00003, 85.98491)
-stats = SubResource("Resource_lq0vo")
 
 [node name="Dummy2" parent="Dummies/NonInvul" unique_id=306738905 instance=ExtResource("1_gwppr")]
 position = Vector2(69.0825, 93.70788)
-stats = SubResource("Resource_4r8qm")
 
 [node name="Dummy3" parent="Dummies/NonInvul" unique_id=1043095412 instance=ExtResource("1_gwppr")]
 position = Vector2(68.9979, 94.350235)
-stats = SubResource("Resource_qohqq")
 
 [node name="Dummy4" parent="Dummies/NonInvul" unique_id=799420082 instance=ExtResource("1_gwppr")]
 position = Vector2(68.99797, 94.350235)
-stats = SubResource("Resource_bfrcn")
 
 [node name="Dummy5" parent="Dummies/NonInvul" unique_id=837342492 instance=ExtResource("1_gwppr")]
 position = Vector2(68.99797, 94.350235)
-stats = SubResource("Resource_1rvjf")
 
 [node name="Dummy6" parent="Dummies/NonInvul" unique_id=503751286 instance=ExtResource("1_gwppr")]
 position = Vector2(68.99797, 94.350235)
-stats = SubResource("Resource_h72e5")
 
 [node name="Dummy7" parent="Dummies/NonInvul" unique_id=222138037 instance=ExtResource("1_gwppr")]
 position = Vector2(68.99797, 94.350235)
-stats = SubResource("Resource_wbeks")
 
 [node name="Dummy8" parent="Dummies/NonInvul" unique_id=1428631832 instance=ExtResource("1_gwppr")]
 position = Vector2(68.99797, 94.350235)
-stats = SubResource("Resource_w5oj6")
 
 [node name="Dummy9" parent="Dummies/NonInvul" unique_id=1136566114 instance=ExtResource("1_gwppr")]
 position = Vector2(68.99797, 94.350235)
-stats = SubResource("Resource_p6c2e")
 
 [node name="Dummy10" parent="Dummies/NonInvul" unique_id=690299477 instance=ExtResource("1_gwppr")]
 position = Vector2(68.99797, 94.350235)
-stats = SubResource("Resource_depyq")
 
 [node name="Dummy11" parent="Dummies/NonInvul" unique_id=887256525 instance=ExtResource("1_gwppr")]
 position = Vector2(68.99797, 94.350235)
-stats = SubResource("Resource_tn4ao")
 
 [node name="Dummy12" parent="Dummies/NonInvul" unique_id=147312387 instance=ExtResource("1_gwppr")]
 position = Vector2(68.99797, 94.350235)
-stats = SubResource("Resource_0j4o1")
 
 [node name="Dummy13" parent="Dummies/NonInvul" unique_id=1260704261 instance=ExtResource("1_gwppr")]
 position = Vector2(68.99797, 94.350235)
-stats = SubResource("Resource_8fuiv")
 
 [node name="Dummy14" parent="Dummies/NonInvul" unique_id=238103415 instance=ExtResource("1_gwppr")]
 position = Vector2(68.99797, 94.350235)
-stats = SubResource("Resource_g7xgt")
 
 [node name="Dummy15" parent="Dummies/NonInvul" unique_id=1193245695 instance=ExtResource("1_gwppr")]
 position = Vector2(69.00142, 95.23142)
-stats = SubResource("Resource_jcp4x")
 
 [node name="Dummy16" parent="Dummies/NonInvul" unique_id=1760809791 instance=ExtResource("1_gwppr")]
 position = Vector2(69.00142, 95.25759)
-stats = SubResource("Resource_tcbmc")
 
 [node name="SolDummy" parent="Dummies" unique_id=1726157216 instance=ExtResource("1_gwppr")]
 position = Vector2(235, 86)
-stats = SubResource("Resource_h5sn3")
 
 [node name="PlantProps" parent="Dummies" unique_id=117392384 instance=ExtResource("3_4r8qm")]
 position = Vector2(121, 51)

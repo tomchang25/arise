@@ -1,66 +1,60 @@
-class_name AttackData
+class_name EffectContext
 extends RefCounted
+## Runtime context carried by a Hitbox from spawn time through to hit resolution.
+##
+## Replaces AttackData as the object passed into Hitbox and Hurtbox.
+## Damage is NOT pre-calculated here — DamageReceiverModule reads source_stats
+## and definition at hit time so buffs are always reflected.
+##
+## Spawn-time snapshot fields (knockback_dir, target_factions, etc.) are baked
+## once in build() because they depend on position/faction at the moment of firing.
 
-## The scene to instantiate for fire-and-forget delivery types (Place, Projectile).
-## Not used by Attached — those manage their own hitbox node.
-var attack_scene: PackedScene = null
+# -------------------------
+# Live references
+# -------------------------
 
-## The effect scene to mount inside the delivery at runtime.
-## Instantiated and added as a child of AttackDelivery in setup().
-var attack_effect_scene: PackedScene = null
+## Live stats of the caster. Read at hit time for damage calculation.
+## Never snapshot — always the current state.
+var source_stats: Stats = null
 
-## Base damage before variance: stats.current_damage * damage_multiplier
-var base_damage: float = 0.0
+## The definition that produced this attack. Carries multipliers, variance, etc.
+var definition: AttackDefinition = null
 
-## Variance fraction baked from the definition (e.g. 0.10 = ±10% of base_damage).
-## Rolled fresh on every final_damage read so multi-target and interval hits
-## each get an independent result.
-var damage_variance: float = 0.0
+# -------------------------
+# Spawn-time snapshot
+# -------------------------
 
-## Whether this hit is a critical strike
-var is_crit: bool = false
-
-## Crit multiplier applied when is_crit is true. Set from stats at build time.
-var crit_multiplier: float = 1.5
-
-## Final damage dealt: rolls fresh variance each read so every victim / interval
-## tick gets an independent result. Crit multiplier applied when is_crit is true.
-var final_damage: float:
-    get:
-        var dmg := base_damage + _roll_variance(base_damage, damage_variance)
-        if is_crit:
-            dmg *= crit_multiplier
-        return dmg
-
-var max_targets: int = -1
-var attack_lifetime: float = 0.2
-var target_factions: Array = []
-
-## Pre-baked travel/facing direction of the attack.
-## Set for fire-and-forget types (Place, Projectile).
-## HitFeedbackModule uses this when knockback_source is null.
+## Pre-baked travel/facing direction. Set for detached attacks (Place, Projectile).
+## Baked at spawn so the direction reflects where the attack was aimed, not where
+## the caster is standing when the hit lands.
 var knockback_dir: Vector2 = Vector2.ZERO
 
-## Live node reference to the attack origin.
-## Set for Attached attacks so victims compute knockback direction
-## as (victim → knockback_source) at hit time.
-## Takes priority over knockback_dir in HitFeedbackModule.
+## Live node reference to the attack origin for Attached attacks.
+## Victims compute knockback direction as (victim → knockback_source) at hit time.
+## Takes priority over knockback_dir when set.
 var knockback_source: Node2D = null
+
 var knockback_force: float = 0.0
 
-var travel_distance: float = 0.0
+## Factions this attack can hit. Resolved from caster faction + definition at spawn.
+var target_factions: Array = []
 
-## Seconds between repeated hits on the same victim while they remain inside the hitbox.
-## 0 = hit on enter only, never repeat while inside.
-## Forwarded to Hitbox.damage_interval at setup time.
+# -------------------------
+# Hit config (forwarded to Hitbox)
+# -------------------------
+
+var max_targets: int = -1
 var damage_interval: float = 0.0
-
-## If true, the victim's hit record is cleared when they exit the hitbox —
-## re-entering will trigger a hit again.
-## If false, a victim hit once is immune for the entire hitbox lifetime.
-## Forwarded to Hitbox.clear_records_on_exit at setup time.
 var clear_records_on_exit: bool = true
 
+# -------------------------
+# Scene refs (used by AttackEffect / AttackDelivery)
+# -------------------------
+
+var attack_scene: PackedScene = null
+var attack_effect_scene: PackedScene = null
+var attack_lifetime: float = 0.2
+var travel_distance: float = 0.0
 var spawn_group: String = "attacks"
 
 # -------------------------
@@ -68,86 +62,67 @@ var spawn_group: String = "attacks"
 # -------------------------
 
 
-## Build a fully populated AttackData from a definition + runtime caster context.
+## Build an EffectContext from a definition + live caster context.
 ##
-## For fire-and-forget types (Place, Projectile), pass target_position to bake
-## knockback_dir from source → target at spawn time.
-## For Attached, omit target_position — knockback_source is stored instead
-## so victims compute direction at hit time.
+## For detached types (Place, Projectile): pass target_position to bake knockback_dir.
+## For Attached: omit target_position — knockback_source is stored instead.
 static func build(
         def: AttackDefinition,
         stats: Stats,
         source: Node2D,
         target_position: Vector2 = Vector2.ZERO,
-) -> AttackData:
+) -> EffectContext:
     if def == null:
-        push_error("AttackData.build: def is null")
+        push_error("EffectContext.build: def is null")
         return null
-
     if stats == null:
-        push_error("AttackData.build: stats is null")
+        push_error("EffectContext.build: stats is null")
         return null
 
-    var data := AttackData.new()
+    var ctx := EffectContext.new()
+    ctx.source_stats = stats
+    ctx.definition = def
 
-    # Delivery type + scene refs
     if def is PlaceAttackDefinition:
         if def.attack_scene == null:
-            push_warning("AttackData.build: PlaceAttackDefinition has no attack_scene")
+            push_warning("EffectContext.build: PlaceAttackDefinition has no attack_scene")
             return null
-        data.attack_scene = def.attack_scene
-        data.attack_effect_scene = def.attack_effect_scene
-        data.attack_lifetime = def.lifetime
-
-        data.knockback_dir = _bake_knockback_dir(source, target_position)
+        ctx.attack_scene = def.attack_scene
+        ctx.attack_effect_scene = def.attack_effect_scene
+        ctx.attack_lifetime = def.lifetime
+        ctx.knockback_dir = _bake_knockback_dir(source, target_position)
 
     elif def is ProjectileAttackDefinition:
-        data.attack_scene = def.attack_scene
-        data.attack_effect_scene = def.attack_effect_scene
-        data.attack_lifetime = def.lifetime
-        data.travel_distance = def.travel_distance
-
-        data.knockback_dir = _bake_knockback_dir(source, target_position)
+        ctx.attack_scene = def.attack_scene
+        ctx.attack_effect_scene = def.attack_effect_scene
+        ctx.attack_lifetime = def.lifetime
+        ctx.travel_distance = def.travel_distance
+        ctx.knockback_dir = _bake_knockback_dir(source, target_position)
 
     elif def is AttachedAttackDefinition:
-        data.knockback_source = source
-
-        # No attack_scene or effect_scene — hitbox is pre-authored in the scene.
+        # No scene refs — hitbox is pre-authored in the actor scene.
+        ctx.knockback_source = source
 
     else:
-        push_error("AttackData.build: unrecognised AttackDefinition subclass: %s" % def.get_class())
+        push_error("EffectContext.build: unrecognised AttackDefinition subclass: %s" % def.get_class())
         return null
 
-    # Damage rolls
-    data.base_damage = stats.current_damage * def.damage_multiplier
-    data.damage_variance = def.damage_variance
-    data.is_crit = _roll_crit(stats.current_crit_chance + def.crit_bonus)
-    data.crit_multiplier = stats.current_crit_multiplier
+    ctx.knockback_force = def.knockback
+    ctx.max_targets = def.max_targets
+    ctx.damage_interval = def.damage_interval
+    ctx.clear_records_on_exit = def.clear_records_on_exit
+    ctx.target_factions = _resolve_factions(def, stats)
 
-    # Hit config
-    data.knockback_force = def.knockback
-    data.max_targets = def.max_targets
-    data.damage_interval = def.damage_interval
-    data.clear_records_on_exit = def.clear_records_on_exit
-
-    # Factions
-    data.target_factions = _resolve_factions(def, stats)
-
-    return data
+    return ctx
 
 # -------------------------
-# Knockback
+# Internal helpers
 # -------------------------
 
 
 static func _bake_knockback_dir(source: Node2D, target_position: Vector2) -> Vector2:
     var dir := target_position - source.global_position
     return dir.normalized() if dir.length_squared() > 0.0001 else Vector2.RIGHT
-
-# -------------------------
-# Internal — build helpers
-# -------------------------
-
 
 ## Resolves which factions this attack can hit, relative to the caster.
 ##
@@ -157,6 +132,8 @@ static func _bake_knockback_dir(source: Node2D, target_position: Vector2) -> Vec
 ##   TEAM_KILLER         — every faction except the caster's own.
 ##   ALL                 — every faction, including the caster's own
 ##                         (self-damage, traps, indiscriminate AoE).
+
+
 static func _resolve_factions(def: AttackDefinition, stats: Stats) -> Array:
     var all_factions: Array = [Stats.Faction.PLAYER, Stats.Faction.ENEMY, Stats.Faction.NEUTRAL]
 

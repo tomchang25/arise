@@ -58,7 +58,7 @@ func _bind_modules() -> void:
             damage_receiver.died.connect(_on_died)
 
 
-func _on_died(_info: AttackData) -> void:
+func _on_died(_ctx: EffectContext) -> void:
     # Optional: play animation / particles here, then free
     if auto_free_on_death:
         queue_free()

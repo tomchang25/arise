@@ -1,9 +1,9 @@
 class_name DamageReceiverModule
 extends Node
 
-signal damaged(amount: float, new_health: float, info: AttackData)
-signal blocked(info: AttackData)
-signal died(info: AttackData)
+signal damaged(amount: float, new_health: float, context: EffectContext)
+signal blocked(context: EffectContext)
+signal died(context: EffectContext)
 
 @export var enabled: bool = true
 @export var stats: Stats
@@ -32,43 +32,60 @@ func _auto_wire() -> void:
             hurtbox.get_hit.connect(_on_hurtbox_hit)
 
 
-func _on_hurtbox_hit(info: AttackData) -> void:
-    if not enabled or not stats or not info:
+func _on_hurtbox_hit(ctx: EffectContext) -> void:
+    if not enabled or not stats or not ctx:
         push_warning("DamageReceiverModule: _on_hurtbox_hit: invalid arguments")
         return
 
-    # 0) health check
     if stats.health <= 0.0:
-        # print_debug("DamageReceiverModule: _on_hurtbox_hit: %s is already dead" % owner.name)
         return
 
-    # 0) invuln gate
     if is_invulnerable():
-        blocked.emit(info)
-        # print_debug("DamageReceiverModule: _on_hurtbox_hit: %s is invulnerable, remaining: %s" % [owner.name, Time.get_ticks_msec() - _invuln_until_msec])
+        blocked.emit(ctx)
         return
 
-    # 1) faction filter
-    if info.target_factions.size() > 0 and not info.target_factions.has(stats.faction):
-        push_warning("DamageReceiverModule: _on_hurtbox_hit: invalid target factions")
+    # Faction filter — resolved at spawn time and stored on the context.
+    if ctx.target_factions.size() > 0 and not ctx.target_factions.has(stats.faction):
+        push_warning("DamageReceiverModule: _on_hurtbox_hit: faction mismatch, ignoring hit")
         return
 
-    # 2) compute damage (snapshot damage from AttackData)
-    var raw := info.final_damage
+    # Damage calculation — reads live source_stats so buffs are always current.
+    # TODO: replace with DamageCalculator.evaluate(ctx, stats) when that class exists.
+    var raw := _calculate_damage(ctx)
     var final_damage := raw - (stats.current_defense * defense_scaling)
     final_damage = max(final_damage, clamp_min_damage)
 
     if final_damage > 0.0:
-        # print_debug("DamageReceiverModule: _on_hurtbox_hit: %s took %s damage, remaining: %s" % [owner.name, final_damage, stats.health])
-
         stats.take_damage(final_damage)
         set_invulnerable_for(stats.invuln_time)
-        damaged.emit(final_damage, stats.health, info)
+        damaged.emit(final_damage, stats.health, ctx)
 
         if stats.health <= 0.0:
-            died.emit(info)
+            died.emit(ctx)
     else:
-        blocked.emit(info)
+        blocked.emit(ctx)
+
+
+## Temporary inline damage calculation.
+## Reads live source_stats at hit time so any buffs applied after spawn are reflected.
+## Replace this body with a DamageCalculator call once that class is introduced.
+func _calculate_damage(ctx: EffectContext) -> float:
+    if ctx.source_stats == null or ctx.definition == null:
+        push_warning("DamageReceiverModule: _calculate_damage: missing source_stats or definition")
+        return 0.0
+
+    var base := ctx.source_stats.current_damage * ctx.definition.damage_multiplier
+    var variance := ctx.definition.damage_variance
+    var offset := 0.0
+    if variance > 0.0:
+        offset = randf_range(-base * variance, base * variance)
+
+    var dmg := base + offset
+    var is_crit: bool = randf() < clamp(ctx.source_stats.current_crit_chance + ctx.definition.crit_bonus, 0.0, 1.0)
+    if is_crit:
+        dmg *= ctx.source_stats.current_crit_multiplier
+
+    return dmg
 
 
 func is_invulnerable() -> bool:

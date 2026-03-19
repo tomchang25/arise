@@ -1,42 +1,38 @@
 class_name PlaceAttackModule
 extends DetachedAttackModule
+
 ## Executes a Place-type attack.
 ##
 ## Spawns an AttackDelivery at the target position via the spawn system.
-## AttackDelivery owns the lifetime and instantiates the AttackEffect
-## from data.attack_effect_scene at runtime.
-##
-## Reads attack_def and owner_stats from DetachedAttackModule (set via setup()).
-## Builds AttackData internally at fire time so it always reflects the current
-## target position and stats.
-
+## Builds an EffectContext (not AttackData) at fire time so it always reflects
+## the current target position and live caster stats.
 func _execute_attack_logic(target_position: Vector2) -> void:
-    var data := AttackData.build(attack_def, owner_stats, self, target_position)
-    if data == null:
+    var ctx := EffectContext.build(attack_def, owner_stats, self, target_position)
+    if ctx == null:
         end_attack()
         return
 
-    if data.attack_scene == null:
-        push_error("PlaceAttackModule: data.attack_scene is null")
+    if ctx.attack_scene == null:
+        push_error("PlaceAttackModule: attack_scene is null in EffectContext")
         end_attack()
         return
 
     var action := SpawnPackedSceneAction.new()
-    action.scene = data.attack_scene
+    action.scene = ctx.attack_scene
     action.use_anchor_position = true
     action.use_anchor_rotation = false
 
-    var spawn_parent := SpawnContext.resolve_spawn_parent(data.spawn_group, self)
+    var spawn_parent := SpawnContext.resolve_spawn_parent(ctx.spawn_group, self)
     if not is_instance_valid(spawn_parent):
         push_error("PlaceAttackModule: could not resolve a valid spawn parent")
         end_attack()
         return
 
-    var ctx := SpawnContext.new()
-    ctx.setup(spawn_parent, 0, self)
+    var spawn_ctx := SpawnContext.new()
+    spawn_ctx.setup(spawn_parent, 0, self)
 
     var request := SpawnRequest.new()
-    request.setup_direct(action, target_position, ctx)
+    request.setup_direct(action, target_position, spawn_ctx)
     var result: SpawnResult = await request.execute()
 
     if not result.success:
@@ -53,5 +49,5 @@ func _execute_attack_logic(target_position: Vector2) -> void:
     if not delivery.is_node_ready():
         await delivery.ready
 
-    delivery.rotation = data.knockback_dir.angle()
-    delivery.setup(data)
+    delivery.rotation = ctx.knockback_dir.angle()
+    delivery.setup(ctx)

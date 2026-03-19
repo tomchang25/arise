@@ -13,8 +13,8 @@ extends AttackEffect
 @onready var line_2d: Line2D = $Line2D
 
 
-func setup(data: AttackData) -> void:
-    super.setup(data)
+func setup(ctx: EffectContext) -> void:
+    super.setup(ctx)
 
     if hitbox:
         _generate_capsule_shape()
@@ -46,8 +46,20 @@ func _play_slash_vfx(duration: float) -> void:
     line_2d.width = slash_width * 1.5
 
     var tween := create_tween()
-    tween.tween_method(_update_slash_points, 0.0, 1.0, duration * 0.4).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-    tween.parallel().tween_property(line_2d, "width", 0.0, duration * 0.6).set_delay(duration * 0.4).set_trans(Tween.TRANS_SINE)
+
+    tween.tween_method(
+        _update_slash_points,
+        0.0,
+        1.0,
+        duration * 0.4,
+    ).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+
+    tween.parallel().tween_property(
+        line_2d,
+        "width",
+        0.0,
+        duration * 0.6,
+    ).set_delay(duration * 0.4).set_trans(Tween.TRANS_SINE)
 
     await tween.finished
     finished.emit()

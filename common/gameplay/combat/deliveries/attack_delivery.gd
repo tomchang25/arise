@@ -3,17 +3,17 @@ extends CharacterBody2D
 
 var lifetime_timer: Timer
 
-var _data: AttackData
+var _context: EffectContext
 var _attack_effect: AttackEffect
 
-## If true, stopping the lifetime timer on trigger and wait for
+## If true, stop the lifetime timer on trigger and wait for
 ## _attack_effect to emit "finished" before freeing this delivery.
 var _wait_for_effect: bool = false
 
 
-func setup(data: AttackData) -> void:
-    _data = data
-    _init_lifetime_timer(data.attack_lifetime)
+func setup(ctx: EffectContext) -> void:
+    _context = ctx
+    _init_lifetime_timer(ctx.attack_lifetime)
 
 
 func _init_lifetime_timer(duration: float) -> void:
@@ -26,13 +26,17 @@ func _init_lifetime_timer(duration: float) -> void:
 
 
 func trigger() -> void:
-    _attack_effect = _data.attack_effect_scene.instantiate()
+    if _context == null or _context.attack_effect_scene == null:
+        push_error("AttackDelivery.trigger: no attack_effect_scene in context for '%s'" % name)
+        return
+
+    _attack_effect = _context.attack_effect_scene.instantiate() as AttackEffect
     if _attack_effect == null:
-        push_error("attack_effect_scene failed to instantiate in: " + name)
+        push_error("AttackDelivery.trigger: attack_effect_scene did not instantiate to AttackEffect in '%s'" % name)
         return
 
     add_child(_attack_effect)
-    _attack_effect.setup(_data)
+    _attack_effect.setup(_context)
     _attack_effect.play()
 
     if _wait_for_effect:

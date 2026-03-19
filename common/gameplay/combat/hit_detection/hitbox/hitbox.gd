@@ -17,14 +17,15 @@ signal hit_enemy
 @export var clear_records_on_exit := true
 
 ## Identifier used by CombatModule to bind this hitbox to an AttachedAttackDefinition.
-## Set this in the inspector to match the slot_id on the corresponding definition.
 @export var slot_id: StringName = ""
 
 var collision_node: CollisionShape2D
 
-var attack_info: AttackData:
+## Runtime context carrying the live caster reference and attack definition.
+## Replaces the old attack_info: AttackData field.
+var context: EffectContext:
     set(value):
-        attack_info = value
+        context = value
         if is_inside_tree():
             _setup_collision_layers()
 
@@ -35,7 +36,7 @@ var shape: Shape2D:
             _setup_collision_shape()
 
 ## Tracks the last hit time per victim. Key = Area2D, value = time in seconds.
-var _hit_times: Dictionary = {}
+var _hit_times: Dictionary = { }
 
 
 func _ready() -> void:
@@ -52,15 +53,14 @@ func _process(_delta: float) -> void:
     if not enabled or damage_interval <= 0.0:
         return
 
-    # Purge stale records for victims that left the tree without triggering area_exited.
+    # Purge stale records for victims that left without triggering area_exited.
     for area in _hit_times.keys():
         if not is_instance_valid(area):
             _hit_times.erase(area)
 
-    # Re-hit victims still inside the hitbox if their interval has elapsed.
+    # Re-hit victims still inside if their interval has elapsed.
     for area in get_overlapping_areas():
         _try_hit(area)
-
 
 # -------------------------
 # Signals
@@ -76,9 +76,7 @@ func _on_area_entered(area: Area2D) -> void:
 func _on_area_exited(area: Area2D) -> void:
     if not enabled or not clear_records_on_exit:
         return
-
     _hit_times.erase(area)
-
 
 # -------------------------
 # Internal
@@ -92,7 +90,6 @@ func _try_hit(area: Area2D) -> void:
     var now := Time.get_ticks_msec() / 1000.0
 
     if _hit_times.has(area):
-        # Victim already hit — only re-hit if interval has elapsed.
         if damage_interval <= 0.0:
             return
         if now - _hit_times[area] < damage_interval:
@@ -104,9 +101,8 @@ func _try_hit(area: Area2D) -> void:
 
 func _apply_hit(area: Area2D) -> void:
     if area.has_method("receive_hit"):
-        area.receive_hit(attack_info)
+        area.receive_hit(context)
         hit_enemy.emit()
-
 
 # -------------------------
 # Setup
@@ -135,8 +131,8 @@ func _setup_collision_layers() -> void:
     set_collision_mask_value(1, false)
 
     collision_mask = 0
-    if attack_info:
-        for faction in attack_info.target_factions:
+    if context:
+        for faction in context.target_factions:
             match faction:
                 Stats.Faction.PLAYER:
                     set_collision_mask_value(Global.PLAYER_HURTBOX, true)

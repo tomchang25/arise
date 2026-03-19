@@ -77,7 +77,7 @@ func _get_flash_time_from_invuln() -> float:
     return min(t * 1.2, t + 0.1)
 
 
-func _on_damaged(_amount: float, _new_hp: float, info: AttackData) -> void:
+func _on_damaged(_amount: float, _new_hp: float, info: EffectContext) -> void:
     if not info:
         return
 
@@ -94,33 +94,38 @@ func _on_damaged(_amount: float, _new_hp: float, info: AttackData) -> void:
         _play_audio_event(damaged_audio)
 
 
-func _on_blocked(_info: AttackData) -> void:
+func _on_blocked(_info: EffectContext) -> void:
     if enabled_sfx and blocked_audio:
         _play_audio_event(blocked_audio)
 
 
-func _on_died(info: AttackData) -> void:
+func _on_died(info: EffectContext) -> void:
     if enabled_particles:
         _spawn_death_particles(info)
 
     if enabled_sfx and died_audio:
         _play_audio_event(died_audio)
 
-
 # -------------------------
 # Particles
 # -------------------------
 
 
-func _spawn_hit_particles(info: AttackData) -> void:
+func _spawn_hit_particles(info: EffectContext) -> void:
     _spawn_particles(hit_particles_scene, hit_particles_color, hit_particles_scale, info)
 
 
-func _spawn_death_particles(info: AttackData) -> void:
+func _spawn_death_particles(info: EffectContext) -> void:
     _spawn_particles(death_particles_scene, death_particles_color, death_particles_scale, info, true)
 
 
-func _spawn_particles(scene: PackedScene, color: Color, scale_amount: float, info: AttackData, force_world: bool = false) -> void:
+func _spawn_particles(
+        scene: PackedScene,
+        color: Color,
+        scale_amount: float,
+        info: EffectContext,
+        force_world: bool = false,
+) -> void:
     if scene == null:
         return
 
@@ -162,8 +167,8 @@ func _spawn_particles(scene: PackedScene, color: Color, scale_amount: float, inf
     var dir := _resolve_hit_dir(info)
     if dir == Vector2.ZERO:
         dir = Vector2.RIGHT
-    particles.direction = Vector2.RIGHT  # keep a stable local emission axis
-    particles.global_rotation = dir.angle()  # rotate the whole system
+    particles.direction = Vector2.RIGHT
+    particles.global_rotation = dir.angle()
 
     # Emit once
     particles.one_shot = true
@@ -172,13 +177,12 @@ func _spawn_particles(scene: PackedScene, color: Color, scale_amount: float, inf
     if not particles.finished.is_connected(particles.queue_free):
         particles.finished.connect(particles.queue_free)
 
-
 # -------------------------
 # Knockback
 # -------------------------
 
 
-func _apply_knockback(info: AttackData) -> void:
+func _apply_knockback(info: EffectContext) -> void:
     if info == null:
         return
 
@@ -202,7 +206,6 @@ func _apply_knockback(info: AttackData) -> void:
 
     if owner is RigidBody2D:
         (owner as RigidBody2D).apply_impulse(impulse)
-
 
 # -------------------------
 # Flash
@@ -235,14 +238,7 @@ func _play_flash(duration: float) -> void:
         m.set_shader_parameter("overlay_color", flash_color)
         m.set_shader_parameter("overlay_amount", 1.0)
 
-    _flash_tween.tween_method(
-        func(v: float) -> void:
-            for m in mats:
-                m.set_shader_parameter("overlay_amount", v),
-        1.0,
-        0.0,
-        duration
-    )
+    _flash_tween.tween_method(func(v: float) -> void: for m in mats:m.set_shader_parameter("overlay_amount", v), 1.0, 0.0, duration)
 
     _flash_tween.tween_callback(
         func():
@@ -268,6 +264,9 @@ func _cache_visual_targets() -> void:
 
 func _collect_sprite_items(root: Node) -> Array[CanvasItem]:
     var out: Array[CanvasItem] = []
+    if root is Sprite2D or root is AnimatedSprite2D:
+        out.append(root as CanvasItem)
+
     for child in root.get_children():
         if child is Sprite2D or child is AnimatedSprite2D:
             out.append(child as CanvasItem)
@@ -291,7 +290,6 @@ func _ensure_hit_shader_material(ci: CanvasItem) -> void:
 
     sm.resource_local_to_scene = true
 
-
 # -------------------------
 # SFX
 # -------------------------
@@ -302,7 +300,6 @@ func _play_audio_event(ev: AudioEvent) -> void:
         return
 
     AudioManager.play_event(ev, owner.global_position)
-
 
 # -------------------------
 # Internal
@@ -315,7 +312,7 @@ func _play_audio_event(ev: AudioEvent) -> void:
 ##   1. knockback_source (live node — contact attacks). Computed source → victim at hit time.
 ##   2. knockback_dir (pre-baked — melee / projectile travel direction).
 ##   3. Vector2.ZERO if neither is available.
-func _resolve_hit_dir(info: AttackData) -> Vector2:
+func _resolve_hit_dir(info: EffectContext) -> Vector2:
     if info == null:
         return Vector2.ZERO
 

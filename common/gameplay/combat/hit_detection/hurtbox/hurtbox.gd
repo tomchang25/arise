@@ -2,7 +2,7 @@
 class_name Hurtbox
 extends Area2D
 
-signal get_hit(attack_info: AttackData)
+signal get_hit(context: EffectContext)
 
 @export var enabled = true:
     set(value):
@@ -27,8 +27,6 @@ func _ready() -> void:
     set_deferred("monitorable", enabled)
     _setup_collision_layers()
 
-    _setup_collision_layers()
-
 
 func _setup_collision_layers() -> void:
     set_collision_layer_value(1, false)
@@ -44,7 +42,7 @@ func _setup_collision_layers() -> void:
             set_collision_layer_value(Global.ENEMY_HURTBOX, true)
 
 
-func receive_hit(attack_info: AttackData) -> void:
+func receive_hit(context: EffectContext) -> void:
     if not enabled:
         return
-    get_hit.emit(attack_info)
+    get_hit.emit(context)

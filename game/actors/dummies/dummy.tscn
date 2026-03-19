@@ -26,6 +26,7 @@
 script = ExtResource("2_ef5gh")
 faction = 1
 mana = 100.0
+base_max_health = 1000.0
 metadata/_custom_type_script = "uid://bkgf2cii3bfri"
 
 [sub_resource type="Resource" id="Resource_gtxs5"]
@@ -462,10 +463,11 @@ grow_horizontal = 2
 script = ExtResource("4_ee1ma")
 hurtbox = NodePath("../../Hurtbox")
 
-[node name="HitFeedbackModule" type="Node" parent="Module" unique_id=909622421 node_paths=PackedStringArray("damage_receiver", "movement_module")]
+[node name="HitFeedbackModule" type="Node" parent="Module" unique_id=909622421 node_paths=PackedStringArray("damage_receiver", "movement_module", "visuals")]
 script = ExtResource("7_ef5gh")
 damage_receiver = NodePath("../DamageReceiverModule")
 movement_module = NodePath("../MovementModule")
+visuals = NodePath("../../Sprite")
 hit_particles_scene = ExtResource("7_elycs")
 death_particles_scene = ExtResource("8_brnip")
 damaged_audio = ExtResource("7_3o05k")
