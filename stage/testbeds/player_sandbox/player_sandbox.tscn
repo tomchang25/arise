@@ -6,7 +6,7 @@
 [ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="4_i812l"]
 [ext_resource type="PackedScene" uid="uid://dhjvr7458gxu0" path="res://game/destroyables/plant_props/plant_props.tscn" id="5_0ev1d"]
 [ext_resource type="PackedScene" uid="uid://dbhtrssgng58f" path="res://game/actors/player/player.tscn" id="6_qwuv5"]
-[ext_resource type="Script" uid="uid://bbnuk476f2gu5" path="res://common/_legacy/camera/camera.gd" id="7_dv6ov"]
+[ext_resource type="Script" uid="uid://bbnuk476f2gu5" path="res://common/gameplay/camera/camera.gd" id="7_dv6ov"]
 
 [sub_resource type="Resource" id="Resource_ptvfu"]
 resource_local_to_scene = true

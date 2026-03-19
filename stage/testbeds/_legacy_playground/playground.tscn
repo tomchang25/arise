@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://dbhtrssgng58f" path="res://game/actors/player/player.tscn" id="2_54ftc"]
 [ext_resource type="PackedScene" uid="uid://dccho5kdagt0e" path="res://game/environment/bush/bush.tscn" id="3_eeu4c"]
 [ext_resource type="PackedScene" uid="uid://bfxutmk72t3gc" path="res://game/actors/summons/army_handler/army_handler.tscn" id="4_fu4i5"]
-[ext_resource type="Script" uid="uid://bbnuk476f2gu5" path="res://common/_legacy/camera/camera.gd" id="4_que0v"]
+[ext_resource type="Script" uid="uid://bbnuk476f2gu5" path="res://common/gameplay/camera/camera.gd" id="4_que0v"]
 [ext_resource type="PackedScene" uid="uid://12rdjr3aafmv" path="res://game/interactables/spawners/arise_box/arise_box.tscn" id="6_fu4i5"]
 [ext_resource type="PackedScene" uid="uid://cssols6rmii6m" path="res://game/actors/enemies/enemy_group/enemy_group.tscn" id="6_xkwl0"]
 [ext_resource type="PackedScene" uid="uid://31x7n43mme6c" path="res://game/actors/enemies/types/ninja/ninja_red.tscn" id="7_que0v"]

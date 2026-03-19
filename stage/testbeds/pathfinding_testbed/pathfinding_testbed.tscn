@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://duuv348he5806" path="res://stage/testbeds/pathfinding_testbed/pathfinding_testbed.gd" id="1_rm3v7"]
 [ext_resource type="PackedScene" uid="uid://58kbxdhebluy" path="res://stage/testbeds/pathfinding_testbed/test_dummies/pathfinding_test_dummy.tscn" id="2_rlx1t"]
 [ext_resource type="PackedScene" uid="uid://dccho5kdagt0e" path="res://game/environment/bush/bush.tscn" id="2_t2ndq"]
-[ext_resource type="Script" uid="uid://bbnuk476f2gu5" path="res://common/_legacy/camera/camera.gd" id="3_3e1am"]
+[ext_resource type="Script" uid="uid://bbnuk476f2gu5" path="res://common/gameplay/camera/camera.gd" id="3_3e1am"]
 [ext_resource type="PackedScene" uid="uid://dbhtrssgng58f" path="res://game/actors/player/player.tscn" id="5_1pwl1"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_rm3v7"]

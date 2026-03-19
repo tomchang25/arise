@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://bgxwwufm2aroh" path="res://game/destroyables/chestbox/assets/chest_3.png" id="3_8nrjs"]
 [ext_resource type="Texture2D" uid="uid://cm2c6n0ytikey" path="res://icon.svg" id="3_dcmda"]
 [ext_resource type="Script" uid="uid://b5aicofpx733b" path="res://stage/testbeds/loot_pickup_testbed/loot_test_player.gd" id="3_enhpa"]
-[ext_resource type="Script" uid="uid://bbnuk476f2gu5" path="res://common/_legacy/camera/camera.gd" id="4_enhpa"]
+[ext_resource type="Script" uid="uid://bbnuk476f2gu5" path="res://common/gameplay/camera/camera.gd" id="4_enhpa"]
 [ext_resource type="Script" uid="uid://i1ibypyr38xv" path="res://common/gameplay/loot/loot_drop_module.gd" id="6_k88kd"]
 [ext_resource type="Resource" uid="uid://bq584j3uqsyau" path="res://game/actors/enemies/types/slime/data/slime_drop_profile.tres" id="7_15q8n"]
 [ext_resource type="Script" uid="uid://ce4d3x6pliud6" path="res://common/gameplay/pickup_collector/pickup_collector_module.gd" id="8_6me2w"]
