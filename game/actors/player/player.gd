@@ -4,7 +4,7 @@ extends CharacterBody2D
 
 signal roll_finished
 signal attack_finished
-signal died(info: AttackData)
+signal died(info)
 
 # -------------------------
 # Animation state constants
@@ -304,7 +304,7 @@ func _enforce_debug_modes() -> void:
 # -------------------------
 
 
-func _on_damaged(amount: float, _new_health: float, _info: AttackData) -> void:
+func _on_damaged(amount: float, _new_health: float, _info) -> void:
     # God mode — no damage: undo what DamageReceiverModule already subtracted.
     if data and data.is_no_damage_active():
         stats.health = min(stats.health + amount, stats.current_max_health)
@@ -320,7 +320,7 @@ func _on_damaged(amount: float, _new_health: float, _info: AttackData) -> void:
         sprite.material.set_shader_parameter("overlay_amount", ratio)
 
 
-func _on_died(info: AttackData) -> void:
+func _on_died(info) -> void:
     # Undead / god — refuse death and restore 1 HP.
     if data and (data.undead_mode or data.is_no_damage_active()):
         stats.health = 1.0
@@ -450,11 +450,11 @@ func can_attack(weapon_index: int = 0, attack_index: int = 0) -> bool:
 ## Perform an attack.
 ## weapon_index and attack_index map directly to CombatModule's weapon/attack arrays.
 ## Defaults to weapon 0, attack 0 — the primary attack of the equipped weapon.
-func perform_attack(target_pos: Vector2, weapon_index: int = 0, attack_index: int = 0, auto_end: bool = false) -> void:
+func perform_attack(target_pos: Vector2, weapon_index: int = 0, attack_index: int = 0) -> void:
     if combat_module == null:
         return
 
-    combat_module.perform_attack(weapon_index, attack_index, target_pos, auto_end)
+    combat_module.perform_attack(weapon_index, attack_index, target_pos)
 
 
 ## Signal the combat module that an animation-driven attack has finished

@@ -20,7 +20,7 @@
 [ext_resource type="Script" uid="uid://w30s7yqi1p3d" path="res://common/gameplay/movement/movement_module.gd" id="16_5xwje"]
 [ext_resource type="Script" uid="uid://dldqypakv40re" path="res://common/gameplay/animation/animation_module.gd" id="18_pgukd"]
 [ext_resource type="Script" uid="uid://i1ibypyr38xv" path="res://common/gameplay/loot/loot_drop_module.gd" id="19_xl8r2"]
-[ext_resource type="Resource" uid="uid://bq584j3uqsyau" path="res://game/actors/enemies/types/slime/data/slime_drop_profile.tres" id="20_7gd1t"]
+[ext_resource type="Resource" uid="uid://bq584j3uqsyau" path="res://game/actors/enemies/types/slime/presets/slime_drop_profile.tres" id="20_7gd1t"]
 
 [sub_resource type="Resource" id="Resource_bjyc7"]
 script = ExtResource("2_ef5gh")

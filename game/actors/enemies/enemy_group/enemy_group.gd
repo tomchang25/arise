@@ -104,7 +104,7 @@ func force_kill() -> void:
 # -------------------------
 
 
-func _on_member_died(_info: AttackData, enemy: Enemy) -> void:
+func _on_member_died(_info, enemy: Enemy) -> void:
     var idx := _members.find(enemy)
     if idx != -1:
         _members.remove_at(idx)

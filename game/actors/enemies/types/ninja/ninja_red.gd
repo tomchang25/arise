@@ -3,7 +3,7 @@ class_name Enemy
 extends CharacterBody2D
 
 signal navigation_finished
-signal died(info: AttackData)
+signal died(info)
 
 # -------------------------
 # Exports
@@ -206,13 +206,13 @@ func _bind_reach_detection() -> void:
 # -------------------------
 
 
-func _on_damaged(_amount: float, _new_health: float, _info: AttackData) -> void:
+func _on_damaged(_amount: float, _new_health: float, _info) -> void:
     if sprite and sprite.material and stats:
         var ratio := (1.0 - (stats.health / stats.current_max_health)) * 0.5
         sprite.material.set_shader_parameter("overlay_amount", ratio)
 
 
-func _on_died(info: AttackData) -> void:
+func _on_died(info) -> void:
     died.emit(info)
     if loot_drop:
         loot_drop.drop_loot()
@@ -256,10 +256,10 @@ func get_path_velocity() -> Vector2:
 
 ## Perform a fire-and-forget attack toward target_pos.
 ## Defaults to weapon 0, attack 0 — the primary attack of the default weapon.
-func perform_attack(target_pos: Vector2, weapon_index: int = 0, attack_index: int = 0, auto_end: bool = true) -> void:
+func perform_attack(target_pos: Vector2, weapon_index: int = 0, attack_index: int = 0) -> void:
     if combat_module == null:
         return
-    combat_module.perform_attack(weapon_index, attack_index, target_pos, auto_end)
+    combat_module.perform_attack(weapon_index, attack_index, target_pos)
 
 
 ## Signal the combat module that an animation-driven attack has finished.

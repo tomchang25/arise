@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://srq1qxfjtyxq"]
 
 [ext_resource type="Script" uid="uid://bmdh4vf3luco6" path="res://game/actors/enemies/enemy.gd" id="1_gecab"]
-[ext_resource type="Resource" uid="uid://bq584j3uqsyau" path="res://game/actors/enemies/types/slime/data/slime_drop_profile.tres" id="2_h3os5"]
+[ext_resource type="Resource" uid="uid://bq584j3uqsyau" path="res://game/actors/enemies/types/slime/presets/slime_drop_profile.tres" id="2_h3os5"]
 [ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/gameplay/combat/hit_detection/hurtbox/hurtbox.gd" id="7_hrkfa"]
 [ext_resource type="Script" uid="uid://x10bxi1qicvw" path="res://common/gameplay/combat/attack/modules/projectile_attack_module.gd" id="8_tajik"]
 [ext_resource type="Script" uid="uid://bb4mbrq1u7pl" path="res://common/gameplay/combat/combat_module.gd" id="10_w8l2s"]

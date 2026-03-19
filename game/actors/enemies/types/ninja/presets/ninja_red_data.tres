@@ -1,8 +1,8 @@
 [gd_resource type="Resource" script_class="EnemyData" format=3 uid="uid://rq5f7puwasyb"]
 
-[ext_resource type="Resource" uid="uid://bq584j3uqsyau" path="res://game/actors/enemies/types/slime/data/slime_drop_profile.tres" id="1_xa21b"]
+[ext_resource type="Resource" uid="uid://bq584j3uqsyau" path="res://game/actors/enemies/types/slime/presets/slime_drop_profile.tres" id="1_xa21b"]
 [ext_resource type="Script" uid="uid://boqrgdnjxi8n8" path="res://game/actors/enemies/enemy_data.gd" id="2_7t35i"]
-[ext_resource type="Resource" uid="uid://rcfcludclv0l" path="res://game/actors/enemies/presets/ninja_red_stats.tres" id="3_uucmk"]
+[ext_resource type="Resource" uid="uid://rcfcludclv0l" path="res://game/actors/enemies/types/ninja/presets/ninja_red_stats.tres" id="3_uucmk"]
 [ext_resource type="Script" uid="uid://i2xvg4o1geuj" path="res://common/gameplay/combat/attack/data/weapon_data.gd" id="4_60ccq"]
 
 [resource]

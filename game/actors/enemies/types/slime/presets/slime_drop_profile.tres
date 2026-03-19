@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" uid="uid://0hg831gihu68" path="res://common/gameplay/loot/loot_drop_profile.gd" id="1_q08lq"]
 [ext_resource type="Script" uid="uid://bil6iq1so8k4p" path="res://common/gameplay/loot/loot_drop_table.gd" id="2_dpv8t"]
-[ext_resource type="Resource" uid="uid://cx0rryuh8ymjn" path="res://game/actors/enemies/types/slime/data/slime_gold_drop_table.tres" id="3_btmxo"]
-[ext_resource type="Resource" uid="uid://bjm08hudp85tg" path="res://game/actors/enemies/types/slime/data/slime_resources_drop_table.tres" id="4_vcp8f"]
+[ext_resource type="Resource" uid="uid://cx0rryuh8ymjn" path="res://game/actors/enemies/types/slime/presets/slime_gold_drop_table.tres" id="3_btmxo"]
+[ext_resource type="Resource" uid="uid://bjm08hudp85tg" path="res://game/actors/enemies/types/slime/presets/slime_resources_drop_table.tres" id="4_vcp8f"]
 
 [resource]
 script = ExtResource("1_q08lq")

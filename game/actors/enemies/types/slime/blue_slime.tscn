@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://c3lbfkun8lbca"]
 
 [ext_resource type="PackedScene" uid="uid://srq1qxfjtyxq" path="res://game/actors/enemies/enemy.tscn" id="1_2nlqr"]
-[ext_resource type="Resource" uid="uid://bq584j3uqsyau" path="res://game/actors/enemies/types/slime/data/slime_drop_profile.tres" id="2_0ngd0"]
+[ext_resource type="Resource" uid="uid://bq584j3uqsyau" path="res://game/actors/enemies/types/slime/presets/slime_drop_profile.tres" id="2_0ngd0"]
 [ext_resource type="Script" uid="uid://boqrgdnjxi8n8" path="res://game/actors/enemies/enemy_data.gd" id="3_f0r6p"]
 [ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="4_ho5gu"]
 [ext_resource type="Texture2D" uid="uid://bt4e0re6x3vj0" path="res://game/actors/enemies/types/slime/assets/Slime.png" id="5_f0r6p"]

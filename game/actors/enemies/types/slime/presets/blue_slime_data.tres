@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="EnemyData" format=3 uid="uid://c8poiox62uv13"]
 
-[ext_resource type="Resource" uid="uid://bq584j3uqsyau" path="res://game/actors/enemies/types/slime/data/slime_drop_profile.tres" id="1_0ovju"]
+[ext_resource type="Resource" uid="uid://bq584j3uqsyau" path="res://game/actors/enemies/types/slime/presets/slime_drop_profile.tres" id="1_0ovju"]
 [ext_resource type="Script" uid="uid://boqrgdnjxi8n8" path="res://game/actors/enemies/enemy_data.gd" id="2_8jf34"]
 [ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="3_mufbj"]
 
