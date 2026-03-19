@@ -5,21 +5,18 @@
 [ext_resource type="Resource" uid="uid://dg0jnt6ju4qcl" path="res://game/actors/player/presets/player_stats.tres" id="2_64mjj"]
 [ext_resource type="Texture2D" uid="uid://e7rr31b6fwkg" path="res://game/actors/player/assets/player.png" id="2_e6ar1"]
 [ext_resource type="AnimationNodeBlendTree" uid="uid://bam4152vw8gtf" path="res://game/actors/player/presets/player_animation_tree.tres" id="3_qa8rf"]
-[ext_resource type="PackedScene" uid="uid://jla2t1i1qafl" path="res://common/gameplay/combat/attack/effects/presets/slash_attack_effect.tscn" id="4_6o7jk"]
 [ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/gameplay/combat/hit_detection/hurtbox/hurtbox.gd" id="5_8nq4u"]
 [ext_resource type="Script" uid="uid://b6r7vut6vta3w" path="res://game/actors/player/state/player_idle_state.gd" id="6_2iqu4"]
 [ext_resource type="Script" uid="uid://i2xvg4o1geuj" path="res://common/gameplay/combat/attack/data/weapon_data.gd" id="8_747sf"]
 [ext_resource type="Script" uid="uid://bb4mbrq1u7pl" path="res://common/gameplay/combat/combat_module.gd" id="8_i5w6q"]
 [ext_resource type="Script" uid="uid://w30s7yqi1p3d" path="res://common/gameplay/movement/movement_module.gd" id="9_1bvv4"]
-[ext_resource type="Script" uid="uid://dqbwdw1d7k7tu" path="res://common/gameplay/combat/attack/definitions/attack_definition.gd" id="9_5qatl"]
 [ext_resource type="Script" uid="uid://jtqne3plv0gg" path="res://game/actors/player/state/player_roll_state.gd" id="9_t2ln0"]
 [ext_resource type="Script" uid="uid://hyy86fs5b0fs" path="res://common/gameplay/detection/detection_module.gd" id="10_8nq4u"]
 [ext_resource type="Script" uid="uid://dldqypakv40re" path="res://common/gameplay/animation/animation_module.gd" id="10_tiye0"]
 [ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/framework/state_machine/state_machine.gd" id="11_b15sj"]
 [ext_resource type="Script" uid="uid://chearh86c82uf" path="res://game/actors/player/state/player_attack_state.gd" id="11_klmji"]
-[ext_resource type="PackedScene" uid="uid://cr1lef2eyb6vu" path="res://common/gameplay/combat/attack/deliveries/slash_delivery.tscn" id="12_5qatl"]
 [ext_resource type="Script" uid="uid://dpi3inldik0ho" path="res://common/gameplay/combat/damage_response/damage_receiver_module.gd" id="12_i5w6q"]
-[ext_resource type="Script" uid="uid://dxe0yv70mfrn4" path="res://common/gameplay/combat/attack/definitions/place_attack_definition.gd" id="12_lje7i"]
+[ext_resource type="Resource" uid="uid://b62wxskj4xd5u" path="res://stage/testbeds/combat_sandbox/simple_slash_bullet.tres" id="12_qsypv"]
 [ext_resource type="Script" uid="uid://duxq84e027el0" path="res://common/gameplay/combat/damage_response/hit_feedback_module.gd" id="13_41lfd"]
 [ext_resource type="Script" uid="uid://ce4d3x6pliud6" path="res://common/gameplay/pickup_collector/pickup_collector_module.gd" id="13_i5w6q"]
 [ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="14_4s16b"]
@@ -33,23 +30,10 @@
 [ext_resource type="PackedScene" uid="uid://qhqm7usjk4s4" path="res://common/gameplay/combat/damage_response/damage_number.tscn" id="21_7c4js"]
 [ext_resource type="PackedScene" uid="uid://d0tswwb1d3smv" path="res://common/gameplay/health_bar/health_bar.tscn" id="23_6xo6p"]
 
-[sub_resource type="Resource" id="Resource_747sf"]
-script = ExtResource("12_lje7i")
-attack_scene = ExtResource("12_5qatl")
-attack_effect_scene = ExtResource("4_6o7jk")
-cooldown = 0.01
-max_targets = -1
-metadata/_custom_type_script = "uid://dxe0yv70mfrn4"
-
-[sub_resource type="Resource" id="Resource_7c4js"]
-script = ExtResource("8_747sf")
-attacks = Array[ExtResource("9_5qatl")]([SubResource("Resource_747sf")])
-metadata/_custom_type_script = "uid://i2xvg4o1geuj"
-
 [sub_resource type="Resource" id="Resource_4s16b"]
 script = ExtResource("2_4s16b")
 stats = ExtResource("2_64mjj")
-weapons = Array[ExtResource("8_747sf")]([SubResource("Resource_7c4js")])
+weapons = Array[ExtResource("8_747sf")]([ExtResource("12_qsypv")])
 metadata/_custom_type_script = "uid://cfsw4hxa4kn3n"
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_64mjj"]
@@ -372,7 +356,7 @@ _data = {
 radius = 3.0
 height = 14.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_747sf"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_4s16b"]
 radius = 50.0
 
 [sub_resource type="Resource" id="Resource_5qatl"]
@@ -456,7 +440,7 @@ script = ExtResource("10_8nq4u")
 radius = 50.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/DetectionModule" unique_id=508858704]
-shape = SubResource("CircleShape2D_747sf")
+shape = SubResource("CircleShape2D_4s16b")
 debug_color = Color(0, 0.101960786, 0.69803923, 0.11764706)
 
 [node name="PickupCollectorModule" type="Area2D" parent="Module/DetectionPivot" unique_id=639109990 node_paths=PackedStringArray("owner_body", "inventory_owner", "magnet_shape")]

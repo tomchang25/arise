@@ -106,6 +106,7 @@ func _ready() -> void:
 
     queue_redraw()
 
+
 func _draw() -> void:
     if not combat_module or Engine.is_editor_hint():
         return
@@ -118,7 +119,6 @@ func _draw() -> void:
 func _unhandled_input(event: InputEvent) -> void:
     if event.is_action_pressed("dodge"):
         _dodge_requested = true
-
 
 # -------------------------
 # Data application
@@ -158,7 +158,6 @@ func _ensure_stats() -> void:
     stats = Stats.new()
     stats.faction = Stats.Faction.PLAYER
     stats.setup_stats()
-
 
 # -------------------------
 # Module wiring
@@ -240,7 +239,6 @@ func _bind_modules() -> void:
         if has_method("add_item"):
             pickup_collector.inventory_owner = self
 
-
 # -------------------------
 # Stats signal helpers
 # -------------------------
@@ -256,16 +254,6 @@ func _disconnect_stats_signals() -> void:
         stats.stats_recalculated.disconnect(_on_stats_recalculated)
 
 
-func _connect_data_signals() -> void:
-    if data and not data.debug_modes_changed.is_connected(_enforce_debug_modes):
-        data.debug_modes_changed.connect(_enforce_debug_modes)
-
-
-func _disconnect_data_signals() -> void:
-    if data and data.debug_modes_changed.is_connected(_enforce_debug_modes):
-        data.debug_modes_changed.disconnect(_enforce_debug_modes)
-
-
 ## Update reach_detection radius from the effective range of weapon 0, attack 0.
 func _refresh_reach_range() -> void:
     if reach_detection == null or combat_module == null:
@@ -274,7 +262,6 @@ func _refresh_reach_range() -> void:
     var attac_range := combat_module.get_attack_range(0, 0)
     if attac_range > 0.0:
         reach_detection.set_collision_radius(attac_range)
-
 
 # -------------------------
 # Debug modes — runtime enforcement
@@ -297,7 +284,6 @@ func _enforce_debug_modes() -> void:
                 combat_module.set_attack_range_override(wi, ai, r)
     else:
         combat_module.clear_all_range_overrides()
-
 
 # -------------------------
 # Damage / death callbacks
@@ -328,7 +314,6 @@ func _on_died(info) -> void:
 
     died.emit(info)
 
-
 # -------------------------
 # Stats callbacks
 # -------------------------
@@ -338,7 +323,6 @@ func _on_stats_recalculated() -> void:
     _enforce_debug_modes()
     _refresh_reach_range()
     queue_redraw()
-
 
 # -------------------------
 # Animation callback
@@ -351,7 +335,6 @@ func _on_animation_finished(anim_name: StringName) -> void:
         roll_finished.emit()
     elif String(ANIM_ATTACK) in anim_text:
         attack_finished.emit()
-
 
 # -------------------------
 # Public API — input helpers
@@ -375,7 +358,6 @@ func consume_dodge_request() -> bool:
     _dodge_requested = false
     return requested
 
-
 # -------------------------
 # Public API — movement
 # -------------------------
@@ -397,7 +379,6 @@ func set_movement_velocity(direction: Vector2, speed: float) -> void:
 func apply_knockback(impulse: Vector2) -> void:
     if movement_module:
         movement_module.apply_knockback(impulse)
-
 
 # -------------------------
 # Public API — animation
@@ -428,7 +409,6 @@ func play_actor_animation(state_name: StringName, direction: Vector2 = Vector2.Z
         set_facing_direction(direction, state_name)
     animation_module.travel(state_name)
     animation_module.set_time_scale(time_scale)
-
 
 # -------------------------
 # Public API — combat
@@ -499,7 +479,6 @@ func clear_all_range_overrides() -> void:
     combat_module.clear_all_range_overrides()
     _refresh_reach_range()
 
-
 # -------------------------
 # Public API — perception proxies
 # -------------------------
@@ -527,7 +506,6 @@ func get_closest_attack_target() -> Node2D:
 ## True when there is a valid target in reach.
 func has_auto_attack_target() -> bool:
     return can_attack() and is_instance_valid(get_nearest_reachable_target())
-
 
 # -------------------------
 # Public API — aim helpers
@@ -586,7 +564,6 @@ func get_aim_direction() -> Vector2:
 
     return Vector2.DOWN
 
-
 # -------------------------
 # Public API — pickup collector
 # -------------------------
@@ -594,7 +571,6 @@ func get_aim_direction() -> Vector2:
 
 func get_pickup_collector_module() -> PickupCollectorModule:
     return pickup_collector
-
 
 # -------------------------
 # Public API — misc
