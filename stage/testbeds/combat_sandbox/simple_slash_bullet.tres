@@ -1,39 +1,37 @@
 [gd_resource type="Resource" script_class="WeaponData" format=3 uid="uid://b62wxskj4xd5u"]
 
 [ext_resource type="Script" uid="uid://dqbwdw1d7k7tu" path="res://common/gameplay/combat/attack/definitions/attack_definition.gd" id="1_mqrkv"]
-[ext_resource type="PackedScene" uid="uid://cr1lef2eyb6vu" path="res://common/gameplay/combat/attack/deliveries/slash_delivery.tscn" id="2_imtox"]
+[ext_resource type="PackedScene" uid="uid://cr1lef2eyb6vu" path="res://common/gameplay/combat/attack/deliveries/slash_delivery.tscn" id="2_mqrkv"]
 [ext_resource type="Script" uid="uid://cmymyo0y1aoi7" path="res://common/gameplay/combat/attack/definitions/effect_phase_definition.gd" id="3_hq13l"]
-[ext_resource type="PackedScene" uid="uid://jla2t1i1qafl" path="res://common/gameplay/combat/attack/effects/slash_attack_effect.tscn" id="4_kcyys"]
+[ext_resource type="PackedScene" uid="uid://jla2t1i1qafl" path="res://common/gameplay/combat/attack/effects/presets/slash_attack_effect.tscn" id="4_imtox"]
 [ext_resource type="Script" uid="uid://dxe0yv70mfrn4" path="res://common/gameplay/combat/attack/definitions/place_attack_definition.gd" id="5_383ob"]
-[ext_resource type="PackedScene" uid="uid://yj56pi16wgud" path="res://common/gameplay/combat/attack/deliveries/projectile_delivery.tscn" id="6_k6bef"]
-[ext_resource type="PackedScene" uid="uid://mo52nt0sxj4w" path="res://common/gameplay/combat/attack/effects/projectile_attack_effect.tscn" id="7_i0b5s"]
+[ext_resource type="PackedScene" uid="uid://yj56pi16wgud" path="res://common/gameplay/combat/attack/deliveries/projectile_delivery.tscn" id="6_hq13l"]
+[ext_resource type="PackedScene" uid="uid://mo52nt0sxj4w" path="res://common/gameplay/combat/attack/effects/presets/projectile_attack_effect.tscn" id="7_kcyys"]
 [ext_resource type="Script" uid="uid://b44chxi8qaq70" path="res://common/gameplay/combat/attack/definitions/projectile_attack_definition.gd" id="8_8fy1u"]
 [ext_resource type="Script" uid="uid://i2xvg4o1geuj" path="res://common/gameplay/combat/attack/data/weapon_data.gd" id="9_y4dhy"]
 
 [sub_resource type="Resource" id="Resource_04wdt"]
 script = ExtResource("3_hq13l")
-effect_scene = ExtResource("4_kcyys")
-knockback_mode = 1
+effect_scene = ExtResource("4_imtox")
 knockback_force = 200.0
 metadata/_custom_type_script = "uid://cmymyo0y1aoi7"
 
 [sub_resource type="Resource" id="Resource_tu1f5"]
 script = ExtResource("5_383ob")
-attack_scene = ExtResource("2_imtox")
+attack_scene = ExtResource("2_mqrkv")
 phases = Array[ExtResource("3_hq13l")]([SubResource("Resource_04wdt")])
 metadata/_custom_type_script = "uid://dxe0yv70mfrn4"
 
 [sub_resource type="Resource" id="Resource_nj1f3"]
 script = ExtResource("3_hq13l")
-effect_scene = ExtResource("7_i0b5s")
+effect_scene = ExtResource("7_kcyys")
 lifetime = 10.0
-knockback_mode = 2
 knockback_force = 100.0
 metadata/_custom_type_script = "uid://cmymyo0y1aoi7"
 
 [sub_resource type="Resource" id="Resource_qhs43"]
 script = ExtResource("8_8fy1u")
-attack_scene = ExtResource("6_k6bef")
+attack_scene = ExtResource("6_hq13l")
 phases = Array[ExtResource("3_hq13l")]([SubResource("Resource_nj1f3")])
 metadata/_custom_type_script = "uid://b44chxi8qaq70"
 

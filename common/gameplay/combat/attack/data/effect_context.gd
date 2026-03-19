@@ -11,10 +11,22 @@ extends RefCounted
 ##
 ## Phase flow
 ## ──────────
-## • phases         — forwarded from DetachedAttackDefinition; AttackDelivery always
-##                    delegates to PhaseSequencer when this is non-empty.
-## • build_phase_override() — forks this context for one phase. Each phase is fully
-##                    authoritative over its own hit config — no sentinel logic.
+## • phases              — forwarded from DetachedAttackDefinition; AttackDelivery
+##                         always delegates to PhaseSequencer when non-empty.
+## • build_phase_override()       — forks this context for one phase. Each phase
+##                         is fully authoritative over its own hit config.
+## • build_for_emitted_child()    — builds a fresh context for a child delivery
+##                         spawned by DeliveryEmitter. Forwards source_stats from
+##                         the root caster and increments spawn_depth.
+##
+## Spawn depth
+## ───────────
+## spawn_depth tracks how many DeliveryEmitter hops separate this context from
+## the original caster. DeliveryEmitter refuses to spawn when spawn_depth reaches
+## DeliveryEmitter.MAX_SPAWN_DEPTH, preventing infinite chains at runtime.
+##   depth 0 — context built directly by an AttackModule (root delivery)
+##   depth 1 — context built for a child spawned by a DeliveryEmitter (e.g. mine)
+##   depth 2 — context built for a grandchild (e.g. bullet from mine)
 
 # -------------------------
 # Live references
@@ -60,7 +72,7 @@ var damage_interval: float = 0.0
 var clear_records_on_exit: bool = false
 
 # -------------------------
-# Scene refs (used by AttackEffect / AttackDelivery)
+# Scene refs (used by PhaseEffect / AttackDelivery)
 # -------------------------
 
 var attack_scene: PackedScene = null
@@ -73,7 +85,17 @@ var spawn_group: String = "attacks"
 var phases: Array[EffectPhaseDefinition] = []
 
 # -------------------------
-# Factory
+# Spawn chain tracking
+# -------------------------
+
+## Number of DeliveryEmitter hops from the original caster to this context.
+## 0 = root delivery fired directly by an AttackModule.
+## Incremented by build_for_emitted_child(). Checked by DeliveryEmitter against
+## MAX_SPAWN_DEPTH before allowing further spawns.
+var spawn_depth: int = 0
+
+# -------------------------
+# Factory — root context
 # -------------------------
 
 
@@ -98,6 +120,7 @@ static func build(
     var ctx := EffectContext.new()
     ctx.source_stats = stats
     ctx.definition = def
+    ctx.spawn_depth = 0
 
     if def is PlaceAttackDefinition:
         if def.attack_scene == null:
@@ -134,6 +157,71 @@ static func build(
 
     return ctx
 
+# -------------------------
+# Factory — child delivery context (used by DeliveryEmitter)
+# -------------------------
+
+
+## Build a fresh EffectContext for a child delivery spawned by a DeliveryEmitter.
+##
+## source_stats is forwarded from the root caster so damage scaling always
+## reflects the original attacker, not an intermediate delivery.
+##
+## dir is the pre-baked launch direction computed by the emitter's direction fan.
+##
+## caller_factions is passed through so the child hits the same target set.
+##
+## depth is the caller's spawn_depth + 1 and is stored on the new context so
+## the DeliveryEmitter depth guard can enforce MAX_SPAWN_DEPTH.
+static func build_for_emitted_child(
+        def: AttackDefinition,
+        stats: Stats,
+        origin: Vector2,
+        dir: Vector2,
+        caller_factions: Array,
+        depth: int,
+) -> EffectContext:
+    if def == null:
+        push_error("EffectContext.build_for_emitted_child: def is null")
+        return null
+    if stats == null:
+        push_error("EffectContext.build_for_emitted_child: stats is null")
+        return null
+
+    var ctx := EffectContext.new()
+    ctx.source_stats = stats
+    ctx.definition = def
+    ctx.knockback_dir = dir.normalized() if dir.length_squared() > 0.0001 else Vector2.RIGHT
+    ctx.target_factions = caller_factions
+    ctx.spawn_depth = depth
+
+    if def is PlaceAttackDefinition:
+        if def.attack_scene == null:
+            push_warning("EffectContext.build_for_emitted_child: PlaceAttackDefinition has no attack_scene")
+            return null
+        ctx.attack_scene = def.attack_scene
+        ctx.attack_lifetime = def.lifetime
+        ctx.phases = def.phases
+
+    elif def is ProjectileAttackDefinition:
+        ctx.attack_scene = def.attack_scene
+        ctx.attack_lifetime = def.lifetime
+        ctx.travel_distance = def.travel_distance
+        ctx.phases = def.phases
+
+    else:
+        push_error(
+            "EffectContext.build_for_emitted_child: child_definition must be Place or Projectile, got: %s"
+            % def.get_class(),
+        )
+        return null
+
+    return ctx
+
+# -------------------------
+# Factory — phase fork
+# -------------------------
+
 
 ## Fork this context for one phase.
 ##
@@ -142,6 +230,9 @@ static func build(
 ##
 ## Hit config and knockback_mode are read directly from the EffectPhaseDefinition —
 ## each phase is fully authoritative, no sentinel / inherit logic.
+##
+## spawn_depth is forwarded unchanged — phases are not a new link in the spawn
+## chain; only DeliveryEmitter increments it via build_for_emitted_child.
 func build_phase_override(phase_def: EffectPhaseDefinition) -> EffectContext:
     var phase_ctx := EffectContext.new()
 
@@ -154,6 +245,7 @@ func build_phase_override(phase_def: EffectPhaseDefinition) -> EffectContext:
     phase_ctx.attack_scene = attack_scene
     phase_ctx.spawn_group = spawn_group
     phase_ctx.attack_lifetime = phase_def.lifetime
+    phase_ctx.spawn_depth = spawn_depth
 
     # Hit config — phase is fully authoritative, read directly.
     phase_ctx.knockback_mode = phase_def.knockback_mode
@@ -162,7 +254,8 @@ func build_phase_override(phase_def: EffectPhaseDefinition) -> EffectContext:
     phase_ctx.damage_interval = phase_def.damage_interval
     phase_ctx.clear_records_on_exit = phase_def.clear_records_on_exit
 
-    # Phases array is not forwarded — a phase does not recurse.
+    # Phases array is not forwarded — a phase does not recurse via the sequencer.
+    # DeliveryEmitter phases recursion is handled through build_for_emitted_child.
     phase_ctx.phases = []
 
     return phase_ctx
@@ -185,22 +278,26 @@ static func _bake_knockback_dir(source: Node2D, target_position: Vector2) -> Vec
 ##   ALL                 — every faction, including the caster's own
 ##                         (self-damage, traps, indiscriminate AoE).
 static func _resolve_factions(def: AttackDefinition, stats: Stats) -> Array:
-    var result: Array = []
+    var caster_faction: Stats.Faction = stats.faction
 
     match def.faction_target_type:
         AttackDefinition.FactionTargetType.HOSTILE_ONLY:
-            match stats.faction:
-                Stats.Faction.PLAYER:
-                    result = [Stats.Faction.ENEMY]
-                Stats.Faction.ENEMY:
-                    result = [Stats.Faction.PLAYER]
+            return _hostile_factions(caster_faction)
         AttackDefinition.FactionTargetType.HOSTILE_AND_NEUTRAL:
-            match stats.faction:
-                Stats.Faction.PLAYER:
-                    result = [Stats.Faction.ENEMY, Stats.Faction.NEUTRAL]
-                Stats.Faction.ENEMY:
-                    result = [Stats.Faction.PLAYER, Stats.Faction.NEUTRAL]
+            var factions := _hostile_factions(caster_faction)
+            factions.append(Stats.Faction.NEUTRAL)
+            return factions
         AttackDefinition.FactionTargetType.ALL:
-            result = [Stats.Faction.PLAYER, Stats.Faction.ENEMY, Stats.Faction.NEUTRAL]
+            return [Stats.Faction.PLAYER, Stats.Faction.ENEMY, Stats.Faction.NEUTRAL]
 
-    return result
+    return _hostile_factions(caster_faction)
+
+
+static func _hostile_factions(caster_faction: Stats.Faction) -> Array:
+    match caster_faction:
+        Stats.Faction.PLAYER:
+            return [Stats.Faction.ENEMY]
+        Stats.Faction.ENEMY:
+            return [Stats.Faction.PLAYER]
+        _:
+            return [Stats.Faction.PLAYER, Stats.Faction.ENEMY]

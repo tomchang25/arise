@@ -1,5 +1,5 @@
 class_name AttackEffect
-extends Node2D
+extends PhaseEffect
 ## Responsible for presentation and hitbox hosting only.
 ##
 ## Wires the Hitbox with an EffectContext and reacts to play() being called.
@@ -23,8 +23,6 @@ extends Node2D
 ## The base play() waits `duration` seconds then emits `finished`.
 ## Subclasses that manage their own animation timing override play() WITHOUT
 ## calling super(), then emit finished.emit() themselves at the end.
-
-signal finished
 
 var max_targets: int = 1
 var targets_hit_count: int = 0

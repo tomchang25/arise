@@ -9,11 +9,18 @@ extends Node
 ##
 ## VFX-only phases (effect_scene == null) are handled inline — the sequencer
 ## waits the phase lifetime via a SceneTree timer and advances without spawning
-## any AttackEffect node.
+## any PhaseEffect node.
 ##
 ## Phase-specific overrides (damage_interval, max_targets, clear_records_on_exit)
 ## are applied by building a per-phase EffectContext fork through
 ## EffectContext.build_phase_override(). The parent context is never mutated.
+##
+## PhaseEffect polymorphism
+## ────────────────────────
+## The sequencer works with PhaseEffect — the shared base of AttackEffect and
+## DeliveryEmitter. It calls setup(), play(), and awaits finished without
+## knowing which concrete type was instantiated. The effect_scene on each
+## EffectPhaseDefinition determines the concrete type at authoring time.
 
 signal all_phases_finished
 
@@ -89,11 +96,12 @@ func _run_next_phase() -> void:
         _run_next_phase()
         return
 
-    # Spawn the AttackEffect for this phase.
-    var effect := phase_def.effect_scene.instantiate() as AttackEffect
+    # Instantiate the phase effect. The root node must extend PhaseEffect —
+    # either an AttackEffect (hitbox branch) or a DeliveryEmitter (spawn branch).
+    var effect := phase_def.effect_scene.instantiate() as PhaseEffect
     if effect == null:
         push_error(
-            "PhaseSequencer: effect_scene at index %d did not instantiate to AttackEffect" \
+            "PhaseSequencer: effect_scene at index %d did not instantiate to PhaseEffect" \
             % (_current_index - 1),
         )
         _run_next_phase()

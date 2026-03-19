@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://btytp8dseow4l"]
+
+[ext_resource type="Script" uid="uid://cbhklklgit75" path="res://common/gameplay/combat/attack/effects/delivery_emitter.gd" id="1_emitter"]
+
+[node name="RpgEmitterEffect" type="Node2D" unique_id=1005661127]
+script = ExtResource("1_emitter")
+reuse_parent_definition = true

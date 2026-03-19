@@ -9,8 +9,8 @@
 [ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="7_t4ipe"]
 [ext_resource type="Script" uid="uid://i2xvg4o1geuj" path="res://common/gameplay/combat/attack/data/weapon_data.gd" id="8_pqotf"]
 [ext_resource type="Script" uid="uid://dqbwdw1d7k7tu" path="res://common/gameplay/combat/attack/definitions/attack_definition.gd" id="9_eothi"]
+[ext_resource type="Resource" uid="uid://b62wxskj4xd5u" path="res://stage/testbeds/combat_sandbox/simple_slash_bullet.tres" id="9_rut13"]
 [ext_resource type="Script" uid="uid://co1s16xd7omkk" path="res://common/gameplay/combat/hit_detection/hitbox/hitbox.gd" id="10_gu8my"]
-[ext_resource type="Resource" uid="uid://dlgs8r87dcr3g" path="res://common/gameplay/combat/attack/definitions/presets/rpg_definition.tres" id="10_y8gd8"]
 [ext_resource type="Script" uid="uid://cmr6ual45tdij" path="res://common/gameplay/combat/attack/definitions/attached_attack_definition.gd" id="14_k6bne"]
 
 [sub_resource type="Resource" id="Resource_y8gd8"]
@@ -21,13 +21,8 @@ metadata/_custom_type_script = "uid://bkgf2cii3bfri"
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ov0ts"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_2ceha"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_6rd2i"]
 radius = 100.0
-
-[sub_resource type="Resource" id="Resource_rut13"]
-script = ExtResource("8_pqotf")
-attacks = Array[ExtResource("9_eothi")]([ExtResource("10_y8gd8")])
-metadata/_custom_type_script = "uid://i2xvg4o1geuj"
 
 [sub_resource type="Resource" id="Resource_eothi"]
 script = ExtResource("14_k6bne")
@@ -92,12 +87,12 @@ script = ExtResource("5_6rd2i")
 metadata/_custom_type_script = "uid://hyy86fs5b0fs"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionModule" unique_id=448472772]
-shape = SubResource("CircleShape2D_2ceha")
+shape = SubResource("CircleShape2D_6rd2i")
 debug_color = Color(0.71200997, 0.47619218, 0.2637897, 0.41960785)
 
 [node name="CombatModule" type="Node2D" parent="Module" unique_id=1154835967 node_paths=PackedStringArray("hitbox_slots")]
 script = ExtResource("6_k6bne")
-weapons = Array[ExtResource("8_pqotf")]([SubResource("Resource_rut13"), SubResource("Resource_gu8my"), SubResource("Resource_8p6t3")])
+weapons = Array[ExtResource("8_pqotf")]([ExtResource("9_rut13"), SubResource("Resource_gu8my"), SubResource("Resource_8p6t3")])
 hitbox_slots = [NodePath("ContactHitbox"), NodePath("ChargeHitbox")]
 metadata/_custom_type_script = "uid://bb4mbrq1u7pl"
 
