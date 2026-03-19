@@ -92,10 +92,10 @@ func trigger() -> void:
         push_error("AttackDelivery.trigger: _context is null on '%s'" % name)
         return
 
-    if not _context.phases.is_empty():
-        _trigger_phases()
-    else:
-        _trigger_legacy()
+    if _context.phases.is_empty():
+        push_error("AttackDelivery.trigger: _context.phases is empty on '%s'" % name)
+
+    _trigger_phases()
 
 # -------------------------
 # Phase path (Step 2)
@@ -119,32 +119,6 @@ func _trigger_phases() -> void:
 
 func _on_phases_finished() -> void:
     queue_free()
-
-# -------------------------
-# Legacy single-effect path
-# -------------------------
-
-
-func _trigger_legacy() -> void:
-    if _context.attack_effect_scene == null:
-        push_error("AttackDelivery._trigger_legacy: no attack_effect_scene in context for '%s'" % name)
-        return
-
-    _attack_effect = _context.attack_effect_scene.instantiate() as AttackEffect
-    if _attack_effect == null:
-        push_error(
-            "AttackDelivery._trigger_legacy: attack_effect_scene did not instantiate " \
-            + "to AttackEffect in '%s'" % name,
-        )
-        return
-
-    add_child(_attack_effect)
-    _attack_effect.setup(_context)
-    _attack_effect.play()
-
-    if _wait_for_effect:
-        lifetime_timer.stop()
-        _attack_effect.connect("finished", queue_free)
 
 # -------------------------
 # Failsafe timeout

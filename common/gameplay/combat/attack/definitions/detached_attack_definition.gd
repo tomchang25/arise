@@ -22,12 +22,6 @@ extends AttackDefinition
 ## Controls how the attack moves and how long it lives.
 @export var attack_scene: PackedScene = null
 
-## [Legacy] The single effect scene to mount inside the delivery at runtime.
-## Root node must extend AttackEffect.
-## Ignored when `phases` is non-empty.
-## Keep populated for existing attacks until they are migrated to phases.
-@export var attack_effect_scene: PackedScene = null
-
 ## [New] Ordered array of effect phases for this attack.
 ## Non-empty activates the PhaseSequencer path in AttackDelivery.trigger().
 ## Each entry is an EffectPhaseDefinition describing one timed effect stage.

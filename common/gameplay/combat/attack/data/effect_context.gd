@@ -103,14 +103,12 @@ static func build(
             push_warning("EffectContext.build: PlaceAttackDefinition has no attack_scene")
             return null
         ctx.attack_scene = def.attack_scene
-        ctx.attack_effect_scene = def.attack_effect_scene
         ctx.attack_lifetime = def.lifetime
         ctx.knockback_dir = _bake_knockback_dir(source, target_position)
         ctx.phases = def.phases
 
     elif def is ProjectileAttackDefinition:
         ctx.attack_scene = def.attack_scene
-        ctx.attack_effect_scene = def.attack_effect_scene
         ctx.attack_lifetime = def.lifetime
         ctx.travel_distance = def.travel_distance
         ctx.knockback_dir = _bake_knockback_dir(source, target_position)
