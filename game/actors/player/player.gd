@@ -86,7 +86,6 @@ var _dodge_requested := false
 func _enter_tree() -> void:
     if Engine.is_editor_hint():
         _auto_wire_nodes()
-        _connect_stats_signals()
 
 
 func _ready() -> void:
@@ -96,13 +95,6 @@ func _ready() -> void:
     _auto_wire_nodes()
     _apply_data()
     _bind_modules()
-
-    if animation_module and not animation_module.animation_finished.is_connected(_on_animation_finished):
-        animation_module.animation_finished.connect(_on_animation_finished)
-
-    _connect_stats_signals()
-    _enforce_debug_modes()
-    _refresh_reach_range()
 
     queue_redraw()
 
@@ -128,7 +120,6 @@ func _unhandled_input(event: InputEvent) -> void:
 func _apply_data() -> void:
     if data == null:
         push_error("Player: no PlayerData assigned — using fallback stats.")
-        _ensure_stats()
         return
 
     # Duplicate so each instance owns its own runtime stats.
@@ -148,6 +139,9 @@ func _apply_data() -> void:
     # Listen for runtime inspector changes to debug flags.
     if not data.debug_modes_changed.is_connected(_enforce_debug_modes):
         data.debug_modes_changed.connect(_enforce_debug_modes)
+
+    if stats and not stats.stats_recalculated.is_connected(_on_stats_recalculated):
+        stats.stats_recalculated.connect(_on_stats_recalculated)
 
 
 func _ensure_stats() -> void:
@@ -239,19 +233,12 @@ func _bind_modules() -> void:
         if has_method("add_item"):
             pickup_collector.inventory_owner = self
 
-# -------------------------
-# Stats signal helpers
-# -------------------------
+    # ── Animation signals ─────────────────────────────────────────────────
+    if animation_module and not animation_module.animation_finished.is_connected(_on_animation_finished):
+        animation_module.animation_finished.connect(_on_animation_finished)
 
-
-func _connect_stats_signals() -> void:
-    if stats and not stats.stats_recalculated.is_connected(_on_stats_recalculated):
-        stats.stats_recalculated.connect(_on_stats_recalculated)
-
-
-func _disconnect_stats_signals() -> void:
-    if stats and stats.stats_recalculated.is_connected(_on_stats_recalculated):
-        stats.stats_recalculated.disconnect(_on_stats_recalculated)
+    # ── Debug modes ───────────────────────────────────────────────────────
+    _enforce_debug_modes()
 
 
 ## Update reach_detection radius from the effective range of weapon 0, attack 0.
@@ -259,9 +246,9 @@ func _refresh_reach_range() -> void:
     if reach_detection == null or combat_module == null:
         return
 
-    var attac_range := combat_module.get_attack_range(0, 0)
-    if attac_range > 0.0:
-        reach_detection.set_collision_radius(attac_range)
+    var attack_range := combat_module.get_attack_range(0, 0)
+    if attack_range > 0.0:
+        reach_detection.set_collision_radius(attack_range)
 
 # -------------------------
 # Debug modes — runtime enforcement
@@ -400,16 +387,6 @@ func set_facing_direction(direction: Vector2, state_name: StringName) -> void:
     animation_module.face_direction(direction)
     animation_module.set_blend_position(direction, state_name)
 
-
-## Combined helper — kept so old callers don't break.
-func play_actor_animation(state_name: StringName, direction: Vector2 = Vector2.ZERO, time_scale: float = 1.0) -> void:
-    if animation_module == null:
-        return
-    if direction != Vector2.ZERO:
-        set_facing_direction(direction, state_name)
-    animation_module.travel(state_name)
-    animation_module.set_time_scale(time_scale)
-
 # -------------------------
 # Public API — combat
 # -------------------------
@@ -498,11 +475,6 @@ func get_nearest_reachable_target() -> Node2D:
     return reach_detection.get_closest_target(false)
 
 
-## Alias kept for backward compatibility.
-func get_closest_attack_target() -> Node2D:
-    return get_nearest_reachable_target()
-
-
 ## True when there is a valid target in reach.
 func has_auto_attack_target() -> bool:
     return can_attack() and is_instance_valid(get_nearest_reachable_target())
@@ -510,10 +482,6 @@ func has_auto_attack_target() -> bool:
 # -------------------------
 # Public API — aim helpers
 # -------------------------
-
-
-func get_mouse_world_position() -> Vector2:
-    return get_global_mouse_position()
 
 
 func get_attack_target_position(weapon_index: int = 0, attack_index: int = 0) -> Vector2:
@@ -531,7 +499,7 @@ func get_attack_target_position(weapon_index: int = 0, attack_index: int = 0) ->
             return origin
         return origin + to_target.normalized() * attack_range
 
-    var mouse_pos := get_mouse_world_position()
+    var mouse_pos := get_global_mouse_position()
     var to_mouse := mouse_pos - origin
     if attack_range <= 0.0:
         return origin
@@ -551,7 +519,7 @@ func get_aim_direction() -> Vector2:
         if to_target != Vector2.ZERO:
             return to_target.normalized()
 
-    var to_mouse := get_mouse_world_position() - origin
+    var to_mouse := get_global_mouse_position() - origin
     if to_mouse != Vector2.ZERO:
         return to_mouse.normalized()
 
