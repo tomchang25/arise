@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://bq1jnng5ytkkd"]
+
+[ext_resource type="Script" uid="uid://b625we552ya7a" path="res://common/gameplay/combat/attack/effects/attack_effect.gd" id="1_6uust"]
+[ext_resource type="Texture2D" uid="uid://cm2c6n0ytikey" path="res://icon.svg" id="2_nybc6"]
+[ext_resource type="Script" uid="uid://co1s16xd7omkk" path="res://common/gameplay/combat/hit_detection/hitbox/hitbox.gd" id="2_ybsm4"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ybsm4"]
+radius = 80.0
+
+[node name="rpg_aoe_effect" type="Node2D" unique_id=923633256]
+script = ExtResource("1_6uust")
+metadata/_custom_type_script = "uid://b625we552ya7a"
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=2042019130]
+texture = ExtResource("2_nybc6")
+
+[node name="Hitbox" type="Area2D" parent="." unique_id=2105935588]
+script = ExtResource("2_ybsm4")
+metadata/_custom_type_script = "uid://co1s16xd7omkk"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox" unique_id=335901323]
+shape = SubResource("CircleShape2D_ybsm4")

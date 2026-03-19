@@ -10,13 +10,16 @@
 [ext_resource type="Script" uid="uid://i2xvg4o1geuj" path="res://common/gameplay/combat/attack/data/weapon_data.gd" id="8_pqotf"]
 [ext_resource type="Script" uid="uid://dqbwdw1d7k7tu" path="res://common/gameplay/combat/attack/definitions/attack_definition.gd" id="9_eothi"]
 [ext_resource type="Script" uid="uid://co1s16xd7omkk" path="res://common/gameplay/combat/hit_detection/hitbox/hitbox.gd" id="10_gu8my"]
-[ext_resource type="PackedScene" uid="uid://jla2t1i1qafl" path="res://common/gameplay/combat/attack/effects/slash_attack_effect.tscn" id="10_rut13"]
+[ext_resource type="Resource" uid="uid://dlgs8r87dcr3g" path="res://common/gameplay/combat/attack/definitions/presets/rpg_definition.tres" id="10_y8gd8"]
 [ext_resource type="Script" uid="uid://dxe0yv70mfrn4" path="res://common/gameplay/combat/attack/definitions/place_attack_definition.gd" id="11_6rd2i"]
-[ext_resource type="PackedScene" uid="uid://cr1lef2eyb6vu" path="res://common/gameplay/combat/deliveries/slash_delivery.tscn" id="11_pqotf"]
-[ext_resource type="PackedScene" uid="uid://mo52nt0sxj4w" path="res://common/gameplay/combat/attack/effects/projectile_attack_effect.tscn" id="13_eothi"]
+[ext_resource type="Script" uid="uid://cg331ejtl5ts1" path="res://common/gameplay/combat/attack/effects/slash_attack_effect.gd" id="12_n12qf"]
+[ext_resource type="Resource" uid="uid://d2s4krk5m4bxe" path="res://common/audio/presets/sfx/default_slash_audio.tres" id="13_04wdt"]
 [ext_resource type="Script" uid="uid://b44chxi8qaq70" path="res://common/gameplay/combat/attack/definitions/projectile_attack_definition.gd" id="13_k6bne"]
-[ext_resource type="PackedScene" uid="uid://yj56pi16wgud" path="res://common/gameplay/combat/deliveries/projectile_delivery.tscn" id="14_eothi"]
 [ext_resource type="Script" uid="uid://cmr6ual45tdij" path="res://common/gameplay/combat/attack/definitions/attached_attack_definition.gd" id="14_k6bne"]
+[ext_resource type="Script" uid="uid://cvs8vnlfparvx" path="res://common/gameplay/combat/deliveries/slash_delivery.gd" id="15_8p6t3"]
+[ext_resource type="Script" uid="uid://cmymyo0y1aoi7" path="res://common/gameplay/combat/attack/definitions/effect_phase_definition.gd" id="16_tu1f5"]
+[ext_resource type="Script" uid="uid://b2nujsk0u866t" path="res://common/gameplay/combat/attack/effects/projectile_attack_effect.gd" id="18_nj1f3"]
+[ext_resource type="Script" uid="uid://cnr3sxokj5em5" path="res://common/gameplay/combat/deliveries/projectile_delivery.gd" id="19_qhs43"]
 
 [sub_resource type="Resource" id="Resource_y8gd8"]
 script = ExtResource("7_t4ipe")
@@ -26,24 +29,12 @@ metadata/_custom_type_script = "uid://bkgf2cii3bfri"
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ov0ts"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_pqotf"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_2ceha"]
 radius = 100.0
 
-[sub_resource type="Resource" id="Resource_t4ipe"]
-script = ExtResource("11_6rd2i")
-attack_scene = ExtResource("11_pqotf")
-attack_effect_scene = ExtResource("10_rut13")
-max_targets = -1
-faction_target_type = 2
-
-[sub_resource type="Resource" id="Resource_pqotf"]
-script = ExtResource("13_k6bne")
-attack_scene = ExtResource("14_eothi")
-attack_effect_scene = ExtResource("13_eothi")
-
-[sub_resource type="Resource" id="Resource_n12qf"]
+[sub_resource type="Resource" id="Resource_a0w70"]
 script = ExtResource("8_pqotf")
-attacks = Array[ExtResource("9_eothi")]([SubResource("Resource_t4ipe"), SubResource("Resource_pqotf")])
+attacks = Array[ExtResource("9_eothi")]([ExtResource("10_y8gd8"), ExtResource("10_y8gd8")])
 metadata/_custom_type_script = "uid://i2xvg4o1geuj"
 
 [sub_resource type="Resource" id="Resource_eothi"]
@@ -67,6 +58,94 @@ clear_records_on_exit = true
 [sub_resource type="Resource" id="Resource_8p6t3"]
 script = ExtResource("8_pqotf")
 attacks = Array[ExtResource("9_eothi")]([SubResource("Resource_k6bne")])
+metadata/_custom_type_script = "uid://i2xvg4o1geuj"
+
+[sub_resource type="Curve" id="Curve_weeud"]
+_data = [Vector2(0, 0.1), 0.0, 0.0, 0, 0, Vector2(0.5, 0.5), 0.0, 0.0, 0, 0, Vector2(1, 0.1), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="PackedScene" id="PackedScene_gpod3"]
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"id_paths": [PackedInt32Array(), PackedInt32Array()],
+"names": PackedStringArray("SlashAttackEffect", "Node2D", "script", "radius", "arc_angle", "slash_width", "slash_audio", "Line2D", "Line2D", "points", "width_curve", "joint_mode", "Hitbox", "Area2D", "script", "metadata/_custom_type_script"),
+"node_count": 3,
+"node_ids": PackedInt32Array(630166668, 1856739242, 64655322),
+"node_paths": [NodePath("."), NodePath(".")],
+"nodes": PackedInt32Array(-1, -1, 1, 0, -1, 5, 2, 0, 3, 1, 4, 2, 5, 3, 6, 4, 0, 1073741824, 0, 8, 7, -1, 3, 9, 5, 10, 6, 11, 7, 0, 1073741825, 0, 13, 12, -1, 2, 14, 8, 15, 9, 0),
+"variants": [ExtResource("12_n12qf"), 120.0, 30.0, 5.0, ExtResource("13_04wdt"), PackedVector2Array(5, 23, 28, 13, 58, 12, 67, 29), SubResource("Curve_weeud"), 2, ExtResource("10_gu8my"), "uid://co1s16xd7omkk"],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_wor3g"]
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"id_paths": [],
+"names": PackedStringArray("SlashDelivery", "CharacterBody2D", "collision_layer", "collision_mask", "script"),
+"node_count": 1,
+"node_ids": PackedInt32Array(78817619),
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 1, 0, -1, 3, 2, 0, 3, 1, 4, 2, 0),
+"variants": [0, 4, ExtResource("15_8p6t3")],
+"version": 3
+}
+
+[sub_resource type="Resource" id="Resource_mghvi"]
+script = ExtResource("11_6rd2i")
+attack_scene = SubResource("PackedScene_wor3g")
+attack_effect_scene = SubResource("PackedScene_gpod3")
+max_targets = -1
+faction_target_type = 2
+
+[sub_resource type="Curve" id="Curve_iakvv"]
+_data = [Vector2(0, 0.8), 0.0, 0.0, 0, 0, Vector2(1, 0.2), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="PackedScene" id="PackedScene_dqxj2"]
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"id_paths": [PackedInt32Array(), PackedInt32Array()],
+"names": PackedStringArray("ProjectileAttackEffect", "Node2D", "script", "Line2D", "Line2D", "points", "width_curve", "joint_mode", "begin_cap_mode", "Hitbox", "Area2D", "script", "metadata/_custom_type_script"),
+"node_count": 3,
+"node_ids": PackedInt32Array(0, 0, 0),
+"node_paths": [NodePath("."), NodePath(".")],
+"nodes": PackedInt32Array(-1, -1, 1, 0, -1, 1, 2, 0, 0, 1073741824, 0, 4, 3, -1, 4, 5, 1, 6, 2, 7, 3, 8, 4, 0, 1073741825, 0, 10, 9, -1, 2, 11, 5, 12, 6, 0),
+"variants": [ExtResource("18_nj1f3"), PackedVector2Array(5, 23, 28, 13, 58, 12, 67, 29), SubResource("Curve_iakvv"), 2, 2, ExtResource("10_gu8my"), "uid://co1s16xd7omkk"],
+"version": 3
+}
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_yyw5i"]
+radius = 1.0
+
+[sub_resource type="PackedScene" id="PackedScene_ky7gf"]
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"id_paths": [PackedInt32Array()],
+"names": PackedStringArray("ProjectileDelivery", "CharacterBody2D", "collision_layer", "collision_mask", "script", "CollisionShape2D", "CollisionShape2D", "shape", "debug_color"),
+"node_count": 2,
+"node_ids": PackedInt32Array(78817619, 232375721),
+"node_paths": [NodePath(".")],
+"nodes": PackedInt32Array(-1, -1, 1, 0, -1, 3, 2, 0, 3, 1, 4, 2, 0, 1073741824, 0, 6, 5, -1, 2, 7, 3, 8, 4, 0),
+"variants": [0, 4, ExtResource("19_qhs43"), SubResource("CircleShape2D_yyw5i"), Color(0.736442, 0.468686, 0.0281956, 0.42)],
+"version": 3
+}
+
+[sub_resource type="Resource" id="Resource_euhj0"]
+script = ExtResource("13_k6bne")
+attack_scene = SubResource("PackedScene_ky7gf")
+attack_effect_scene = SubResource("PackedScene_dqxj2")
+
+[sub_resource type="Resource" id="Resource_pt85w"]
+script = ExtResource("8_pqotf")
+attacks = Array[ExtResource("9_eothi")]([SubResource("Resource_mghvi"), SubResource("Resource_euhj0")])
 metadata/_custom_type_script = "uid://i2xvg4o1geuj"
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jcp4x"]
@@ -109,12 +188,12 @@ script = ExtResource("5_6rd2i")
 metadata/_custom_type_script = "uid://hyy86fs5b0fs"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionModule" unique_id=448472772]
-shape = SubResource("CircleShape2D_pqotf")
+shape = SubResource("CircleShape2D_2ceha")
 debug_color = Color(0.71200997, 0.47619218, 0.2637897, 0.41960785)
 
 [node name="CombatModule" type="Node2D" parent="Module" unique_id=1154835967 node_paths=PackedStringArray("hitbox_slots")]
 script = ExtResource("6_k6bne")
-weapons = Array[ExtResource("8_pqotf")]([SubResource("Resource_n12qf"), SubResource("Resource_gu8my"), SubResource("Resource_8p6t3")])
+weapons = Array[ExtResource("8_pqotf")]([SubResource("Resource_a0w70"), SubResource("Resource_gu8my"), SubResource("Resource_8p6t3"), SubResource("Resource_pt85w")])
 hitbox_slots = [NodePath("ContactHitbox"), NodePath("ChargeHitbox")]
 metadata/_custom_type_script = "uid://bb4mbrq1u7pl"
 

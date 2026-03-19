@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="EffectPhaseDefinition" format=3 uid="uid://wiyws3x3iorw"]
+
+[ext_resource type="PackedScene" uid="uid://cwyp7xfxqkynw" path="res://common/gameplay/combat/attack/effects/rpg_scorch_effect.tscn" id="1_cey6m"]
+[ext_resource type="Script" uid="uid://cmymyo0y1aoi7" path="res://common/gameplay/combat/attack/definitions/effect_phase_definition.gd" id="1_qe5kl"]
+
+[resource]
+script = ExtResource("1_qe5kl")
+effect_scene = ExtResource("1_cey6m")
+lifetime = 10.0
+metadata/_custom_type_script = "uid://cmymyo0y1aoi7"

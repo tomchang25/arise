@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="EffectPhaseDefinition" format=3 uid="uid://c4ylh670njncp"]
+
+[ext_resource type="Script" uid="uid://cmymyo0y1aoi7" path="res://common/gameplay/combat/attack/definitions/effect_phase_definition.gd" id="1_3d0rs"]
+[ext_resource type="PackedScene" uid="uid://c1hxothl0cu4v" path="res://common/gameplay/combat/attack/effects/rpg_burn_effect.tscn" id="1_tiulq"]
+
+[resource]
+script = ExtResource("1_3d0rs")
+effect_scene = ExtResource("1_tiulq")
+lifetime = 5.0
+damage_interval = 0.5
+metadata/_custom_type_script = "uid://cmymyo0y1aoi7"

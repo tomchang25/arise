@@ -9,6 +9,7 @@ var _travel_distance: float = 0.0
 func setup(ctx: EffectContext) -> void:
     _wait_for_effect = true
     super(ctx)
+    arm()
 
 
 func launch(direction: Vector2, speed: float, travel_distance: float) -> void:
