@@ -15,13 +15,32 @@ extends Resource
 ##   phases = [ one EffectPhaseDefinition with effect_scene = slash_effect.tscn ]
 ##
 ## RPG explosion chain:
-##   phases[0]  large AOE burst   → effect_scene = aoe_effect.tscn,   lifetime = 0.2
-##   phases[1]  burn DoT          → effect_scene = burn_effect.tscn,  lifetime = 10.0
-##   phases[2]  scorch mark VFX   → effect_scene = null,              lifetime = 30.0
+##   phases[0]  AOE burst  → effect_scene = aoe_effect.tscn,  lifetime = 0.2,
+##                           knockback_mode = OUTWARD, knockback_force = 200.0
+##   phases[1]  burn DoT   → effect_scene = burn_effect.tscn, lifetime = 5.0,
+##                           knockback_mode = INWARD,  knockback_force = 80.0
+##   phases[2]  scorch VFX → effect_scene = null, lifetime = 10.0
 ##
 ## VFX-only phase:
 ##   Set effect_scene = null. PhaseSequencer will wait the lifetime duration and
 ##   then advance without spawning any AttackEffect or Hitbox.
+
+## Controls how knockback direction is computed for victims hit in this phase.
+##
+## FIXED   — use knockback_dir as baked at spawn time (travel direction of the
+##           projectile / facing direction of the caster). Default behaviour.
+##           Good for: melee slashes, linear projectiles.
+##
+## OUTWARD — push victims away from the AttackEffect's world position at hit time.
+##           Good for: explosions, shockwaves.
+##
+## INWARD  — pull victims toward the AttackEffect's world position at hit time.
+##           Good for: implosions, vortex/suck effects, burn DoT pulling to center.
+enum KnockbackMode {
+    FIXED,
+    OUTWARD,
+    INWARD,
+}
 
 @export_group("Scene")
 ## The AttackEffect scene to instantiate for this phase.
@@ -37,6 +56,9 @@ extends Resource
 @export var lifetime: float = 0.2
 
 @export_group("Hit")
+## How knockback direction is determined for this phase. See KnockbackMode.
+@export var knockback_mode: KnockbackMode = KnockbackMode.FIXED
+
 ## Knockback force applied to victims hit during this phase.
 @export var knockback_force: float = 40.0
 

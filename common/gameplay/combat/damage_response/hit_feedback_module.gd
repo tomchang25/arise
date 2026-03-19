@@ -306,24 +306,46 @@ func _play_audio_event(ev: AudioEvent) -> void:
 # -------------------------
 
 
-## Resolve the direction an attack came from — used for both knockback and particles.
+## Resolve knockback direction, respecting the phase's KnockbackMode.
 ##
-## Priority:
-##   1. knockback_source (live node — contact attacks). Computed source → victim at hit time.
-##   2. knockback_dir (pre-baked — melee / projectile travel direction).
-##   3. Vector2.ZERO if neither is available.
+## FIXED (default):
+##   • knockback_source valid → victim − source (contact/attached attacks).
+##   • knockback_dir set      → baked travel direction (projectile/melee).
+##
+## OUTWARD:
+##   Push victim away from the effect center (knockback_source = AttackEffect node).
+##   Direction = victim − source.
+##
+## INWARD:
+##   Pull victim toward the effect center (knockback_source = AttackEffect node).
+##   Direction = source − victim (negated OUTWARD).
 func _resolve_hit_dir(info: EffectContext) -> Vector2:
     if info == null:
         return Vector2.ZERO
 
-    # Contact attacks: source node is live — always correct at hit time.
-    if is_instance_valid(info.knockback_source) and owner is Node2D:
-        var dir := ((owner as Node2D).global_position - info.knockback_source.global_position).normalized()
-        if dir != Vector2.ZERO:
-            return dir
+    if not owner is Node2D:
+        return Vector2.ZERO
 
-    # Fire-and-forget attacks: direction was baked at spawn time.
-    if info.knockback_dir != Vector2.ZERO:
-        return info.knockback_dir.normalized()
+    var victim_pos := (owner as Node2D).global_position
+
+    match info.knockback_mode:
+        EffectPhaseDefinition.KnockbackMode.OUTWARD:
+            if is_instance_valid(info.knockback_source):
+                var dir := (victim_pos - info.knockback_source.global_position).normalized()
+                if dir != Vector2.ZERO:
+                    return dir
+        EffectPhaseDefinition.KnockbackMode.INWARD:
+            if is_instance_valid(info.knockback_source):
+                var dir := (info.knockback_source.global_position - victim_pos).normalized()
+                if dir != Vector2.ZERO:
+                    return dir
+        EffectPhaseDefinition.KnockbackMode.FIXED, _:
+            if is_instance_valid(info.knockback_source):
+                var dir := (victim_pos - info.knockback_source.global_position).normalized()
+                if dir != Vector2.ZERO:
+                    return dir
+
+            if info.knockback_dir != Vector2.ZERO:
+                return info.knockback_dir.normalized()
 
     return Vector2.ZERO

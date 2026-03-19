@@ -19,6 +19,11 @@ func launch(direction: Vector2, speed: float, travel_distance: float) -> void:
     rotation = _direction.angle()
 
 
+func trigger() -> void:
+    super.trigger()
+    set_physics_process(false)
+
+
 func _physics_process(delta: float) -> void:
     var collision := move_and_collide(_direction * _speed * delta)
     if collision:
@@ -31,5 +36,4 @@ func _physics_process(delta: float) -> void:
 
 
 func _on_wall_hit() -> void:
-    set_physics_process(false)
     trigger()

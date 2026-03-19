@@ -2,6 +2,8 @@
 
 [ext_resource type="Script" uid="uid://l473hckyjaa" path="res://common/gameplay/combat/deliveries/rpg_delivery.gd" id="1_mg8ju"]
 [ext_resource type="Texture2D" uid="uid://cm2c6n0ytikey" path="res://icon.svg" id="2_2xtuc"]
+[ext_resource type="Script" uid="uid://dgc0y5xwfamvs" path="res://common/gameplay/combat/deliveries/trigger_component.gd" id="3_adtdl"]
+[ext_resource type="Script" uid="uid://co1s16xd7omkk" path="res://common/gameplay/combat/hit_detection/hitbox/hitbox.gd" id="3_t5m5a"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_g51n4"]
 radius = 4.0
@@ -17,3 +19,15 @@ texture = ExtResource("2_2xtuc")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1937140923]
 shape = SubResource("CircleShape2D_g51n4")
+
+[node name="TriggerComponent" type="Node2D" parent="." unique_id=1596333544]
+script = ExtResource("3_adtdl")
+mode = 2
+detection_radius = 8.0
+metadata/_custom_type_script = "uid://dgc0y5xwfamvs"
+
+[node name="Hitbox" type="Area2D" parent="TriggerComponent" unique_id=1027317628]
+collision_layer = 0
+collision_mask = 0
+script = ExtResource("3_t5m5a")
+metadata/_custom_type_script = "uid://co1s16xd7omkk"

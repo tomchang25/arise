@@ -12,6 +12,7 @@ script = ExtResource("1_6uust")
 metadata/_custom_type_script = "uid://b625we552ya7a"
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=2042019130]
+modulate = Color(1, 1, 1, 0.19607843)
 texture = ExtResource("2_nybc6")
 
 [node name="Hitbox" type="Area2D" parent="." unique_id=2105935588]

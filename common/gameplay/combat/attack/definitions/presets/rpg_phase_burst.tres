@@ -6,3 +6,6 @@
 [resource]
 script = ExtResource("2_3sjn2")
 effect_scene = ExtResource("1_copp6")
+knockback_mode = 1
+knockback_force = 100.0
+max_targets = -1

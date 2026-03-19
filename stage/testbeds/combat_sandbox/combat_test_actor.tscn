@@ -10,14 +10,8 @@
 [ext_resource type="Script" uid="uid://i2xvg4o1geuj" path="res://common/gameplay/combat/attack/data/weapon_data.gd" id="8_pqotf"]
 [ext_resource type="Script" uid="uid://dqbwdw1d7k7tu" path="res://common/gameplay/combat/attack/definitions/attack_definition.gd" id="9_eothi"]
 [ext_resource type="Script" uid="uid://co1s16xd7omkk" path="res://common/gameplay/combat/hit_detection/hitbox/hitbox.gd" id="10_gu8my"]
-[ext_resource type="PackedScene" uid="uid://jla2t1i1qafl" path="res://common/gameplay/combat/attack/effects/slash_attack_effect.tscn" id="10_rut13"]
-[ext_resource type="Script" uid="uid://dxe0yv70mfrn4" path="res://common/gameplay/combat/attack/definitions/place_attack_definition.gd" id="11_6rd2i"]
-[ext_resource type="PackedScene" uid="uid://cr1lef2eyb6vu" path="res://common/gameplay/combat/deliveries/slash_delivery.tscn" id="11_pqotf"]
-[ext_resource type="PackedScene" uid="uid://mo52nt0sxj4w" path="res://common/gameplay/combat/attack/effects/projectile_attack_effect.tscn" id="13_eothi"]
-[ext_resource type="Script" uid="uid://b44chxi8qaq70" path="res://common/gameplay/combat/attack/definitions/projectile_attack_definition.gd" id="13_k6bne"]
-[ext_resource type="PackedScene" uid="uid://yj56pi16wgud" path="res://common/gameplay/combat/deliveries/projectile_delivery.tscn" id="14_eothi"]
+[ext_resource type="Resource" uid="uid://dlgs8r87dcr3g" path="res://common/gameplay/combat/attack/definitions/presets/rpg_definition.tres" id="10_y8gd8"]
 [ext_resource type="Script" uid="uid://cmr6ual45tdij" path="res://common/gameplay/combat/attack/definitions/attached_attack_definition.gd" id="14_k6bne"]
-[ext_resource type="Script" uid="uid://cmymyo0y1aoi7" path="res://common/gameplay/combat/attack/definitions/effect_phase_definition.gd" id="16_tu1f5"]
 
 [sub_resource type="Resource" id="Resource_y8gd8"]
 script = ExtResource("7_t4ipe")
@@ -30,34 +24,9 @@ metadata/_custom_type_script = "uid://bkgf2cii3bfri"
 [sub_resource type="CircleShape2D" id="CircleShape2D_2ceha"]
 radius = 100.0
 
-[sub_resource type="Resource" id="Resource_04wdt"]
-script = ExtResource("16_tu1f5")
-effect_scene = ExtResource("10_rut13")
-knockback_force = 200.0
-metadata/_custom_type_script = "uid://cmymyo0y1aoi7"
-
-[sub_resource type="Resource" id="Resource_tu1f5"]
-script = ExtResource("11_6rd2i")
-attack_scene = ExtResource("11_pqotf")
-phases = Array[ExtResource("16_tu1f5")]([SubResource("Resource_04wdt")])
-metadata/_custom_type_script = "uid://dxe0yv70mfrn4"
-
-[sub_resource type="Resource" id="Resource_nj1f3"]
-script = ExtResource("16_tu1f5")
-effect_scene = ExtResource("13_eothi")
-lifetime = 10.0
-knockback_force = 100.0
-metadata/_custom_type_script = "uid://cmymyo0y1aoi7"
-
-[sub_resource type="Resource" id="Resource_qhs43"]
-script = ExtResource("13_k6bne")
-attack_scene = ExtResource("14_eothi")
-phases = Array[ExtResource("16_tu1f5")]([SubResource("Resource_nj1f3")])
-metadata/_custom_type_script = "uid://b44chxi8qaq70"
-
-[sub_resource type="Resource" id="Resource_a0w70"]
+[sub_resource type="Resource" id="Resource_rut13"]
 script = ExtResource("8_pqotf")
-attacks = Array[ExtResource("9_eothi")]([SubResource("Resource_tu1f5"), SubResource("Resource_qhs43")])
+attacks = Array[ExtResource("9_eothi")]([ExtResource("10_y8gd8")])
 metadata/_custom_type_script = "uid://i2xvg4o1geuj"
 
 [sub_resource type="Resource" id="Resource_eothi"]
@@ -128,7 +97,7 @@ debug_color = Color(0.71200997, 0.47619218, 0.2637897, 0.41960785)
 
 [node name="CombatModule" type="Node2D" parent="Module" unique_id=1154835967 node_paths=PackedStringArray("hitbox_slots")]
 script = ExtResource("6_k6bne")
-weapons = Array[ExtResource("8_pqotf")]([SubResource("Resource_a0w70"), SubResource("Resource_gu8my"), SubResource("Resource_8p6t3")])
+weapons = Array[ExtResource("8_pqotf")]([SubResource("Resource_rut13"), SubResource("Resource_gu8my"), SubResource("Resource_8p6t3")])
 hitbox_slots = [NodePath("ContactHitbox"), NodePath("ChargeHitbox")]
 metadata/_custom_type_script = "uid://bb4mbrq1u7pl"
 

@@ -34,14 +34,19 @@ var definition: AttackDefinition = null
 ## Pre-baked travel/facing direction. Set for detached attacks (Place, Projectile).
 ## Baked at spawn so the direction reflects where the attack was aimed, not where
 ## the caster is standing when the hit lands.
+## Used by HitFeedbackModule when knockback_mode = FIXED.
 var knockback_dir: Vector2 = Vector2.ZERO
 
 ## Live node reference to the attack origin for Attached attacks.
 ## Victims compute knockback direction as (victim → knockback_source) at hit time.
-## Takes priority over knockback_dir when set.
+## Takes priority over knockback_dir when set (for FIXED mode on attached attacks).
 var knockback_source: Node2D = null
 
 var knockback_force: float = 0.0
+
+## How knockback direction is computed at hit time. Forwarded from EffectPhaseDefinition.
+## HitFeedbackModule reads this alongside knockback_source to resolve the final impulse.
+var knockback_mode: EffectPhaseDefinition.KnockbackMode = EffectPhaseDefinition.KnockbackMode.FIXED
 
 ## Factions this attack can hit. Resolved from caster faction + definition at spawn.
 var target_factions: Array = []
@@ -118,6 +123,8 @@ static func build(
         ctx.max_targets = def.max_targets
         ctx.damage_interval = def.damage_interval
         ctx.clear_records_on_exit = def.clear_records_on_exit
+        # Attached attacks always use FIXED mode — direction is victim → source at hit time.
+        ctx.knockback_mode = EffectPhaseDefinition.KnockbackMode.FIXED
 
     else:
         push_error("EffectContext.build: unrecognised AttackDefinition subclass: %s" % def.get_class())
@@ -133,8 +140,8 @@ static func build(
 ## Shared spawn-time data (knockback_dir, target_factions, source_stats, definition)
 ## is copied by reference — baked at fire time and identical for all phases.
 ##
-## Hit config is read directly from the EffectPhaseDefinition — each phase is
-## fully authoritative, no sentinel / inherit logic.
+## Hit config and knockback_mode are read directly from the EffectPhaseDefinition —
+## each phase is fully authoritative, no sentinel / inherit logic.
 func build_phase_override(phase_def: EffectPhaseDefinition) -> EffectContext:
     var phase_ctx := EffectContext.new()
 
@@ -149,6 +156,7 @@ func build_phase_override(phase_def: EffectPhaseDefinition) -> EffectContext:
     phase_ctx.attack_lifetime = phase_def.lifetime
 
     # Hit config — phase is fully authoritative, read directly.
+    phase_ctx.knockback_mode = phase_def.knockback_mode
     phase_ctx.knockback_force = phase_def.knockback_force
     phase_ctx.max_targets = phase_def.max_targets
     phase_ctx.damage_interval = phase_def.damage_interval

@@ -35,7 +35,6 @@ extends CharacterBody2D
 var lifetime_timer: Timer
 
 var _context: EffectContext
-var _attack_effect: AttackEffect
 var _sequencer: PhaseSequencer
 var _trigger_component: TriggerComponent
 
