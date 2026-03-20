@@ -1,5 +1,5 @@
 class_name ScorchEffect
-extends VfxOnlyEffect
+extends VfxEffect
 ## Phase 2 of the telegraph AOE attack — lingering scorch mark.
 ##
 ## Draws a filled scorch decal at the blast centre. No Hitbox, no damage.
@@ -33,10 +33,10 @@ extends VfxOnlyEffect
 var _fill: Polygon2D
 var _edge: Line2D
 
-
 # ─────────────────────────────────────────────
 # PhaseEffect / AttackEffect overrides
 # ─────────────────────────────────────────────
+
 
 ## VfxOnlyEffect.setup() zeros max_targets and skips Hitbox wiring — call super.
 func setup(ctx: EffectContext) -> void:
@@ -52,10 +52,10 @@ func play(duration: float = 10.0) -> void:
     finished.emit()
     queue_free()
 
-
 # ─────────────────────────────────────────────
 # Internal helpers
 # ─────────────────────────────────────────────
+
 
 func _build_decal() -> void:
     # Filled polygon.
@@ -83,14 +83,15 @@ func _build_decal() -> void:
 ## Wait the active portion, then tween the alpha to zero.
 func _run_lifetime(duration: float) -> void:
     var active_time := duration * (1.0 - fade_fraction)
-    var fade_time   := duration * fade_fraction
+    var fade_time := duration * fade_fraction
 
     await get_tree().create_timer(active_time).timeout
 
     # Fade the whole effect node so fill + edge fade together.
     var tween := create_tween()
     tween.tween_property(
-        self, "modulate:a",
+        self,
+        "modulate:a",
         0.0,
         fade_time,
     ).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)

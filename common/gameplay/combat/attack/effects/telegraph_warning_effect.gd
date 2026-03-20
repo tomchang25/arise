@@ -1,5 +1,5 @@
 class_name TelegraphWarningEffect
-extends AttackEffect
+extends VfxEffect
 ## Phase 0 of the telegraph AOE attack.
 ##
 ## Displays a warning circle at the target position and pulses it
@@ -47,8 +47,7 @@ var _ring: Line2D
 ## setup() is called by PhaseSequencer right after instantiation.
 ## We skip super.setup() because there is intentionally no Hitbox here.
 func setup(_ctx: EffectContext) -> void:
-    max_targets = 0   # VFX-only — AttackEffect base needs this zeroed.
-    # hitbox stays null; no wiring needed.
+    pass
 
 
 ## play() drives the warning animation for `duration` seconds, then emits finished.

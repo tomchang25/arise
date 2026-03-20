@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://b4ra5go2v2qit"]
+
+[ext_resource type="Script" uid="uid://c7dy3uq1mox8b" path="res://stage/testbeds/phase_effect_preview/phase_effect_preview.gd" id="1_rnq82"]
+[ext_resource type="PackedScene" uid="uid://clxc3oxcvglpk" path="res://common/gameplay/combat/attack/effects/presets/telegraph_warning_effect.tscn" id="2_61f30"]
+
+[node name="PhaseEffectPreview" type="Node2D" unique_id=1630797439]
+script = ExtResource("1_rnq82")
+effect_scene = ExtResource("2_61f30")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=378855795]
