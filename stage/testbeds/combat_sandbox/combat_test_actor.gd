@@ -18,6 +18,7 @@ const ACTION_CHARGE := &"test_charge"
 # Exports
 # -------------------------
 @export var stats: Stats
+@export var weapons: Array[WeaponData]
 
 @export_group("Modules")
 @export var movement_module: MovementModule
@@ -73,7 +74,7 @@ func _bind_modules() -> void:
         movement_module.set_manual_mode()
 
     if combat_module:
-        combat_module.setup(stats)
+        combat_module.setup(stats, weapons)
 
     if reach_detection:
         var attac_range := combat_module.get_attack_range(fire_weapon_index, 0) if combat_module else 50.0
@@ -159,6 +160,7 @@ func _fire_attack(weapon_index: int, attack_index: int) -> void:
     var target_pos := _get_target_position(weapon_index, attack_index)
     combat_module.perform_attack(weapon_index, attack_index, target_pos)
     combat_module.end_attack(weapon_index, attack_index)
+
 
 func _get_target_position(weapon_index: int, attack_index: int) -> Vector2:
     var attac_range := combat_module.get_attack_range(weapon_index, attack_index)
