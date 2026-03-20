@@ -73,7 +73,7 @@ func _run_next_phase() -> void:
 
     var phase_def: EffectPhaseDefinition = _phases[_current_index]
     _current_index += 1
-
+    
     if phase_def == null:
         push_warning(
             "PhaseSequencer: null EffectPhaseDefinition at index %d — skipping" \

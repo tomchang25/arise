@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://clxc3oxcvglpk"]
+
+[ext_resource type="Script" uid="uid://c2v4obm8nq3gh" path="res://common/gameplay/combat/attack/effects/telegraph_warning_effect.gd" id="1_xy1jy"]
+
+[node name="TelegraphWarningEffect" type="Node2D" unique_id=416472549]
+script = ExtResource("1_xy1jy")

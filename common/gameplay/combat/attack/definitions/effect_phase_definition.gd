@@ -60,7 +60,7 @@ enum KnockbackMode {
 @export var knockback_mode: KnockbackMode = KnockbackMode.FIXED
 
 ## Knockback force applied to victims hit during this phase.
-@export var knockback_force: float = 40.0
+@export var knockback_force: float = 0.0
 
 ## Maximum number of victims this phase's hitbox can hit before disabling itself.
 ## -1 = unlimited.
