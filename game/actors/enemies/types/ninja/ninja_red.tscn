@@ -83,6 +83,7 @@ vframes = 7
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=617274679]
 rotation = 1.5708
 shape = SubResource("CapsuleShape2D_body")
+disabled = true
 
 [node name="Hurtbox" type="Area2D" parent="." unique_id=375287305]
 collision_layer = 2
@@ -201,7 +202,7 @@ drop_profile = ExtResource("24_drop")
 
 [node name="BeehaveTree" type="Node" parent="." unique_id=1035777613 node_paths=PackedStringArray("blackboard", "actor")]
 script = ExtResource("26_btree")
-blackboard = NodePath("@Node@45761")
+blackboard = NodePath("@Node@19034")
 actor = NodePath("..")
 
 [node name="MainAI" type="Node" parent="BeehaveTree" unique_id=416008838]

@@ -69,7 +69,7 @@ base_encounter_config = ExtResource("2_60flp")
 base_groups_per_wave = 5
 groups_increment_per_wave = 5
 
-[node name="VFX" type="Node2D" parent="." unique_id=1853950831 groups=["damage_number", "loot_root"]]
+[node name="VFX" type="Node2D" parent="." unique_id=1853950831 groups=["attacks", "damage_number", "loot_root"]]
 
 [node name="Pickups" type="Node2D" parent="." unique_id=1638146363 groups=["loot_root"]]
 
