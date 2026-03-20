@@ -105,7 +105,6 @@ func _unhandled_input(event: InputEvent) -> void:
         get_viewport().set_input_as_handled()
         return
 
-
 # -------------------------
 # Hotkey Handlers
 # -------------------------
@@ -161,7 +160,6 @@ func _on_toggle_pressed() -> void:
         if print_hotkey_log:
             Debug.log("Demo: encounter started")
 
-
 # -------------------------
 # Encounter Signals
 # -------------------------
@@ -179,8 +177,6 @@ func _on_group_spawned(group: EnemyGroup) -> void:
 
     if print_hotkey_log:
         Debug.log("Demo: group spawned — members=%s" % group.get_member_count())
-
-
 
 # -------------------------
 # Placement
@@ -211,7 +207,6 @@ func _build_spawn_validator() -> SpawnPositionValidator:
     validator.excluded_radius = player_safe_radius
 
     return validator
-
 
 # -------------------------
 # Internal Helpers
@@ -262,8 +257,7 @@ func _update_debug_label() -> void:
     var budget_str := "%s" % groups_to_kill if groups_to_kill >= 0 else "∞"
 
     debug_label.text = (
-        "\n"
-        . join(
+        "\n".join(
             [
                 "[F] Force Spawn",
                 "[C] Clear",
@@ -273,7 +267,7 @@ func _update_debug_label() -> void:
                 "active_groups=%s" % active_groups,
                 "active_members=%s" % active_members,
                 "killed=%s / budget=%s" % [groups_killed, budget_str],
-            ]
+            ],
         )
     )
 

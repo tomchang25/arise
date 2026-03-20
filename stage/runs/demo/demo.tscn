@@ -6,8 +6,8 @@
 [ext_resource type="PackedScene" uid="uid://i0w72n7e6is8" path="res://stage/systems/player_with_camera.tscn" id="2_pxgj2"]
 [ext_resource type="Script" uid="uid://qonxf7sblp5f" path="res://common/gameplay/encounter/encounter_controller.gd" id="4_a6hy3"]
 [ext_resource type="Script" uid="uid://bwm8u3xypysu8" path="res://common/gameplay/despawn/despawn_controller.gd" id="5_60flp"]
-[ext_resource type="Script" uid="uid://wave_defense_ctrl" path="res://game/wave_defense/wave_defense_controller.gd" id="6_wvdef"]
-[ext_resource type="PackedScene" uid="uid://wave_hud_scene" path="res://game/ui/hud/wave_hud.tscn" id="7_wavhud"]
+[ext_resource type="Script" uid="uid://b1r85egboq2ak" path="res://game/wave_defense/wave_defense_controller.gd" id="6_wvdef"]
+[ext_resource type="PackedScene" path="res://game/ui/hud/wave_hud.tscn" id="7_wavhud"]
 
 [node name="Demo" type="Node2D" unique_id=535920825 node_paths=PackedStringArray("player", "player_spawn", "enemies_root", "debug_label", "encounter_controller", "despawn_controller", "wave_defense_controller", "wave_hud")]
 script = ExtResource("1_a6hy3")
@@ -17,8 +17,8 @@ enemies_root = NodePath("EnemiesRoot")
 debug_label = NodePath("UI/DebugLabel")
 encounter_controller = NodePath("EncounterController")
 despawn_controller = NodePath("DespawnController")
-encounter_config = ExtResource("2_60flp")
 wave_defense_controller = NodePath("WaveDefenseController")
+encounter_config = ExtResource("2_60flp")
 wave_hud = NodePath("UI/WaveHUD")
 
 [node name="Tilemaps" type="Node2D" parent="." unique_id=606999450]
@@ -66,7 +66,8 @@ metadata/_custom_type_script = "uid://bwm8u3xypysu8"
 script = ExtResource("6_wvdef")
 encounter_controller = NodePath("../EncounterController")
 base_encounter_config = ExtResource("2_60flp")
-metadata/_custom_type_script = "uid://wave_defense_ctrl"
+base_groups_per_wave = 5
+groups_increment_per_wave = 5
 
 [node name="VFX" type="Node2D" parent="." unique_id=1853950831 groups=["damage_number", "loot_root"]]
 
@@ -80,4 +81,4 @@ offset_bottom = 22.0
 theme_override_font_sizes/font_size = 6
 metadata/_edit_use_anchors_ = true
 
-[node name="WaveHUD" parent="UI" instance=ExtResource("7_wavhud")]
+[node name="WaveHUD" parent="UI" unique_id=231930506 instance=ExtResource("7_wavhud")]
