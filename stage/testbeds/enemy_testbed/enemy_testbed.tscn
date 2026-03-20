@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://caxp8curqi3sy"]
 
 [ext_resource type="PackedScene" uid="uid://dbhtrssgng58f" path="res://game/actors/player/player.tscn" id="1_aa6vn"]
+[ext_resource type="Script" uid="uid://bq5c0poarlg4h" path="res://stage/testbeds/enemy_testbed/enemy_testbed.gd" id="1_bmphv"]
 [ext_resource type="PackedScene" uid="uid://31x7n43mme6c" path="res://game/actors/enemies/types/ninja/ninja_red.tscn" id="2_bmphv"]
 [ext_resource type="Resource" uid="uid://bq584j3uqsyau" path="res://game/actors/enemies/types/slime/presets/slime_drop_profile.tres" id="3_f4h17"]
 [ext_resource type="Script" uid="uid://boqrgdnjxi8n8" path="res://game/actors/enemies/enemy_data.gd" id="4_42owv"]
@@ -18,7 +19,7 @@ base_damage = 8.0
 base_defense = 5.0
 invuln_time = 0.01
 
-[sub_resource type="Resource" id="Resource_r6n7q"]
+[sub_resource type="Resource" id="Resource_bmphv"]
 resource_local_to_scene = true
 script = ExtResource("4_42owv")
 stats = SubResource("Resource_bekhx")
@@ -26,11 +27,20 @@ weapons = Array[ExtResource("6_7sg33")]([ExtResource("7_4407i")])
 drop_profile = ExtResource("3_f4h17")
 metadata/_custom_type_script = "uid://boqrgdnjxi8n8"
 
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_aa6vn"]
+vertices = PackedVector2Array(799.84375, -3.2890625, 716.8203, 408.97656, -97.203125, 407.02344, -25.5625, -23.78125)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-34, -34, 812, -13, 725, 419, -109, 417)])
+
 [node name="EnemyTestbed" type="Node2D" unique_id=349203210]
+script = ExtResource("1_bmphv")
 
 [node name="Player" parent="." unique_id=1080162393 instance=ExtResource("1_aa6vn")]
 position = Vector2(50, 80)
 
 [node name="Ninja_red" parent="." unique_id=1967515506 instance=ExtResource("2_bmphv")]
-position = Vector2(170, 80)
-data = SubResource("Resource_r6n7q")
+position = Vector2(500, 200)
+data = SubResource("Resource_bmphv")
+
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="." unique_id=1132032638]
+navigation_polygon = SubResource("NavigationPolygon_aa6vn")

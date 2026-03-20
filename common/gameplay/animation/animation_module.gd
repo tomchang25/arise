@@ -65,14 +65,14 @@ func has_playback() -> bool:
 # -------------------------
 
 
-func travel(state_name: StringName) -> void:
+func travel(state_name: StringName, force_restart: bool = false) -> void:
     if not enabled:
         return
 
     if _playback == null:
         return
 
-    if _playback.get_current_node() == state_name:
+    if _playback.get_current_node() == state_name and force_restart:
         _playback.start(state_name)
     else:
         _playback.travel(state_name)
