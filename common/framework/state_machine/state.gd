@@ -5,6 +5,11 @@ signal transition_requested(from: State, to: int)
 
 @export var state_id: int = -1
 
+## If false, external request_transition() calls on StateMachine are ignored.
+## Use this for states that must run to completion (e.g. HEAVY_ATTACK).
+## Internal change_state() from within the state itself is always allowed.
+@export var interruptible: bool = true
+
 var _locked := false
 
 
@@ -51,6 +56,9 @@ func physics_update(delta: float) -> void:
     _physics_update(delta)
 
 
+## Called by the state itself to move to the next state.
+## This is the ONLY way a state should trigger its own transitions.
+## External systems must use StateMachine.request_transition() instead.
 func change_state(to: int) -> void:
     if _locked:
         return

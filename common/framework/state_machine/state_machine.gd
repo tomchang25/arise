@@ -5,7 +5,10 @@ extends Node
 @onready var target: Node = owner
 
 var current_state: State
-var states: Dictionary = {}
+var states: Dictionary = { }
+
+## Guards against re-entrant transitions triggered during enter() or exit().
+var _transitioning: bool = false
 
 
 func _ready() -> void:
@@ -47,7 +50,14 @@ func _physics_process(delta: float) -> void:
         current_state.physics_update(delta)
 
 
+## Internal path — only states call this via change_state().
+## The `from` check ensures a stale or already-exited state
+## cannot corrupt the FSM with a late-arriving signal.
 func _on_transition_requested(from: State, to: int) -> void:
+    if _transitioning:
+        push_warning("StateMachine: transition requested mid-transition from '%s', ignoring" % from.name)
+        return
+
     if from != current_state:
         return
 
@@ -59,6 +69,40 @@ func _on_transition_requested(from: State, to: int) -> void:
     if new_state == current_state:
         return
 
+    _do_transition(new_state)
+
+
+## External path — called by the actor (e.g. on damage, or from Beehave).
+## Respects the current state's interruptible flag.
+## Use force = true only when the transition must happen regardless
+## (e.g. instant death, cutscene takeover).
+func request_transition(to: int, force: bool = false) -> void:
+    if _transitioning:
+        push_warning("StateMachine: request_transition called mid-transition to id %s, ignoring" % str(to))
+        return
+
+    if current_state == null:
+        return
+
+    if not states.has(to):
+        push_warning("StateMachine: missing target state id %s" % str(to))
+        return
+
+    if not force and not current_state.interruptible:
+        return
+
+    var new_state := states[to] as State
+    if new_state == current_state:
+        return
+
+    _do_transition(new_state)
+
+
+## Shared transition logic. Never call this directly — use
+## _on_transition_requested (internal) or request_transition (external).
+func _do_transition(new_state: State) -> void:
+    _transitioning = true
     current_state.exit()
     current_state = new_state
     current_state.enter()
+    _transitioning = false
