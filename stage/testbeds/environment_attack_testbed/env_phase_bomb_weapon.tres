@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="EnvironmentAttackDefinition" format=3 uid="uid://higu60uyj0ra"]
+
+[ext_resource type="PackedScene" uid="uid://cr1lef2eyb6vu" path="res://common/gameplay/combat/attack/deliveries/slash_delivery.tscn" id="1_uu42l"]
+[ext_resource type="Script" uid="uid://cmymyo0y1aoi7" path="res://common/gameplay/combat/attack/definitions/effect_phase_definition.gd" id="2_et5lw"]
+[ext_resource type="Resource" uid="uid://bvdrpba1xnfyj" path="res://stage/testbeds/environment_attack_testbed/env_phase_warning.tres" id="3_w8mkt"]
+[ext_resource type="Resource" uid="uid://ha22thxe37vq" path="res://stage/testbeds/environment_attack_testbed/env_phase_burst.tres" id="4_ripro"]
+[ext_resource type="Resource" uid="uid://bb47mrennhhbk" path="res://stage/testbeds/environment_attack_testbed/env_phase_scorch.tres" id="5_dq048"]
+[ext_resource type="Script" uid="uid://7sgvq4vvy76" path="res://common/gameplay/combat/environment/environment_attack_definition.gd" id="6_mln64"]
+
+[resource]
+script = ExtResource("6_mln64")
+lifetime = 30.0
+attack_scene = ExtResource("1_uu42l")
+phases = Array[ExtResource("2_et5lw")]([ExtResource("3_w8mkt"), ExtResource("4_ripro"), ExtResource("5_dq048")])
+metadata/_custom_type_script = "uid://7sgvq4vvy76"

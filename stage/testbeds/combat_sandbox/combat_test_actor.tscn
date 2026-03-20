@@ -4,11 +4,12 @@
 [ext_resource type="Texture2D" uid="uid://cm2c6n0ytikey" path="res://icon.svg" id="2_t2wgf"]
 [ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/gameplay/combat/hit_detection/hurtbox/hurtbox.gd" id="3_rut13"]
 [ext_resource type="Script" uid="uid://w30s7yqi1p3d" path="res://common/gameplay/movement/movement_module.gd" id="4_ov0ts"]
+[ext_resource type="Script" uid="uid://dqbwdw1d7k7tu" path="res://common/gameplay/combat/attack/definitions/attack_definition.gd" id="4_t2wgf"]
 [ext_resource type="Script" uid="uid://hyy86fs5b0fs" path="res://common/gameplay/detection/detection_module.gd" id="5_6rd2i"]
+[ext_resource type="Resource" uid="uid://dv8mq2ml0rp3s" path="res://common/gameplay/combat/attack/definitions/presets/rpg_recursive_definition.tres" id="5_rut13"]
 [ext_resource type="Script" uid="uid://bb4mbrq1u7pl" path="res://common/gameplay/combat/combat_module.gd" id="6_k6bne"]
 [ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="7_t4ipe"]
 [ext_resource type="Script" uid="uid://i2xvg4o1geuj" path="res://common/gameplay/combat/attack/data/weapon_data.gd" id="8_pqotf"]
-[ext_resource type="Resource" uid="uid://b62wxskj4xd5u" path="res://stage/testbeds/combat_sandbox/simple_slash_bullet.tres" id="9_rut13"]
 [ext_resource type="Script" uid="uid://co1s16xd7omkk" path="res://common/gameplay/combat/hit_detection/hitbox/hitbox.gd" id="10_gu8my"]
 
 [sub_resource type="Resource" id="Resource_y8gd8"]
@@ -17,9 +18,14 @@ mana = 100.0
 base_damage = 100.0
 metadata/_custom_type_script = "uid://bkgf2cii3bfri"
 
+[sub_resource type="Resource" id="Resource_ov0ts"]
+script = ExtResource("8_pqotf")
+attacks = Array[ExtResource("4_t2wgf")]([ExtResource("5_rut13")])
+metadata/_custom_type_script = "uid://i2xvg4o1geuj"
+
 [sub_resource type="CircleShape2D" id="CircleShape2D_ov0ts"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_4x2gi"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_6rd2i"]
 radius = 100.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jcp4x"]
@@ -32,7 +38,7 @@ height = 36.0
 [node name="CombatTestActor" type="CharacterBody2D" unique_id=94791442 node_paths=PackedStringArray("movement_module", "combat_module", "reach_detection")]
 script = ExtResource("1_5ltyh")
 stats = SubResource("Resource_y8gd8")
-weapons = Array[ExtResource("8_pqotf")]([ExtResource("9_rut13")])
+weapons = Array[ExtResource("8_pqotf")]([SubResource("Resource_ov0ts")])
 movement_module = NodePath("Module/MovementModule")
 combat_module = NodePath("Module/CombatModule")
 reach_detection = NodePath("Module/DetectionModule")
@@ -63,7 +69,7 @@ script = ExtResource("5_6rd2i")
 metadata/_custom_type_script = "uid://hyy86fs5b0fs"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionModule" unique_id=448472772]
-shape = SubResource("CircleShape2D_4x2gi")
+shape = SubResource("CircleShape2D_6rd2i")
 debug_color = Color(0.71200997, 0.47619218, 0.2637897, 0.41960785)
 
 [node name="CombatModule" type="Node2D" parent="Module" unique_id=1154835967 node_paths=PackedStringArray("hitbox_slots")]

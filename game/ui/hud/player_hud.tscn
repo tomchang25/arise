@@ -1,0 +1,346 @@
+[gd_scene format=3 uid="uid://b6fkxs12rxtfw"]
+
+[ext_resource type="Script" uid="uid://b3u8ke6psmkmj" path="res://game/ui/hud/player_hud.gd" id="1_hud"]
+[ext_resource type="Script" uid="uid://dwqgm0byaj1lc" path="res://common/gameplay/resource_bar/resource_bar_module.gd" id="2_resbar"]
+[ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="3_05i12"]
+[ext_resource type="Texture2D" uid="uid://bknli33ylfnny" path="res://game/ui/hud/assets/hud_panel_bg.png" id="3_panel"]
+[ext_resource type="Texture2D" uid="uid://cr4h3fl08epmo" path="res://game/ui/hud/assets/debug_panel_bg.png" id="4_dbgpanel"]
+[ext_resource type="Texture2D" uid="uid://b6fmmss8v4g7g" path="res://game/ui/hud/assets/icon_health.png" id="5_ichp"]
+[ext_resource type="Texture2D" uid="uid://ctflar11dekan" path="res://game/ui/hud/assets/icon_mana.png" id="6_icmp"]
+[ext_resource type="Texture2D" uid="uid://bcdapcub4mgyt" path="res://game/ui/hud/assets/icon_gold.png" id="7_icgold"]
+[ext_resource type="Texture2D" uid="uid://bwl3jatq7cv2k" path="res://game/ui/hud/assets/hp_bar_under.png" id="8_hpunder"]
+[ext_resource type="Texture2D" uid="uid://bydo4nfbwk178" path="res://game/ui/hud/assets/hp_bar_damage.png" id="9_hpdmg"]
+[ext_resource type="Texture2D" uid="uid://teqn0ns4ysra" path="res://game/ui/hud/assets/hp_bar_full.png" id="10_hpfull"]
+[ext_resource type="Texture2D" uid="uid://d1pbh5waw8bst" path="res://game/ui/hud/assets/mp_bar_under.png" id="11_mpunder"]
+[ext_resource type="Texture2D" uid="uid://bltfkbdns56n6" path="res://game/ui/hud/assets/mp_bar_full.png" id="12_mpfull"]
+[ext_resource type="Texture2D" uid="uid://5cfibr03224y" path="res://game/ui/hud/assets/btn_damage_normal.png" id="13_btnd_n"]
+[ext_resource type="Texture2D" uid="uid://coxu58yijmkc2" path="res://game/ui/hud/assets/btn_damage_hover.png" id="14_btnd_h"]
+[ext_resource type="Texture2D" uid="uid://wspybtd53y7w" path="res://game/ui/hud/assets/btn_damage_pressed.png" id="15_btnd_p"]
+[ext_resource type="Texture2D" uid="uid://2sntor165l70" path="res://game/ui/hud/assets/btn_mana_normal.png" id="16_btnm_n"]
+[ext_resource type="Texture2D" uid="uid://dfl8one3xevqr" path="res://game/ui/hud/assets/btn_mana_hover.png" id="17_btnm_h"]
+[ext_resource type="Texture2D" uid="uid://dvl30d7j2e8bd" path="res://game/ui/hud/assets/btn_mana_pressed.png" id="18_btnm_p"]
+[ext_resource type="Texture2D" uid="uid://din58bu3hcf42" path="res://game/ui/hud/assets/btn_reset_normal.png" id="19_btnr_n"]
+[ext_resource type="Texture2D" uid="uid://6eyk0pmbiii4" path="res://game/ui/hud/assets/btn_reset_hover.png" id="20_btnr_h"]
+[ext_resource type="Texture2D" uid="uid://0n2ixqiqfg88" path="res://game/ui/hud/assets/btn_reset_pressed.png" id="21_btnr_p"]
+
+[sub_resource type="Resource" id="Resource_6uwpt"]
+script = ExtResource("3_05i12")
+health = 1000.0
+mana = 100.0
+base_max_health = 1000.0
+metadata/_custom_type_script = "uid://bkgf2cii3bfri"
+
+[sub_resource type="StyleBoxTexture" id="SBT_dmg_normal"]
+texture = ExtResource("13_btnd_n")
+texture_margin_left = 3.0
+
+[sub_resource type="StyleBoxTexture" id="SBT_dmg_pressed"]
+texture = ExtResource("15_btnd_p")
+texture_margin_left = 3.0
+
+[sub_resource type="StyleBoxTexture" id="SBT_dmg_hover"]
+texture = ExtResource("14_btnd_h")
+texture_margin_left = 3.0
+
+[sub_resource type="StyleBoxTexture" id="SBT_mana_normal"]
+texture = ExtResource("16_btnm_n")
+texture_margin_left = 3.0
+
+[sub_resource type="StyleBoxTexture" id="SBT_mana_pressed"]
+texture = ExtResource("18_btnm_p")
+texture_margin_left = 3.0
+
+[sub_resource type="StyleBoxTexture" id="SBT_mana_hover"]
+texture = ExtResource("17_btnm_h")
+texture_margin_left = 3.0
+
+[sub_resource type="StyleBoxTexture" id="SBT_reset_normal"]
+texture = ExtResource("19_btnr_n")
+texture_margin_left = 3.0
+
+[sub_resource type="StyleBoxTexture" id="SBT_reset_pressed"]
+texture = ExtResource("21_btnr_p")
+texture_margin_left = 3.0
+
+[sub_resource type="StyleBoxTexture" id="SBT_reset_hover"]
+texture = ExtResource("20_btnr_h")
+texture_margin_left = 3.0
+
+[node name="PlayerHUD" type="Control" unique_id=627799983 node_paths=PackedStringArray("hp_bar", "mana_bar", "hp_label", "mana_label", "gold_label", "btn_damage", "btn_mana", "btn_reset")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_hud")
+stats = SubResource("Resource_6uwpt")
+hp_bar = NodePath("TopLeftPanel/Margin/VBox/HPSection/HPBar")
+mana_bar = NodePath("TopLeftPanel/Margin/VBox/MPSection/MPBar")
+hp_label = NodePath("TopLeftPanel/Margin/VBox/HPSection/TitleRow/HPLabel")
+mana_label = NodePath("TopLeftPanel/Margin/VBox/MPSection/TitleRow/MPLabel")
+gold_label = NodePath("BottomLeft/GoldRow/GoldLabel")
+btn_damage = NodePath("DebugPanel/Margin/VBox/BtnDamage")
+btn_mana = NodePath("DebugPanel/Margin/VBox/BtnMana")
+btn_reset = NodePath("DebugPanel/Margin/VBox/BtnReset")
+
+[node name="TopLeftPanel" type="NinePatchRect" parent="." unique_id=788933733]
+layout_mode = 1
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 252.0
+offset_bottom = 82.0
+texture = ExtResource("3_panel")
+patch_margin_left = 8
+patch_margin_top = 8
+patch_margin_right = 8
+patch_margin_bottom = 8
+
+[node name="Margin" type="MarginContainer" parent="TopLeftPanel" unique_id=1134311979]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="VBox" type="VBoxContainer" parent="TopLeftPanel/Margin" unique_id=1523383117]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="HPSection" type="VBoxContainer" parent="TopLeftPanel/Margin/VBox" unique_id=1644152745]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="TitleRow" type="HBoxContainer" parent="TopLeftPanel/Margin/VBox/HPSection" unique_id=2122207421]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="HPIcon" type="TextureRect" parent="TopLeftPanel/Margin/VBox/HPSection/TitleRow" unique_id=1543834955]
+texture_filter = 1
+custom_minimum_size = Vector2(14, 14)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("5_ichp")
+stretch_mode = 5
+
+[node name="HPTitle" type="Label" parent="TopLeftPanel/Margin/VBox/HPSection/TitleRow" unique_id=1532223387]
+modulate = Color(1, 1, 1, 0.65)
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+text = "HP"
+
+[node name="HPLabel" type="Label" parent="TopLeftPanel/Margin/VBox/HPSection/TitleRow" unique_id=1370838717]
+modulate = Color(1, 1, 1, 0.9)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 8
+text = "1000 / 1000"
+horizontal_alignment = 2
+
+[node name="HPBar" type="Control" parent="TopLeftPanel/Margin/VBox/HPSection" unique_id=2060240670 node_paths=PackedStringArray("under_bar", "damage_bar", "fill_bar")]
+custom_minimum_size = Vector2(220, 14)
+layout_mode = 2
+script = ExtResource("2_resbar")
+under_bar = NodePath("UnderBar")
+damage_bar = NodePath("DamageBar")
+fill_bar = NodePath("FillBar")
+
+[node name="UnderBar" type="TextureProgressBar" parent="TopLeftPanel/Margin/VBox/HPSection/HPBar" unique_id=1538174893]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+value = 100.0
+nine_patch_stretch = true
+texture_under = ExtResource("8_hpunder")
+texture_progress = ExtResource("8_hpunder")
+
+[node name="DamageBar" type="TextureProgressBar" parent="TopLeftPanel/Margin/VBox/HPSection/HPBar" unique_id=36652465]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+value = 100.0
+nine_patch_stretch = true
+texture_progress = ExtResource("9_hpdmg")
+
+[node name="FillBar" type="TextureProgressBar" parent="TopLeftPanel/Margin/VBox/HPSection/HPBar" unique_id=833826144]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+value = 100.0
+nine_patch_stretch = true
+texture_progress = ExtResource("10_hpfull")
+
+[node name="MPSection" type="VBoxContainer" parent="TopLeftPanel/Margin/VBox" unique_id=1740967969]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="TitleRow" type="HBoxContainer" parent="TopLeftPanel/Margin/VBox/MPSection" unique_id=295564186]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="MPIcon" type="TextureRect" parent="TopLeftPanel/Margin/VBox/MPSection/TitleRow" unique_id=1461792528]
+texture_filter = 1
+custom_minimum_size = Vector2(14, 14)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("6_icmp")
+stretch_mode = 5
+
+[node name="MPTitle" type="Label" parent="TopLeftPanel/Margin/VBox/MPSection/TitleRow" unique_id=18261246]
+modulate = Color(1, 1, 1, 0.65)
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+text = "MP"
+
+[node name="MPLabel" type="Label" parent="TopLeftPanel/Margin/VBox/MPSection/TitleRow" unique_id=279980775]
+modulate = Color(1, 1, 1, 0.9)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 8
+text = "100 / 100"
+horizontal_alignment = 2
+
+[node name="MPBar" type="Control" parent="TopLeftPanel/Margin/VBox/MPSection" unique_id=973176162 node_paths=PackedStringArray("under_bar", "fill_bar")]
+custom_minimum_size = Vector2(220, 9)
+layout_mode = 2
+script = ExtResource("2_resbar")
+mode = 1
+under_bar = NodePath("UnderBar")
+fill_bar = NodePath("FillBar")
+fill_tween_duration = 0.35
+
+[node name="UnderBar" type="TextureProgressBar" parent="TopLeftPanel/Margin/VBox/MPSection/MPBar" unique_id=222659821]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+value = 100.0
+nine_patch_stretch = true
+texture_under = ExtResource("11_mpunder")
+texture_progress = ExtResource("11_mpunder")
+
+[node name="FillBar" type="TextureProgressBar" parent="TopLeftPanel/Margin/VBox/MPSection/MPBar" unique_id=1145985703]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+value = 100.0
+nine_patch_stretch = true
+texture_progress = ExtResource("12_mpfull")
+
+[node name="BottomLeft" type="HBoxContainer" parent="." unique_id=1478235854]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = -26.0
+offset_right = 140.0
+offset_bottom = -8.0
+grow_vertical = 0
+theme_override_constants/separation = 0
+
+[node name="GoldRow" type="HBoxContainer" parent="BottomLeft" unique_id=1070856241]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="GoldIcon" type="TextureRect" parent="BottomLeft/GoldRow" unique_id=2128200613]
+texture_filter = 1
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("7_icgold")
+stretch_mode = 5
+
+[node name="GoldLabel" type="Label" parent="BottomLeft/GoldRow" unique_id=1261645759]
+modulate = Color(1, 0.88, 0.35, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+text = "0"
+vertical_alignment = 1
+
+[node name="DebugPanel" type="NinePatchRect" parent="." unique_id=981040835]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -276.0
+offset_top = -94.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 0
+grow_vertical = 0
+texture = ExtResource("4_dbgpanel")
+patch_margin_left = 6
+patch_margin_top = 6
+patch_margin_right = 6
+patch_margin_bottom = 6
+
+[node name="Margin" type="MarginContainer" parent="DebugPanel" unique_id=1244496663]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBox" type="VBoxContainer" parent="DebugPanel/Margin" unique_id=1313763605]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="BtnDamage" type="Button" parent="DebugPanel/Margin/VBox" unique_id=1183171949]
+custom_minimum_size = Vector2(80, 20)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 8
+theme_override_styles/normal = SubResource("SBT_dmg_normal")
+theme_override_styles/pressed = SubResource("SBT_dmg_pressed")
+theme_override_styles/hover = SubResource("SBT_dmg_hover")
+theme_override_styles/focus = SubResource("SBT_dmg_normal")
+text = "Take Damage"
+
+[node name="BtnMana" type="Button" parent="DebugPanel/Margin/VBox" unique_id=462391648]
+custom_minimum_size = Vector2(80, 20)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 8
+theme_override_styles/normal = SubResource("SBT_mana_normal")
+theme_override_styles/pressed = SubResource("SBT_mana_pressed")
+theme_override_styles/hover = SubResource("SBT_mana_hover")
+theme_override_styles/focus = SubResource("SBT_mana_normal")
+text = "Spend Mana"
+
+[node name="BtnReset" type="Button" parent="DebugPanel/Margin/VBox" unique_id=968574915]
+custom_minimum_size = Vector2(80, 20)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 8
+theme_override_styles/normal = SubResource("SBT_reset_normal")
+theme_override_styles/pressed = SubResource("SBT_reset_pressed")
+theme_override_styles/hover = SubResource("SBT_reset_hover")
+theme_override_styles/focus = SubResource("SBT_reset_normal")
+text = "Reset"

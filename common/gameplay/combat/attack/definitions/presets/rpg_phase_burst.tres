@@ -1,11 +1,12 @@
 [gd_resource type="Resource" script_class="EffectPhaseDefinition" format=3 uid="uid://c407atb67k2s2"]
 
-[ext_resource type="PackedScene" uid="uid://bq1jnng5ytkkd" path="res://common/gameplay/combat/attack/effects/presets/rpg_aoe_effect.tscn" id="1_copp6"]
+[ext_resource type="PackedScene" uid="uid://q5y5v02vna1a" path="res://common/gameplay/combat/attack/effects/presets/aoe_burst_effect.tscn" id="1_copp6"]
 [ext_resource type="Script" uid="uid://cmymyo0y1aoi7" path="res://common/gameplay/combat/attack/definitions/effect_phase_definition.gd" id="2_3sjn2"]
 
 [resource]
 script = ExtResource("2_3sjn2")
 effect_scene = ExtResource("1_copp6")
+lifetime = 1.0
 knockback_mode = 1
 knockback_force = 100.0
 max_targets = -1
