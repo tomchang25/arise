@@ -5,9 +5,9 @@
 [ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="3_05i12"]
 [ext_resource type="Texture2D" uid="uid://bknli33ylfnny" path="res://game/ui/hud/assets/hud_panel_bg.png" id="3_panel"]
 [ext_resource type="Texture2D" uid="uid://cr4h3fl08epmo" path="res://game/ui/hud/assets/debug_panel_bg.png" id="4_dbgpanel"]
-[ext_resource type="Texture2D" uid="uid://b6fmmss8v4g7g" path="res://game/ui/hud/assets/icon_health.png" id="5_ichp"]
-[ext_resource type="Texture2D" uid="uid://ctflar11dekan" path="res://game/ui/hud/assets/icon_mana.png" id="6_icmp"]
-[ext_resource type="Texture2D" uid="uid://bcdapcub4mgyt" path="res://game/ui/hud/assets/icon_gold.png" id="7_icgold"]
+[ext_resource type="Texture2D" uid="uid://b6fmmss8v4g7g" path="res://assets/arts/icon_health.png" id="5_ichp"]
+[ext_resource type="Texture2D" uid="uid://ctflar11dekan" path="res://assets/arts/icon_mana.png" id="6_icmp"]
+[ext_resource type="Texture2D" uid="uid://bcdapcub4mgyt" path="res://assets/arts/icon_gold.png" id="7_icgold"]
 [ext_resource type="Texture2D" uid="uid://bwl3jatq7cv2k" path="res://game/ui/hud/assets/hp_bar_under.png" id="8_hpunder"]
 [ext_resource type="Texture2D" uid="uid://bydo4nfbwk178" path="res://game/ui/hud/assets/hp_bar_damage.png" id="9_hpdmg"]
 [ext_resource type="Texture2D" uid="uid://teqn0ns4ysra" path="res://game/ui/hud/assets/hp_bar_full.png" id="10_hpfull"]
@@ -25,7 +25,6 @@
 
 [sub_resource type="Resource" id="Resource_6uwpt"]
 script = ExtResource("3_05i12")
-health = 1000.0
 mana = 100.0
 base_max_health = 1000.0
 metadata/_custom_type_script = "uid://bkgf2cii3bfri"

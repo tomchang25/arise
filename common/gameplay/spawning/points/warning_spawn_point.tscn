@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://djodnob72wufg"]
 
 [ext_resource type="Script" uid="uid://4rlqnb7ja7mt" path="res://common/gameplay/spawning/points/warning_spawn_point.gd" id="1_ubemp"]
-[ext_resource type="Texture2D" uid="uid://c03ai1c1shhqm" path="res://asset/unmanaged/Ninja Adventure - Asset Pack/FX/Magic/Circle/SpriteSheetWhite.png" id="2_dk6v4"]
+[ext_resource type="Texture2D" uid="uid://c03ai1c1shhqm" path="res://assets/unmanaged/Ninja Adventure - Asset Pack/FX/Magic/Circle/SpriteSheetWhite.png" id="2_dk6v4"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_kchy0"]
 atlas = ExtResource("2_dk6v4")

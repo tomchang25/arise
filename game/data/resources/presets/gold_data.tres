@@ -1,13 +1,13 @@
 [gd_resource type="Resource" script_class="ResourceData" format=3 uid="uid://capaut2owso4d"]
 
 [ext_resource type="Script" uid="uid://d1hiuslt4wlek" path="res://game/data/resources/resource_data.gd" id="1_vght6"]
-[ext_resource type="Texture2D" uid="uid://b173y7dtt1nl2" path="res://asset/unmanaged/Ninja Adventure - Asset Pack/Ui/Emote/emote6.png" id="2_im2kn"]
+[ext_resource type="Texture2D" uid="uid://bcdapcub4mgyt" path="res://assets/arts/icon_gold.png" id="2_vght6"]
 
 [resource]
 script = ExtResource("1_vght6")
 id = &"gold"
 kind = 3
-sprite = ExtResource("2_im2kn")
+sprite = ExtResource("2_vght6")
 label = "Gold"
 description = "Everything."
 metadata/_custom_type_script = "uid://d1hiuslt4wlek"

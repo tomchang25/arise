@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="ResourceData" format=3 uid="uid://b82tjjkywkp8c"]
 
 [ext_resource type="Script" uid="uid://d1hiuslt4wlek" path="res://game/data/resources/resource_data.gd" id="1_38hho"]
-[ext_resource type="Texture2D" uid="uid://cqjupgwungyj8" path="res://asset/unmanaged/Ninja Adventure - Asset Pack/Ui/Arrow.png" id="2_38hho"]
+[ext_resource type="Texture2D" uid="uid://cvoin2vankdxa" path="res://assets/arts/icon_soul.png" id="2_38hho"]
 
 [resource]
 script = ExtResource("1_38hho")

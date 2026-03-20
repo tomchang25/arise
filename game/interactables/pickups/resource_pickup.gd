@@ -1,8 +1,8 @@
 class_name ResourcePickup
 extends BasePickup
 
-const MAX_ICON_SIZE := Vector2(16.0, 16.0)
-const DEFAULT_COLLISION_RADIUS := 8.0
+const MAX_ICON_SIZE := Vector2(8.0, 8.0)
+const DEFAULT_COLLISION_RADIUS := 4.0
 
 @export_group("Resource")
 @export var resource_data: ResourceData:

@@ -1,13 +1,13 @@
 [gd_resource type="Resource" script_class="ResourceData" format=3 uid="uid://d0tpfg3ivbno0"]
 
 [ext_resource type="Script" uid="uid://d1hiuslt4wlek" path="res://game/data/resources/resource_data.gd" id="1_ods3s"]
-[ext_resource type="Texture2D" uid="uid://dg0u0xesbar5e" path="res://asset/unmanaged/Ninja Adventure - Asset Pack/Items/Food/Fish.png" id="2_lr54j"]
+[ext_resource type="Texture2D" uid="uid://ctflar11dekan" path="res://assets/arts/icon_mana.png" id="2_tljsy"]
 
 [resource]
 script = ExtResource("1_ods3s")
 id = &"mana_orb"
 kind = 1
-sprite = ExtResource("2_lr54j")
+sprite = ExtResource("2_tljsy")
 label = "Mana Orb"
 description = "Restores mana."
 amount_per_unit = 10.0
