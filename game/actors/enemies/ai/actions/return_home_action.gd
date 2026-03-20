@@ -22,5 +22,6 @@ func tick(actor: Node, _blackboard: Blackboard) -> int:
         enemy.global_position.direction_to(enemy.home_position),
         Enemy.ANIM_MOVE,
     )
+
     enemy.play_animation(Enemy.ANIM_MOVE)
     return RUNNING

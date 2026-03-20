@@ -7,6 +7,10 @@
 class_name BlueSlime
 extends Enemy
 
+const HOME_UPDATE_INTERVAL := 3.0
+
+var _home_update_timer := 0.0
+
 func _ready() -> void:
     if Engine.is_editor_hint():
         return
@@ -28,3 +32,14 @@ func _ready() -> void:
         push_warning("BlueSlime: home_position not set. Assign it at spawn time.")
     else:
         global_position = home_position
+    
+    activate_attack(0,0)
+
+func _physics_process(delta: float) -> void:
+    _home_update_timer += delta
+
+    if _home_update_timer >= HOME_UPDATE_INTERVAL:
+        _home_update_timer = 0.0
+        var target := get_tree().get_first_node_in_group("player") as Node2D
+        if target != null:
+            home_position = target.global_position

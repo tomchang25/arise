@@ -7,7 +7,7 @@ extends ActionLeaf
 @export var weapon_index: int = 0
 @export var attack_index: int = 0
 ## Slow creep speed while repositioning during the attack.
-@export var attack_speed: float = 30.0
+@export var attack_speed: float = 150.0
 
 
 func tick(actor: Node, _blackboard: Blackboard) -> int:

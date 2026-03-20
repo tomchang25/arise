@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://31x7n43mme6c"]
 
-[ext_resource type="Script" path="res://game/actors/enemies/types/ninja/red_ninja.gd" id="1_redninja"]
+[ext_resource type="Script" uid="uid://bd4wrsrbdwesh" path="res://game/actors/enemies/types/ninja/red_ninja.gd" id="1_redninja"]
 [ext_resource type="Material" uid="uid://4sxc1efucw5k" path="res://common/rendering/shaders/dynamic_color_overlay.tres" id="2_mat"]
 [ext_resource type="Resource" uid="uid://rq5f7puwasyb" path="res://game/actors/enemies/types/ninja/presets/ninja_red_data.tres" id="3_data"]
 [ext_resource type="Texture2D" uid="uid://c7rvngvjpf2nr" path="res://game/actors/enemies/types/ninja/assets/ninja_red.png" id="4_tex"]
@@ -25,15 +25,15 @@
 [ext_resource type="Script" uid="uid://i1ibypyr38xv" path="res://common/gameplay/loot/loot_drop_module.gd" id="23_loot"]
 [ext_resource type="Resource" uid="uid://bq584j3uqsyau" path="res://game/actors/enemies/types/slime/presets/slime_drop_profile.tres" id="24_drop"]
 [ext_resource type="Script" uid="uid://bb0t2ovl7wifo" path="res://addons/beehave/nodes/beehave_tree.gd" id="26_btree"]
-[ext_resource type="Script" uid="uid://bkr7qj44253ue" path="res://addons/beehave/nodes/composites/simple_parallel.gd" id="27_parallel"]
-[ext_resource type="Script" uid="uid://8hn4kne15ac5" path="res://addons/beehave/nodes/composites/selector.gd" id="28_select"]
+[ext_resource type="Script" uid="uid://cw22yurt5l74k" path="res://addons/beehave/nodes/composites/selector_reactive.gd" id="27_nnul2"]
 [ext_resource type="Script" uid="uid://cg016dbe7gs1x" path="res://addons/beehave/nodes/composites/sequence.gd" id="29_seq"]
-[ext_resource type="Script" path="res://game/actors/enemies/ai/conditions/is_player_in_reach.gd" id="30_inreach"]
-[ext_resource type="Script" path="res://game/actors/enemies/ai/actions/melee_attack_action.gd" id="31_melee"]
-[ext_resource type="Script" path="res://game/actors/enemies/ai/conditions/is_player_in_aggro_range.gd" id="32_inrange"]
-[ext_resource type="Script" path="res://game/actors/enemies/ai/actions/chase_player_action.gd" id="33_chase"]
-[ext_resource type="Script" path="res://game/actors/enemies/ai/actions/idle_action.gd" id="34_idle"]
-[ext_resource type="Script" path="res://game/actors/enemies/ai/actions/update_home_position_action.gd" id="35_homupd"]
+[ext_resource type="Script" uid="uid://ia8xe33228ok" path="res://game/actors/enemies/ai/conditions/is_player_in_reach.gd" id="30_inreach"]
+[ext_resource type="Script" uid="uid://bb2wt4ldvjx70" path="res://game/actors/enemies/ai/actions/melee_attack_action.gd" id="31_melee"]
+[ext_resource type="Script" uid="uid://8kngjes24dy1" path="res://game/actors/enemies/ai/conditions/is_player_in_aggro_range.gd" id="32_inrange"]
+[ext_resource type="Script" uid="uid://cwdwi0llionpe" path="res://game/actors/enemies/ai/conditions/is_home_too_far.gd" id="32_nnul2"]
+[ext_resource type="Script" uid="uid://c7hxxghn10gj6" path="res://game/actors/enemies/ai/actions/chase_player_action.gd" id="33_chase"]
+[ext_resource type="Script" uid="uid://cp3miie2gv3e7" path="res://game/actors/enemies/ai/actions/return_home_action.gd" id="33_u2ujg"]
+[ext_resource type="Script" uid="uid://c2a51dwl67f3x" path="res://game/actors/enemies/ai/actions/idle_action.gd" id="34_idle"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_body"]
 radius = 2.0
@@ -43,16 +43,16 @@ height = 8.0
 radius = 6.0
 height = 16.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_aggro"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_nnul2"]
 radius = 200.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_deaggro"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_u2ujg"]
 radius = 300.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_reach"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_uqcqm"]
 radius = 100.0
 
-[node name="Ninja_red" type="CharacterBody2D" node_paths=PackedStringArray("sprite", "hurtbox", "damage_receiver", "hit_feedback", "damage_number", "health_bar", "combat_module", "aggro_detection", "deaggro_detection", "reach_detection", "movement_module", "navigation_module", "animation_module", "loot_drop") groups=["enemies"]]
+[node name="Ninja_red" type="CharacterBody2D" unique_id=1781307875 node_paths=PackedStringArray("sprite", "hurtbox", "damage_receiver", "hit_feedback", "damage_number", "health_bar", "combat_module", "aggro_detection", "deaggro_detection", "reach_detection", "movement_module", "navigation_module", "animation_module", "loot_drop") groups=["enemies"]]
 collision_layer = 2
 collision_mask = 2
 script = ExtResource("1_redninja")
@@ -73,78 +73,77 @@ navigation_module = NodePath("Module/NavigationModule")
 animation_module = NodePath("Module/AnimationModule")
 loot_drop = NodePath("Module/LootDropModule")
 
-[node name="Sprite" type="Sprite2D" parent="."]
+[node name="Sprite" type="Sprite2D" parent="." unique_id=1518804396]
 material = ExtResource("2_mat")
 position = Vector2(0, -6)
 texture = ExtResource("4_tex")
 hframes = 4
 vframes = 7
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=617274679]
 rotation = 1.5708
 shape = SubResource("CapsuleShape2D_body")
 
-[node name="Hurtbox" type="Area2D" parent="."]
+[node name="Hurtbox" type="Area2D" parent="." unique_id=375287305]
 collision_layer = 2
 collision_mask = 0
 monitoring = false
 script = ExtResource("5_hurtbox")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=287331379]
 position = Vector2(0, -6)
 shape = SubResource("CapsuleShape2D_hurtbox")
 debug_color = Color(0.639216, 0.529412, 0, 0.329412)
 
-[node name="Visual" type="Node2D" parent="."]
+[node name="Visual" type="Node2D" parent="." unique_id=1531441884]
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Visual"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Visual" unique_id=1677041906]
 libraries/ = ExtResource("6_anims")
 
-[node name="AnimationTree" type="AnimationTree" parent="Visual"]
+[node name="AnimationTree" type="AnimationTree" parent="Visual" unique_id=672556790]
 tree_root = ExtResource("7_blend")
 anim_player = NodePath("../AnimationPlayer")
 parameters/StateMachine/Attack/blend_position = Vector2(0, 0)
 parameters/StateMachine/Move/blend_position = Vector2(0, 0)
 parameters/TimeScale/scale = 1.0
 
-[node name="Module" type="Node2D" parent="."]
+[node name="Module" type="Node2D" parent="." unique_id=677920860]
 
-[node name="DetectionPivot" type="Marker2D" parent="Module"]
+[node name="DetectionPivot" type="Marker2D" parent="Module" unique_id=1098988142]
 position = Vector2(0, -6)
 
-[node name="CombatModule" type="Node2D" parent="Module/DetectionPivot"]
+[node name="CombatModule" type="Node2D" parent="Module/DetectionPivot" unique_id=821495176]
 script = ExtResource("8_combat")
 
-[node name="AggroDetection" type="Area2D" parent="Module/DetectionPivot"]
+[node name="AggroDetection" type="Area2D" parent="Module/DetectionPivot" unique_id=751129509]
 collision_layer = 0
 monitorable = false
 script = ExtResource("9_detect")
 radius = 200.0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/AggroDetection"]
-shape = SubResource("CircleShape2D_aggro")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/AggroDetection" unique_id=19296424]
+shape = SubResource("CircleShape2D_nnul2")
 debug_color = Color(0, 0.6, 0.1764706, 0.23529412)
 
-[node name="DeaggroDetection" type="Area2D" parent="Module/DetectionPivot"]
+[node name="DeaggroDetection" type="Area2D" parent="Module/DetectionPivot" unique_id=80076531]
 collision_layer = 0
 monitorable = false
 script = ExtResource("9_detect")
 radius = 300.0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/DeaggroDetection"]
-shape = SubResource("CircleShape2D_deaggro")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/DeaggroDetection" unique_id=357107328]
+shape = SubResource("CircleShape2D_u2ujg")
 debug_color = Color(0.8627451, 0.23529412, 0.69803923, 0.23921569)
 
-[node name="ReachDetection" type="Area2D" parent="Module/DetectionPivot"]
+[node name="ReachDetection" type="Area2D" parent="Module/DetectionPivot" unique_id=401014540]
 collision_layer = 0
 monitorable = false
 script = ExtResource("9_detect")
-radius = 100.0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/ReachDetection"]
-shape = SubResource("CircleShape2D_reach")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/ReachDetection" unique_id=1333937030]
+shape = SubResource("CircleShape2D_uqcqm")
 
-[node name="HealthBar" parent="Module" instance=ExtResource("10_hbar")]
+[node name="HealthBar" parent="Module" unique_id=1501966175 instance=ExtResource("10_hbar")]
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
@@ -154,11 +153,11 @@ offset_right = 12.0
 offset_bottom = 8.0
 grow_horizontal = 2
 
-[node name="DamageReceiverModule" type="Node" parent="Module" node_paths=PackedStringArray("hurtbox")]
+[node name="DamageReceiverModule" type="Node" parent="Module" unique_id=429254503 node_paths=PackedStringArray("hurtbox")]
 script = ExtResource("11_dmgrcv")
 hurtbox = NodePath("../../Hurtbox")
 
-[node name="HitFeedbackModule" type="Node" parent="Module" node_paths=PackedStringArray("damage_receiver", "movement_module")]
+[node name="HitFeedbackModule" type="Node" parent="Module" unique_id=340645115 node_paths=PackedStringArray("damage_receiver", "movement_module")]
 script = ExtResource("12_hitfb")
 damage_receiver = NodePath("../DamageReceiverModule")
 movement_module = NodePath("../MovementModule")
@@ -168,68 +167,74 @@ damaged_audio = ExtResource("15_dmgsfx")
 blocked_audio = ExtResource("16_blksfx")
 died_audio = ExtResource("17_diedfx")
 
-[node name="DamageNumberModule" type="Node" parent="Module" node_paths=PackedStringArray("damage_receiver", "world_anchor")]
+[node name="DamageNumberModule" type="Node" parent="Module" unique_id=1897138566 node_paths=PackedStringArray("damage_receiver", "world_anchor")]
 script = ExtResource("18_dmgnum")
 damage_receiver = NodePath("../DamageReceiverModule")
 world_anchor = NodePath("../..")
 damage_number_scene = ExtResource("19_dmgnumscn")
 
-[node name="MovementModule" type="Node" parent="Module" node_paths=PackedStringArray("character")]
+[node name="MovementModule" type="Node" parent="Module" unique_id=810572988 node_paths=PackedStringArray("character")]
 script = ExtResource("20_move")
 character = NodePath("../..")
 
-[node name="NavigationModule" type="Node2D" parent="Module" node_paths=PackedStringArray("character", "movement", "navigation_agent")]
+[node name="NavigationModule" type="Node2D" parent="Module" unique_id=439702878 node_paths=PackedStringArray("character", "movement", "navigation_agent")]
 script = ExtResource("21_nav")
 character = NodePath("../..")
 movement = NodePath("../MovementModule")
 navigation_agent = NodePath("NavigationAgent2D")
+enable_avoidance = true
 
-[node name="NavigationAgent2D" type="NavigationAgent2D" parent="Module/NavigationModule"]
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="Module/NavigationModule" unique_id=1038648320]
 target_desired_distance = 5.0
+avoidance_enabled = true
 radius = 4.0
 
-[node name="AnimationModule" type="Node" parent="Module" node_paths=PackedStringArray("actor", "animation_tree")]
+[node name="AnimationModule" type="Node" parent="Module" unique_id=998838272 node_paths=PackedStringArray("actor", "animation_tree")]
 script = ExtResource("22_anim")
 actor = NodePath("../..")
 animation_tree = NodePath("../../Visual/AnimationTree")
 
-[node name="LootDropModule" type="Node" parent="Module" node_paths=PackedStringArray("owner_node")]
+[node name="LootDropModule" type="Node" parent="Module" unique_id=813681759 node_paths=PackedStringArray("owner_node")]
 script = ExtResource("23_loot")
 owner_node = NodePath("../..")
 drop_profile = ExtResource("24_drop")
 
-[node name="BeehaveTree" type="Node" parent="."]
+[node name="BeehaveTree" type="Node" parent="." unique_id=1035777613 node_paths=PackedStringArray("blackboard", "actor")]
 script = ExtResource("26_btree")
+blackboard = NodePath("@Node@45761")
+actor = NodePath("..")
 
-[node name="SimpleParallel" type="Node" parent="BeehaveTree"]
-script = ExtResource("27_parallel")
+[node name="MainAI" type="Node" parent="BeehaveTree" unique_id=416008838]
+script = ExtResource("27_nnul2")
+metadata/_custom_type_script = "uid://cw22yurt5l74k"
 
-[node name="MainAI" type="Node" parent="BeehaveTree/SimpleParallel"]
-script = ExtResource("28_select")
-
-[node name="AttackSequence" type="Node" parent="BeehaveTree/SimpleParallel/MainAI"]
+[node name="AttackSequence" type="Node" parent="BeehaveTree/MainAI" unique_id=2004320403]
 script = ExtResource("29_seq")
 
-[node name="IsPlayerInReach" type="Node" parent="BeehaveTree/SimpleParallel/MainAI/AttackSequence"]
+[node name="IsPlayerInReach" type="Node" parent="BeehaveTree/MainAI/AttackSequence" unique_id=253303944]
 script = ExtResource("30_inreach")
 
-[node name="SlashAttack" type="Node" parent="BeehaveTree/SimpleParallel/MainAI/AttackSequence"]
+[node name="SlashAttack" type="Node" parent="BeehaveTree/MainAI/AttackSequence" unique_id=245208749]
 script = ExtResource("31_melee")
-attack_speed = 30.0
 
-[node name="ChaseSequence" type="Node" parent="BeehaveTree/SimpleParallel/MainAI"]
+[node name="ChaseSequence" type="Node" parent="BeehaveTree/MainAI" unique_id=1191885151]
 script = ExtResource("29_seq")
 
-[node name="IsPlayerInAggroRange" type="Node" parent="BeehaveTree/SimpleParallel/MainAI/ChaseSequence"]
+[node name="IsPlayerInAggroRange" type="Node" parent="BeehaveTree/MainAI/ChaseSequence" unique_id=1386344655]
 script = ExtResource("32_inrange")
 
-[node name="ChasePlayer" type="Node" parent="BeehaveTree/SimpleParallel/MainAI/ChaseSequence"]
+[node name="ChasePlayer" type="Node" parent="BeehaveTree/MainAI/ChaseSequence" unique_id=328890137]
 script = ExtResource("33_chase")
-chase_speed = 150.0
 
-[node name="Idle" type="Node" parent="BeehaveTree/SimpleParallel/MainAI"]
+[node name="ReturnHomeSequence" type="Node" parent="BeehaveTree/MainAI" unique_id=267608458]
+script = ExtResource("29_seq")
+
+[node name="IsHomeTooFar" type="Node" parent="BeehaveTree/MainAI/ReturnHomeSequence" unique_id=1569428713]
+script = ExtResource("32_nnul2")
+
+[node name="ReturnHome" type="Node" parent="BeehaveTree/MainAI/ReturnHomeSequence" unique_id=265933730]
+script = ExtResource("33_u2ujg")
+metadata/_custom_type_script = "uid://cp3miie2gv3e7"
+
+[node name="Idle" type="Node" parent="BeehaveTree/MainAI" unique_id=1583752157]
 script = ExtResource("34_idle")
-
-[node name="UpdateHomePosition" type="Node" parent="BeehaveTree/SimpleParallel"]
-script = ExtResource("35_homupd")
-interval = 10.0
