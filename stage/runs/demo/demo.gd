@@ -22,9 +22,13 @@ const ACTION_TOGGLE := "demo_toggle"
 @export_group("Controllers")
 @export var encounter_controller: EncounterController
 @export var despawn_controller: DespawnController
+@export var wave_defense_controller: WaveDefenseController
 
 @export_group("Encounter")
 @export var encounter_config: EncounterConfig
+
+@export_group("HUD")
+@export var wave_hud: WaveHUD
 
 @export_group("Spawn Placement")
 @export var min_spawn_distance := 120.0
@@ -59,13 +63,20 @@ func _ready() -> void:
 
     if encounter_controller != null:
         encounter_controller.group_spawned.connect(_on_group_spawned)
-        encounter_controller.round_cleared.connect(_on_round_cleared)
         encounter_controller.encounter_started.connect(_on_encounter_started)
 
     _update_debug_label()
 
-    if encounter_config != null and encounter_controller != null:
+    if encounter_controller != null:
         encounter_controller.spawn_position_resolver = _find_spawn_position
+
+    if wave_defense_controller != null:
+        # Wave defense mode: WaveDefenseController drives the encounter.
+        if wave_hud != null:
+            wave_hud.bind(wave_defense_controller)
+        wave_defense_controller.start()
+    elif encounter_config != null and encounter_controller != null:
+        # Fallback: plain encounter without wave management.
         encounter_controller.start(encounter_config)
 
 
@@ -93,7 +104,6 @@ func _unhandled_input(event: InputEvent) -> void:
         _on_toggle_pressed()
         get_viewport().set_input_as_handled()
         return
-
 
 # -------------------------
 # Hotkey Handlers
@@ -127,6 +137,17 @@ func _on_reset_player_pressed() -> void:
 
 
 func _on_toggle_pressed() -> void:
+    if wave_defense_controller != null:
+        if encounter_controller != null and encounter_controller.is_active():
+            wave_defense_controller.stop()
+            if print_hotkey_log:
+                Debug.log("Demo: wave defense stopped")
+        else:
+            wave_defense_controller.start()
+            if print_hotkey_log:
+                Debug.log("Demo: wave defense started")
+        return
+
     if encounter_controller == null:
         return
 
@@ -138,7 +159,6 @@ func _on_toggle_pressed() -> void:
         encounter_controller.start(encounter_config)
         if print_hotkey_log:
             Debug.log("Demo: encounter started")
-
 
 # -------------------------
 # Encounter Signals
@@ -157,17 +177,6 @@ func _on_group_spawned(group: EnemyGroup) -> void:
 
     if print_hotkey_log:
         Debug.log("Demo: group spawned — members=%s" % group.get_member_count())
-
-
-func _on_round_cleared() -> void:
-    if print_hotkey_log:
-        Debug.log("Demo: round cleared")
-
-    # Demo just auto-advances. A real run scene would handle objectives/timer here
-    # before calling start_next_round().
-    if encounter_controller != null:
-        encounter_controller.start_next_round()
-
 
 # -------------------------
 # Placement
@@ -199,7 +208,6 @@ func _build_spawn_validator() -> SpawnPositionValidator:
 
     return validator
 
-
 # -------------------------
 # Internal Helpers
 # -------------------------
@@ -221,8 +229,14 @@ func _auto_wire() -> void:
     if despawn_controller == null:
         despawn_controller = get_node_or_null("World/DespawnController") as DespawnController
 
+    if wave_defense_controller == null:
+        wave_defense_controller = get_node_or_null("World/WaveDefenseController") as WaveDefenseController
+
     if debug_label == null:
         debug_label = get_node_or_null("UI/DebugLabel") as Label
+
+    if wave_hud == null:
+        wave_hud = get_node_or_null("UI/WaveHUD") as WaveHUD
 
 
 func _update_debug_label() -> void:
@@ -243,8 +257,7 @@ func _update_debug_label() -> void:
     var budget_str := "%s" % groups_to_kill if groups_to_kill >= 0 else "∞"
 
     debug_label.text = (
-        "\n"
-        . join(
+        "\n".join(
             [
                 "[F] Force Spawn",
                 "[C] Clear",
@@ -254,7 +267,7 @@ func _update_debug_label() -> void:
                 "active_groups=%s" % active_groups,
                 "active_members=%s" % active_members,
                 "killed=%s / budget=%s" % [groups_killed, budget_str],
-            ]
+            ],
         )
     )
 

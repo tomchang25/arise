@@ -40,7 +40,7 @@ signal target_lost
 @export_group("Debug")
 @export var debug_print_state := false
 @export var debug_disable_navigation_agent := false
-@export var debug_draw := true
+@export var debug_draw := false
 @export var debug_color_path := Color(0.2, 0.8, 1.0, 0.9)
 @export var debug_color_target := Color(1.0, 0.3, 0.3, 0.9)
 @export var debug_color_next := Color(0.3, 1.0, 0.3, 0.9)
