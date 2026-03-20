@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="WeaponData" format=3]
+
+[ext_resource type="Script" uid="uid://dqbwdw1d7k7tu" path="res://common/gameplay/combat/attack/definitions/attack_definition.gd" id="1_base"]
+[ext_resource type="Script" path="res://common/gameplay/combat/attack/definitions/attached_attack_definition.gd" id="2_attached"]
+[ext_resource type="Script" uid="uid://i2xvg4o1geuj" path="res://common/gameplay/combat/attack/data/weapon_data.gd" id="3_weapon"]
+
+[sub_resource type="Resource" id="ContactAttack"]
+script = ExtResource("2_attached")
+hitbox_slot_id = &"slime_body"
+knockback_force = 15.0
+max_targets = 1
+damage_interval = 0.5
+clear_records_on_exit = true
+damage_multiplier = 1.0
+damage_variance = 0.1
+crit_bonus = 0.0
+
+[resource]
+script = ExtResource("3_weapon")
+weapon_name = "SlimeBody"
+attacks = Array[ExtResource("1_base")]([SubResource("ContactAttack")])
+metadata/_custom_type_script = "uid://i2xvg4o1geuj"
