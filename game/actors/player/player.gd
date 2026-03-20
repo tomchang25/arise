@@ -98,6 +98,8 @@ func _ready() -> void:
 
     queue_redraw()
 
+    push_warning("Player: has_auto_attack_target is disabled. Make sure to uncomment it if you need it.")
+
 
 func _draw() -> void:
     if not combat_module or Engine.is_editor_hint():
@@ -127,11 +129,9 @@ func _apply_data() -> void:
         stats = data.stats.duplicate() as Stats
     _ensure_stats()
 
-    # Load weapons from data into combat module.
-    # equip_weapons() duplicates each entry so runtime overrides don't bleed
-    # back into the source resources, then rebuilds all executors.
-    if combat_module and data.weapons.size() > 0:
-        combat_module.equip_weapons(data.weapons)
+    # Initialize combat module — stats and weapons must always be set together.
+    if combat_module:
+        combat_module.setup(stats, data.weapons)
 
     if pickup_collector:
         pickup_collector.magnet_range = data.magnet_range
@@ -196,10 +196,6 @@ func _bind_modules() -> void:
         animation_module.actor = self
 
     # ── Combat ────────────────────────────────────────────────────────────
-    # stats must be bound before setup() runs so _build_attack_data has a stats ref.
-    if combat_module:
-        combat_module.setup(stats)
-
     if hurtbox:
         hurtbox.owner_stats = stats
 
@@ -265,9 +261,8 @@ func _enforce_debug_modes() -> void:
 
     if data.is_max_range_active():
         var r := data.god_attack_range_override
-        for wi in combat_module.weapons.size():
-            var weapon := combat_module.weapons[wi]
-            for ai in weapon.attacks.size():
+        for wi in combat_module.get_weapon_count():
+            for ai in combat_module.get_attack_count(wi):
                 combat_module.set_attack_range_override(wi, ai, r)
     else:
         combat_module.clear_all_range_overrides()
@@ -477,7 +472,8 @@ func get_nearest_reachable_target() -> Node2D:
 
 ## True when there is a valid target in reach.
 func has_auto_attack_target() -> bool:
-    return can_attack() and is_instance_valid(get_nearest_reachable_target())
+    return false
+    # return can_attack() and is_instance_valid(get_nearest_reachable_target())
 
 # -------------------------
 # Public API — aim helpers

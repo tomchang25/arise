@@ -2,28 +2,35 @@ class_name CombatModule
 extends Node2D
 ## Manages all weapons on an actor.
 ##
-## Setup:
-##   1. Assign `stats` (actor's Stats resource).
-##   2. Assign `hitbox_slots` (pre-authored Hitbox nodes in the scene) for any
-##      ATTACHED weapons. Detached types need no hitbox slots.
-##   3. Assign `weapons` array (WeaponData resources).
-##   4. Call setup() — or it is called automatically in _ready().
+## Setup (initialization):
+##   Call setup(stats, weapons) once — this is the only correct way to initialize.
+##   Assigning .stats directly is blocked and will push an error.
 ##
-## Hitbox binding for ATTACHED attacks:
-##   Each AttachedAttackDefinition must set hitbox_slot_id to match the slot_id of
-##   its intended Hitbox node in hitbox_slots. Order in hitbox_slots is irrelevant.
+##   Has weapons:
+##     combat_module.setup(stats, data.weapons)
 ##
-## API (weapon_index = index in `weapons`, attack_index = index in weapon.attacks):
+##   No weapons (intentional):
+##     combat_module.setup(stats, [])
+##
+## Hitbox slots (ATTACHED attacks only):
+##   Assign `hitbox_slots` before calling setup().
+##   Each AttachedAttackDefinition binds by hitbox_slot_id — order in the array
+##   does not matter.
+##
+## Runtime weapon swap:
+##   Use equip_weapons(weapons) after setup() to hot-swap weapons mid-game.
+##   setup() must have been called first.
+##
+## API (weapon_index = index in weapons array, attack_index = index in weapon.attacks):
 ##
 ##   Unified attack (works for both detached and attached):
-##     perform_attack(weapon_index, attack_index, target_position, auto_end)
+##     perform_attack(weapon_index, attack_index, target_position)
 ##     end_attack(weapon_index, attack_index)
 ##     can_attack(weapon_index, attack_index) -> bool
 ##
 ##   For attached attacks:
 ##     perform_attack → activates the hitbox   (target_position ignored)
 ##     end_attack     → deactivates the hitbox
-##     auto_end param is ignored for attached attacks
 ##
 ##   Weapon switch:
 ##     set_weapon_enabled(weapon_index, enabled)
@@ -34,20 +41,33 @@ extends Node2D
 ##     clear_all_range_overrides()
 ##     get_attack_range(weapon_index, attack_index) -> float
 
-@export var stats: Stats
-@export_group("Weapons")
-## WeaponData resources to equip on this actor.
-## Index matches weapon_index used in all API calls.
-@export var weapons: Array[WeaponData] = []
 @export_group("Hitbox Slots")
 ## Pre-authored Hitbox nodes for ATTACHED attacks.
 ## Order does not matter — each AttachedAttackDefinition binds by hitbox_slot_id.
 @export var hitbox_slots: Array[Hitbox] = []
 
 # -------------------------
+# Stats — access via setup() only
+# -------------------------
+
+## Backing variable. Never assign _stats directly from outside this class.
+var _stats: Stats
+
+## Read-only access to stats after setup().
+## Assigning .stats directly is an error — use setup() instead.
+var stats: Stats:
+    get:
+        return _stats
+    set(_value):
+        push_error("CombatModule: do not assign .stats directly. Use setup(stats, weapons) instead.")
+
+# -------------------------
 # Runtime state
 # -------------------------
-## WeaponHandle instances, index-matched to `weapons`.
+
+## WeaponData in use — populated by setup() or equip_weapons().
+var _weapons: Array[WeaponData] = []
+## WeaponHandle instances, index-matched to _weapons.
 var _handles: Array[WeaponHandle] = []
 ## Range overrides keyed by "wi_ai" string (weapon_index + attack_index).
 ## When a key exists, get_attack_range() returns its value instead of the
@@ -55,48 +75,65 @@ var _handles: Array[WeaponHandle] = []
 var _range_overrides: Dictionary = { }
 
 # -------------------------
-# Lifecycle
+# Initialization
 # -------------------------
 
 
-## Build all WeaponHandles from the current `weapons` array.
-## Safe to call again if weapons change at runtime (clears and rebuilds).
-func setup(owner_stats := stats) -> void:
-    stats = owner_stats
+## Initialize the module. Must be called before any attack API is used.
+##
+## Passing an empty weapons array is valid and intentional — write setup(stats, [])
+## to make it explicit that this actor has no weapons.
+##
+## Passing weapons here is preferred over calling equip_weapons() separately,
+## as it guarantees stats and weapons are always set together.
+func setup(owner_stats: Stats, weapons: Array[WeaponData]) -> void:
+    if owner_stats == null:
+        push_error("CombatModule: setup() called with null stats.")
+        return
 
-    _clear_handles()
+    _stats = owner_stats
 
-    for weapon in weapons:
-        var handle := WeaponExecutor.build(weapon, self, hitbox_slots, stats)
-        _handles.append(handle)
+    if weapons.is_empty():
+        _clear_handles()
+        return
+
+    _load_weapons(weapons)
+    _rebuild_handles()
+
+# -------------------------
+# Runtime weapon swap
+# -------------------------
 
 
-## Replace the equipped weapons with duplicates of the given array, then rebuild.
-## Duplicating ensures runtime overrides don't write back into the source resources.
+## Hot-swap weapons after the module is already initialized.
+## setup() must have been called first — stats must already be set.
+##
+## Duplicates each entry so runtime overrides don't bleed back into source resources.
 func equip_weapons(source_weapons: Array[WeaponData]) -> void:
-    weapons.clear()
-    for weapon in source_weapons:
-        if weapon != null:
-            weapons.append(weapon.duplicate() as WeaponData)
-    setup()
+    if _stats == null:
+        push_error("CombatModule: equip_weapons() called before setup(). Call setup(stats, weapons) first.")
+        return
 
+    _load_weapons(source_weapons)
+    _rebuild_handles()
 
 # -------------------------
 # Attack API
 # -------------------------
+
+
 ## Execute an attack for any module type.
 ##
 ## Detached (Projectile, Place, Trap):
 ##   Fires once toward target_position.
-##   auto_end=true starts the cooldown immediately.
 ##   Pass auto_end=false and call end_attack() from animation_finished to defer cooldown.
 ##
 ## Attached (persistent hitbox):
-##   Activates the hitbox. target_position and auto_end are ignored.
+##   Activates the hitbox. target_position is ignored.
 ##   Call end_attack() to deactivate.
 func perform_attack(weapon_index: int, attack_index: int, target_position: Vector2 = Vector2.ZERO) -> void:
-    if stats == null:
-        push_error("CombatModule: stats is not set")
+    if _stats == null:
+        push_error("CombatModule: perform_attack() called before setup().")
         return
 
     var handle := _get_handle(weapon_index)
@@ -115,7 +152,7 @@ func perform_attack(weapon_index: int, attack_index: int, target_position: Vecto
         var effective_range := get_attack_range(weapon_index, attack_index)
         var distance := global_position.distance_to(target_position)
         if distance > effective_range + 0.01:
-            Debug.warn("CombatModule: target out of range (%.1f > %.1f)" % [distance, effective_range])
+            # push_warning("CombatModule: target out of range (%.1f > %.1f)" % [distance, effective_range])
             var dir := (target_position - global_position).normalized()
             target_position = global_position + dir * effective_range
 
@@ -154,10 +191,11 @@ func can_attack(weapon_index: int, attack_index: int) -> bool:
 
     return module.can_attack()
 
-
 # -------------------------
 # Weapon enable / disable
 # -------------------------
+
+
 ## Enable or disable an entire weapon.
 ## This gates future perform_attack calls on all modules in this weapon.
 ## It does NOT deactivate any currently live attached hitboxes —
@@ -172,10 +210,11 @@ func set_weapon_enabled(weapon_index: int, value: bool) -> void:
     for module in handle.attack_modules:
         module.enabled = value
 
-
 # -------------------------
 # Range override API
 # -------------------------
+
+
 ## Returns the effective attack range for the given weapon/attack.
 ## If a range override is active, that value is returned instead.
 ## Only PlaceAttackDefinition carries a range — Projectile and Attached return 0.
@@ -211,13 +250,48 @@ func clear_attack_range_override(weapon_index: int, attack_index: int) -> void:
 func clear_all_range_overrides() -> void:
     _range_overrides.clear()
 
+# -------------------------
+# Weapon / attack count queries
+# -------------------------
+
+
+## Returns the number of weapons currently equipped.
+## Use this to iterate weapons without accessing _weapons directly.
+## Example: for wi in combat_module.get_weapon_count()
+func get_weapon_count() -> int:
+    return _weapons.size()
+
+
+## Returns the number of attacks on a given weapon.
+## Use this alongside get_weapon_count() to iterate all attacks.
+## Example: for ai in combat_module.get_attack_count(wi)
+func get_attack_count(weapon_index: int) -> int:
+    if weapon_index < 0 or weapon_index >= _weapons.size():
+        return 0
+    return _weapons[weapon_index].attacks.size()
 
 # -------------------------
 # Internal
 # -------------------------
+
+
+func _load_weapons(source_weapons: Array[WeaponData]) -> void:
+    _weapons.clear()
+    for weapon in source_weapons:
+        if weapon != null:
+            _weapons.append(weapon.duplicate() as WeaponData)
+
+
+func _rebuild_handles() -> void:
+    _clear_handles()
+    for weapon in _weapons:
+        var handle := WeaponExecutor.build(weapon, self, hitbox_slots, _stats)
+        _handles.append(handle)
+
+
 func _get_handle(weapon_index: int) -> WeaponHandle:
     if weapon_index < 0 or weapon_index >= _handles.size():
-        push_warning("CombatModule: weapon_index %d out of range" % weapon_index)
+        push_warning("CombatModule: %s weapon_index %d out of range" % [owner.name, weapon_index])
         return null
     return _handles[weapon_index]
 

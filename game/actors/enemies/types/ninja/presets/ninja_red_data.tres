@@ -2,12 +2,14 @@
 
 [ext_resource type="Resource" uid="uid://bq584j3uqsyau" path="res://game/actors/enemies/types/slime/presets/slime_drop_profile.tres" id="1_xa21b"]
 [ext_resource type="Script" uid="uid://boqrgdnjxi8n8" path="res://game/actors/enemies/enemy_data.gd" id="2_7t35i"]
-[ext_resource type="Resource" uid="uid://rcfcludclv0l" path="res://game/actors/enemies/types/ninja/presets/ninja_red_stats.tres" id="3_uucmk"]
+[ext_resource type="Resource" uid="uid://rcfcludclv0l" path="res://game/actors/enemies/types/ninja/presets/ninja_red_stats.tres" id="3_cvjhg"]
 [ext_resource type="Script" uid="uid://i2xvg4o1geuj" path="res://common/gameplay/combat/attack/data/weapon_data.gd" id="4_60ccq"]
+[ext_resource type="Resource" uid="uid://ci3t141brem18" path="res://stage/testbeds/combat_sandbox/mini_slash.tres" id="5_cvjhg"]
 
 [resource]
 resource_local_to_scene = true
 script = ExtResource("2_7t35i")
-stats = ExtResource("3_uucmk")
+stats = ExtResource("3_cvjhg")
+weapons = Array[ExtResource("4_60ccq")]([ExtResource("5_cvjhg")])
 drop_profile = ExtResource("1_xa21b")
 metadata/_custom_type_script = "uid://boqrgdnjxi8n8"

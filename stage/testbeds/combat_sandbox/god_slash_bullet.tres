@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Stats" format=3 uid="uid://c81d2efuu8jwc"]
+
+[ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="1_t3fsq"]
+
+[resource]
+script = ExtResource("1_t3fsq")
+mana = 100.0
+base_damage = 100.0
+metadata/_custom_type_script = "uid://bkgf2cii3bfri"

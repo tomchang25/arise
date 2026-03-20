@@ -30,7 +30,10 @@ func _setup_timer() -> void:
     cooldown_timer = Timer.new()
     cooldown_timer.wait_time = _cooldown()
     cooldown_timer.one_shot = true
-    cooldown_timer.timeout.connect(func(): locked = false)
+    cooldown_timer.timeout.connect(
+        func():
+            locked = false
+    )
     add_child(cooldown_timer)
 
 
@@ -75,6 +78,7 @@ func execute_attack(target_position: Vector2) -> void:
 ## Start the cooldown. Call immediately after execute_attack for auto-end,
 ## or defer to an animation_finished signal for animation-driven flow.
 func end_attack() -> void:
+    print("[DetachedAttackModule] end_attack")
     if cooldown_timer.is_stopped():
         cooldown_timer.start()
 

@@ -1,6 +1,5 @@
 [gd_resource type="Resource" script_class="Stats" format=3 uid="uid://rcfcludclv0l"]
 
-[ext_resource type="PackedScene" uid="uid://vpxne6o7pihf" path="res://common/gameplay/combat/deliveries/projectile_attack_delivery.tscn" id="1_7rodb"]
 [ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="2_gibpa"]
 
 [resource]
@@ -9,8 +8,6 @@ faction = 1
 health = 80.0
 mana = 100.0
 base_max_health = 80.0
-base_damage = 8.0
+base_damage = 50.0
 base_defense = 5.0
-primary_delivery_type = 1
-primary_effect_scene = ExtResource("1_7rodb")
 invuln_time = 0.01

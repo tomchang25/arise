@@ -3,6 +3,7 @@ class_name Enemy
 extends CharacterBody2D
 
 signal navigation_finished
+signal attack_finished
 signal died(info)
 
 # -------------------------
@@ -65,12 +66,15 @@ func _enter_tree() -> void:
 
 
 func _ready() -> void:
+    if Engine.is_editor_hint():
+        return
+
     _auto_wire_nodes()
     _apply_data()
     _bind_modules()
 
     if home_position == Vector2.ZERO:
-        push_error("Enemy: home_position not set. Assign it at spawn time.")
+        push_warning("Enemy: home_position not set. Assign it at spawn time.")
     else:
         global_position = home_position
 
@@ -111,12 +115,6 @@ func _auto_wire_nodes() -> void:
 func _apply_data() -> void:
     if data == null:
         push_error("Enemy: no EnemyData assigned — using fallback stats.")
-        stats = Stats.new()
-        stats.faction = Stats.Faction.ENEMY
-        stats.base_max_health = 100.0
-        stats.base_defense = 0.0
-        stats.base_damage = 10.0
-        stats.setup_stats()
         return
 
     # Duplicate so each instance owns its own runtime stats.
@@ -129,16 +127,13 @@ func _apply_data() -> void:
     if deaggro_detection and data.deaggro_range > 0.0:
         deaggro_detection.set_collision_radius(data.deaggro_range)
 
-    # Load weapons from data into combat module.
-    if combat_module and data.weapons.size() > 0:
-        combat_module.equip_weapons(data.weapons)
+    # Initialize combat module — stats and weapons must always be set together.
+    if combat_module:
+        combat_module.setup(stats, data.weapons)
 
 
 func _bind_modules() -> void:
     # --- Combat ---
-    if combat_module:
-        combat_module.stats = stats
-
     if hurtbox:
         hurtbox.owner_stats = stats
 
@@ -164,8 +159,7 @@ func _bind_modules() -> void:
         health_bar.bind(stats)
 
     # --- Perception: reach radius from weapon 0 attack 0 range ---
-    if not Engine.is_editor_hint():
-        _bind_reach_detection()
+    _bind_reach_detection()
 
     # --- Movement ---
     if movement_module:
@@ -176,14 +170,18 @@ func _bind_modules() -> void:
         navigation_module.movement = movement_module
 
         if not Engine.is_editor_hint():
-            if not navigation_module.navigation_finished.is_connected(_on_navigation_finished):
-                navigation_module.navigation_finished.connect(_on_navigation_finished)
+            if not navigation_module.navigation_finished.is_connected(navigation_finished.emit):
+                navigation_module.navigation_finished.connect(navigation_finished.emit)
 
     # --- Loot ---
     if loot_drop:
         loot_drop.owner_node = self
         if data and data.drop_profile:
             loot_drop.drop_profile = data.drop_profile
+
+    # --- Animation signals ---
+    if animation_module and not animation_module.animation_finished.is_connected(_on_animation_finished):
+        animation_module.animation_finished.connect(_on_animation_finished)
 
 
 func _bind_reach_detection() -> void:
@@ -194,12 +192,11 @@ func _bind_reach_detection() -> void:
         push_warning("Enemy: reach_detection present but combat_module is null — radius not set.")
         return
 
-    var attac_range := combat_module.get_attack_range(0, 0)
-    if attac_range > 0.0:
-        reach_detection.set_collision_radius(attac_range)
+    var attack_range := combat_module.get_attack_range(0, 0)
+    if attack_range > 0.0:
+        reach_detection.set_collision_radius(attack_range)
     else:
         push_warning("Enemy: attack range returned 0 — reach_detection radius not set.")
-
 
 # -------------------------
 # Lifecycle callbacks
@@ -219,9 +216,10 @@ func _on_died(info) -> void:
     queue_free()
 
 
-func _on_navigation_finished() -> void:
-    navigation_finished.emit()
-
+func _on_animation_finished(anim_name: StringName) -> void:
+    print("[AnimationModule] animation finished: ", anim_name)
+    if String(ANIM_ATTACK) in String(anim_name):
+        attack_finished.emit()
 
 # -------------------------
 # Public API — movement
@@ -247,7 +245,6 @@ func get_path_velocity() -> Vector2:
     if movement_module == null:
         return Vector2.ZERO
     return movement_module.path_velocity
-
 
 # -------------------------
 # Public API — combat
@@ -276,20 +273,6 @@ func can_attack(weapon_index: int = 0, attack_index: int = 0) -> bool:
     return combat_module.can_attack(weapon_index, attack_index)
 
 
-## Enable a persistent hitbox (CONTACT or CHARGE).
-func activate_attack(weapon_index: int = 0, attack_index: int = 0) -> void:
-    if combat_module == null:
-        return
-    combat_module.activate_attack(weapon_index, attack_index)
-
-
-## Disable a persistent hitbox.
-func deactivate_attack(weapon_index: int = 0, attack_index: int = 0) -> void:
-    if combat_module == null:
-        return
-    combat_module.deactivate_attack(weapon_index, attack_index)
-
-
 ## Enable or disable an entire weapon by index.
 func set_weapon_enabled(weapon_index: int, value: bool) -> void:
     if combat_module == null:
@@ -302,7 +285,6 @@ func get_attack_range(weapon_index: int = 0, attack_index: int = 0) -> float:
     if combat_module == null:
         return 0.0
     return combat_module.get_attack_range(weapon_index, attack_index)
-
 
 # -------------------------
 # Public API — animation
@@ -327,7 +309,6 @@ func get_facing_direction() -> Vector2:
     if animation_module == null:
         return Vector2.RIGHT
     return animation_module.get_last_direction()
-
 
 # -------------------------
 # Public API — perception proxies
@@ -366,7 +347,6 @@ func get_nearest_reachable_target() -> Node2D:
     if reach_detection == null:
         return null
     return reach_detection.get_closest_target(false)
-
 
 # -------------------------
 # Public API — misc

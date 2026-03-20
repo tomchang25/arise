@@ -34,7 +34,7 @@ func execute(anchor: Node2D, ctx: SpawnContext) -> Node:
         var scene: PackedScene = pair[0]
         var count: int = pair[1]
 
-        for _i in range(count):
+        for i in range(count):
             var enemy := scene.instantiate() as Enemy
             if enemy == null:
                 Debug.warn("SpawnEnemyGroupAction: scene did not instantiate to Enemy")
@@ -46,7 +46,6 @@ func execute(anchor: Node2D, ctx: SpawnContext) -> Node:
             group.register_member(enemy)
 
     return group
-
 
 # -------------------------
 # Internal

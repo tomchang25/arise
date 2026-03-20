@@ -1,16 +1,14 @@
 [gd_resource type="Resource" script_class="Stats" format=3 uid="uid://cvbx3q36wf4kx"]
 
-[ext_resource type="PackedScene" uid="uid://327801cur3pj" path="res://common/gameplay/combat/attack/effects/presets/mini_slash_attack_effect.tscn" id="1_x5et6"]
 [ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="2_1ujn2"]
 
 [resource]
 resource_local_to_scene = true
 script = ExtResource("2_1ujn2")
 faction = 1
-health = 80.0
+health = 50.0
 mana = 100.0
-base_max_health = 80.0
-base_damage = 8.0
+base_max_health = 50.0
+base_damage = 20.0
 base_defense = 5.0
-primary_effect_scene = ExtResource("1_x5et6")
 invuln_time = 0.01

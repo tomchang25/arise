@@ -26,6 +26,10 @@ func _update(_delta: float) -> void:
         change_state(EnemyStateId.LEASH_BACK)
         return
 
+    if enemy.is_player_in_reach():
+        change_state(EnemyStateId.ATTACK)
+        return
+
     # Move toward player
     var target := enemy.get_nearest_aggro_target()
     if target:

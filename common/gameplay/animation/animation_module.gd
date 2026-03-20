@@ -37,7 +37,6 @@ func _ready() -> void:
     _cache_handles()
     _connect_signals()
 
-
 # -------------------------
 # Common API
 # -------------------------
@@ -61,7 +60,6 @@ func has_animation_tree() -> bool:
 func has_playback() -> bool:
     return _playback != null
 
-
 # -------------------------
 # State Travel
 # -------------------------
@@ -74,8 +72,10 @@ func travel(state_name: StringName) -> void:
     if _playback == null:
         return
 
-    _playback.travel(state_name)
-
+    if _playback.get_current_node() == state_name:
+        _playback.start(state_name)
+    else:
+        _playback.travel(state_name)
 
 # -------------------------
 # Blend / Facing
@@ -112,7 +112,6 @@ func face_direction(direction: Vector2) -> void:
 func get_last_direction() -> Vector2:
     return _last_direction
 
-
 # -------------------------
 # Playback Parameters
 # -------------------------
@@ -123,7 +122,6 @@ func set_time_scale(scale: float) -> void:
         return
 
     animation_tree.set(time_scale_path, scale)
-
 
 # -------------------------
 # Internal Helpers
@@ -158,7 +156,6 @@ func _get_blend_position_path(state_name: StringName) -> String:
 
     var base_path := state_machine_path.trim_suffix("/playback")
     return "%s/%s/blend_position" % [base_path, String(state_name)]
-
 
 # -------------------------
 # Signals / Callbacks

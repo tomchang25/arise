@@ -67,7 +67,6 @@ func _process(delta: float) -> void:
     _spawn_timer = maxf(_config.spawn_interval, 0.01)
     _run_pacing_tick()
 
-
 # -------------------------
 # Public API
 # -------------------------
@@ -148,7 +147,6 @@ func get_active_member_count() -> int:
             total += group.get_member_count()
     return total
 
-
 # -------------------------
 # Internal — Round
 # -------------------------
@@ -185,7 +183,7 @@ func _run_pacing_tick() -> void:
     if budget_left >= 0:
         count = mini(count, budget_left)
 
-    for _i in range(count):
+    for i in range(count):
         _request_spawn()
 
 
@@ -193,14 +191,15 @@ func _is_kill_budget_exhausted() -> bool:
     if _groups_to_kill < 0:
         # Endless round — never exhausted.
         return false
+
     if _config.spawn_beyond_budget:
         # Extermination mode: keep spawning past the budget so enemies are always
         # available to kill. Only stop once kills strictly exceed the budget.
         return _groups_killed >= _groups_to_kill
-    else:
-        # Wave mode: hard stop once (killed + active) reaches the budget.
-        # Player must clear remaining stragglers themselves.
-        return (_groups_killed + _active_groups.size()) >= _groups_to_kill
+
+    # Wave mode: hard stop once (killed + active) reaches the budget.
+    # Player must clear remaining stragglers themselves.
+    return (_groups_killed + _active_groups.size()) >= _groups_to_kill
 
 
 func _kill_budget_remaining() -> int:
@@ -238,7 +237,6 @@ func _check_round_cleared() -> void:
 
     if print_debug_log:
         Debug.log("EncounterController: round cleared — killed=%s" % _groups_killed)
-
 
 # -------------------------
 # Internal — Spawning
@@ -310,7 +308,6 @@ func _resolve_spawn_position() -> Variant:
         return null
     return spawn_position_resolver.call()
 
-
 # -------------------------
 # Internal — Group Lifecycle
 # -------------------------
@@ -349,7 +346,6 @@ func _clear_all_groups() -> void:
 
 func _cleanup_invalid() -> void:
     _active_groups = _active_groups.filter(func(g): return is_instance_valid(g))
-
 
 # -------------------------
 # Validation

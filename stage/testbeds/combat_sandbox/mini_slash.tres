@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="WeaponData" format=3 uid="uid://ci3t141brem18"]
+
+[ext_resource type="Script" uid="uid://dqbwdw1d7k7tu" path="res://common/gameplay/combat/attack/definitions/attack_definition.gd" id="1_gxj5p"]
+[ext_resource type="PackedScene" uid="uid://cr1lef2eyb6vu" path="res://common/gameplay/combat/attack/deliveries/slash_delivery.tscn" id="2_kl3vl"]
+[ext_resource type="Script" uid="uid://cmymyo0y1aoi7" path="res://common/gameplay/combat/attack/definitions/effect_phase_definition.gd" id="3_r0a22"]
+[ext_resource type="PackedScene" uid="uid://327801cur3pj" path="res://common/gameplay/combat/attack/effects/presets/mini_slash_attack_effect.tscn" id="4_l4i33"]
+[ext_resource type="Script" uid="uid://dxe0yv70mfrn4" path="res://common/gameplay/combat/attack/definitions/place_attack_definition.gd" id="5_f43xn"]
+[ext_resource type="Script" uid="uid://i2xvg4o1geuj" path="res://common/gameplay/combat/attack/data/weapon_data.gd" id="6_x5v6h"]
+
+[sub_resource type="Resource" id="Resource_04wdt"]
+script = ExtResource("3_r0a22")
+effect_scene = ExtResource("4_l4i33")
+metadata/_custom_type_script = "uid://cmymyo0y1aoi7"
+
+[sub_resource type="Resource" id="Resource_tu1f5"]
+script = ExtResource("5_f43xn")
+attack_range = 100.0
+attack_scene = ExtResource("2_kl3vl")
+phases = Array[ExtResource("3_r0a22")]([SubResource("Resource_04wdt")])
+metadata/_custom_type_script = "uid://dxe0yv70mfrn4"
+
+[resource]
+script = ExtResource("6_x5v6h")
+attacks = Array[ExtResource("1_gxj5p")]([SubResource("Resource_tu1f5")])
+metadata/_custom_type_script = "uid://i2xvg4o1geuj"
