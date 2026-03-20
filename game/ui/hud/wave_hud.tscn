@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://wave_hud_scene"]
+
+[ext_resource type="Script" uid="uid://wave_hud_script" path="res://game/ui/hud/wave_hud.gd" id="1_wavehud"]
+
+[node name="WaveHUD" type="Control" node_paths=PackedStringArray("progress_bar", "wave_label")]
+layout_mode = 3
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -200.0
+offset_top = 8.0
+offset_right = 200.0
+offset_bottom = 36.0
+grow_horizontal = 2
+script = ExtResource("1_wavehud")
+progress_bar = NodePath("HBox/ProgressBar")
+wave_label = NodePath("HBox/WaveLabel")
+
+[node name="HBox" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 8
+
+[node name="ProgressBar" type="ProgressBar" parent="HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+min_value = 0.0
+max_value = 10.0
+value = 0.0
+
+[node name="WaveLabel" type="Label" parent="HBox"]
+layout_mode = 2
+size_flags_vertical = 4
+text = "Wave 1"
+vertical_alignment = 1
