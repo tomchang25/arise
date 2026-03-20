@@ -13,32 +13,32 @@ extends ActionLeaf
 
 
 func tick(actor: Node, _blackboard: Blackboard) -> int:
-	var enemy := actor as Enemy
-	if enemy == null:
-		return FAILURE
+    var enemy := actor as Enemy
+    if enemy == null:
+        return FAILURE
 
-	if enemy.reach_detection == null:
-		return FAILURE
+    if enemy.reach_detection == null:
+        return FAILURE
 
-	var target := enemy.get_nearest_aggro_target()
-	if target == null:
-		return SUCCESS
+    var target := enemy.get_nearest_aggro_target()
+    if target == null:
+        return SUCCESS
 
-	var dist := enemy.global_position.distance_to(target.global_position)
-	var reach := enemy.reach_detection.radius
-	var stop_dist := reach * stop_fraction
+    var dist := enemy.global_position.distance_to(target.global_position)
+    var reach := enemy.reach_detection.radius
+    var stop_dist := reach * stop_fraction
 
-	if dist >= stop_dist:
-		enemy.stop_movement()
-		return SUCCESS
+    if dist >= stop_dist:
+        enemy.stop_movement()
+        return SUCCESS
 
-	# Move away from the player.
-	var away_dir := enemy.global_position.direction_to(target.global_position) * -1.0
-	var retreat_target := enemy.global_position + away_dir * retreat_speed
-	enemy.move_to_position(retreat_target, retreat_speed, 4.0)
-	enemy.set_facing_direction(
-		enemy.global_position.direction_to(target.global_position),
-		Enemy.ANIM_MOVE
-	)
-	enemy.play_animation(Enemy.ANIM_MOVE)
-	return RUNNING
+    # Move away from the player.
+    var away_dir := enemy.global_position.direction_to(target.global_position) * -1.0
+    var retreat_target := enemy.global_position + away_dir * retreat_speed
+    enemy.move_to_position(retreat_target, retreat_speed, 4.0)
+    enemy.set_facing_direction(
+        enemy.global_position.direction_to(target.global_position),
+        Enemy.ANIM_MOVE,
+    )
+    enemy.play_animation(Enemy.ANIM_MOVE)
+    return RUNNING

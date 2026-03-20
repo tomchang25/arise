@@ -5,11 +5,10 @@
 class_name IdleAction
 extends ActionLeaf
 
-
 func tick(actor: Node, _blackboard: Blackboard) -> int:
-	var enemy := actor as Enemy
-	if enemy == null:
-		return FAILURE
-	enemy.stop_movement()
-	enemy.play_animation(Enemy.ANIM_IDLE)
-	return RUNNING
+    var enemy := actor as Enemy
+    if enemy == null:
+        return FAILURE
+    enemy.stop_movement()
+    enemy.play_animation(Enemy.ANIM_IDLE)
+    return RUNNING

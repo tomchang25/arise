@@ -11,22 +11,22 @@ var _last_update_ms: int = 0
 
 
 func before_run(_actor: Node, _blackboard: Blackboard) -> void:
-	_last_update_ms = Time.get_ticks_msec()
+    _last_update_ms = Time.get_ticks_msec()
 
 
 func tick(actor: Node, _blackboard: Blackboard) -> int:
-	var enemy := actor as Enemy
-	if enemy == null:
-		return SUCCESS
+    var enemy := actor as Enemy
+    if enemy == null:
+        return SUCCESS
 
-	var now_ms := Time.get_ticks_msec()
-	if now_ms - _last_update_ms >= int(interval * 1000.0):
-		_last_update_ms = now_ms
-		# Prefer an aggro target; fall back to any target in deaggro range.
-		var target: Node2D = enemy.get_nearest_aggro_target()
-		if target == null and enemy.deaggro_detection:
-			target = enemy.deaggro_detection.get_closest_target(false)
-		if target:
-			enemy.home_position = target.global_position
+    var now_ms := Time.get_ticks_msec()
+    if now_ms - _last_update_ms >= int(interval * 1000.0):
+        _last_update_ms = now_ms
+        # Prefer an aggro target; fall back to any target in deaggro range.
+        var target: Node2D = enemy.get_nearest_aggro_target()
+        if target == null and enemy.deaggro_detection:
+            target = enemy.deaggro_detection.get_closest_target(false)
+        if target:
+            enemy.home_position = target.global_position
 
-	return SUCCESS
+    return SUCCESS

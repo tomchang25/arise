@@ -11,47 +11,47 @@ var _is_active: bool = false
 
 
 func before_run(actor: Node, _blackboard: Blackboard) -> void:
-	_activate(actor)
+    _activate(actor)
 
 
 func tick(actor: Node, _blackboard: Blackboard) -> int:
-	var enemy := actor as Enemy
-	if enemy == null:
-		return FAILURE
+    var enemy := actor as Enemy
+    if enemy == null:
+        return FAILURE
 
-	if not enemy.is_player_in_reach():
-		_deactivate(actor)
-		return FAILURE
+    if not enemy.is_player_in_reach():
+        _deactivate(actor)
+        return FAILURE
 
-	if not _is_active:
-		_activate(actor)
+    if not _is_active:
+        _activate(actor)
 
-	enemy.stop_movement()
-	return RUNNING
+    enemy.stop_movement()
+    return RUNNING
 
 
 func after_run(actor: Node, _blackboard: Blackboard) -> void:
-	_deactivate(actor)
+    _deactivate(actor)
 
 
 func interrupt(actor: Node, blackboard: Blackboard) -> void:
-	_deactivate(actor)
-	super(actor, blackboard)
+    _deactivate(actor)
+    super(actor, blackboard)
 
 
 func _activate(actor: Node) -> void:
-	var enemy := actor as Enemy
-	if enemy == null or _is_active:
-		return
-	# can_attack() returns false while the hitbox is already active.
-	if enemy.can_attack(weapon_index, attack_index):
-		enemy.activate_attack(weapon_index, attack_index)
-		_is_active = true
+    var enemy := actor as Enemy
+    if enemy == null or _is_active:
+        return
+    # can_attack() returns false while the hitbox is already active.
+    if enemy.can_attack(weapon_index, attack_index):
+        enemy.activate_attack(weapon_index, attack_index)
+        _is_active = true
 
 
 func _deactivate(actor: Node) -> void:
-	var enemy := actor as Enemy
-	if enemy == null or not _is_active:
-		return
-	enemy.deactivate_attack(weapon_index, attack_index)
-	_is_active = false
+    var enemy := actor as Enemy
+    if enemy == null or not _is_active:
+        return
+    enemy.deactivate_attack(weapon_index, attack_index)
+    _is_active = false

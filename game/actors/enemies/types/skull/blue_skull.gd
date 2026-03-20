@@ -14,23 +14,23 @@ extends Enemy
 
 
 func _ready() -> void:
-	if Engine.is_editor_hint():
-		return
+    if Engine.is_editor_hint():
+        return
 
-	actor_type = ActorType.BLUE_SKULL
+    actor_type = ActorType.BLUE_SKULL
 
-	_auto_wire_nodes()
-	_apply_data()
-	_bind_modules()
+    _auto_wire_nodes()
+    _apply_data()
+    _bind_modules()
 
-	if home_position == Vector2.ZERO:
-		push_warning("BlueSkull: home_position not set. Assign it at spawn time.")
-	else:
-		global_position = home_position
+    if home_position == Vector2.ZERO:
+        push_warning("BlueSkull: home_position not set. Assign it at spawn time.")
+    else:
+        global_position = home_position
 
 
 func _bind_reach_detection() -> void:
-	if reach_detection == null:
-		return
-	# Projectile weapons return 0 from get_attack_range; set radius manually.
-	reach_detection.set_collision_radius(projectile_reach)
+    if reach_detection == null:
+        return
+    # Projectile weapons return 0 from get_attack_range; set radius manually.
+    reach_detection.set_collision_radius(projectile_reach)
