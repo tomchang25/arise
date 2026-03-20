@@ -3,13 +3,16 @@
 [ext_resource type="Resource" uid="uid://bq584j3uqsyau" path="res://game/actors/enemies/types/slime/presets/slime_drop_profile.tres" id="1_0ovju"]
 [ext_resource type="Script" uid="uid://boqrgdnjxi8n8" path="res://game/actors/enemies/enemy_data.gd" id="2_8jf34"]
 [ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="3_mufbj"]
+[ext_resource type="Script" uid="uid://i2xvg4o1geuj" path="res://common/gameplay/combat/attack/data/weapon_data.gd" id="4_wdata"]
+[ext_resource type="Resource" uid="uid://nj01owha41av" path="res://game/actors/enemies/types/slime/presets/slime_contact_weapon.tres" id="5_weapon"]
 
 [sub_resource type="Resource" id="Resource_84vaf"]
 script = ExtResource("3_mufbj")
 faction = 1
-health = 10.0
-base_max_health = 10.0
+health = 20.0
+base_max_health = 20.0
 base_max_mana = 0.0
+base_damage = 5.0
 base_crit_chance = 0.0
 base_crit_multiplier = 1.0
 metadata/_custom_type_script = "uid://bkgf2cii3bfri"
@@ -18,7 +21,8 @@ metadata/_custom_type_script = "uid://bkgf2cii3bfri"
 resource_local_to_scene = true
 script = ExtResource("2_8jf34")
 stats = SubResource("Resource_84vaf")
-aggro_range = 100.0
-deaggro_range = 150.0
+weapons = Array[ExtResource("4_wdata")]([ExtResource("5_weapon")])
+aggro_range = 120.0
+deaggro_range = 200.0
 drop_profile = ExtResource("1_0ovju")
 metadata/_custom_type_script = "uid://boqrgdnjxi8n8"

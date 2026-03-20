@@ -1,12 +1,15 @@
 [gd_scene format=3 uid="uid://caxp8curqi3sy"]
 
 [ext_resource type="PackedScene" uid="uid://dbhtrssgng58f" path="res://game/actors/player/player.tscn" id="1_aa6vn"]
+[ext_resource type="Script" uid="uid://bq5c0poarlg4h" path="res://stage/testbeds/enemy_testbed/enemy_testbed.gd" id="1_bmphv"]
 [ext_resource type="PackedScene" uid="uid://31x7n43mme6c" path="res://game/actors/enemies/types/ninja/ninja_red.tscn" id="2_bmphv"]
 [ext_resource type="Resource" uid="uid://bq584j3uqsyau" path="res://game/actors/enemies/types/slime/presets/slime_drop_profile.tres" id="3_f4h17"]
 [ext_resource type="Script" uid="uid://boqrgdnjxi8n8" path="res://game/actors/enemies/enemy_data.gd" id="4_42owv"]
 [ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="5_2jkgr"]
 [ext_resource type="Script" uid="uid://i2xvg4o1geuj" path="res://common/gameplay/combat/attack/data/weapon_data.gd" id="6_7sg33"]
 [ext_resource type="Resource" uid="uid://ci3t141brem18" path="res://stage/testbeds/combat_sandbox/mini_slash.tres" id="7_4407i"]
+[ext_resource type="PackedScene" uid="uid://c3lbfkun8lbca" path="res://game/actors/enemies/types/slime/blue_slime.tscn" id="9_42owv"]
+[ext_resource type="Resource" uid="uid://nj01owha41av" path="res://game/actors/enemies/types/slime/presets/slime_contact_weapon.tres" id="10_2jkgr"]
 
 [sub_resource type="Resource" id="Resource_bekhx"]
 script = ExtResource("5_2jkgr")
@@ -18,7 +21,7 @@ base_damage = 8.0
 base_defense = 5.0
 invuln_time = 0.01
 
-[sub_resource type="Resource" id="Resource_r6n7q"]
+[sub_resource type="Resource" id="Resource_7sg33"]
 resource_local_to_scene = true
 script = ExtResource("4_42owv")
 stats = SubResource("Resource_bekhx")
@@ -26,11 +29,45 @@ weapons = Array[ExtResource("6_7sg33")]([ExtResource("7_4407i")])
 drop_profile = ExtResource("3_f4h17")
 metadata/_custom_type_script = "uid://boqrgdnjxi8n8"
 
+[sub_resource type="Resource" id="Resource_84vaf"]
+script = ExtResource("5_2jkgr")
+faction = 1
+health = 20.0
+base_max_health = 20.0
+base_max_mana = 0.0
+base_damage = 5.0
+base_crit_chance = 0.0
+base_crit_multiplier = 1.0
+metadata/_custom_type_script = "uid://bkgf2cii3bfri"
+
+[sub_resource type="Resource" id="Resource_4407i"]
+resource_local_to_scene = true
+script = ExtResource("4_42owv")
+stats = SubResource("Resource_84vaf")
+weapons = Array[ExtResource("6_7sg33")]([ExtResource("10_2jkgr")])
+aggro_range = 120.0
+deaggro_range = 200.0
+drop_profile = ExtResource("3_f4h17")
+metadata/_custom_type_script = "uid://boqrgdnjxi8n8"
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_aa6vn"]
+vertices = PackedVector2Array(896.96094, -19.59375, 895.03125, 538.85156, -164.4375, 524.1328, -192.49219, -86.328125)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-203, -97, 907, -29, 905, 549, -174, 534)])
+
 [node name="EnemyTestbed" type="Node2D" unique_id=349203210]
+script = ExtResource("1_bmphv")
 
 [node name="Player" parent="." unique_id=1080162393 instance=ExtResource("1_aa6vn")]
 position = Vector2(50, 80)
 
 [node name="Ninja_red" parent="." unique_id=1967515506 instance=ExtResource("2_bmphv")]
-position = Vector2(170, 80)
-data = SubResource("Resource_r6n7q")
+position = Vector2(500, 200)
+data = SubResource("Resource_7sg33")
+
+[node name="BlueSlime" parent="." unique_id=1127208942 instance=ExtResource("9_42owv")]
+position = Vector2(104, 405)
+data = SubResource("Resource_4407i")
+
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="." unique_id=1132032638]
+navigation_polygon = SubResource("NavigationPolygon_aa6vn")

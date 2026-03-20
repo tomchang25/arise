@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="Stats" format=3]
+
+[ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="1_stats"]
+
+[resource]
+script = ExtResource("1_stats")
+faction = 1
+base_max_health = 40.0
+health = 40.0
+base_max_mana = 0.0
+base_damage = 8.0
+base_defense = 0.0
+base_speed = 1.0
+base_crit_chance = 0.05
+base_crit_multiplier = 1.5
+metadata/_custom_type_script = "uid://bkgf2cii3bfri"

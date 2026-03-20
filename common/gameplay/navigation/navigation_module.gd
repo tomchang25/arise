@@ -136,7 +136,6 @@ func _draw() -> void:
         draw_circle(to_local(next_point), 3.0, debug_color_next)
         draw_line(to_local(origin), to_local(next_point), debug_color_next, 1.5)
 
-
 # -------------------------
 # Common API
 # -------------------------
@@ -171,7 +170,6 @@ func is_path_finished() -> bool:
         return navigation_agent.is_navigation_finished()
 
     return true
-
 
 # -------------------------
 # Target Control
@@ -219,7 +217,6 @@ func get_target_position() -> Vector2:
 func get_follow_target() -> Node2D:
     return _follow_target
 
-
 # -------------------------
 # Navigation Control
 # -------------------------
@@ -254,7 +251,6 @@ func is_avoidance_enabled() -> bool:
 func set_avoidance_priority(value: float) -> void:
     avoidance_priority = value
 
-
 # -------------------------
 # Debug / Test Helpers
 # -------------------------
@@ -267,10 +263,9 @@ func debug_print_target_state() -> void:
             "has_target": has_target(),
             "target_position": _target_position,
             "follow_target": _follow_target,
-            "path_finished": is_path_finished()
-        }
+            "path_finished": is_path_finished(),
+        },
     )
-
 
 # -------------------------
 # Internal Helpers
@@ -379,7 +374,6 @@ func _emit_navigation_finished_once() -> void:
 
     _finished_emitted = true
     navigation_finished.emit()
-
 
 # -------------------------
 # Signals / Callbacks

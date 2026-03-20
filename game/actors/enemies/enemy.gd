@@ -7,10 +7,24 @@ signal attack_finished
 signal died(info)
 
 # -------------------------
+# Actor type enum
+# -------------------------
+
+enum ActorType {
+    UNKNOWN = 0,
+    BLUE_SLIME = 1,
+    RED_NINJA = 2,
+    BLUE_SKULL = 3,
+}
+
+# -------------------------
 # Exports
 # -------------------------
 
 @export var data: EnemyData
+
+@export_group("Actor")
+@export var actor_type: ActorType = ActorType.UNKNOWN
 
 @export_group("Visuals")
 @export var sprite: Sprite2D
@@ -114,7 +128,7 @@ func _auto_wire_nodes() -> void:
 
 func _apply_data() -> void:
     if data == null:
-        push_error("Enemy: no EnemyData assigned — using fallback stats.")
+        push_error("Enemy: no EnemyData assigned.")
         return
 
     # Duplicate so each instance owns its own runtime stats.
@@ -159,7 +173,8 @@ func _bind_modules() -> void:
         health_bar.bind(stats)
 
     # --- Perception: reach radius from weapon 0 attack 0 range ---
-    _bind_reach_detection()
+    if not Engine.is_editor_hint():
+        _bind_reach_detection()
 
     # --- Movement ---
     if movement_module:
@@ -273,6 +288,22 @@ func can_attack(weapon_index: int = 0, attack_index: int = 0) -> bool:
     return combat_module.can_attack(weapon_index, attack_index)
 
 
+## Activate a persistent (ATTACHED) hitbox weapon.
+## Maps to perform_attack which, for AttachedAttackDefinition, enables the hitbox.
+func activate_attack(weapon_index: int = 0, attack_index: int = 0) -> void:
+    if combat_module == null:
+        return
+    combat_module.perform_attack(weapon_index, attack_index, Vector2.ZERO)
+
+
+## Deactivate a persistent (ATTACHED) hitbox weapon.
+## Maps to end_attack which, for AttachedAttackDefinition, disables the hitbox.
+func deactivate_attack(weapon_index: int = 0, attack_index: int = 0) -> void:
+    if combat_module == null:
+        return
+    combat_module.end_attack(weapon_index, attack_index)
+
+
 ## Enable or disable an entire weapon by index.
 func set_weapon_enabled(weapon_index: int, value: bool) -> void:
     if combat_module == null:
@@ -291,10 +322,10 @@ func get_attack_range(weapon_index: int = 0, attack_index: int = 0) -> float:
 # -------------------------
 
 
-func play_animation(state_name: StringName, time_scale: float = 1.0) -> void:
+func play_animation(state_name: StringName, time_scale: float = 1.0, force_restart: bool = false) -> void:
     if animation_module == null:
         return
-    animation_module.travel(state_name)
+    animation_module.travel(state_name, force_restart)
     animation_module.set_time_scale(time_scale)
 
 
