@@ -20,6 +20,7 @@ signal target_lost
 @export_group("Path Update")
 @export var target_update_interval := 0.20
 @export var repath_distance_threshold := 8.0
+@export var path_tick_interval := 0.2
 
 @export_group("Movement")
 @export var auto_set_path_mode := true
@@ -50,6 +51,7 @@ var _has_target_position := false
 var _target_position: Vector2 = Vector2.ZERO
 var _last_applied_target_position: Vector2 = Vector2.INF
 var _target_update_timer := 0.0
+var _path_tick_timer := 0.0
 var _finished_emitted := false
 
 # -------------------------
@@ -83,6 +85,11 @@ func _physics_process(delta: float) -> void:
     if _target_update_timer >= target_update_interval:
         _target_update_timer = 0.0
         _refresh_target_position()
+
+    _path_tick_timer += delta
+    if _path_tick_timer < path_tick_interval:
+        return
+    _path_tick_timer = 0.0
 
     if _should_use_fallback_direct_path():
         _fallback_direct_path()
