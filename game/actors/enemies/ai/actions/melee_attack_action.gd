@@ -39,7 +39,7 @@ func tick(actor: Node, _blackboard: Blackboard) -> int:
 
         # Fire when ready. Auto-end immediately to start the cooldown timer.
         if enemy.can_attack(weapon_index, attack_index):
-            enemy.play_animation(Enemy.ANIM_ATTACK)
+            enemy.play_animation(Enemy.ANIM_ATTACK, 1.0, true)
             enemy.perform_attack(target.global_position, weapon_index, attack_index)
             enemy.end_attack(weapon_index, attack_index)
             enemy.set_facing_direction(
