@@ -1,0 +1,41 @@
+[gd_scene format=3 uid="uid://summon_manager_scene"]
+
+[ext_resource type="Script" path="res://game/summon/summon_manager.gd" id="1_manager"]
+[ext_resource type="Script" path="res://game/summon/summon_type.gd" id="2_type"]
+[ext_resource type="PackedScene" uid="uid://dybnb2lmsq7s0" path="res://game/actors/summons/ninja_green/ninja_green.tscn" id="3_ninja"]
+
+[sub_resource type="Resource" id="SummonType_warrior"]
+script = ExtResource("2_type")
+label = "Warrior"
+soul_cost = 5
+max_count = 5
+color = Color(1, 0.4, 0.4, 1)
+scene = ExtResource("3_ninja")
+
+[sub_resource type="Resource" id="SummonType_archer"]
+script = ExtResource("2_type")
+label = "Archer"
+soul_cost = 10
+max_count = 3
+color = Color(0.4, 1, 0.4, 1)
+scene = ExtResource("3_ninja")
+
+[sub_resource type="Resource" id="SummonType_knight"]
+script = ExtResource("2_type")
+label = "Knight"
+soul_cost = 15
+max_count = 2
+color = Color(0.4, 0.6, 1, 1)
+scene = ExtResource("3_ninja")
+
+[sub_resource type="Resource" id="SummonType_mage"]
+script = ExtResource("2_type")
+label = "Mage"
+soul_cost = 25
+max_count = 1
+color = Color(0.9, 0.4, 1, 1)
+scene = ExtResource("3_ninja")
+
+[node name="SummonManager" type="Node" groups=["summon_manager"]]
+script = ExtResource("1_manager")
+army_types = [SubResource("SummonType_warrior"), SubResource("SummonType_archer"), SubResource("SummonType_knight"), SubResource("SummonType_mage")]

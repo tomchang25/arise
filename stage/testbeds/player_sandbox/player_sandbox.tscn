@@ -7,6 +7,9 @@
 [ext_resource type="PackedScene" uid="uid://dhjvr7458gxu0" path="res://game/destroyables/plant_props/plant_props.tscn" id="5_0ev1d"]
 [ext_resource type="PackedScene" uid="uid://dbhtrssgng58f" path="res://game/actors/player/player.tscn" id="6_qwuv5"]
 [ext_resource type="Script" uid="uid://bbnuk476f2gu5" path="res://common/gameplay/camera/camera.gd" id="7_dv6ov"]
+[ext_resource type="PackedScene" uid="uid://bfxutmk72t3gc" path="res://game/actors/summons/army_handler/army_handler.tscn" id="8_summon"]
+[ext_resource type="PackedScene" path="res://game/summon/summon_manager.tscn" id="9_summon"]
+[ext_resource type="PackedScene" path="res://game/ui/hud/summon_hud/summon_hud.tscn" id="10_summon"]
 
 [sub_resource type="Resource" id="Resource_ptvfu"]
 resource_local_to_scene = true
@@ -86,3 +89,12 @@ position = Vector2(93, 80)
 [node name="Camera2D" type="Camera2D" parent="Player" unique_id=389206353]
 zoom = Vector2(0.2, 0.2)
 script = ExtResource("7_dv6ov")
+
+[node name="ArmyHandler" parent="." instance=ExtResource("8_summon")]
+
+[node name="SummonManager" parent="." instance=ExtResource("9_summon")]
+debug_starting_souls = 100
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="SummonHUD" parent="UI" instance=ExtResource("10_summon")]
