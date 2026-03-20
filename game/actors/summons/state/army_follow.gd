@@ -1,7 +1,7 @@
 extends ArmyState
 
 # @export var check_player_timer_interval: float = 0.1
-@export var animation_state: String = Army.AnimationState.MOVE
+@export var animation_state: StringName = Army.ANIM_MOVE
 @export var move_speed: float = 100
 @export var min_distance_to_player: float = 25
 
@@ -23,7 +23,7 @@ func _update(_delta: float) -> void:
     target.move_to_position(target.player.global_position + target.grid_position, move_speed, 5)
 
     # Update animation based on pathfinding velocity
-    var velocity = target.pathfinding.get_velocity()
+    var velocity = target.get_path_velocity()
     target.set_facing_direction(velocity, animation_state)
 
     # Check for nearby enemies while following

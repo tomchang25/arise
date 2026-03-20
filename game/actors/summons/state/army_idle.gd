@@ -1,7 +1,7 @@
 extends ArmyState
 
 @export var follow_threshold: float = 50
-@export var animation_state: String = Army.AnimationState.IDLE
+@export var animation_state: StringName = Army.ANIM_IDLE
 
 
 func _init() -> void:
