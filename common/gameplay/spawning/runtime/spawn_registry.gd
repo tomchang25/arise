@@ -5,139 +5,131 @@ var _tracked_nodes: Array[WeakRef] = []
 
 
 func register_node(node: Node) -> bool:
-    if node == null:
-        return false
+	if node == null:
+		return false
 
-    cleanup_invalid()
+	if has_node(node):
+		return false
 
-    if has_node(node):
-        return false
-
-    _tracked_nodes.append(weakref(node))
-    return true
+	_tracked_nodes.append(weakref(node))
+	return true
 
 
 func unregister_node(node: Node) -> void:
-    if node == null:
-        return
+	if node == null:
+		return
 
-    var next_nodes: Array[WeakRef] = []
+	for i in range(_tracked_nodes.size() - 1, -1, -1):
+		var weak_node := _tracked_nodes[i]
+		if weak_node == null:
+			_tracked_nodes.remove_at(i)
+			continue
 
-    for weak_node in _tracked_nodes:
-        if weak_node == null:
-            continue
+		var tracked_node = weak_node.get_ref()
+		if tracked_node == null or not is_instance_valid(tracked_node):
+			_tracked_nodes.remove_at(i)
+			continue
 
-        var tracked_node = weak_node.get_ref()
-        if tracked_node == null:
-            continue
-
-        if tracked_node == node:
-            continue
-
-        if not is_instance_valid(tracked_node):
-            continue
-
-        next_nodes.append(weak_node)
-
-    _tracked_nodes = next_nodes
+		if tracked_node == node:
+			_tracked_nodes.remove_at(i)
 
 
 func has_node(node: Node) -> bool:
-    if node == null:
-        return false
+	if node == null:
+		return false
 
-    for weak_node in _tracked_nodes:
-        if weak_node == null:
-            continue
+	for weak_node in _tracked_nodes:
+		if weak_node == null:
+			continue
 
-        var tracked_node = weak_node.get_ref()
-        if tracked_node == null:
-            continue
+		var tracked_node = weak_node.get_ref()
+		if tracked_node == null:
+			continue
 
-        if not is_instance_valid(tracked_node):
-            continue
+		if not is_instance_valid(tracked_node):
+			continue
 
-        if tracked_node == node:
-            return true
+		if tracked_node == node:
+			return true
 
-    return false
+	return false
 
 
 func cleanup_invalid() -> void:
-    var next_nodes: Array[WeakRef] = []
+	for i in range(_tracked_nodes.size() - 1, -1, -1):
+		var weak_node := _tracked_nodes[i]
+		if weak_node == null:
+			_tracked_nodes.remove_at(i)
+			continue
 
-    for weak_node in _tracked_nodes:
-        if weak_node == null:
-            continue
-
-        var tracked_node = weak_node.get_ref()
-        if tracked_node == null:
-            continue
-
-        if not is_instance_valid(tracked_node):
-            continue
-
-        next_nodes.append(weak_node)
-
-    _tracked_nodes = next_nodes
+		var tracked_node = weak_node.get_ref()
+		if tracked_node == null or not is_instance_valid(tracked_node):
+			_tracked_nodes.remove_at(i)
 
 
 func clear() -> void:
-    _tracked_nodes.clear()
+	_tracked_nodes.clear()
 
 
 func get_valid_nodes() -> Array[Node]:
-    cleanup_invalid()
+	cleanup_invalid()
 
-    var result: Array[Node] = []
+	var result: Array[Node] = []
 
-    for weak_node in _tracked_nodes:
-        if weak_node == null:
-            continue
+	for weak_node in _tracked_nodes:
+		if weak_node == null:
+			continue
 
-        var tracked_node = weak_node.get_ref()
-        if tracked_node == null:
-            continue
+		var tracked_node = weak_node.get_ref()
+		if tracked_node == null:
+			continue
 
-        if not is_instance_valid(tracked_node):
-            continue
+		if not is_instance_valid(tracked_node):
+			continue
 
-        result.append(tracked_node)
+		result.append(tracked_node)
 
-    return result
+	return result
 
 
 func get_valid_nodes_2d() -> Array[Node2D]:
-    cleanup_invalid()
+	cleanup_invalid()
 
-    var result: Array[Node2D] = []
+	var result: Array[Node2D] = []
 
-    for weak_node in _tracked_nodes:
-        if weak_node == null:
-            continue
+	for weak_node in _tracked_nodes:
+		if weak_node == null:
+			continue
 
-        var tracked_node = weak_node.get_ref()
-        if tracked_node == null:
-            continue
+		var tracked_node = weak_node.get_ref()
+		if tracked_node == null:
+			continue
 
-        if not is_instance_valid(tracked_node):
-            continue
+		if not is_instance_valid(tracked_node):
+			continue
 
-        var node_2d := tracked_node as Node2D
-        if node_2d != null:
-            result.append(node_2d)
+		var node_2d := tracked_node as Node2D
+		if node_2d != null:
+			result.append(node_2d)
 
-    return result
+	return result
 
 
 func get_valid_count() -> int:
-    cleanup_invalid()
-    return _tracked_nodes.size()
+	var count := 0
+	for weak_node in _tracked_nodes:
+		if weak_node == null:
+			continue
+		var tracked_node = weak_node.get_ref()
+		if tracked_node == null or not is_instance_valid(tracked_node):
+			continue
+		count += 1
+	return count
 
 
 func queue_free_all() -> void:
-    for node in get_valid_nodes():
-        if is_instance_valid(node):
-            node.queue_free()
+	for node in get_valid_nodes():
+		if is_instance_valid(node):
+			node.queue_free()
 
-    clear()
+	clear()
