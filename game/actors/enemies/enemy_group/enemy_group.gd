@@ -11,6 +11,17 @@ signal group_removed
 signal members_changed
 
 # -------------------------
+# Exports — Anchor tracking
+# -------------------------
+
+## When enabled, the anchor is updated to the player's world position every
+## [member track_interval] seconds instead of being fixed in place.
+@export var track_player: bool = false
+
+## Seconds between automatic anchor updates when [member track_player] is true.
+@export var track_interval: float = 5.0
+
+# -------------------------
 # Internal state
 # -------------------------
 
@@ -21,10 +32,20 @@ var _members: Array[Enemy] = []
 var _living_count: int = 0
 var _was_depleted: bool = false
 
-## Per-member anchor offsets relative to this group node's position.
+## The logical anchor position used to compute each member's formation slot.
+## Stored as a plain Vector2 so that changing it does NOT move children.
+var _anchor: Vector2 = Vector2.ZERO
+
+## Per-member anchor offsets relative to _anchor.
 ## Stored when a member is registered so anchor_position updates automatically
-## whenever the group node moves.
-var _anchor_offsets: Dictionary = { }
+## whenever set_anchor() is called.
+var _anchor_offsets: Dictionary = {}
+
+## Accumulated time for [member track_player] periodic updates.
+var _track_timer: float = 0.0
+
+## Cached player reference, resolved at _ready().
+var _player: Node2D
 
 # -------------------------
 # Lifecycle
@@ -32,22 +53,32 @@ var _anchor_offsets: Dictionary = { }
 
 
 func _ready() -> void:
-    # Capture the node's world position as the pivot the moment it enters the tree.
-    # The spawner should place the node at the desired center before add_child().
-    spawn_pivot = global_position
+	# Capture the node's world position as the pivot the moment it enters the tree.
+	# The spawner should place the node at the desired center before add_child().
+	spawn_pivot = global_position
+	_anchor = global_position
+
+	_player = get_tree().get_first_node_in_group("player")
 
 
-func _physics_process(_delta: float) -> void:
-    # Propagate updated anchor_positions whenever this group node moves.
-    for member in get_alive_members():
-        var offset: Vector2 = _anchor_offsets.get(member, Vector2.ZERO)
-        member.anchor_position = global_position + offset
+func _physics_process(delta: float) -> void:
+	# Optionally update the anchor to the player's position every N seconds.
+	if track_player and _player:
+		_track_timer += delta
+		if _track_timer >= track_interval:
+			_track_timer = 0.0
+			set_anchor(_player.global_position)
+
+	# Propagate updated anchor_positions to all living members.
+	for member in get_alive_members():
+		var offset: Vector2 = _anchor_offsets.get(member, Vector2.ZERO)
+		member.anchor_position = _anchor + offset
 
 
 func _notification(what: int) -> void:
-    if what == NOTIFICATION_PREDELETE:
-        if not _was_depleted:
-            group_removed.emit()
+	if what == NOTIFICATION_PREDELETE:
+		if not _was_depleted:
+			group_removed.emit()
 
 # -------------------------
 # Member registry (called by SpawnEnemyGroupAction)
@@ -55,63 +86,72 @@ func _notification(what: int) -> void:
 
 
 func register_member(enemy: Enemy) -> void:
-    if _members.has(enemy):
-        return
+	if _members.has(enemy):
+		return
 
-    _members.append(enemy)
-    _living_count += 1
+	_members.append(enemy)
+	_living_count += 1
 
-    # Store the member's anchor offset relative to this group's current position.
-    # SpawnEnemyGroupAction sets enemy.anchor_position before calling register_member(),
-    # so we capture it here as the authoritative offset.
-    _anchor_offsets[enemy] = enemy.anchor_position - global_position
+	# Store the member's anchor offset relative to the current _anchor.
+	# SpawnEnemyGroupAction sets enemy.anchor_position before calling register_member(),
+	# so we capture it here as the authoritative offset.
+	_anchor_offsets[enemy] = enemy.anchor_position - _anchor
 
-    if not enemy.died.is_connected(_on_member_died.bind(enemy)):
-        enemy.died.connect(_on_member_died.bind(enemy))
+	if not enemy.died.is_connected(_on_member_died.bind(enemy)):
+		enemy.died.connect(_on_member_died.bind(enemy))
 
-    members_changed.emit()
+	members_changed.emit()
 
 # -------------------------
 # Public API
 # -------------------------
 
 
+## Moves the formation anchor to [param new_position] and immediately updates
+## every member's anchor_position. Does NOT move the Node2D itself.
+func set_anchor(new_position: Vector2) -> void:
+	_anchor = new_position
+	for member in get_alive_members():
+		var offset: Vector2 = _anchor_offsets.get(member, Vector2.ZERO)
+		member.anchor_position = _anchor + offset
+
+
 ## Returns the live centroid of all members.
 ## Falls back to spawn_pivot when all members are dead (minimap icon stays in place).
 func get_center() -> Vector2:
-    var alive := get_alive_members()
-    if alive.is_empty():
-        return spawn_pivot
+	var alive := get_alive_members()
+	if alive.is_empty():
+		return spawn_pivot
 
-    var sum := Vector2.ZERO
-    for m in alive:
-        sum += m.global_position
-    return sum / float(alive.size())
+	var sum := Vector2.ZERO
+	for m in alive:
+		sum += m.global_position
+	return sum / float(alive.size())
 
 
 func get_alive_members() -> Array[Enemy]:
-    var result: Array[Enemy] = []
-    for m in _members:
-        if is_instance_valid(m):
-            result.append(m)
-    return result
+	var result: Array[Enemy] = []
+	for m in _members:
+		if is_instance_valid(m):
+			result.append(m)
+	return result
 
 
 func get_member_count() -> int:
-    return _living_count
+	return _living_count
 
 
 func is_depleted() -> bool:
-    return _living_count <= 0
+	return _living_count <= 0
 
 
 ## Immediately frees all living members and this group node.
 ## Does not emit group_depleted — use this for forced cleanup, not natural death.
 func force_kill() -> void:
-    for member in get_alive_members():
-        member.queue_free()
+	for member in get_alive_members():
+		member.queue_free()
 
-    queue_free()
+	queue_free()
 
 # -------------------------
 # Internal
@@ -119,15 +159,15 @@ func force_kill() -> void:
 
 
 func _on_member_died(_info, enemy: Enemy) -> void:
-    var idx := _members.find(enemy)
-    if idx != -1:
-        _members.remove_at(idx)
+	var idx := _members.find(enemy)
+	if idx != -1:
+		_members.remove_at(idx)
 
-    _anchor_offsets.erase(enemy)
-    _living_count -= 1
-    members_changed.emit()
+	_anchor_offsets.erase(enemy)
+	_living_count -= 1
+	members_changed.emit()
 
-    if _living_count <= 0:
-        _was_depleted = true
-        group_depleted.emit()
-        queue_free()
+	if _living_count <= 0:
+		_was_depleted = true
+		group_depleted.emit()
+		queue_free()

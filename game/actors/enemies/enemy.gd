@@ -22,10 +22,6 @@ enum ActorType {
 @export_group("Actor")
 @export var actor_type: ActorType = ActorType.UNKNOWN
 
-@export_group("Modules — Perception")
-@export var aggro_detection: DetectionModule
-@export var deaggro_detection: DetectionModule
-
 @export_group("Modules — Gameplay")
 @export var loot_drop: LootDropModule
 
@@ -50,10 +46,6 @@ func _ready() -> void:
 
 func _auto_wire_nodes() -> void:
     super._auto_wire_nodes()
-    if not aggro_detection:
-        aggro_detection = find_child("AggroDetection", true, false) as DetectionModule
-    if not deaggro_detection:
-        deaggro_detection = find_child("DeaggroDetection", true, false) as DetectionModule
     if not loot_drop:
         loot_drop = find_child("LootDropModule", true, false) as LootDropModule
 
@@ -108,27 +100,16 @@ func _on_animation_finished(anim_name: StringName) -> void:
 # -------------------------
 
 
-## True when the player is inside aggro range (line-of-sight checked).
+## True when the player is inside aggro range.
 func is_player_in_aggro_range() -> bool:
-    if aggro_detection == null:
-        return false
-    return aggro_detection.get_target_count() > 0
+    return is_aggro_active()
 
 
 ## True when the player has moved OUTSIDE the deaggro zone.
-## Use this as the chase exit condition to prevent oscillation.
 func is_player_outside_deaggro_range() -> bool:
-    if deaggro_detection == null:
-        return true
-    return deaggro_detection.get_target_count() == 0
+    return is_deaggro_active()
 
 
 ## True when the player is close enough to attack.
 func is_player_in_reach() -> bool:
     return is_target_in_reach()
-
-
-func get_nearest_aggro_target() -> Node2D:
-    if aggro_detection == null:
-        return null
-    return aggro_detection.get_closest_target()
