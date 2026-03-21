@@ -32,7 +32,6 @@ func _unhandled_input(event: InputEvent) -> void:
         _reset_dummies()
         get_viewport().set_input_as_handled()
 
-
 # -------------------------
 # HUD Binding
 # -------------------------
@@ -48,7 +47,6 @@ func _bind_hud() -> void:
     if summon_hud and summon_manager:
         summon_hud.bind(summon_manager)
 
-
 # -------------------------
 # Dummy Reset
 # -------------------------
@@ -61,7 +59,6 @@ func _reset_dummies() -> void:
         if is_instance_valid(child) and child.has_method("reset_dummy"):
             child.reset_dummy()
 
-
 # -------------------------
 # Debug Label
 # -------------------------
@@ -70,11 +67,12 @@ func _reset_dummies() -> void:
 func _update_debug_label() -> void:
     if debug_label == null:
         return
-    debug_label.text = "\n".join([
-        "[1–4]  Summon unit",
-        "[R]    Reset dummies",
-    ])
-
+    debug_label.text = "\n".join(
+        [
+            "[1–4]  Summon unit",
+            "[R]    Reset dummies",
+        ],
+    )
 
 # -------------------------
 # Input Setup
