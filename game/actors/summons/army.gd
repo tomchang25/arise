@@ -2,8 +2,6 @@
 class_name Army
 extends Actor
 
-signal attack_finished
-
 # -------------------------
 # Exports — Army-specific
 # -------------------------

@@ -9,10 +9,10 @@
 [resource]
 resource_local_to_scene = true
 script = ExtResource("2_narlh")
+drop_profile = ExtResource("1_ombsu")
 stats = ExtResource("3_8uix3")
 weapons = Array[ExtResource("4_5ojgb")]([ExtResource("5_jk4ga")])
 has_wander = true
 has_deaggro = true
 leash_distance = 300.0
-drop_profile = ExtResource("1_ombsu")
 metadata/_custom_type_script = "uid://boqrgdnjxi8n8"

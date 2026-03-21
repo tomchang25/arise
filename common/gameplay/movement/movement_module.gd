@@ -9,6 +9,7 @@ extends Node
             _stop_runtime_state()
 
 @export var character: CharacterBody2D
+@export var use_direct_position := false
 
 @export_group("Movement")
 @export var acceleration: float = 10000.0
@@ -49,8 +50,13 @@ func _physics_process(delta: float) -> void:
     knockback_velocity = knockback_velocity.move_toward(Vector2.ZERO, knockback_friction * delta)
 
     character.velocity = current_move + knockback_velocity
-    character.move_and_slide()
+    if character.velocity == Vector2.ZERO:
+        return
 
+    if use_direct_position:
+        character.global_position += character.velocity * delta
+    else:
+        character.move_and_slide()
 
 # -------------------------
 # Common API
@@ -90,7 +96,6 @@ func stop_all_motion(force_clear_knockback: bool = true) -> void:
     if character != null:
         character.velocity = Vector2.ZERO
 
-
 # -------------------------
 # Manual Control
 # -------------------------
@@ -123,7 +128,6 @@ func set_manual_mode() -> void:
     use_path = false
     path_velocity = Vector2.ZERO
 
-
 # -------------------------
 # Path Control
 # -------------------------
@@ -144,7 +148,6 @@ func set_path_mode() -> void:
     use_manual = false
     use_path = true
     manual_velocity = Vector2.ZERO
-
 
 # -------------------------
 # Knockback
@@ -173,7 +176,6 @@ func set_knockback_velocity(velocity: Vector2, velocity_cap: float = -1.0) -> vo
 
 func clear_knockback() -> void:
     knockback_velocity = Vector2.ZERO
-
 
 # -------------------------
 # Internal Helpers

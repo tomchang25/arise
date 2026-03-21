@@ -24,7 +24,6 @@ func _init() -> void:
 
 func _enter() -> void:
     actor.play_animation(animation_state)
-    actor.stop_movement()
 
     if not actor.attack_finished.is_connected(_on_attack_finished):
         actor.attack_finished.connect(_on_attack_finished)
@@ -70,7 +69,7 @@ func _update(_delta: float) -> void:
 
         # Fire when ready.
         if actor.can_attack(weapon_index, attack_index):
-            actor.play_animation(animation_state)
+            actor.play_animation(animation_state, 1.0, true)
             actor.perform_attack(target.global_position, weapon_index, attack_index)
             actor.set_facing_direction(actor.global_position.direction_to(target.global_position), animation_state)
 

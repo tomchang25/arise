@@ -192,7 +192,7 @@ func _on_animation_finished(anim_name: StringName) -> void:
 # -------------------------
 
 
-func move_to_position(target_pos: Vector2, speed: float, arrive_dist: float = 5.0) -> void:
+func move_to_position(target_pos: Vector2, speed: float, arrive_dist: float = 10.0) -> void:
     if navigation_module == null:
         return
     navigation_module.set_speed(speed)
@@ -205,12 +205,6 @@ func stop_movement() -> void:
         navigation_module.stop()
     if movement_module:
         movement_module.stop_all_motion()
-
-
-func is_navigation_finished() -> bool:
-    if navigation_module == null:
-        return true
-    return navigation_module.is_path_finished()
 
 
 func get_path_velocity() -> Vector2:

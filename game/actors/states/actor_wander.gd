@@ -37,7 +37,7 @@ func _update(_delta: float) -> void:
         change_state(ActorStateId.CHASE)
         return
 
-    actor.move_to_position(_target_position, wander_speed, 5.0)
+    actor.move_to_position(_target_position, wander_speed, 10.0)
 
     var vel := actor.get_path_velocity()
     if vel.length() > 0.1:

@@ -24,7 +24,7 @@ var _was_depleted: bool = false
 ## Per-member anchor offsets relative to this group node's position.
 ## Stored when a member is registered so anchor_position updates automatically
 ## whenever the group node moves.
-var _anchor_offsets: Dictionary = {}
+var _anchor_offsets: Dictionary = { }
 
 # -------------------------
 # Lifecycle
@@ -49,7 +49,6 @@ func _notification(what: int) -> void:
         if not _was_depleted:
             group_removed.emit()
 
-
 # -------------------------
 # Member registry (called by SpawnEnemyGroupAction)
 # -------------------------
@@ -71,7 +70,6 @@ func register_member(enemy: Enemy) -> void:
         enemy.died.connect(_on_member_died.bind(enemy))
 
     members_changed.emit()
-
 
 # -------------------------
 # Public API
@@ -114,7 +112,6 @@ func force_kill() -> void:
         member.queue_free()
 
     queue_free()
-
 
 # -------------------------
 # Internal
