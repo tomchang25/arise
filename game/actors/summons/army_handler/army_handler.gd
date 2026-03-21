@@ -37,7 +37,7 @@ func _on_child_exiting_tree(child: Node):
 
 
 func _on_check_timer_timeout():
-    var armies_state = {&"Follow": 0, &"Chase": 0, &"Idle": 0, &"Attack": 0}
+    var armies_state = { &"Follow": 0, &"Chase": 0, &"Idle": 0, &"Attack": 0 }
     for army in get_children():
         if army is not CharacterBody2D:
             continue
@@ -53,7 +53,6 @@ func _on_check_timer_timeout():
 
 func _physics_process(_delta):
     pass
-
 
 ## --- Public API ---
 
@@ -110,7 +109,6 @@ func get_all_units() -> Array[Node]:
 
 func is_grid_full() -> bool:
     return get_first_empty_slot() == -1
-
 
 ## --- Private ---
 
