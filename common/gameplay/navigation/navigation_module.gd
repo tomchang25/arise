@@ -18,7 +18,7 @@ signal target_lost
 @export var navigation_agent: NavigationAgent2D
 
 @export_group("Path Update")
-@export var target_update_interval := 0.20
+@export var target_update_interval := 0.2
 @export var repath_distance_threshold := 8.0
 @export var path_tick_interval := 0.2
 
@@ -95,10 +95,6 @@ func _physics_process(delta: float) -> void:
         _emit_navigation_finished_once()
         return
 
-    if _should_use_fallback_direct_path():
-        _fallback_direct_path()
-        return
-
     # Refresh follow target position at a fixed interval.
     if _follow_target != null:
         _target_update_timer += delta
@@ -111,6 +107,11 @@ func _physics_process(delta: float) -> void:
     if _path_tick_timer < path_tick_interval:
         return
     _path_tick_timer = 0.0
+
+    # Fallback to direct path if no navigation agent
+    if _should_use_fallback_direct_path():
+        _fallback_direct_path()
+        return
 
     # Reset
     _finished_emitted = false

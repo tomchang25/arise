@@ -21,6 +21,9 @@ signal members_changed
 ## Seconds between automatic anchor updates when [member track_player] is true.
 @export var track_interval: float = 5.0
 
+@export var dormant_distance: float = 480.0
+@export var dormant_check_interval: float = 1.0
+
 # -------------------------
 # Internal state
 # -------------------------
@@ -47,6 +50,10 @@ var _track_timer: float = 0.0
 ## Cached player reference, resolved at _ready().
 var _player: Node2D
 
+# Dormant when player is too far away.
+var _dormant_timer: float = 0.0
+var dormant: bool = false
+
 # -------------------------
 # Lifecycle
 # -------------------------
@@ -68,6 +75,15 @@ func _physics_process(delta: float) -> void:
         if _track_timer >= track_interval:
             _track_timer = 0.0
             set_anchor(_player.global_position)
+
+    # Dormant check
+    _dormant_timer += delta
+    if _dormant_timer >= dormant_check_interval:
+        _dormant_timer = 0.0
+        _update_dormant_state()
+
+    if dormant:
+        return
 
     # Propagate updated anchor_positions to all living members.
     for member in get_alive_members():
@@ -171,3 +187,18 @@ func _on_member_died(_info, enemy: Enemy) -> void:
         _was_depleted = true
         group_depleted.emit()
         queue_free()
+
+
+func _update_dormant_state() -> void:
+    if not _player:
+        return
+
+    var dist := _player.global_position.distance_to(_anchor)
+    var should_sleep := dist > dormant_distance
+
+    if should_sleep == dormant:
+        return
+
+    dormant = should_sleep
+    for member in get_alive_members():
+        member.dormant = should_sleep

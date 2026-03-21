@@ -60,6 +60,8 @@ var stats: Stats
 ## Managed externally by the owning group (ArmyHandler / EnemyGroup).
 var anchor_position: Vector2 = Vector2.ZERO
 
+var dormant := false
+
 # -------------------------
 # Lifecycle
 # -------------------------
