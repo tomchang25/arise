@@ -8,7 +8,7 @@ extends ConditionLeaf
 
 
 func tick(actor: Node, _blackboard: Blackboard) -> int:
-	var army := actor as Army
-	if army == null:
-		return FAILURE
-	return SUCCESS if army.get_distance_to_player() > threshold else FAILURE
+    var army := actor as Army
+    if army == null:
+        return FAILURE
+    return SUCCESS if army.get_distance_to_player() > threshold else FAILURE

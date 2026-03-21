@@ -3,9 +3,8 @@
 class_name ArmyIsTargetAttackable
 extends ConditionLeaf
 
-
 func tick(actor: Node, _blackboard: Blackboard) -> int:
-	var army := actor as Army
-	if army == null:
-		return FAILURE
-	return SUCCESS if army.is_target_attackable() else FAILURE
+    var army := actor as Army
+    if army == null:
+        return FAILURE
+    return SUCCESS if army.is_target_attackable() else FAILURE

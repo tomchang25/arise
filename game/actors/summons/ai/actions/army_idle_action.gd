@@ -5,11 +5,10 @@
 class_name ArmyIdleAction
 extends ActionLeaf
 
-
 func tick(actor: Node, _blackboard: Blackboard) -> int:
-	var army := actor as Army
-	if army == null:
-		return FAILURE
-	army.stop_movement()
-	army.play_animation(Army.ANIM_IDLE)
-	return RUNNING
+    var army := actor as Army
+    if army == null:
+        return FAILURE
+    army.stop_movement()
+    army.play_animation(Army.ANIM_IDLE)
+    return RUNNING

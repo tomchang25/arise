@@ -9,17 +9,17 @@ extends ActionLeaf
 
 
 func tick(actor: Node, _blackboard: Blackboard) -> int:
-	var army := actor as Army
-	if army == null or army.player == null:
-		return FAILURE
+    var army := actor as Army
+    if army == null or army.player == null:
+        return FAILURE
 
-	army.move_to_position(
-		army.player.global_position + army.grid_position,
-		move_speed,
-		arrive_distance,
-	)
+    army.move_to_position(
+        army.player.global_position + army.grid_position,
+        move_speed,
+        arrive_distance,
+    )
 
-	var velocity := army.get_path_velocity()
-	army.set_facing_direction(velocity, Army.ANIM_MOVE)
-	army.play_animation(Army.ANIM_MOVE)
-	return RUNNING
+    var velocity := army.get_path_velocity()
+    army.set_facing_direction(velocity, Army.ANIM_MOVE)
+    army.play_animation(Army.ANIM_MOVE)
+    return RUNNING

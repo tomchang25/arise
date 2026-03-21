@@ -1,18 +1,18 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://dw7j5kdvlemen"]
 
-[ext_resource type="Script" path="res://stage/testbeds/formation_testbed/formation_testbed.gd" id="1_ftbed"]
+[ext_resource type="Script" uid="uid://crxqrity77enu" path="res://stage/testbeds/formation_testbed/formation_testbed.gd" id="1_ftbed"]
 [ext_resource type="PackedScene" uid="uid://i0w72n7e6is8" path="res://stage/systems/player_with_camera.tscn" id="2_player"]
 [ext_resource type="PackedScene" uid="uid://dybnb2lmsq7s0" path="res://game/actors/summons/ninja_green/ninja_green.tscn" id="3_ninja"]
 [ext_resource type="PackedScene" uid="uid://bfxutmk72t3gc" path="res://game/actors/summons/army_handler/army_handler.tscn" id="4_handler"]
 [ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="5_stats"]
-[ext_resource type="Script" path="res://game/actors/summons/army_data.gd" id="6_armydata"]
+[ext_resource type="Script" uid="uid://7hsl65dchouj" path="res://game/actors/summons/army_data.gd" id="6_armydata"]
 [ext_resource type="Script" uid="uid://i2xvg4o1geuj" path="res://common/gameplay/combat/attack/data/weapon_data.gd" id="7_wpndata"]
 [ext_resource type="Resource" uid="uid://ci3t141brem18" path="res://stage/testbeds/combat_sandbox/mini_slash.tres" id="8_slash"]
 
 [sub_resource type="Resource" id="Resource_stats"]
 script = ExtResource("5_stats")
-faction = 0
 health = 60.0
+mana = 100.0
 base_max_health = 60.0
 base_damage = 8.0
 base_defense = 2.0
@@ -24,15 +24,13 @@ resource_local_to_scene = true
 script = ExtResource("6_armydata")
 stats = SubResource("Resource_stats")
 weapons = Array[ExtResource("7_wpndata")]([ExtResource("8_slash")])
-track_range = 100.0
-attack_range = 50.0
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_main"]
-vertices = PackedVector2Array(-400.0, -300.0, 400.0, -300.0, 400.0, 300.0, -400.0, 300.0)
+vertices = PackedVector2Array(-400, -300, 400, -300, 400, 300, -400, 300)
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(-400.0, -300.0, 400.0, -300.0, 400.0, 300.0, -400.0, 300.0)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-400, -300, 400, -300, 400, 300, -400, 300)])
 
-[node name="FormationTestbed" type="Node2D" node_paths=PackedStringArray("army_handler", "spawn_origin", "debug_label")]
+[node name="FormationTestbed" type="Node2D" unique_id=1867710555 node_paths=PackedStringArray("army_handler", "spawn_origin", "debug_label")]
 script = ExtResource("1_ftbed")
 army_handler = NodePath("ArmyHandler")
 spawn_origin = NodePath("SpawnOrigin")
@@ -40,21 +38,19 @@ debug_label = NodePath("UI/DebugLabel")
 unit_scene = ExtResource("3_ninja")
 unit_data = SubResource("Resource_armydata")
 
-[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="." unique_id=1570113341]
 navigation_polygon = SubResource("NavigationPolygon_main")
 
-[node name="ArmyHandler" parent="." instance=ExtResource("4_handler")]
-position = Vector2(0, 0)
+[node name="ArmyHandler" parent="." unique_id=1698022111 instance=ExtResource("4_handler")]
 
-[node name="SpawnOrigin" type="Marker2D" parent="."]
+[node name="SpawnOrigin" type="Marker2D" parent="." unique_id=1485462247]
 position = Vector2(60, 0)
 
-[node name="Player" parent="." instance=ExtResource("2_player")]
-position = Vector2(0, 0)
+[node name="Player" parent="." unique_id=736525067 instance=ExtResource("2_player")]
 
-[node name="UI" type="CanvasLayer" parent="."]
+[node name="UI" type="CanvasLayer" parent="." unique_id=1624993691]
 
-[node name="DebugLabel" type="Label" parent="UI"]
+[node name="DebugLabel" type="Label" parent="UI" unique_id=665673471]
 offset_right = 200.0
 offset_bottom = 140.0
 theme_override_font_sizes/font_size = 11

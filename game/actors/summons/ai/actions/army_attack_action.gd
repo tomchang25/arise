@@ -13,27 +13,27 @@ extends ActionLeaf
 
 
 func tick(actor: Node, _blackboard: Blackboard) -> int:
-	var army := actor as Army
-	if army == null:
-		return FAILURE
+    var army := actor as Army
+    if army == null:
+        return FAILURE
 
-	if army.get_distance_to_player() > follow_threshold:
-		army.stop_movement()
-		return FAILURE
+    if army.get_distance_to_player() > follow_threshold:
+        army.stop_movement()
+        return FAILURE
 
-	var target := army.get_nearest_attackable_target()
-	if target == null:
-		return FAILURE
+    var target := army.get_nearest_attackable_target()
+    if target == null:
+        return FAILURE
 
-	army.stop_movement()
-	army.set_facing_direction(
-		army.global_position.direction_to(target.global_position),
-		Army.ANIM_ATTACK,
-	)
+    army.stop_movement()
+    army.set_facing_direction(
+        army.global_position.direction_to(target.global_position),
+        Army.ANIM_ATTACK,
+    )
 
-	if army.can_attack(weapon_index, attack_index):
-		army.play_animation(Army.ANIM_ATTACK, 1.0, true)
-		army.perform_attack(target.global_position, weapon_index, attack_index)
-		army.end_attack(weapon_index, attack_index)
+    if army.can_attack(weapon_index, attack_index):
+        army.play_animation(Army.ANIM_ATTACK, 1.0, true)
+        army.perform_attack(target.global_position, weapon_index, attack_index)
+        army.end_attack(weapon_index, attack_index)
 
-	return RUNNING
+    return RUNNING
