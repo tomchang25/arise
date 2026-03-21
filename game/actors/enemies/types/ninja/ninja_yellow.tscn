@@ -26,12 +26,11 @@
 [ext_resource type="Script" uid="uid://i1ibypyr38xv" path="res://common/gameplay/loot/loot_drop_module.gd" id="23_lootdrop"]
 [ext_resource type="Resource" uid="uid://bq584j3uqsyau" path="res://game/actors/enemies/types/slime/presets/slime_drop_profile.tres" id="25_com4q"]
 [ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/framework/state_machine/state_machine.gd" id="25_statemachine"]
-[ext_resource type="Script" uid="uid://ixpqntb22d76" path="res://game/actors/enemies/state/enemy_idle.gd" id="26_idle"]
-[ext_resource type="Script" uid="uid://v0ips7afnj6" path="res://game/actors/enemies/state/enemy_wander.gd" id="27_wander"]
-[ext_resource type="Script" uid="uid://btduv83t3tnr" path="res://game/actors/enemies/state/enemy_chase.gd" id="28_chase"]
-[ext_resource type="Script" uid="uid://dq7gm11wvwn6m" path="res://game/actors/enemies/state/enemy_attack.gd" id="29_attack"]
-[ext_resource type="Script" uid="uid://og75stne3wma" path="res://game/actors/enemies/state/enemy_back.gd" id="30_back"]
-[ext_resource type="Script" uid="uid://62t58yuad5go" path="res://game/actors/enemies/state/enemy_leash_back.gd" id="31_0sh5i"]
+[ext_resource type="Script" uid="uid://ddtdcft6vfis2" path="res://game/actors/states/actor_idle.gd" id="26_idle"]
+[ext_resource type="Script" uid="uid://bowuxc36tcs3o" path="res://game/actors/states/actor_wander.gd" id="27_wander"]
+[ext_resource type="Script" uid="uid://dyutmrr8drad0" path="res://game/actors/states/actor_chase.gd" id="28_chase"]
+[ext_resource type="Script" uid="uid://dtt7o1sc0xhl2" path="res://game/actors/states/actor_attack.gd" id="29_attack"]
+[ext_resource type="Script" uid="uid://kw8cga7ytcv3" path="res://game/actors/states/actor_return_to_anchor.gd" id="30_back"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_body"]
 radius = 4.0
@@ -41,20 +40,23 @@ height = 10.0
 radius = 6.0
 height = 16.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_pwlan"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_six8i"]
 radius = 160.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_2ugil"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_pwlan"]
 radius = 280.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_562be"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_2ugil"]
 radius = 40.0
 
-[node name="NinjaYellow" type="CharacterBody2D" unique_id=1130231603 node_paths=PackedStringArray("sprite", "hurtbox", "damage_receiver", "hit_feedback", "damage_number", "health_bar", "combat_module", "aggro_detection", "deaggro_detection", "reach_detection", "movement_module", "navigation_module", "animation_module", "loot_drop", "state_machine") groups=["enemies"]]
+[node name="NinjaYellow" type="CharacterBody2D" unique_id=1130231603 node_paths=PackedStringArray("aggro_detection", "deaggro_detection", "loot_drop", "sprite", "hurtbox", "damage_receiver", "hit_feedback", "damage_number", "health_bar", "combat_module", "reach_detection", "movement_module", "navigation_module", "animation_module", "state_machine") groups=["enemies"]]
 collision_layer = 2
 collision_mask = 0
 script = ExtResource("1_enemy")
 data = ExtResource("2_562be")
+aggro_detection = NodePath("Module/AggroDetection")
+deaggro_detection = NodePath("Module/DeaggroDetection")
+loot_drop = NodePath("Module/LootDropModule")
 sprite = NodePath("Sprite")
 hurtbox = NodePath("Hurtbox")
 damage_receiver = NodePath("Module/DamageReceiverModule")
@@ -62,13 +64,10 @@ hit_feedback = NodePath("Module/HitFeedbackModule")
 damage_number = NodePath("Module/DamageNumberModule")
 health_bar = NodePath("Module/HealthBar")
 combat_module = NodePath("Module/CombatModule")
-aggro_detection = NodePath("Module/AggroDetection")
-deaggro_detection = NodePath("Module/DeaggroDetection")
 reach_detection = NodePath("Module/ReachDetection")
 movement_module = NodePath("Module/MovementModule")
 navigation_module = NodePath("Module/NavigationModule")
 animation_module = NodePath("Module/AnimationModule")
-loot_drop = NodePath("Module/LootDropModule")
 state_machine = NodePath("StateMachine")
 
 [node name="Sprite" type="Sprite2D" parent="." unique_id=1693742817]
@@ -151,7 +150,7 @@ script = ExtResource("17_detection")
 radius = 160.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/AggroDetection" unique_id=957994283]
-shape = SubResource("CircleShape2D_pwlan")
+shape = SubResource("CircleShape2D_six8i")
 debug_color = Color(0, 0.6, 0.1764706, 0.23529412)
 
 [node name="DeaggroDetection" type="Area2D" parent="Module" unique_id=837214786]
@@ -162,7 +161,7 @@ script = ExtResource("17_detection")
 radius = 280.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DeaggroDetection" unique_id=2022225881]
-shape = SubResource("CircleShape2D_2ugil")
+shape = SubResource("CircleShape2D_pwlan")
 debug_color = Color(0.8627451, 0.23529412, 0.69803923, 0.23921569)
 
 [node name="ReachDetection" type="Area2D" parent="Module" unique_id=430639735]
@@ -173,19 +172,20 @@ script = ExtResource("17_detection")
 radius = 40.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/ReachDetection" unique_id=1152141690]
-shape = SubResource("CircleShape2D_562be")
+shape = SubResource("CircleShape2D_2ugil")
 
 [node name="MovementModule" type="Node" parent="Module" unique_id=265278886 node_paths=PackedStringArray("character")]
 script = ExtResource("18_movement")
 character = NodePath("../..")
+use_direct_position = true
 
-[node name="NavigationModule" type="Node2D" parent="Module" unique_id=105493594 node_paths=PackedStringArray("character", "movement", "navigation_agent")]
+[node name="NavigationModule" type="Node2D" parent="Module" unique_id=105493594 node_paths=PackedStringArray("character", "movement")]
 script = ExtResource("19_navigation")
 character = NodePath("../..")
 movement = NodePath("../MovementModule")
-navigation_agent = NodePath("NavigationAgent2D")
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="Module/NavigationModule" unique_id=1036614070]
+path_desired_distance = 5.0
 target_desired_distance = 5.0
 radius = 4.0
 
@@ -211,12 +211,12 @@ script = ExtResource("27_wander")
 
 [node name="Chase" type="Node" parent="StateMachine" unique_id=58470279]
 script = ExtResource("28_chase")
+chase_speed = 100.0
 
 [node name="Attack" type="Node" parent="StateMachine" unique_id=478504038]
 script = ExtResource("29_attack")
+attack_speed = 100.0
 
-[node name="Back" type="Node" parent="StateMachine" unique_id=1469795797]
+[node name="ReturnToAnchor" type="Node" parent="StateMachine" unique_id=1469795797]
 script = ExtResource("30_back")
-
-[node name="LeashBack" type="Node" parent="StateMachine" unique_id=1385443946]
-script = ExtResource("31_0sh5i")
+re_engage_distance = 50.0

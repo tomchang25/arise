@@ -13,6 +13,14 @@ enum FormationType { RECTANGULAR, CIRCULAR }
 
 var units: Array[Node]
 
+## Player reference — resolved at _ready(). ArmyHandler is the single source of
+## truth for each unit's anchor_position and updates it every physics frame.
+var _player: Node2D
+
+## Per-unit grid offsets in world units, keyed by the unit node.
+## Populated in add_unit(), cleared in remove_unit().
+var _unit_offsets: Dictionary = {}
+
 ## --- GDScript Lifecycle ---
 
 
@@ -24,9 +32,19 @@ func _ready():
 
     reset_units()
 
-    # for i in range(20):
-    #     var a = _convert_index_to_grid(i)
-    #     print(a)
+    _player = get_tree().get_first_node_in_group("player")
+
+
+func _physics_process(_delta: float) -> void:
+    # Sync this handler's own position to the player so that anchor_positions
+    # (= global_position + per-unit offset) automatically follow the player.
+    if _player:
+        global_position = _player.global_position
+
+    # Propagate anchor_position for every active unit from this node's position.
+    for unit in get_all_units():
+        var offset: Vector2 = _unit_offsets.get(unit, Vector2.ZERO)
+        unit.anchor_position = global_position + offset
 
 
 func _on_child_entered_tree(child: Node):
@@ -56,9 +74,6 @@ func _on_check_timer_timeout():
     # print(armies_state)
 
 
-func _physics_process(_delta):
-    pass
-
 ## --- Public API ---
 
 
@@ -68,9 +83,13 @@ func add_unit(unit: Node) -> bool:
     if index == -1:
         return false
 
-    var grid = _convert_index_to_grid(index)
-    var grid_position = grid * grid_size
-    unit.grid_position = grid_position
+    var grid := _convert_index_to_grid(index)
+    var offset := grid * grid_size
+    _unit_offsets[unit] = offset
+
+    # Set initial anchor_position immediately so the unit starts at the right spot.
+    if _player:
+        unit.anchor_position = _player.global_position + offset
 
     units[index] = unit
     unit_grid_changed.emit()
@@ -85,6 +104,7 @@ func remove_unit(unit: Node) -> bool:
         return false
 
     units[index] = null
+    _unit_offsets.erase(unit)
     unit_grid_changed.emit()
 
     return true
@@ -92,6 +112,7 @@ func remove_unit(unit: Node) -> bool:
 
 func reset_units():
     units.clear()
+    _unit_offsets.clear()
 
     for i in range(size):
         units.append(null)
@@ -130,13 +151,19 @@ func _rebuild_formation() -> void:
     var all_units := get_all_units()
     for i in range(size):
         units[i] = null
+    _unit_offsets.clear()
+
     for unit in all_units:
         var index := get_first_empty_slot()
         if index == -1:
             break
         var grid := _convert_index_to_grid(index)
-        unit.grid_position = grid * grid_size
+        var offset := grid * grid_size
+        _unit_offsets[unit] = offset
+        if _player:
+            unit.anchor_position = _player.global_position + offset
         units[index] = unit
+
     unit_grid_changed.emit()
 
 

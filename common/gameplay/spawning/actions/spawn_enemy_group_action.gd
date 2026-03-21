@@ -46,7 +46,7 @@ func execute(anchor: Node2D, ctx: SpawnContext) -> Node:
                 enemy_pos = found if found != null else group.spawn_pivot
             else:
                 enemy_pos = group.spawn_pivot + SpatialRandomUtils.random_point_in_circle(Vector2.ZERO, profile.spawn_radius, rng)
-            enemy.home_position = enemy_pos
+            enemy.anchor_position = enemy_pos
             group.add_child(enemy)
             group.register_member(enemy)
 

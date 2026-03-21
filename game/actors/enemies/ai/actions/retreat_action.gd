@@ -35,7 +35,7 @@ func tick(actor: Node, _blackboard: Blackboard) -> int:
     # Move away from the player.
     var away_dir := enemy.global_position.direction_to(target.global_position) * -1.0
     var retreat_target := enemy.global_position + away_dir * retreat_speed
-    enemy.move_to_position(retreat_target, retreat_speed, 4.0)
+    enemy.move_to_position(retreat_target, retreat_speed)
     enemy.set_facing_direction(
         enemy.global_position.direction_to(target.global_position),
         Enemy.ANIM_MOVE,

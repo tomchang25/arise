@@ -55,6 +55,9 @@ var _path_tick_timer := 0.0
 var _finished_emitted := false
 var _arrive_distance_sq := arrive_distance * arrive_distance
 
+var _process_skip := 0
+var process_every_n_frames := 2
+
 # -------------------------
 # Lifecycle
 # -------------------------
@@ -74,6 +77,11 @@ func _physics_process(delta: float) -> void:
     if not enabled:
         return
 
+    _process_skip += 1
+    if _process_skip < process_every_n_frames:
+        return
+    _process_skip = 0
+
     if character == null:
         _clear_path_velocity()
         return
@@ -82,30 +90,29 @@ func _physics_process(delta: float) -> void:
         _clear_path_velocity()
         return
 
+    if _has_target_position and character.global_position.distance_squared_to(_target_position) <= _arrive_distance_sq:
+        _clear_path_velocity()
+        _emit_navigation_finished_once()
+        return
+
+    if _should_use_fallback_direct_path():
+        _fallback_direct_path()
+        return
+
+    # Refresh follow target position at a fixed interval.
     if _follow_target != null:
         _target_update_timer += delta
         if _target_update_timer >= target_update_interval:
             _target_update_timer = 0.0
             _refresh_target_position()
 
+    # Throttle path processing to path_tick_interval.
     _path_tick_timer += delta
     if _path_tick_timer < path_tick_interval:
         return
     _path_tick_timer = 0.0
 
-    if _should_use_fallback_direct_path():
-        _fallback_direct_path()
-        return
-
-    if navigation_agent == null:
-        _clear_path_velocity()
-        return
-
-    if navigation_agent.is_navigation_finished():
-        _clear_path_velocity()
-        _emit_navigation_finished_once()
-        return
-
+    # Reset
     _finished_emitted = false
 
     var next_point := navigation_agent.get_next_path_position()
@@ -170,13 +177,19 @@ func has_target() -> bool:
 
 
 func is_path_finished() -> bool:
+    if _has_target_position and character != null:
+        if character.global_position.distance_squared_to(_target_position) <= _arrive_distance_sq:
+            return true
+
     if _should_use_fallback_direct_path():
         if character == null or not _has_target_position:
             return true
         return character.global_position.distance_squared_to(_target_position) <= _arrive_distance_sq
 
     if navigation_agent != null:
-        return navigation_agent.is_navigation_finished()
+        if navigation_agent.is_navigation_finished():
+            return true
+        return false
 
     return true
 

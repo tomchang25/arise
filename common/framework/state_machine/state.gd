@@ -9,7 +9,7 @@ signal transition_requested(from: State, to: int)
 ## Use this for states that must run to completion (e.g. HEAVY_ATTACK).
 ## Internal change_state() from within the state itself is always allowed.
 @export var interruptible: bool = true
-
+@export var debug_enabled: bool = false
 var _locked := false
 
 
@@ -36,6 +36,8 @@ func _physics_update(_delta: float) -> void:
 
 func enter() -> void:
     _locked = false
+    if debug_enabled:
+        print("State %s entered" % name)
     _enter()
 
 
