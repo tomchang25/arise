@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://summon_testbed_hud"]
+
+[ext_resource type="PackedScene" uid="uid://player_hud_scene" path="res://game/ui/hud/player_hud/player_hud.tscn" id="1_phud"]
+[ext_resource type="PackedScene" uid="uid://summon_hud_scene" path="res://game/ui/hud/summon_hud/summon_hud.tscn" id="2_sumhud"]
+
+[node name="SummonTestbedHUD" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PlayerHUD" parent="." instance=ExtResource("1_phud")]
+
+[node name="SummonHUD" parent="." instance=ExtResource("2_sumhud")]

@@ -1,0 +1,62 @@
+[gd_scene format=3 uid="uid://summon_testbed_scene"]
+
+[ext_resource type="Script" path="res://stage/testbeds/summon_testbed/summon_testbed.gd" id="1_stbed"]
+[ext_resource type="PackedScene" uid="uid://i0w72n7e6is8" path="res://stage/systems/player_with_camera.tscn" id="2_player"]
+[ext_resource type="PackedScene" uid="uid://bfxutmk72t3gc" path="res://game/actors/summons/army_handler/army_handler.tscn" id="3_handler"]
+[ext_resource type="PackedScene" uid="uid://summon_manager_scene" path="res://game/summon/summon_manager.tscn" id="4_summon"]
+[ext_resource type="PackedScene" uid="uid://bmlww50h5ia4c" path="res://game/actors/dummies/dummy.tscn" id="5_dummy"]
+[ext_resource type="PackedScene" path="res://stage/testbeds/summon_testbed/hud/summon_testbed_hud.tscn" id="6_hud"]
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_main"]
+vertices = PackedVector2Array(-500, -400, 500, -400, 500, 400, -500, 400)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-500, -400, 500, -400, 500, 400, -500, 400)])
+
+[node name="SummonTestbed" type="Node2D" node_paths=PackedStringArray("player", "summon_manager", "dummies_root", "player_hud", "summon_hud", "debug_label")]
+y_sort_enabled = true
+script = ExtResource("1_stbed")
+player = NodePath("Player")
+summon_manager = NodePath("SummonManager")
+dummies_root = NodePath("Dummies")
+player_hud = NodePath("UI/SummonTestbedHUD/PlayerHUD")
+summon_hud = NodePath("UI/SummonTestbedHUD/SummonHUD")
+debug_label = NodePath("UI/DebugLabel")
+
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+navigation_polygon = SubResource("NavigationPolygon_main")
+
+[node name="ArmyHandler" parent="." instance=ExtResource("3_handler")]
+
+[node name="SummonManager" parent="." instance=ExtResource("4_summon")]
+debug_starting_souls = 100
+
+[node name="Dummies" type="Node2D" parent="."]
+
+[node name="Dummy1" parent="Dummies" instance=ExtResource("5_dummy")]
+position = Vector2(120, 0)
+
+[node name="Dummy2" parent="Dummies" instance=ExtResource("5_dummy")]
+position = Vector2(160, -60)
+
+[node name="Dummy3" parent="Dummies" instance=ExtResource("5_dummy")]
+position = Vector2(160, 60)
+
+[node name="Dummy4" parent="Dummies" instance=ExtResource("5_dummy")]
+position = Vector2(200, 0)
+
+[node name="Dummy5" parent="Dummies" instance=ExtResource("5_dummy")]
+position = Vector2(-100, 120)
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+position = Vector2(0, 0)
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="SummonTestbedHUD" parent="UI" instance=ExtResource("6_hud")]
+
+[node name="DebugLabel" type="Label" parent="UI"]
+offset_left = 8.0
+offset_top = 140.0
+offset_right = 300.0
+offset_bottom = 200.0
+theme_override_font_sizes/font_size = 10

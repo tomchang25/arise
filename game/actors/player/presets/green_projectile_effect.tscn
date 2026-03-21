@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://green_proj_effect"]
+
+[ext_resource type="Script" uid="uid://b2nujsk0u866t" path="res://common/gameplay/combat/attack/effects/projectile_attack_effect.gd" id="1_eff"]
+[ext_resource type="Script" uid="uid://co1s16xd7omkk" path="res://common/gameplay/combat/hit_detection/hitbox/hitbox.gd" id="2_hbx"]
+
+[sub_resource type="Curve" id="Curve_shape"]
+_data = [Vector2(0, 0.8), 0.0, 0.0, 0, 0, Vector2(1, 0.2), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[node name="ProjectileAttackEffect" type="Node2D"]
+script = ExtResource("1_eff")
+projectile_color = Color(0.2, 1.0, 0.2, 1.0)
+
+[node name="Line2D" type="Line2D" parent="."]
+default_color = Color(0.2, 1.0, 0.2, 1.0)
+points = PackedVector2Array(0, 0, -40, 0)
+width_curve = SubResource("Curve_shape")
+joint_mode = 2
+begin_cap_mode = 2
+
+[node name="Hitbox" type="Area2D" parent="."]
+script = ExtResource("2_hbx")
+metadata/_custom_type_script = "uid://co1s16xd7omkk"
