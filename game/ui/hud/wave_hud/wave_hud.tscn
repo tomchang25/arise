@@ -1,6 +1,6 @@
-[gd_scene format=3 uid="uid://wave_hud_scene"]
+[gd_scene format=3]
 
-[ext_resource type="Script" uid="uid://wave_hud_script" path="res://game/ui/hud/wave_hud.gd" id="1_wavehud"]
+[ext_resource type="Script" uid="uid://c3s16kgsgkh6l" path="res://game/ui/hud/wave_hud/wave_hud.gd" id="1_wavehud"]
 
 [node name="WaveHUD" type="Control" node_paths=PackedStringArray("progress_bar", "wave_label")]
 layout_mode = 3

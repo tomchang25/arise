@@ -1,11 +1,15 @@
 [gd_scene format=3 uid="uid://dybnb2lmsq7s0"]
 
 [ext_resource type="Script" uid="uid://be5rffb7rwigg" path="res://game/actors/summons/army.gd" id="1_13omc"]
+[ext_resource type="Script" uid="uid://bibweujld2ihj" path="res://game/actors/summons/army_data.gd" id="2_5kexx"]
 [ext_resource type="Material" uid="uid://4sxc1efucw5k" path="res://common/rendering/shaders/dynamic_color_overlay.tres" id="2_mat"]
 [ext_resource type="AnimationLibrary" uid="uid://yx2utmx2c56c" path="res://game/actors/enemies/types/ninja/presets/ninja_animations.res" id="3_4k57o"]
+[ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="3_lhn60"]
 [ext_resource type="Texture2D" uid="uid://dcefsfe6uvtoj" path="res://game/actors/summons/ninja_green/assets/SpriteSheet.png" id="3_tex"]
 [ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/gameplay/combat/hit_detection/hurtbox/hurtbox.gd" id="4_hurtbox"]
+[ext_resource type="Script" uid="uid://i2xvg4o1geuj" path="res://common/gameplay/combat/attack/data/weapon_data.gd" id="4_m1dpv"]
 [ext_resource type="Script" uid="uid://bb4mbrq1u7pl" path="res://common/gameplay/combat/combat_module.gd" id="5_combat"]
+[ext_resource type="Resource" uid="uid://ci3t141brem18" path="res://stage/testbeds/combat_sandbox/mini_slash.tres" id="5_ho0hb"]
 [ext_resource type="Script" uid="uid://hyy86fs5b0fs" path="res://common/gameplay/detection/detection_module.gd" id="6_detect"]
 [ext_resource type="PackedScene" uid="uid://d0tswwb1d3smv" path="res://common/gameplay/health_bar/health_bar.tscn" id="7_hbar"]
 [ext_resource type="Script" uid="uid://dpi3inldik0ho" path="res://common/gameplay/combat/damage_response/damage_receiver_module.gd" id="8_dmgrcv"]
@@ -23,13 +27,24 @@
 [ext_resource type="Script" uid="uid://bb0t2ovl7wifo" path="res://addons/beehave/nodes/beehave_tree.gd" id="20_btree"]
 [ext_resource type="Script" uid="uid://cw22yurt5l74k" path="res://addons/beehave/nodes/composites/selector_reactive.gd" id="21_selreact"]
 [ext_resource type="Script" uid="uid://cg016dbe7gs1x" path="res://addons/beehave/nodes/composites/sequence.gd" id="22_seq"]
-[ext_resource type="Script" uid="uid://2falvbrjntjb" path="res://game/actors/summons/ai/conditions/is_target_attackable.gd" id="23_cond_atk"]
-[ext_resource type="Script" uid="uid://cri22e0inxk52" path="res://game/actors/summons/ai/conditions/is_target_tracked.gd" id="24_cond_trk"]
-[ext_resource type="Script" uid="uid://cl2bs26gl2ccl" path="res://game/actors/summons/ai/conditions/is_player_far_away.gd" id="25_cond_far"]
-[ext_resource type="Script" uid="uid://dfbm04yvaxk8i" path="res://game/actors/summons/ai/actions/army_attack_action.gd" id="26_act_atk"]
-[ext_resource type="Script" uid="uid://ctrvmvbhxqxjp" path="res://game/actors/summons/ai/actions/army_chase_action.gd" id="27_act_chs"]
-[ext_resource type="Script" uid="uid://bgi786w4my3uk" path="res://game/actors/summons/ai/actions/army_follow_action.gd" id="28_act_flw"]
-[ext_resource type="Script" uid="uid://cp38564tvyr3v" path="res://game/actors/summons/ai/actions/army_idle_action.gd" id="29_act_idl"]
+[ext_resource type="Script" uid="uid://d2584rx7xktii" path="res://game/actors/summons/ai/conditions/is_target_attackable.gd" id="23_cond_atk"]
+[ext_resource type="Script" uid="uid://jb6o4cfykw36" path="res://game/actors/summons/ai/conditions/is_target_tracked.gd" id="24_cond_trk"]
+[ext_resource type="Script" uid="uid://dfq48rjlqi63p" path="res://game/actors/summons/ai/conditions/is_player_far_away.gd" id="25_cond_far"]
+[ext_resource type="Script" uid="uid://be6di0jrl2wxx" path="res://game/actors/summons/ai/actions/army_attack_action.gd" id="26_act_atk"]
+[ext_resource type="Script" uid="uid://biwi54c0b16wf" path="res://game/actors/summons/ai/actions/army_chase_action.gd" id="27_act_chs"]
+[ext_resource type="Script" uid="uid://dl7m0pd1k1ifa" path="res://game/actors/summons/ai/actions/army_follow_action.gd" id="28_act_flw"]
+[ext_resource type="Script" uid="uid://beejajen32wnk" path="res://game/actors/summons/ai/actions/army_idle_action.gd" id="29_act_idl"]
+
+[sub_resource type="Resource" id="Resource_i7vl2"]
+script = ExtResource("3_lhn60")
+mana = 100.0
+metadata/_custom_type_script = "uid://bkgf2cii3bfri"
+
+[sub_resource type="Resource" id="Resource_btvt0"]
+script = ExtResource("2_5kexx")
+stats = SubResource("Resource_i7vl2")
+weapons = Array[ExtResource("4_m1dpv")]([ExtResource("5_ho0hb")])
+metadata/_custom_type_script = "uid://bibweujld2ihj"
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_body"]
 radius = 1.0
@@ -118,10 +133,10 @@ nodes/TimeScale/node = SubResource("AnimationNodeTimeScale_y5i28")
 nodes/TimeScale/position = Vector2(60, 120)
 node_connections = [&"output", 0, &"TimeScale", &"TimeScale", 0, &"StateMachine"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_gmkq7"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_30g4b"]
 radius = 100.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_vhmd8"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_6ei60"]
 radius = 50.0
 
 [node name="NinjaGreen" type="CharacterBody2D" unique_id=1952489733 node_paths=PackedStringArray("sprite", "hurtbox", "damage_receiver", "hit_feedback", "damage_number", "health_bar", "combat_module", "track_detection", "reach_detection", "movement_module", "navigation_module", "animation_module") groups=["armies"]]
@@ -129,6 +144,7 @@ collision_layer = 256
 collision_mask = 4
 motion_mode = 1
 script = ExtResource("1_13omc")
+data = SubResource("Resource_btvt0")
 sprite = NodePath("Sprite")
 hurtbox = NodePath("Hurtbox")
 damage_receiver = NodePath("Module/DamageReceiverModule")
@@ -185,7 +201,7 @@ monitorable = false
 script = ExtResource("6_detect")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/TrackDetection" unique_id=19296424]
-shape = SubResource("CircleShape2D_gmkq7")
+shape = SubResource("CircleShape2D_30g4b")
 debug_color = Color(0, 0.6, 0.1764706, 0.23529412)
 
 [node name="ReachDetection" type="Area2D" parent="Module/DetectionPivot" unique_id=401014540]
@@ -196,7 +212,7 @@ script = ExtResource("6_detect")
 radius = 50.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/ReachDetection" unique_id=1333937030]
-shape = SubResource("CircleShape2D_vhmd8")
+shape = SubResource("CircleShape2D_6ei60")
 debug_color = Color(0.8627451, 0.23529412, 0.69803923, 0.23921569)
 
 [node name="HealthBar" parent="Module" unique_id=1501966175 instance=ExtResource("7_hbar")]
@@ -256,7 +272,7 @@ animation_tree = NodePath("../../Visual/AnimationTree")
 
 [node name="BeehaveTree" type="Node" parent="." unique_id=2005491568 node_paths=PackedStringArray("blackboard", "actor")]
 script = ExtResource("20_btree")
-blackboard = NodePath("@Node@69800")
+blackboard = NodePath("@Node@95685")
 actor = NodePath("..")
 
 [node name="MainAI" type="Node" parent="BeehaveTree" unique_id=416008838]

@@ -38,6 +38,7 @@
 [ext_resource type="Script" uid="uid://6jeesy7iltw" path="res://common/gameplay/combat/damage_response/damage_number_module.gd" id="20_lje7i"]
 [ext_resource type="PackedScene" uid="uid://qhqm7usjk4s4" path="res://common/gameplay/combat/damage_response/damage_number.tscn" id="21_7c4js"]
 [ext_resource type="PackedScene" uid="uid://d0tswwb1d3smv" path="res://common/gameplay/health_bar/health_bar.tscn" id="23_6xo6p"]
+[ext_resource type="PackedScene" uid="uid://green_proj_effect" path="res://game/actors/player/presets/green_projectile_effect.tscn" id="24_grproj"]
 
 [sub_resource type="PackedScene" id="PackedScene_f7g0i"]
 _bundled = {
@@ -126,7 +127,7 @@ _bundled = {
 
 [sub_resource type="Resource" id="Resource_47yrc"]
 script = ExtResource("7_d4m7k")
-effect_scene = SubResource("PackedScene_k1elb")
+effect_scene = ExtResource("24_grproj")
 lifetime = 10.0
 knockback_force = 400.0
 metadata/_custom_type_script = "uid://cmymyo0y1aoi7"
@@ -135,6 +136,7 @@ metadata/_custom_type_script = "uid://cmymyo0y1aoi7"
 script = ExtResource("14_il4ec")
 attack_scene = SubResource("PackedScene_cm075")
 phases = Array[ExtResource("7_d4m7k")]([SubResource("Resource_47yrc")])
+projectile_speed = 700.0
 cooldown = 0.1
 metadata/_custom_type_script = "uid://b44chxi8qaq70"
 
