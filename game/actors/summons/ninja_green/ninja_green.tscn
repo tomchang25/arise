@@ -1,30 +1,43 @@
 [gd_scene format=3 uid="uid://dybnb2lmsq7s0"]
 
 [ext_resource type="Script" uid="uid://be5rffb7rwigg" path="res://game/actors/summons/army.gd" id="1_13omc"]
-[ext_resource type="Texture2D" uid="uid://dcefsfe6uvtoj" path="res://game/actors/summons/ninja_green/assets/SpriteSheet.png" id="2_tn28i"]
-[ext_resource type="PackedScene" uid="uid://bphvl1tkicrfo" path="res://common/gameplay/combat/hit_detection/hitbox/hitbox.tscn" id="3_igrur"]
-[ext_resource type="PackedScene" uid="uid://do052sqt3wjdp" path="res://common/_legacy/detectbox/detectbox.tscn" id="3_lqaih"]
-[ext_resource type="PackedScene" uid="uid://d3g8jgprf7bfw" path="res://common/_legacy/enemy_scanner/enemy_scanner.tscn" id="3_v4ucm"]
-[ext_resource type="PackedScene" uid="uid://bhgm1iqut1i6s" path="res://common/_legacy/pathfinding/pathfinding.tscn" id="7_iga26"]
-[ext_resource type="Script" uid="uid://bu436ru5hhd66" path="res://common/_legacy/animation/base_animation.gd" id="8_4aipm"]
-[ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/framework/state_machine/state_machine.gd" id="8_13omc"]
-[ext_resource type="Script" uid="uid://lnjp761bf75g" path="res://common/_legacy/movement/base_movement.gd" id="8_i87wb"]
-[ext_resource type="Script" uid="uid://dplrsortb8ufa" path="res://game/actors/summons/state/army_idle.gd" id="8_lqaih"]
-[ext_resource type="Script" uid="uid://d0008vj2c0w5u" path="res://game/actors/summons/state/army_follow.gd" id="9_6k810"]
-[ext_resource type="Script" uid="uid://d257mq3pbe3mk" path="res://game/actors/summons/state/army_chase.gd" id="11_6k810"]
-[ext_resource type="Script" uid="uid://4ryn1wepqme5" path="res://game/actors/summons/state/army_attack.gd" id="12_4aipm"]
-[ext_resource type="PackedScene" uid="uid://d0tswwb1d3smv" path="res://common/gameplay/health_bar/health_bar.tscn" id="16_v6u25"]
+[ext_resource type="Material" uid="uid://4sxc1efucw5k" path="res://common/rendering/shaders/dynamic_color_overlay.tres" id="2_mat"]
+[ext_resource type="AnimationLibrary" uid="uid://yx2utmx2c56c" path="res://game/actors/enemies/types/ninja/presets/ninja_animations.res" id="3_4k57o"]
+[ext_resource type="Texture2D" uid="uid://dcefsfe6uvtoj" path="res://game/actors/summons/ninja_green/assets/SpriteSheet.png" id="3_tex"]
+[ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/gameplay/combat/hit_detection/hurtbox/hurtbox.gd" id="4_hurtbox"]
+[ext_resource type="Script" uid="uid://bb4mbrq1u7pl" path="res://common/gameplay/combat/combat_module.gd" id="5_combat"]
+[ext_resource type="Script" uid="uid://hyy86fs5b0fs" path="res://common/gameplay/detection/detection_module.gd" id="6_detect"]
+[ext_resource type="PackedScene" uid="uid://d0tswwb1d3smv" path="res://common/gameplay/health_bar/health_bar.tscn" id="7_hbar"]
+[ext_resource type="Script" uid="uid://dpi3inldik0ho" path="res://common/gameplay/combat/damage_response/damage_receiver_module.gd" id="8_dmgrcv"]
+[ext_resource type="Script" uid="uid://duxq84e027el0" path="res://common/gameplay/combat/damage_response/hit_feedback_module.gd" id="9_hitfb"]
+[ext_resource type="PackedScene" uid="uid://c5uu71l3jwxu6" path="res://common/rendering/vfx/one_shot_hit_particles.tscn" id="10_hitfx"]
+[ext_resource type="PackedScene" uid="uid://duohq0xpsyv1" path="res://common/rendering/vfx/explosion.tscn" id="11_explode"]
+[ext_resource type="Resource" uid="uid://vp7463hsmyw0" path="res://common/audio/presets/sfx/default_damaged_audio.tres" id="12_dmgsfx"]
+[ext_resource type="Resource" uid="uid://xsccf58mw7d5" path="res://common/audio/presets/sfx/default_blocked_audio.tres" id="13_blksfx"]
+[ext_resource type="Resource" uid="uid://csppceje2neh5" path="res://common/audio/presets/sfx/default_died_audio.tres" id="14_diedfx"]
+[ext_resource type="Script" uid="uid://6jeesy7iltw" path="res://common/gameplay/combat/damage_response/damage_number_module.gd" id="15_dmgnum"]
+[ext_resource type="PackedScene" uid="uid://qhqm7usjk4s4" path="res://common/gameplay/combat/damage_response/damage_number.tscn" id="16_dmgnumscn"]
+[ext_resource type="Script" uid="uid://w30s7yqi1p3d" path="res://common/gameplay/movement/movement_module.gd" id="17_move"]
+[ext_resource type="Script" uid="uid://ds7jcv6cdv02p" path="res://common/gameplay/navigation/navigation_module.gd" id="18_nav"]
+[ext_resource type="Script" uid="uid://dldqypakv40re" path="res://common/gameplay/animation/animation_module.gd" id="19_anim"]
+[ext_resource type="Script" uid="uid://bb0t2ovl7wifo" path="res://addons/beehave/nodes/beehave_tree.gd" id="20_btree"]
+[ext_resource type="Script" uid="uid://cw22yurt5l74k" path="res://addons/beehave/nodes/composites/selector_reactive.gd" id="21_selreact"]
+[ext_resource type="Script" uid="uid://cg016dbe7gs1x" path="res://addons/beehave/nodes/composites/sequence.gd" id="22_seq"]
+[ext_resource type="Script" uid="uid://2falvbrjntjb" path="res://game/actors/summons/ai/conditions/is_target_attackable.gd" id="23_cond_atk"]
+[ext_resource type="Script" uid="uid://cri22e0inxk52" path="res://game/actors/summons/ai/conditions/is_target_tracked.gd" id="24_cond_trk"]
+[ext_resource type="Script" uid="uid://cl2bs26gl2ccl" path="res://game/actors/summons/ai/conditions/is_player_far_away.gd" id="25_cond_far"]
+[ext_resource type="Script" uid="uid://dfbm04yvaxk8i" path="res://game/actors/summons/ai/actions/army_attack_action.gd" id="26_act_atk"]
+[ext_resource type="Script" uid="uid://ctrvmvbhxqxjp" path="res://game/actors/summons/ai/actions/army_chase_action.gd" id="27_act_chs"]
+[ext_resource type="Script" uid="uid://bgi786w4my3uk" path="res://game/actors/summons/ai/actions/army_follow_action.gd" id="28_act_flw"]
+[ext_resource type="Script" uid="uid://cp38564tvyr3v" path="res://game/actors/summons/ai/actions/army_idle_action.gd" id="29_act_idl"]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ocq7q"]
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_body"]
 radius = 1.0
 height = 4.0
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_igrur"]
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_hurtbox"]
 radius = 5.0
 height = 12.0
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_nki8c"]
-radius = 50.0
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_pilld"]
 animation = &"AttackDown"
@@ -105,327 +118,184 @@ nodes/TimeScale/node = SubResource("AnimationNodeTimeScale_y5i28")
 nodes/TimeScale/position = Vector2(60, 120)
 node_connections = [&"output", 0, &"TimeScale", &"TimeScale", 0, &"StateMachine"]
 
-[sub_resource type="Animation" id="Animation_oas31"]
-resource_name = "AttackDown"
-length = 0.666671
-loop_mode = 1
-step = 0.0416667
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("../Sprite:frame_coords")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.25, 0.333333, 0.5),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
-"update": 1,
-"values": [Vector2i(0, 3), Vector2i(0, 5), Vector2i(0, 4), Vector2i(0, 2)]
-}
+[sub_resource type="CircleShape2D" id="CircleShape2D_gmkq7"]
+radius = 100.0
 
-[sub_resource type="Animation" id="Animation_rhdt7"]
-resource_name = "AttackLeft"
-length = 0.666671
-loop_mode = 1
-step = 0.0416667
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("../Sprite:frame_coords")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.25, 0.333333, 0.5),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
-"update": 1,
-"values": [Vector2i(2, 3), Vector2i(2, 5), Vector2i(2, 4), Vector2i(2, 2)]
-}
+[sub_resource type="CircleShape2D" id="CircleShape2D_vhmd8"]
+radius = 50.0
 
-[sub_resource type="Animation" id="Animation_87esk"]
-resource_name = "AttackRight"
-length = 0.666671
-loop_mode = 1
-step = 0.0416667
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("../Sprite:frame_coords")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.25, 0.333333, 0.5),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
-"update": 1,
-"values": [Vector2i(3, 3), Vector2i(3, 5), Vector2i(3, 4), Vector2i(3, 2)]
-}
-
-[sub_resource type="Animation" id="Animation_bgeu8"]
-resource_name = "AttackUp"
-length = 0.666671
-loop_mode = 1
-step = 0.0416667
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("../Sprite:frame_coords")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.25, 0.333333, 0.5),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
-"update": 1,
-"values": [Vector2i(1, 3), Vector2i(1, 5), Vector2i(1, 4), Vector2i(1, 2)]
-}
-
-[sub_resource type="Animation" id="Animation_4aipm"]
-resource_name = "Idle"
-loop_mode = 1
-step = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("../Sprite:scale")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.4, 0.6),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 0,
-"values": [Vector2(1, 1), Vector2(1, 0.9), Vector2(1, 1)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("../Sprite:position")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.4, 0.6),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 0,
-"values": [Vector2(0, -7), Vector2(0, -6), Vector2(0, -7)]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("../Sprite:frame_coords")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [Vector2i(0, 0)]
-}
-
-[sub_resource type="Animation" id="Animation_ocq7q"]
-resource_name = "MoveDown"
-length = 0.666683
-loop_mode = 1
-step = 0.166667
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("../Sprite:frame_coords")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.166667, 0.333333, 0.5),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
-"update": 1,
-"values": [Vector2i(0, 1), Vector2i(0, 2), Vector2i(0, 3), Vector2i(0, 0)]
-}
-
-[sub_resource type="Animation" id="Animation_hww7n"]
-resource_name = "MoveLeft"
-length = 0.666683
-loop_mode = 1
-step = 0.166667
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("../Sprite:frame_coords")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.166667, 0.333333, 0.5),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
-"update": 1,
-"values": [Vector2i(2, 1), Vector2i(2, 2), Vector2i(2, 3), Vector2i(2, 0)]
-}
-
-[sub_resource type="Animation" id="Animation_mvkfs"]
-resource_name = "MoveRight"
-length = 0.666683
-loop_mode = 1
-step = 0.166667
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("../Sprite:frame_coords")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.166667, 0.333333, 0.5),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
-"update": 1,
-"values": [Vector2i(3, 1), Vector2i(3, 2), Vector2i(3, 3), Vector2i(3, 0)]
-}
-
-[sub_resource type="Animation" id="Animation_iga26"]
-resource_name = "MoveUp"
-length = 0.666683
-loop_mode = 1
-step = 0.166667
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("../Sprite:frame_coords")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.166667, 0.333333, 0.5),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
-"update": 1,
-"values": [Vector2i(1, 1), Vector2i(1, 2), Vector2i(1, 3), Vector2i(1, 0)]
-}
-
-[sub_resource type="Animation" id="Animation_i87wb"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("../Sprite:scale")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(1, 1)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("../Sprite:position")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(0, -6)]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("../Sprite:frame_coords")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [Vector2i(0, 0)]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_i87wb"]
-_data = {
-&"AttackDown": SubResource("Animation_oas31"),
-&"AttackLeft": SubResource("Animation_rhdt7"),
-&"AttackRight": SubResource("Animation_87esk"),
-&"AttackUp": SubResource("Animation_bgeu8"),
-&"Idle": SubResource("Animation_4aipm"),
-&"MoveDown": SubResource("Animation_ocq7q"),
-&"MoveLeft": SubResource("Animation_hww7n"),
-&"MoveRight": SubResource("Animation_mvkfs"),
-&"MoveUp": SubResource("Animation_iga26"),
-&"RESET": SubResource("Animation_i87wb")
-}
-
-[node name="NinjaGreen" type="CharacterBody2D" unique_id=1952489733]
+[node name="NinjaGreen" type="CharacterBody2D" unique_id=1952489733 node_paths=PackedStringArray("sprite", "hurtbox", "damage_receiver", "hit_feedback", "damage_number", "health_bar", "combat_module", "track_detection", "reach_detection", "movement_module", "navigation_module", "animation_module") groups=["armies"]]
 collision_layer = 256
 collision_mask = 4
 motion_mode = 1
 script = ExtResource("1_13omc")
-visible_range = 50.0
-
-[node name="Sprite" type="Sprite2D" parent="." unique_id=1410171533]
-position = Vector2(0, -6)
-texture = ExtResource("2_tn28i")
-hframes = 4
-vframes = 7
+sprite = NodePath("Sprite")
+hurtbox = NodePath("Hurtbox")
+damage_receiver = NodePath("Module/DamageReceiverModule")
+hit_feedback = NodePath("Module/HitFeedbackModule")
+damage_number = NodePath("Module/DamageNumberModule")
+health_bar = NodePath("Module/HealthBar")
+combat_module = NodePath("Module/DetectionPivot/CombatModule")
+track_detection = NodePath("Module/DetectionPivot/TrackDetection")
+reach_detection = NodePath("Module/DetectionPivot/ReachDetection")
+movement_module = NodePath("Module/MovementModule")
+navigation_module = NodePath("Module/NavigationModule")
+animation_module = NodePath("Module/AnimationModule")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=464441980]
 rotation = 1.5708
-shape = SubResource("CapsuleShape2D_ocq7q")
+shape = SubResource("CapsuleShape2D_body")
 debug_color = Color(0.961248, 0, 0.511433, 0.42)
 
-[node name="Hitbox" parent="." unique_id=103917815 instance=ExtResource("3_igrur")]
-position = Vector2(0, -5)
+[node name="Hurtbox" type="Area2D" parent="." unique_id=103917815]
 collision_layer = 256
 collision_mask = 0
+monitoring = false
+script = ExtResource("4_hurtbox")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox" unique_id=1790357147]
-shape = SubResource("CapsuleShape2D_igrur")
-debug_color = Color(0.849634, 0.358302, 0.287232, 0.42)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=1790357147]
+position = Vector2(0, -6)
+shape = SubResource("CapsuleShape2D_hurtbox")
+debug_color = Color(0.639216, 0.529412, 0, 0.329412)
 
-[node name="EnemyScanner" parent="." unique_id=1616657711 instance=ExtResource("3_v4ucm")]
-position = Vector2(0, -5)
-visible_range = 50.0
+[node name="Visual" type="Node2D" parent="." unique_id=1531441884]
 
-[node name="Detectbox" parent="EnemyScanner" unique_id=1839650539 instance=ExtResource("3_lqaih")]
+[node name="AnimationTree" type="AnimationTree" parent="Visual" unique_id=750032551]
+tree_root = SubResource("AnimationNodeBlendTree_ocq7q")
+anim_player = NodePath("../AnimationPlayer")
+parameters/StateMachine/Attack/blend_position = Vector2(0, 0)
+parameters/StateMachine/Move/blend_position = Vector2(0, 0)
+parameters/TimeScale/scale = 1.0
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Visual" unique_id=1867641660]
+libraries/ = ExtResource("3_4k57o")
+
+[node name="Module" type="Node2D" parent="." unique_id=677920860]
+
+[node name="DetectionPivot" type="Marker2D" parent="Module" unique_id=1098988142]
+position = Vector2(0, -6)
+
+[node name="CombatModule" type="Node2D" parent="Module/DetectionPivot" unique_id=821495176]
+script = ExtResource("5_combat")
+
+[node name="TrackDetection" type="Area2D" parent="Module/DetectionPivot" unique_id=751129509]
+collision_layer = 0
 collision_mask = 2
+monitorable = false
+script = ExtResource("6_detect")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyScanner/Detectbox" unique_id=65487892]
-shape = SubResource("CircleShape2D_nki8c")
-debug_color = Color(0, 0.129412, 0.701961, 0.0784314)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/TrackDetection" unique_id=19296424]
+shape = SubResource("CircleShape2D_gmkq7")
+debug_color = Color(0, 0.6, 0.1764706, 0.23529412)
 
-[node name="Pathfinding" parent="." unique_id=1389891702 instance=ExtResource("7_iga26")]
+[node name="ReachDetection" type="Area2D" parent="Module/DetectionPivot" unique_id=401014540]
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("6_detect")
+radius = 50.0
 
-[node name="NavigationAgent2D" type="NavigationAgent2D" parent="Pathfinding" unique_id=1277153496]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/ReachDetection" unique_id=1333937030]
+shape = SubResource("CircleShape2D_vhmd8")
+debug_color = Color(0.8627451, 0.23529412, 0.69803923, 0.23921569)
+
+[node name="HealthBar" parent="Module" unique_id=1501966175 instance=ExtResource("7_hbar")]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -12.0
+offset_top = 4.0
+offset_right = 12.0
+offset_bottom = 8.0
+grow_horizontal = 2
+
+[node name="DamageReceiverModule" type="Node" parent="Module" unique_id=429254503 node_paths=PackedStringArray("hurtbox")]
+script = ExtResource("8_dmgrcv")
+hurtbox = NodePath("../../Hurtbox")
+
+[node name="HitFeedbackModule" type="Node" parent="Module" unique_id=340645115 node_paths=PackedStringArray("damage_receiver", "movement_module")]
+script = ExtResource("9_hitfb")
+damage_receiver = NodePath("../DamageReceiverModule")
+movement_module = NodePath("../MovementModule")
+hit_particles_scene = ExtResource("10_hitfx")
+death_particles_scene = ExtResource("11_explode")
+damaged_audio = ExtResource("12_dmgsfx")
+blocked_audio = ExtResource("13_blksfx")
+died_audio = ExtResource("14_diedfx")
+
+[node name="DamageNumberModule" type="Node" parent="Module" unique_id=1897138566 node_paths=PackedStringArray("damage_receiver", "world_anchor")]
+script = ExtResource("15_dmgnum")
+damage_receiver = NodePath("../DamageReceiverModule")
+world_anchor = NodePath("../..")
+damage_number_scene = ExtResource("16_dmgnumscn")
+
+[node name="MovementModule" type="Node" parent="Module" unique_id=810572988 node_paths=PackedStringArray("character")]
+script = ExtResource("17_move")
+character = NodePath("../..")
+
+[node name="NavigationModule" type="Node2D" parent="Module" unique_id=439702878 node_paths=PackedStringArray("character", "movement", "navigation_agent")]
+script = ExtResource("18_nav")
+character = NodePath("../..")
+movement = NodePath("../MovementModule")
+navigation_agent = NodePath("NavigationAgent2D")
+enable_avoidance = true
+debug_draw = true
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="Module/NavigationModule" unique_id=1038648320]
+path_desired_distance = 5.0
+target_desired_distance = 5.0
 avoidance_enabled = true
 radius = 1.0
 avoidance_layers = 65536
 avoidance_mask = 65536
-debug_enabled = true
-debug_use_custom = true
-debug_path_custom_color = Color(1, 0, 1, 1)
 
-[node name="Movement" type="Node" parent="." unique_id=2137958773]
-script = ExtResource("8_i87wb")
+[node name="AnimationModule" type="Node" parent="Module" unique_id=998838272 node_paths=PackedStringArray("actor", "animation_tree")]
+script = ExtResource("19_anim")
+actor = NodePath("../..")
+animation_tree = NodePath("../../Visual/AnimationTree")
 
-[node name="Animation" type="Node" parent="." unique_id=861760504 node_paths=PackedStringArray("animation_tree")]
-script = ExtResource("8_4aipm")
-animation_tree = NodePath("AnimationTree")
+[node name="BeehaveTree" type="Node" parent="." unique_id=2005491568 node_paths=PackedStringArray("blackboard", "actor")]
+script = ExtResource("20_btree")
+blackboard = NodePath("@Node@69800")
+actor = NodePath("..")
 
-[node name="AnimationTree" type="AnimationTree" parent="Animation" unique_id=750032551]
-tree_root = SubResource("AnimationNodeBlendTree_ocq7q")
-anim_player = NodePath("../AnimationPlayer")
-parameters/StateMachine/Attack/blend_position = Vector2(0.00197494, 0.905405)
-parameters/StateMachine/Move/blend_position = Vector2(-0.162607, -0.756701)
-parameters/TimeScale/scale = 1.0
+[node name="MainAI" type="Node" parent="BeehaveTree" unique_id=416008838]
+script = ExtResource("21_selreact")
+metadata/_custom_type_script = "uid://cw22yurt5l74k"
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Animation" unique_id=1867641660]
-libraries/ = SubResource("AnimationLibrary_i87wb")
+[node name="AttackSequence" type="Node" parent="BeehaveTree/MainAI" unique_id=2004320403]
+script = ExtResource("22_seq")
 
-[node name="HealthComponent" parent="." unique_id=351554003 instance=ExtResource("16_v6u25")]
+[node name="IsTargetAttackable" type="Node" parent="BeehaveTree/MainAI/AttackSequence" unique_id=253303944]
+script = ExtResource("23_cond_atk")
 
-[node name="StateMachine" type="Node" parent="." unique_id=2005491568 node_paths=PackedStringArray("initial_state")]
-script = ExtResource("8_13omc")
-initial_state = NodePath("Idle")
+[node name="ArmyAttackAction" type="Node" parent="BeehaveTree/MainAI/AttackSequence" unique_id=245208749]
+script = ExtResource("26_act_atk")
 
-[node name="Idle" type="Node" parent="StateMachine" unique_id=1994102282]
-script = ExtResource("8_lqaih")
-follow_threshold = 16.0
+[node name="ChaseSequence" type="Node" parent="BeehaveTree/MainAI" unique_id=1191885151]
+script = ExtResource("22_seq")
 
-[node name="Follow" type="Node" parent="StateMachine" unique_id=799256189]
-script = ExtResource("9_6k810")
+[node name="IsTargetTracked" type="Node" parent="BeehaveTree/MainAI/ChaseSequence" unique_id=1386344655]
+script = ExtResource("24_cond_trk")
 
-[node name="Chase" type="Node" parent="StateMachine" unique_id=672364940]
-script = ExtResource("11_6k810")
-follow_threshold = 250.0
+[node name="ArmyChaseAction" type="Node" parent="BeehaveTree/MainAI/ChaseSequence" unique_id=328890137]
+script = ExtResource("27_act_chs")
 
-[node name="Attack" type="Node" parent="StateMachine" unique_id=289689962]
-script = ExtResource("12_4aipm")
-follow_threshold = 250.0
+[node name="FollowSequence" type="Node" parent="BeehaveTree/MainAI" unique_id=267608458]
+script = ExtResource("22_seq")
+
+[node name="IsPlayerFarAway" type="Node" parent="BeehaveTree/MainAI/FollowSequence" unique_id=1569428713]
+script = ExtResource("25_cond_far")
+
+[node name="ArmyFollowAction" type="Node" parent="BeehaveTree/MainAI/FollowSequence" unique_id=265933730]
+script = ExtResource("28_act_flw")
+
+[node name="ArmyIdleAction" type="Node" parent="BeehaveTree/MainAI" unique_id=1583752157]
+script = ExtResource("29_act_idl")
+
+[node name="Sprite" type="Sprite2D" parent="." unique_id=1410171533]
+material = ExtResource("2_mat")
+position = Vector2(0, -6)
+texture = ExtResource("3_tex")
+hframes = 4
+vframes = 7

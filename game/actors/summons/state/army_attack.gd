@@ -1,6 +1,6 @@
 extends ArmyState
 
-@export var animation_state: String = Army.AnimationState.ATTACK
+@export var animation_state: StringName = Army.ANIM_ATTACK
 @export var follow_threshold: float = 200
 
 
