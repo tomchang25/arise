@@ -16,46 +16,46 @@ extends ActorState
 
 
 func _init() -> void:
-	state_id = ActorStateId.CHASE
+    state_id = ActorStateId.CHASE
 
 
 func _enter() -> void:
-	actor.play_animation(Actor.ANIM_MOVE, 1.5)
+    actor.play_animation(Actor.ANIM_MOVE, 1.5)
 
 
 func _update(_delta: float) -> void:
-	# Leash check — return home if too far from anchor.
-	var leash := _get_leash_distance()
-	if leash > 0.0 and actor.get_distance_to_anchor() > leash:
-		change_state(ActorStateId.RETURN_TO_ANCHOR)
-		return
+    # Leash check — return home if too far from anchor.
+    var leash := _get_leash_distance()
+    if leash > 0.0 and actor.get_distance_to_anchor() > leash:
+        change_state(ActorStateId.RETURN_TO_ANCHOR)
+        return
 
-	# Deaggro check (Enemy with deaggro zone).
-	if _has_deaggro() and actor.is_deaggro_active():
-		change_state(ActorStateId.RETURN_TO_ANCHOR)
-		return
+    # Deaggro check (Enemy with deaggro zone).
+    if _has_deaggro() and actor.is_deaggro_active():
+        change_state(ActorStateId.RETURN_TO_ANCHOR)
+        return
 
-	# Distance-based disengage (Army-like actors without deaggro).
-	if not _has_deaggro():
-		var no_target := not actor.is_aggro_active()
-		var too_far := actor.get_distance_to_anchor() > follow_threshold
-		if no_target or too_far:
-			change_state(ActorStateId.RETURN_TO_ANCHOR)
-			return
+    # Distance-based disengage (Army-like actors without deaggro).
+    if not _has_deaggro():
+        var no_target := not actor.is_aggro_active()
+        var too_far := actor.get_distance_to_anchor() > follow_threshold
+        if no_target or too_far:
+            change_state(ActorStateId.RETURN_TO_ANCHOR)
+            return
 
-	# Target within reach → attack.
-	if actor.is_target_in_reach():
-		change_state(ActorStateId.ATTACK)
-		return
+    # Target within reach → attack.
+    if actor.is_target_in_reach():
+        change_state(ActorStateId.ATTACK)
+        return
 
-	# Move toward target.
-	var target := actor.get_nearest_aggro_target()
-	if target:
-		var stop_dist := 0.0
-		if actor.reach_detection:
-			stop_dist = actor.reach_detection.radius * 0.5
-		actor.move_to_position(target.global_position, chase_speed, stop_dist)
-		actor.set_facing_direction(actor.global_position.direction_to(target.global_position), Actor.ANIM_MOVE)
+    # Move toward target.
+    var target := actor.get_nearest_aggro_target()
+    if target:
+        var stop_dist := 0.0
+        if actor.reach_detection:
+            stop_dist = actor.reach_detection.radius * 0.5
+        actor.move_to_position(target.global_position, chase_speed, stop_dist)
+        actor.set_facing_direction(actor.global_position.direction_to(target.global_position), Actor.ANIM_MOVE)
 
 # -------------------------
 # Internal helpers
@@ -63,20 +63,20 @@ func _update(_delta: float) -> void:
 
 
 func _has_deaggro() -> bool:
-	var army := actor as Army
-	if army and army.data:
-		return army.data.has_deaggro
-	var enemy := actor as Enemy
-	if enemy and enemy.data:
-		return enemy.data.has_deaggro
-	return false
+    var army := actor as Army
+    if army and army.data:
+        return army.data.has_deaggro
+    var enemy := actor as Enemy
+    if enemy and enemy.data:
+        return enemy.data.has_deaggro
+    return false
 
 
 func _get_leash_distance() -> float:
-	var army := actor as Army
-	if army and army.data:
-		return army.data.leash_distance
-	var enemy := actor as Enemy
-	if enemy and enemy.data:
-		return enemy.data.leash_distance
-	return 0.0
+    var army := actor as Army
+    if army and army.data:
+        return army.data.leash_distance
+    var enemy := actor as Enemy
+    if enemy and enemy.data:
+        return enemy.data.leash_distance
+    return 0.0

@@ -24,45 +24,45 @@ var _elapsed: float = 0.0
 
 
 func _init() -> void:
-	state_id = ActorStateId.RETURN_TO_ANCHOR
+    state_id = ActorStateId.RETURN_TO_ANCHOR
 
 
 func _enter() -> void:
-	actor.play_animation(Actor.ANIM_MOVE)
-	_elapsed = 0.0
-	actor.navigation_finished.connect(_on_navigation_finished, CONNECT_ONE_SHOT)
+    actor.play_animation(Actor.ANIM_MOVE)
+    _elapsed = 0.0
+    actor.navigation_finished.connect(_on_navigation_finished, CONNECT_ONE_SHOT)
 
 
 func _exit() -> void:
-	if actor.navigation_finished.is_connected(_on_navigation_finished):
-		actor.navigation_finished.disconnect(_on_navigation_finished)
+    if actor.navigation_finished.is_connected(_on_navigation_finished):
+        actor.navigation_finished.disconnect(_on_navigation_finished)
 
 
 func _update(delta: float) -> void:
-	actor.move_to_position(actor.anchor_position, back_speed, 5.0)
+    actor.move_to_position(actor.anchor_position, back_speed, 5.0)
 
-	var vel := actor.get_path_velocity()
-	if vel.length() > 0.1:
-		actor.set_facing_direction(vel, Actor.ANIM_MOVE)
+    var vel := actor.get_path_velocity()
+    if vel.length() > 0.1:
+        actor.set_facing_direction(vel, Actor.ANIM_MOVE)
 
-	# Re-engage check
-	var dist_to_anchor := actor.get_distance_to_anchor()
-	if dist_to_anchor <= re_engage_distance and actor.is_aggro_active():
-		change_state(ActorStateId.CHASE)
-		return
+    # Re-engage check
+    var dist_to_anchor := actor.get_distance_to_anchor()
+    if dist_to_anchor <= re_engage_distance and actor.is_aggro_active():
+        change_state(ActorStateId.CHASE)
+        return
 
-	# Timeout
-	if return_timeout > 0.0:
-		_elapsed += delta
-		if _elapsed >= return_timeout:
-			_force_arrive()
-			return
+    # Timeout
+    if return_timeout > 0.0:
+        _elapsed += delta
+        if _elapsed >= return_timeout:
+            _force_arrive()
+            return
 
 
 func _on_navigation_finished() -> void:
-	change_state(ActorStateId.IDLE)
+    change_state(ActorStateId.IDLE)
 
 
 func _force_arrive() -> void:
-	actor.global_position = actor.anchor_position
-	change_state(ActorStateId.IDLE)
+    actor.global_position = actor.anchor_position
+    change_state(ActorStateId.IDLE)

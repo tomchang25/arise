@@ -4,7 +4,7 @@ class_name IsPlayerOutsideDeaggroRange
 extends ConditionLeaf
 
 func tick(actor: Node, _blackboard: Blackboard) -> int:
-	var a := actor as Actor
-	if a == null:
-		return FAILURE
-	return SUCCESS if a.is_deaggro_active() else FAILURE
+    var a := actor as Actor
+    if a == null:
+        return FAILURE
+    return SUCCESS if a.is_deaggro_active() else FAILURE
