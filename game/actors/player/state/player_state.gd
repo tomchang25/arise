@@ -7,16 +7,16 @@ extends State
 ## State ID enum shared by all player states.
 ## Kept here (not in Player) so states can reference it without a circular dep.
 enum PlayerStateId {
-	NULL   = -1,
-	IDLE   = 0,
-	MOVE   = 1,
-	ROLL   = 2,
-	ATTACK = 3,
+    NULL   = -1,
+    IDLE   = 0,
+    MOVE   = 1,
+    ROLL   = 2,
+    ATTACK = 3,
 }
 
 var player: Player
 
 
 func _ready() -> void:
-	await owner.ready
-	player = owner as Player
+    await owner.ready
+    player = owner as Player
