@@ -202,7 +202,7 @@ drop_profile = ExtResource("24_drop")
 
 [node name="BeehaveTree" type="Node" parent="." unique_id=1035777613 node_paths=PackedStringArray("blackboard", "actor")]
 script = ExtResource("26_btree")
-blackboard = NodePath("@Node@100474")
+blackboard = NodePath("@Node@19041")
 actor = NodePath("..")
 
 [node name="MainAI" type="Node" parent="BeehaveTree" unique_id=416008838]

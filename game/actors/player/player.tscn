@@ -10,7 +10,7 @@
 [ext_resource type="Script" uid="uid://cvs8vnlfparvx" path="res://common/gameplay/combat/attack/deliveries/slash_delivery.gd" id="6_0fe1s"]
 [ext_resource type="Script" uid="uid://b6r7vut6vta3w" path="res://game/actors/player/state/player_idle_state.gd" id="6_2iqu4"]
 [ext_resource type="Script" uid="uid://cmymyo0y1aoi7" path="res://common/gameplay/combat/attack/definitions/effect_phase_definition.gd" id="7_d4m7k"]
-[ext_resource type="Script" uid="uid://cg331ejtl5ts1" path="res://common/gameplay/combat/attack/effects/slash_attack_effect.gd" id="8_0g54q"]
+[ext_resource type="Script" uid="uid://c0v8mh2opkpui" path="res://common/gameplay/combat/attack/effects/slash_attack_effect.gd" id="8_0g54q"]
 [ext_resource type="Script" uid="uid://i2xvg4o1geuj" path="res://common/gameplay/combat/attack/data/weapon_data.gd" id="8_747sf"]
 [ext_resource type="Script" uid="uid://bb4mbrq1u7pl" path="res://common/gameplay/combat/combat_module.gd" id="8_i5w6q"]
 [ext_resource type="Script" uid="uid://w30s7yqi1p3d" path="res://common/gameplay/movement/movement_module.gd" id="9_1bvv4"]
@@ -25,7 +25,6 @@
 [ext_resource type="Script" uid="uid://cnr3sxokj5em5" path="res://common/gameplay/combat/attack/deliveries/projectile_delivery.gd" id="12_3luqa"]
 [ext_resource type="Script" uid="uid://dpi3inldik0ho" path="res://common/gameplay/combat/damage_response/damage_receiver_module.gd" id="12_i5w6q"]
 [ext_resource type="Script" uid="uid://duxq84e027el0" path="res://common/gameplay/combat/damage_response/hit_feedback_module.gd" id="13_41lfd"]
-[ext_resource type="Script" uid="uid://b2nujsk0u866t" path="res://common/gameplay/combat/attack/effects/projectile_attack_effect.gd" id="13_hkbyu"]
 [ext_resource type="Script" uid="uid://ce4d3x6pliud6" path="res://common/gameplay/pickup_collector/pickup_collector_module.gd" id="13_i5w6q"]
 [ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="14_4s16b"]
 [ext_resource type="Script" uid="uid://csp44dwfwcqu0" path="res://game/actors/player/state/player_move_state.gd" id="14_b15sj"]
@@ -38,7 +37,7 @@
 [ext_resource type="Script" uid="uid://6jeesy7iltw" path="res://common/gameplay/combat/damage_response/damage_number_module.gd" id="20_lje7i"]
 [ext_resource type="PackedScene" uid="uid://qhqm7usjk4s4" path="res://common/gameplay/combat/damage_response/damage_number.tscn" id="21_7c4js"]
 [ext_resource type="PackedScene" uid="uid://d0tswwb1d3smv" path="res://common/gameplay/health_bar/health_bar.tscn" id="23_6xo6p"]
-[ext_resource type="PackedScene" uid="uid://green_proj_effect" path="res://game/actors/player/presets/green_projectile_effect.tscn" id="24_grproj"]
+[ext_resource type="PackedScene" path="res://game/actors/player/presets/green_projectile_effect.tscn" id="24_grproj"]
 
 [sub_resource type="PackedScene" id="PackedScene_f7g0i"]
 _bundled = {
@@ -106,25 +105,6 @@ _bundled = {
 "version": 3
 }
 
-[sub_resource type="Curve" id="Curve_iakvv"]
-_data = [Vector2(0, 0.8), 0.0, 0.0, 0, 0, Vector2(1, 0.2), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="PackedScene" id="PackedScene_k1elb"]
-_bundled = {
-"conn_count": 0,
-"conns": PackedInt32Array(),
-"editable_instances": [],
-"id_paths": [PackedInt32Array(), PackedInt32Array()],
-"names": PackedStringArray("ProjectileAttackEffect", "Node2D", "script", "Line2D", "Line2D", "points", "width_curve", "joint_mode", "begin_cap_mode", "Hitbox", "Area2D", "script", "metadata/_custom_type_script"),
-"node_count": 3,
-"node_ids": PackedInt32Array(0, 0, 0),
-"node_paths": [NodePath("."), NodePath(".")],
-"nodes": PackedInt32Array(-1, -1, 1, 0, -1, 1, 2, 0, 0, 1073741824, 0, 4, 3, -1, 4, 5, 1, 6, 2, 7, 3, 8, 4, 0, 1073741825, 0, 10, 9, -1, 2, 11, 5, 12, 6, 0),
-"variants": [ExtResource("13_hkbyu"), PackedVector2Array(5, 23, 28, 13, 58, 12, 67, 29), SubResource("Curve_iakvv"), 2, 2, ExtResource("10_rsjix"), "uid://co1s16xd7omkk"],
-"version": 3
-}
-
 [sub_resource type="Resource" id="Resource_47yrc"]
 script = ExtResource("7_d4m7k")
 effect_scene = ExtResource("24_grproj")
@@ -134,9 +114,9 @@ metadata/_custom_type_script = "uid://cmymyo0y1aoi7"
 
 [sub_resource type="Resource" id="Resource_cea6g"]
 script = ExtResource("14_il4ec")
+projectile_speed = 700.0
 attack_scene = SubResource("PackedScene_cm075")
 phases = Array[ExtResource("7_d4m7k")]([SubResource("Resource_47yrc")])
-projectile_speed = 700.0
 cooldown = 0.1
 metadata/_custom_type_script = "uid://b44chxi8qaq70"
 
