@@ -43,7 +43,11 @@ func execute(anchor: Node2D, ctx: SpawnContext) -> Node:
             target_position += local_offset.rotated(anchor.global_rotation)
 
         if scatter_radius > 0.0:
-            target_position += SpatialRandomUtils.random_point_in_circle(Vector2.ZERO, scatter_radius, rng)
+            if ctx.validator != null:
+                var found := SpawnPositionFinder.find_position_in_radius(target_position, scatter_radius, ctx.validator, rng)
+                target_position = found if found != null else target_position
+            else:
+                target_position += SpatialRandomUtils.random_point_in_circle(Vector2.ZERO, scatter_radius, rng)
 
         if use_anchor_position:
             node_2d.global_position = target_position

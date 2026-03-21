@@ -43,7 +43,9 @@ var _pending_spawns: int = 0
 var _force_kill_pending: bool = false
 
 ## Assign a callable from outside to resolve spawn positions.
-## Signature: func() -> Variant  (returns Vector2 or null)
+## Signature: func() -> Variant
+##   Returns Vector2, or a Dictionary with keys "position" (Vector2) and
+##   optionally "validator" (SpawnPositionValidator), or null on failure.
 ## Example: encounter_controller.spawn_position_resolver = _find_spawn_position
 var spawn_position_resolver: Callable = Callable()
 
@@ -261,10 +263,18 @@ func _spawn_group(group_profile: EnemyGroupProfile) -> void:
         Debug.warn("EncounterController: enemies_root is null or freed")
         return
 
-    var position: Variant = _resolve_spawn_position()
-    if position == null:
+    var resolved: Variant = _resolve_spawn_position()
+    if resolved == null:
         Debug.warn("EncounterController: could not resolve spawn position")
         return
+
+    var position: Vector2
+    var spawn_validator: SpawnPositionValidator = null
+    if resolved is Dictionary:
+        position = resolved.get("position", Vector2.ZERO)
+        spawn_validator = resolved.get("validator") as SpawnPositionValidator
+    else:
+        position = resolved as Vector2
 
     _pending_spawns += 1
     var action := SpawnEnemyGroupAction.new()
@@ -272,6 +282,7 @@ func _spawn_group(group_profile: EnemyGroupProfile) -> void:
 
     var ctx := SpawnContext.new()
     ctx.setup(enemies_root, _rng.randi(), self)
+    ctx.validator = spawn_validator
 
     var spawned := await SpawnWarningExecutor.execute_at_position(warning_point_scene, action, position, ctx)
 
