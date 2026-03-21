@@ -25,10 +25,10 @@
 [ext_resource type="Script" uid="uid://ds7jcv6cdv02p" path="res://common/gameplay/navigation/navigation_module.gd" id="18_nav"]
 [ext_resource type="Script" uid="uid://dldqypakv40re" path="res://common/gameplay/animation/animation_module.gd" id="19_anim"]
 [ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/framework/state_machine/state_machine.gd" id="20_statemachine"]
-[ext_resource type="Script" path="res://game/actors/states/actor_idle.gd" id="21_idle"]
-[ext_resource type="Script" path="res://game/actors/states/actor_chase.gd" id="22_chase"]
-[ext_resource type="Script" path="res://game/actors/states/actor_attack.gd" id="23_attack"]
-[ext_resource type="Script" path="res://game/actors/states/actor_return_to_anchor.gd" id="24_return"]
+[ext_resource type="Script" uid="uid://dtpcn0ydqfetw" path="res://game/actors/states/actor_idle.gd" id="21_idle"]
+[ext_resource type="Script" uid="uid://ccpaai32tn4c6" path="res://game/actors/states/actor_chase.gd" id="22_chase"]
+[ext_resource type="Script" uid="uid://s8lpdn6sk4ut" path="res://game/actors/states/actor_attack.gd" id="23_attack"]
+[ext_resource type="Script" uid="uid://c7sidn8kv7i3d" path="res://game/actors/states/actor_return_to_anchor.gd" id="24_return"]
 
 [sub_resource type="Resource" id="Resource_i7vl2"]
 script = ExtResource("3_lhn60")
@@ -131,13 +131,13 @@ nodes/TimeScale/node = SubResource("AnimationNodeTimeScale_y5i28")
 nodes/TimeScale/position = Vector2(60, 120)
 node_connections = [&"output", 0, &"TimeScale", &"TimeScale", 0, &"StateMachine"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_5kexx"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_y1gh6"]
 radius = 100.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_lhn60"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_gmkq7"]
 radius = 50.0
 
-[node name="NinjaGreen" type="CharacterBody2D" unique_id=1952489733 node_paths=PackedStringArray("sprite", "hurtbox", "damage_receiver", "hit_feedback", "damage_number", "health_bar", "combat_module", "aggro_detection", "reach_detection", "movement_module", "navigation_module", "animation_module", "state_machine") groups=["armies"]]
+[node name="NinjaGreen" type="CharacterBody2D" unique_id=1952489733 node_paths=PackedStringArray("sprite", "hurtbox", "damage_receiver", "hit_feedback", "damage_number", "health_bar", "combat_module", "reach_detection", "aggro_detection", "movement_module", "navigation_module", "animation_module", "state_machine") groups=["armies"]]
 collision_layer = 256
 collision_mask = 4
 motion_mode = 1
@@ -150,8 +150,8 @@ hit_feedback = NodePath("Module/HitFeedbackModule")
 damage_number = NodePath("Module/DamageNumberModule")
 health_bar = NodePath("Module/HealthBar")
 combat_module = NodePath("Module/DetectionPivot/CombatModule")
-aggro_detection = NodePath("Module/DetectionPivot/AggroDetection")
 reach_detection = NodePath("Module/DetectionPivot/ReachDetection")
+aggro_detection = NodePath("Module/DetectionPivot/AggroDetection")
 movement_module = NodePath("Module/MovementModule")
 navigation_module = NodePath("Module/NavigationModule")
 animation_module = NodePath("Module/AnimationModule")
@@ -200,7 +200,7 @@ monitorable = false
 script = ExtResource("6_detect")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/AggroDetection" unique_id=19296424]
-shape = SubResource("CircleShape2D_5kexx")
+shape = SubResource("CircleShape2D_y1gh6")
 debug_color = Color(0, 0.6, 0.1764706, 0.23529412)
 
 [node name="ReachDetection" type="Area2D" parent="Module/DetectionPivot" unique_id=401014540]
@@ -211,7 +211,7 @@ script = ExtResource("6_detect")
 radius = 50.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/ReachDetection" unique_id=1333937030]
-shape = SubResource("CircleShape2D_lhn60")
+shape = SubResource("CircleShape2D_gmkq7")
 debug_color = Color(0.8627451, 0.23529412, 0.69803923, 0.23921569)
 
 [node name="HealthBar" parent="Module" unique_id=1501966175 instance=ExtResource("7_hbar")]
@@ -248,20 +248,11 @@ damage_number_scene = ExtResource("16_dmgnumscn")
 script = ExtResource("17_move")
 character = NodePath("../..")
 
-[node name="NavigationModule" type="Node2D" parent="Module" unique_id=439702878 node_paths=PackedStringArray("character", "movement", "navigation_agent")]
+[node name="NavigationModule" type="Node2D" parent="Module" unique_id=439702878 node_paths=PackedStringArray("character", "movement")]
 script = ExtResource("18_nav")
 character = NodePath("../..")
 movement = NodePath("../MovementModule")
-navigation_agent = NodePath("NavigationAgent2D")
 enable_avoidance = true
-
-[node name="NavigationAgent2D" type="NavigationAgent2D" parent="Module/NavigationModule" unique_id=1038648320]
-path_desired_distance = 5.0
-target_desired_distance = 5.0
-avoidance_enabled = true
-radius = 1.0
-avoidance_layers = 65536
-avoidance_mask = 65536
 
 [node name="AnimationModule" type="Node" parent="Module" unique_id=998838272 node_paths=PackedStringArray("actor", "animation_tree")]
 script = ExtResource("19_anim")

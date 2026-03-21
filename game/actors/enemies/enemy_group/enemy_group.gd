@@ -39,7 +39,7 @@ var _anchor: Vector2 = Vector2.ZERO
 ## Per-member anchor offsets relative to _anchor.
 ## Stored when a member is registered so anchor_position updates automatically
 ## whenever set_anchor() is called.
-var _anchor_offsets: Dictionary = {}
+var _anchor_offsets: Dictionary = { }
 
 ## Accumulated time for [member track_player] periodic updates.
 var _track_timer: float = 0.0

@@ -32,7 +32,7 @@ var _anchor: Vector2 = Vector2.ZERO
 
 ## Per-unit grid offsets in world units, keyed by the unit node.
 ## Populated in add_unit(), cleared in remove_unit().
-var _unit_offsets: Dictionary = {}
+var _unit_offsets: Dictionary = { }
 
 ## Accumulated time for periodic anchor updates.
 var _track_timer: float = 0.0
@@ -96,7 +96,6 @@ func _on_check_timer_timeout():
             armies_state[army_current_state.name] += 1
 
     # print(armies_state)
-
 
 ## --- Public API ---
 

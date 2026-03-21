@@ -94,4 +94,3 @@ func _on_died(info) -> void:
 func _on_animation_finished(anim_name: StringName) -> void:
     if String(ANIM_ATTACK) in String(anim_name):
         attack_finished.emit()
-
