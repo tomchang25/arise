@@ -6,6 +6,7 @@ var metadata: Dictionary = {}
 
 var spawn_parent: Node
 var source_node: Node
+var validator: SpawnPositionValidator = null
 
 var _rng: RandomNumberGenerator
 

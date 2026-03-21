@@ -40,8 +40,13 @@ func execute(anchor: Node2D, ctx: SpawnContext) -> Node:
                 Debug.warn("SpawnEnemyGroupAction: scene did not instantiate to Enemy")
                 continue
 
-            var offset := SpatialRandomUtils.random_point_in_circle(Vector2.ZERO, profile.spawn_radius, rng)
-            enemy.home_position = group.spawn_pivot + offset
+            var enemy_pos: Vector2
+            if ctx.validator != null and profile.spawn_radius > 0.0:
+                var found := SpawnPositionFinder.find_position_in_radius(group.spawn_pivot, profile.spawn_radius, ctx.validator, rng)
+                enemy_pos = found if found != null else group.spawn_pivot
+            else:
+                enemy_pos = group.spawn_pivot + SpatialRandomUtils.random_point_in_circle(Vector2.ZERO, profile.spawn_radius, rng)
+            enemy.home_position = enemy_pos
             group.add_child(enemy)
             group.register_member(enemy)
 

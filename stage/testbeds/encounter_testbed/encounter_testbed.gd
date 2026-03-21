@@ -183,8 +183,11 @@ func _find_spawn_position() -> Variant:
         return null
 
     var validator := _build_spawn_validator()
+    var position := SpawnPositionFinder.find_position_in_annulus(player.global_position, min_spawn_distance, max_spawn_distance, validator, _rng, placement_attempts)
+    if position == null:
+        return null
 
-    return SpawnPositionFinder.find_position_in_annulus(player.global_position, min_spawn_distance, max_spawn_distance, validator, _rng, placement_attempts)
+    return {position = position, validator = validator}
 
 
 func _build_spawn_validator() -> SpawnPositionValidator:
