@@ -95,21 +95,3 @@ func _on_animation_finished(anim_name: StringName) -> void:
     if String(ANIM_ATTACK) in String(anim_name):
         attack_finished.emit()
 
-# -------------------------
-# Public API — perception proxies
-# -------------------------
-
-
-## True when the player is inside aggro range.
-func is_player_in_aggro_range() -> bool:
-    return is_aggro_active()
-
-
-## True when the player has moved OUTSIDE the deaggro zone.
-func is_player_outside_deaggro_range() -> bool:
-    return is_deaggro_active()
-
-
-## True when the player is close enough to attack.
-func is_player_in_reach() -> bool:
-    return is_target_in_reach()

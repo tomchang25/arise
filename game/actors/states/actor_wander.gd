@@ -33,7 +33,7 @@ func _exit() -> void:
 
 
 func _update(_delta: float) -> void:
-    if _is_aggro_triggered():
+    if actor.is_aggro_active():
         change_state(ActorStateId.CHASE)
         return
 
@@ -46,17 +46,3 @@ func _update(_delta: float) -> void:
 
 func _on_navigation_finished() -> void:
     change_state(ActorStateId.IDLE)
-
-# -------------------------
-# Internal helpers
-# -------------------------
-
-
-func _is_aggro_triggered() -> bool:
-    var army := actor as Army
-    if army:
-        return army.is_target_tracked()
-    var enemy := actor as Enemy
-    if enemy:
-        return enemy.is_player_in_aggro_range()
-    return false

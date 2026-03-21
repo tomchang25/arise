@@ -63,30 +63,6 @@ func _on_died(_info) -> void:
     queue_free()
 
 # -------------------------
-# Public API — perception proxies (Army-specific)
-# -------------------------
-
-
-## Compatibility alias — prefer is_aggro_active() from Actor base.
-func is_target_tracked() -> bool:
-    return is_aggro_active()
-
-
-## Compatibility alias — prefer get_nearest_aggro_target() from Actor base.
-func get_nearest_tracked_target() -> Node2D:
-    return get_nearest_aggro_target()
-
-
-## Compatibility alias — prefer is_target_in_reach() from Actor base.
-func is_target_attackable() -> bool:
-    return is_target_in_reach()
-
-
-## Compatibility alias — prefer get_nearest_reachable_target() from Actor base.
-func get_nearest_attackable_target() -> Node2D:
-    return get_nearest_reachable_target()
-
-# -------------------------
 # Public API — state machine
 # -------------------------
 
@@ -96,12 +72,3 @@ func get_current_state() -> State:
         return null
     return state_machine.current_state
 
-# -------------------------
-# Public API — misc
-# -------------------------
-
-
-## Distance from this unit to its formation slot (anchor_position).
-## anchor_position is updated each frame by ArmyHandler.
-func get_distance_to_player() -> float:
-    return get_distance_to_anchor()

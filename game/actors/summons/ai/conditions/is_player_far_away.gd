@@ -1,6 +1,6 @@
-## Returns SUCCESS if the army unit is farther than [threshold] units from its
-## formation slot (player position + grid_position). Used to trigger the Follow
-## branch in the behaviour tree.
+## Returns SUCCESS if the actor is farther than [threshold] units from its
+## formation slot (anchor_position). Used to trigger the Follow branch in the
+## behaviour tree.
 class_name ArmyIsPlayerFarAway
 extends ConditionLeaf
 
@@ -8,7 +8,7 @@ extends ConditionLeaf
 
 
 func tick(actor: Node, _blackboard: Blackboard) -> int:
-    var army := actor as Army
-    if army == null:
+    var a := actor as Actor
+    if a == null:
         return FAILURE
-    return SUCCESS if army.get_distance_to_player() > threshold else FAILURE
+    return SUCCESS if a.get_distance_to_anchor() > threshold else FAILURE

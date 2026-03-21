@@ -13,7 +13,7 @@ func tick(actor: Node, _blackboard: Blackboard) -> int:
     if enemy == null:
         return FAILURE
 
-    if not enemy.is_player_in_reach():
+    if not enemy.is_target_in_reach():
         return FAILURE
 
     var target := enemy.get_nearest_reachable_target()

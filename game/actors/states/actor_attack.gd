@@ -38,13 +38,13 @@ func _exit() -> void:
 
 func _update(_delta: float) -> void:
     # Deaggro check (Enemy).
-    if _has_deaggro() and _is_deaggrod():
+    if _has_deaggro() and actor.is_deaggro_active():
         change_state(ActorStateId.RETURN_TO_ANCHOR)
         return
 
     # Anchor-distance check (Army).
     if not _has_deaggro():
-        if not _is_aggro_triggered() or actor.get_distance_to_anchor() > follow_threshold:
+        if not actor.is_aggro_active() or actor.get_distance_to_anchor() > follow_threshold:
             change_state(ActorStateId.RETURN_TO_ANCHOR)
             return
 
@@ -86,23 +86,6 @@ func _get_reach_radius() -> float:
     if actor.reach_detection:
         return actor.reach_detection.radius
     return 0.0
-
-
-func _is_aggro_triggered() -> bool:
-    var army := actor as Army
-    if army:
-        return army.is_target_tracked()
-    var enemy := actor as Enemy
-    if enemy:
-        return enemy.is_player_in_aggro_range()
-    return false
-
-
-func _is_deaggrod() -> bool:
-    var enemy := actor as Enemy
-    if enemy:
-        return enemy.is_player_outside_deaggro_range()
-    return false
 
 
 func _has_deaggro() -> bool:

@@ -14,11 +14,11 @@ func tick(actor: Node, _blackboard: Blackboard) -> int:
     if army == null:
         return FAILURE
 
-    if army.get_distance_to_player() > follow_threshold:
+    if army.get_distance_to_anchor() > follow_threshold:
         army.stop_movement()
         return FAILURE
 
-    var target := army.get_nearest_tracked_target()
+    var target := army.get_nearest_aggro_target()
     if target == null:
         army.stop_movement()
         return FAILURE
