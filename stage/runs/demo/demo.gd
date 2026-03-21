@@ -36,6 +36,7 @@ const ACTION_TOGGLE := "demo_toggle"
 @export var placement_attempts := 12
 @export var use_rect_bounds := true
 @export var world_rect := Rect2(Vector2(-800.0, -800.0), Vector2(1600.0, 1600.0))
+@export var spawn_group_radius := 60.0
 @export var exclude_near_player := true
 @export var player_safe_radius := 160.0
 
@@ -199,7 +200,7 @@ func _build_spawn_validator() -> SpawnPositionValidator:
         validator.world_2d = get_world_2d()
 
     validator.use_play_area_rect = use_rect_bounds
-    validator.play_area_rect = world_rect
+    validator.play_area_rect = world_rect.grow(-spawn_group_radius)
 
     validator.use_excluded_radius = exclude_near_player and player != null and player_safe_radius > 0.0
     if player != null:
