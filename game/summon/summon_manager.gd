@@ -10,7 +10,7 @@ signal souls_changed(souls: int)
 var _player: Player
 var _army_handler: ArmyHandler
 var _counts: Array[int] = []
-var _tracked_units: Array = []  # Array of Arrays, one per type
+var _tracked_units: Array = [] # Array of Arrays, one per type
 
 
 func _ready() -> void:
@@ -33,7 +33,6 @@ func _unhandled_input(event: InputEvent) -> void:
     for i in army_types.size():
         if event.is_action_pressed("summon_%d" % (i + 1)):
             summon(i)
-
 
 # -------------------------
 # Public API
@@ -91,7 +90,6 @@ func get_cost(type_index: int) -> int:
     if type_index < army_types.size():
         return army_types[type_index].soul_cost
     return 0
-
 
 # -------------------------
 # Private

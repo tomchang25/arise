@@ -14,14 +14,13 @@ func _ready() -> void:
     if summon_manager:
         bind(summon_manager)
     else:
-        var found := get_tree().get_first_node_in_group("summon_manager")
+        var found := get_tree().get_first_node_in_group("summon_mana ger")
         if found is SummonManager:
             bind(found as SummonManager)
 
 
 func _exit_tree() -> void:
     _unbind()
-
 
 # -------------------------
 # Public API
@@ -40,7 +39,6 @@ func bind(manager: SummonManager) -> void:
 
     _build_cards()
     _refresh_all()
-
 
 # -------------------------
 # Internal
@@ -146,11 +144,10 @@ func _refresh_card(type_index: int) -> void:
         return
     _cards[type_index].update_count(
         summon_manager.get_count(type_index),
-        summon_manager.get_max(type_index)
+        summon_manager.get_max(type_index),
     )
     var can_afford := summon_manager.get_souls() >= summon_manager.get_cost(type_index)
     _cards[type_index].set_affordable(can_afford)
-
 
 # -------------------------
 # Signal Callbacks
