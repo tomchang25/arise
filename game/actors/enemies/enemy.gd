@@ -350,7 +350,7 @@ func get_facing_direction() -> Vector2:
 func is_player_in_aggro_range() -> bool:
     if aggro_detection == null:
         return false
-    return aggro_detection.get_target_count(true) > 0
+    return aggro_detection.get_target_count() > 0
 
 
 ## True when the player has moved OUTSIDE the deaggro zone.
@@ -358,26 +358,27 @@ func is_player_in_aggro_range() -> bool:
 func is_player_outside_deaggro_range() -> bool:
     if deaggro_detection == null:
         return true
-    return deaggro_detection.get_target_count(false) == 0
+    return deaggro_detection.get_target_count() == 0
 
 
 ## True when the player is close enough to attack.
 func is_player_in_reach() -> bool:
     if reach_detection == null:
         return false
-    return reach_detection.get_target_count(false) > 0
+    return reach_detection.get_target_count() > 0
 
 
 func get_nearest_aggro_target() -> Node2D:
     if aggro_detection == null:
         return null
-    return aggro_detection.get_closest_target(true)
+
+    return aggro_detection.get_closest_target()
 
 
 func get_nearest_reachable_target() -> Node2D:
     if reach_detection == null:
         return null
-    return reach_detection.get_closest_target(false)
+    return reach_detection.get_closest_target()
 
 # -------------------------
 # Public API — misc
