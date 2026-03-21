@@ -20,11 +20,16 @@
 [ext_resource type="Script" uid="uid://w30s7yqi1p3d" path="res://common/gameplay/movement/movement_module.gd" id="17_move"]
 [ext_resource type="Script" uid="uid://ds7jcv6cdv02p" path="res://common/gameplay/navigation/navigation_module.gd" id="18_nav"]
 [ext_resource type="Script" uid="uid://dldqypakv40re" path="res://common/gameplay/animation/animation_module.gd" id="19_anim"]
-[ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/framework/state_machine/state_machine.gd" id="20_sm"]
-[ext_resource type="Script" uid="uid://dplrsortb8ufa" path="res://game/actors/summons/state/army_idle.gd" id="21_idle"]
-[ext_resource type="Script" uid="uid://d0008vj2c0w5u" path="res://game/actors/summons/state/army_follow.gd" id="22_follow"]
-[ext_resource type="Script" uid="uid://d257mq3pbe3mk" path="res://game/actors/summons/state/army_chase.gd" id="23_chase"]
-[ext_resource type="Script" uid="uid://4ryn1wepqme5" path="res://game/actors/summons/state/army_attack.gd" id="24_attack"]
+[ext_resource type="Script" uid="uid://bb0t2ovl7wifo" path="res://addons/beehave/nodes/beehave_tree.gd" id="20_btree"]
+[ext_resource type="Script" uid="uid://cw22yurt5l74k" path="res://addons/beehave/nodes/composites/selector_reactive.gd" id="21_selreact"]
+[ext_resource type="Script" uid="uid://cg016dbe7gs1x" path="res://addons/beehave/nodes/composites/sequence.gd" id="22_seq"]
+[ext_resource type="Script" uid="uid://2falvbrjntjb" path="res://game/actors/summons/ai/conditions/is_target_attackable.gd" id="23_cond_atk"]
+[ext_resource type="Script" uid="uid://cri22e0inxk52" path="res://game/actors/summons/ai/conditions/is_target_tracked.gd" id="24_cond_trk"]
+[ext_resource type="Script" uid="uid://cl2bs26gl2ccl" path="res://game/actors/summons/ai/conditions/is_player_far_away.gd" id="25_cond_far"]
+[ext_resource type="Script" uid="uid://dfbm04yvaxk8i" path="res://game/actors/summons/ai/actions/army_attack_action.gd" id="26_act_atk"]
+[ext_resource type="Script" uid="uid://ctrvmvbhxqxjp" path="res://game/actors/summons/ai/actions/army_chase_action.gd" id="27_act_chs"]
+[ext_resource type="Script" uid="uid://bgi786w4my3uk" path="res://game/actors/summons/ai/actions/army_follow_action.gd" id="28_act_flw"]
+[ext_resource type="Script" uid="uid://cp38564tvyr3v" path="res://game/actors/summons/ai/actions/army_idle_action.gd" id="29_act_idl"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_body"]
 radius = 1.0
@@ -113,13 +118,13 @@ nodes/TimeScale/node = SubResource("AnimationNodeTimeScale_y5i28")
 nodes/TimeScale/position = Vector2(60, 120)
 node_connections = [&"output", 0, &"TimeScale", &"TimeScale", 0, &"StateMachine"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_rlhjn"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_gmkq7"]
 radius = 100.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_bqpvu"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_vhmd8"]
 radius = 50.0
 
-[node name="NinjaGreen" type="CharacterBody2D" unique_id=1952489733 node_paths=PackedStringArray("sprite", "hurtbox", "damage_receiver", "hit_feedback", "damage_number", "health_bar", "combat_module", "track_detection", "reach_detection", "movement_module", "navigation_module", "animation_module", "state_machine") groups=["armies"]]
+[node name="NinjaGreen" type="CharacterBody2D" unique_id=1952489733 node_paths=PackedStringArray("sprite", "hurtbox", "damage_receiver", "hit_feedback", "damage_number", "health_bar", "combat_module", "track_detection", "reach_detection", "movement_module", "navigation_module", "animation_module") groups=["armies"]]
 collision_layer = 256
 collision_mask = 4
 motion_mode = 1
@@ -136,7 +141,6 @@ reach_detection = NodePath("Module/DetectionPivot/ReachDetection")
 movement_module = NodePath("Module/MovementModule")
 navigation_module = NodePath("Module/NavigationModule")
 animation_module = NodePath("Module/AnimationModule")
-state_machine = NodePath("StateMachine")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=464441980]
 rotation = 1.5708
@@ -181,7 +185,7 @@ monitorable = false
 script = ExtResource("6_detect")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/TrackDetection" unique_id=19296424]
-shape = SubResource("CircleShape2D_rlhjn")
+shape = SubResource("CircleShape2D_gmkq7")
 debug_color = Color(0, 0.6, 0.1764706, 0.23529412)
 
 [node name="ReachDetection" type="Area2D" parent="Module/DetectionPivot" unique_id=401014540]
@@ -192,7 +196,7 @@ script = ExtResource("6_detect")
 radius = 50.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/ReachDetection" unique_id=1333937030]
-shape = SubResource("CircleShape2D_bqpvu")
+shape = SubResource("CircleShape2D_vhmd8")
 debug_color = Color(0.8627451, 0.23529412, 0.69803923, 0.23921569)
 
 [node name="HealthBar" parent="Module" unique_id=1501966175 instance=ExtResource("7_hbar")]
@@ -235,8 +239,10 @@ character = NodePath("../..")
 movement = NodePath("../MovementModule")
 navigation_agent = NodePath("NavigationAgent2D")
 enable_avoidance = true
+debug_draw = true
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="Module/NavigationModule" unique_id=1038648320]
+path_desired_distance = 5.0
 target_desired_distance = 5.0
 avoidance_enabled = true
 radius = 1.0
@@ -248,24 +254,44 @@ script = ExtResource("19_anim")
 actor = NodePath("../..")
 animation_tree = NodePath("../../Visual/AnimationTree")
 
-[node name="StateMachine" type="Node" parent="." unique_id=2005491568 node_paths=PackedStringArray("initial_state")]
-script = ExtResource("20_sm")
-initial_state = NodePath("Idle")
+[node name="BeehaveTree" type="Node" parent="." unique_id=2005491568 node_paths=PackedStringArray("blackboard", "actor")]
+script = ExtResource("20_btree")
+blackboard = NodePath("@Node@69800")
+actor = NodePath("..")
 
-[node name="Idle" type="Node" parent="StateMachine" unique_id=1994102282]
-script = ExtResource("21_idle")
-follow_threshold = 16.0
+[node name="MainAI" type="Node" parent="BeehaveTree" unique_id=416008838]
+script = ExtResource("21_selreact")
+metadata/_custom_type_script = "uid://cw22yurt5l74k"
 
-[node name="Follow" type="Node" parent="StateMachine" unique_id=799256189]
-script = ExtResource("22_follow")
+[node name="AttackSequence" type="Node" parent="BeehaveTree/MainAI" unique_id=2004320403]
+script = ExtResource("22_seq")
 
-[node name="Chase" type="Node" parent="StateMachine" unique_id=672364940]
-script = ExtResource("23_chase")
-follow_threshold = 250.0
+[node name="IsTargetAttackable" type="Node" parent="BeehaveTree/MainAI/AttackSequence" unique_id=253303944]
+script = ExtResource("23_cond_atk")
 
-[node name="Attack" type="Node" parent="StateMachine" unique_id=289689962]
-script = ExtResource("24_attack")
-follow_threshold = 250.0
+[node name="ArmyAttackAction" type="Node" parent="BeehaveTree/MainAI/AttackSequence" unique_id=245208749]
+script = ExtResource("26_act_atk")
+
+[node name="ChaseSequence" type="Node" parent="BeehaveTree/MainAI" unique_id=1191885151]
+script = ExtResource("22_seq")
+
+[node name="IsTargetTracked" type="Node" parent="BeehaveTree/MainAI/ChaseSequence" unique_id=1386344655]
+script = ExtResource("24_cond_trk")
+
+[node name="ArmyChaseAction" type="Node" parent="BeehaveTree/MainAI/ChaseSequence" unique_id=328890137]
+script = ExtResource("27_act_chs")
+
+[node name="FollowSequence" type="Node" parent="BeehaveTree/MainAI" unique_id=267608458]
+script = ExtResource("22_seq")
+
+[node name="IsPlayerFarAway" type="Node" parent="BeehaveTree/MainAI/FollowSequence" unique_id=1569428713]
+script = ExtResource("25_cond_far")
+
+[node name="ArmyFollowAction" type="Node" parent="BeehaveTree/MainAI/FollowSequence" unique_id=265933730]
+script = ExtResource("28_act_flw")
+
+[node name="ArmyIdleAction" type="Node" parent="BeehaveTree/MainAI" unique_id=1583752157]
+script = ExtResource("29_act_idl")
 
 [node name="Sprite" type="Sprite2D" parent="." unique_id=1410171533]
 material = ExtResource("2_mat")
