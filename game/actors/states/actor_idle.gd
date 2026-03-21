@@ -43,7 +43,7 @@ func _update(delta: float) -> void:
         return
 
     # Wander when idle timer expires (enemy behaviour)
-    if _has_wander():
+    if _has_wander() and not actor.dormant:
         _idle_timer += delta
         if _idle_timer >= _wait_time:
             change_state(ActorStateId.WANDER)

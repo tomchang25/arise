@@ -13,6 +13,9 @@ extends ActorState
 @export var chase_speed: float = 150.0
 ## Distance threshold used when has_deaggro is false (Army-like actors).
 @export var follow_threshold: float = 100.0
+@export var move_update_interval: float = 0.1
+
+var _move_timer: float = 0.0
 
 
 func _init() -> void:
@@ -23,7 +26,7 @@ func _enter() -> void:
     actor.play_animation(Actor.ANIM_MOVE, 1.5)
 
 
-func _update(_delta: float) -> void:
+func _update(delta: float) -> void:
     # Leash check — return home if too far from anchor.
     var leash := _get_leash_distance()
     if leash > 0.0 and actor.get_distance_to_anchor() > leash:
@@ -49,14 +52,19 @@ func _update(_delta: float) -> void:
         return
 
     # Move toward target.
-    var target := actor.get_nearest_aggro_target()
-    if target:
-        var stop_dist := 0.0
-        if actor.reach_detection:
-            stop_dist = actor.reach_detection.radius * 0.5
-        actor.move_to_position(target.global_position, chase_speed, stop_dist)
-        actor.set_facing_direction(actor.global_position.direction_to(target.global_position), Actor.ANIM_MOVE)
-
+    _move_timer += delta
+    if _move_timer >= move_update_interval:
+        _move_timer = 0.0
+        var target := actor.get_nearest_aggro_target()
+        if target:
+            var stop_dist := 0.0
+            if actor.reach_detection:
+                stop_dist = actor.reach_detection.radius * 0.5
+            actor.move_to_position(target.global_position, chase_speed, stop_dist)
+            actor.set_facing_direction(
+                actor.global_position.direction_to(target.global_position),
+                Actor.ANIM_MOVE,
+            )
 # -------------------------
 # Internal helpers
 # -------------------------

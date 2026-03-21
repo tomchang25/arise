@@ -26,11 +26,11 @@
 [ext_resource type="Script" uid="uid://i1ibypyr38xv" path="res://common/gameplay/loot/loot_drop_module.gd" id="23_lootdrop"]
 [ext_resource type="Resource" uid="uid://bq584j3uqsyau" path="res://game/actors/enemies/types/slime/presets/slime_drop_profile.tres" id="25_com4q"]
 [ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/framework/state_machine/state_machine.gd" id="25_statemachine"]
-[ext_resource type="Script" uid="uid://dtpcn0ydqfetw" path="res://game/actors/states/actor_idle.gd" id="26_idle"]
-[ext_resource type="Script" uid="uid://cqmw7jyyum8a6" path="res://game/actors/states/actor_wander.gd" id="27_wander"]
-[ext_resource type="Script" uid="uid://ccpaai32tn4c6" path="res://game/actors/states/actor_chase.gd" id="28_chase"]
-[ext_resource type="Script" uid="uid://s8lpdn6sk4ut" path="res://game/actors/states/actor_attack.gd" id="29_attack"]
-[ext_resource type="Script" uid="uid://c7sidn8kv7i3d" path="res://game/actors/states/actor_return_to_anchor.gd" id="30_back"]
+[ext_resource type="Script" uid="uid://buw12hs4rl23y" path="res://game/actors/states/actor_idle.gd" id="26_idle"]
+[ext_resource type="Script" uid="uid://ghkrjx4eskgd" path="res://game/actors/states/actor_wander.gd" id="27_wander"]
+[ext_resource type="Script" uid="uid://bdtpmymrh152k" path="res://game/actors/states/actor_chase.gd" id="28_chase"]
+[ext_resource type="Script" uid="uid://cikpejrf13cy1" path="res://game/actors/states/actor_attack.gd" id="29_attack"]
+[ext_resource type="Script" uid="uid://c5oa2ppydf4o3" path="res://game/actors/states/actor_return_to_anchor.gd" id="30_back"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_body"]
 radius = 4.0
@@ -207,10 +207,12 @@ script = ExtResource("27_wander")
 [node name="Chase" type="Node" parent="StateMachine" unique_id=58470279]
 script = ExtResource("28_chase")
 chase_speed = 100.0
+move_update_interval = 1.0
 
 [node name="Attack" type="Node" parent="StateMachine" unique_id=478504038]
 script = ExtResource("29_attack")
 attack_speed = 100.0
+move_update_interval = 1.0
 
 [node name="ReturnToAnchor" type="Node" parent="StateMachine" unique_id=1469795797]
 script = ExtResource("30_back")
