@@ -1,22 +1,33 @@
+## Army-specific state base. Extends ActorState and exposes a typed
+## Army reference for convenience in Army-only states.
 class_name ArmyState
-extends State
+extends ActorState
 
-enum ArmyStateId { NULL = -1, IDLE = 0, FOLLOW = 1, CHASE = 2, RETREAT = 3, ATTACK = 4 }
+## Re-export Army state IDs for backward compatibility with existing army state scripts.
+enum ArmyStateId {
+	NULL = -1,
+	IDLE = ActorStateId.IDLE,
+	FOLLOW = ActorStateId.RETURN_TO_ANCHOR,
+	CHASE = ActorStateId.CHASE,
+	RETREAT = ActorStateId.RETURN_TO_ANCHOR,
+	ATTACK = ActorStateId.ATTACK,
+}
 
-# @export var animation_state: String
+## Typed shortcut — use actor (from ActorState) for the common Actor API.
 var target: Army
 
 
 func _ready() -> void:
-    if owner == null:
-        push_error("ArmyState must have an owner")
-        return
+	if owner == null:
+		push_error("ArmyState must have an owner")
+		return
 
-    if not owner.is_node_ready():
-        await owner.ready
+	if not owner.is_node_ready():
+		await owner.ready
 
-    if owner is not Army:
-        push_error("ArmyState owner must be an Army")
-        return
+	if owner is not Army:
+		push_error("ArmyState owner must be an Army")
+		return
 
-    target = owner
+	actor = owner
+	target = owner

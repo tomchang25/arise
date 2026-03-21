@@ -1,22 +1,27 @@
+## Enemy-specific state base. Extends ActorState and exposes a typed
+## Enemy reference for convenience in Enemy-only states.
 class_name EnemyState
-extends State
+extends ActorState
 
+## Re-export Enemy state IDs for backward compatibility with existing enemy state scripts.
 enum EnemyStateId {
-    NULL = -1,
-    IDLE = 0,
-    WANDER = 1,
-    CHASE = 2,
-    ATTACK = 3,
-    BACK = 4,
-    LEASH_BACK = 5,
-    CHARGE_WINDUP = 6,
-    CHARGE = 7,
-    CHARGE_RECOVERY = 8,
+	NULL = ActorStateId.NULL,
+	IDLE = ActorStateId.IDLE,
+	WANDER = ActorStateId.WANDER,
+	CHASE = ActorStateId.CHASE,
+	ATTACK = ActorStateId.ATTACK,
+	BACK = ActorStateId.RETURN_TO_ANCHOR,
+	LEASH_BACK = ActorStateId.LEASH_BACK,
+	CHARGE_WINDUP = ActorStateId.CHARGE_WINDUP,
+	CHARGE = ActorStateId.CHARGE,
+	CHARGE_RECOVERY = ActorStateId.CHARGE_RECOVERY,
 }
 
+## Typed shortcut — use actor (from ActorState) for the common Actor API.
 var enemy: Enemy
 
 
 func _ready() -> void:
-    await owner.ready
-    enemy = owner as Enemy
+	await owner.ready
+	actor = owner as Actor
+	enemy = owner as Enemy
