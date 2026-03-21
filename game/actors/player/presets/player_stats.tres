@@ -6,6 +6,7 @@
 script = ExtResource("2_87lid")
 mana = 100.0
 souls = 100
-base_max_health = 1000.0
+base_max_health = 5000.0
 base_damage = 100.0
+base_defense = 100.0
 metadata/_custom_type_script = "uid://bkgf2cii3bfri"

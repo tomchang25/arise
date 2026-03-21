@@ -28,7 +28,8 @@ const ACTION_TOGGLE := "demo_toggle"
 @export var encounter_config: EncounterConfig
 
 @export_group("HUD")
-@export var wave_hud: WaveHUD
+@export var main_hud: MainHUD
+@export var summon_manager: SummonManager
 
 @export_group("Spawn Placement")
 @export var min_spawn_distance := 120.0
@@ -70,10 +71,16 @@ func _ready() -> void:
     if encounter_controller != null:
         encounter_controller.spawn_position_resolver = _find_spawn_position
 
+    if main_hud != null:
+        if player != null and player.get("stats") != null:
+            main_hud.bind_player(player.stats)
+        if summon_manager != null:
+            main_hud.bind_summon(summon_manager)
+
     if wave_defense_controller != null:
         # Wave defense mode: WaveDefenseController drives the encounter.
-        if wave_hud != null:
-            wave_hud.bind(wave_defense_controller)
+        if main_hud != null:
+            main_hud.bind_wave(wave_defense_controller)
         wave_defense_controller.start()
     elif encounter_config != null and encounter_controller != null:
         # Fallback: plain encounter without wave management.
@@ -246,8 +253,11 @@ func _auto_wire() -> void:
     if debug_label == null:
         debug_label = get_node_or_null("UI/DebugLabel") as Label
 
-    if wave_hud == null:
-        wave_hud = get_node_or_null("UI/WaveHUD") as WaveHUD
+    if main_hud == null:
+        main_hud = get_node_or_null("UI/MainHUD") as MainHUD
+
+    if summon_manager == null:
+        summon_manager = get_node_or_null("SummonManager") as SummonManager
 
 
 func _update_debug_label() -> void:

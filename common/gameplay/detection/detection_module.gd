@@ -81,6 +81,9 @@ func get_targets(must_be_visible: bool = false) -> Array[Node2D]:
             continue
         targets.append(entity)
 
+    if must_be_visible:
+        push_warning("DetectionModule: Raycasts are pretty heavy, only use when needed.")
+
     return targets
 
 

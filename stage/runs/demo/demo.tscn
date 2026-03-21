@@ -7,9 +7,11 @@
 [ext_resource type="Script" uid="uid://qonxf7sblp5f" path="res://common/gameplay/encounter/encounter_controller.gd" id="4_a6hy3"]
 [ext_resource type="Script" uid="uid://bwm8u3xypysu8" path="res://common/gameplay/despawn/despawn_controller.gd" id="5_60flp"]
 [ext_resource type="Script" uid="uid://cqbsn4xt87m8m" path="res://game/wave_defense/wave_defense_controller.gd" id="6_wvdef"]
-[ext_resource type="PackedScene" path="res://game/ui/hud/wave_hud/wave_hud.tscn" id="7_wavhud"]
+[ext_resource type="PackedScene" uid="uid://bl6qc51imn6xk" path="res://game/ui/hud/main_hud/main_hud.tscn" id="7_mainhud"]
+[ext_resource type="PackedScene" path="res://game/summon/summon_manager.tscn" id="8_summon"]
+[ext_resource type="PackedScene" uid="uid://bfxutmk72t3gc" path="res://game/actors/summons/army_handler/army_handler.tscn" id="9_armyhandler"]
 
-[node name="Demo" type="Node2D" unique_id=535920825 node_paths=PackedStringArray("player", "player_spawn", "enemies_root", "debug_label", "encounter_controller", "despawn_controller", "wave_defense_controller", "wave_hud")]
+[node name="Demo" type="Node2D" unique_id=535920825 node_paths=PackedStringArray("player", "player_spawn", "enemies_root", "debug_label", "encounter_controller", "despawn_controller", "wave_defense_controller", "main_hud", "summon_manager")]
 script = ExtResource("1_a6hy3")
 player = NodePath("Player")
 player_spawn = NodePath("PlayerSpawn")
@@ -19,7 +21,8 @@ encounter_controller = NodePath("EncounterController")
 despawn_controller = NodePath("DespawnController")
 wave_defense_controller = NodePath("WaveDefenseController")
 encounter_config = ExtResource("2_60flp")
-wave_hud = NodePath("UI/WaveHUD")
+main_hud = NodePath("UI/MainHUD")
+summon_manager = NodePath("SummonManager")
 
 [node name="Tilemaps" type="Node2D" parent="." unique_id=606999450]
 
@@ -82,4 +85,8 @@ offset_bottom = 22.0
 theme_override_font_sizes/font_size = 6
 metadata/_edit_use_anchors_ = true
 
-[node name="WaveHUD" parent="UI" unique_id=231930506 instance=ExtResource("7_wavhud")]
+[node name="MainHUD" parent="UI" unique_id=231930507 instance=ExtResource("7_mainhud")]
+
+[node name="SummonManager" parent="." unique_id=1124833830 instance=ExtResource("8_summon")]
+
+[node name="ArmyHandler" parent="." unique_id=2083674041 instance=ExtResource("9_armyhandler")]

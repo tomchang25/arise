@@ -14,7 +14,7 @@ func _ready() -> void:
     if summon_manager:
         bind(summon_manager)
     else:
-        var found := get_tree().get_first_node_in_group("summon_mana ger")
+        var found := get_tree().get_first_node_in_group("summon_manager")
         if found is SummonManager:
             bind(found as SummonManager)
 
