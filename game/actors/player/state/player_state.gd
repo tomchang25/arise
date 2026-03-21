@@ -7,10 +7,10 @@ extends State
 ## State ID enum shared by all player states.
 ## Kept here (not in Player) so states can reference it without a circular dep.
 enum PlayerStateId {
-    NULL   = -1,
-    IDLE   = 0,
-    MOVE   = 1,
-    ROLL   = 2,
+    NULL = -1,
+    IDLE = 0,
+    MOVE = 1,
+    ROLL = 2,
     ATTACK = 3,
 }
 
