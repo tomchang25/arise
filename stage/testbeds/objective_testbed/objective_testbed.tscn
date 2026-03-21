@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://c0u1qygtogd4p" path="res://stage/testbeds/objective_testbed/objective_testbed.gd" id="1"]
 [ext_resource type="Script" uid="uid://cq4hamengotte" path="res://game/objectives/extraction/extraction_point.gd" id="3"]
 [ext_resource type="Script" uid="uid://cux5pydjudc0b" path="res://game/objectives/objective_manager.gd" id="3_dp1ud"]
-[ext_resource type="Script" uid="uid://dp580idnmc17n" path="res://game/ui/hud/objective_hud.gd" id="4"]
+[ext_resource type="Script" uid="uid://dp580idnmc17n" path="res://game/ui/hud/objective_hud/objective_hud.gd" id="4"]
 [ext_resource type="PackedScene" uid="uid://i0w72n7e6is8" path="res://stage/systems/player_with_camera.tscn" id="5_5oe3h"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_dp1ud"]

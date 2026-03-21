@@ -6,8 +6,8 @@
 [ext_resource type="PackedScene" uid="uid://i0w72n7e6is8" path="res://stage/systems/player_with_camera.tscn" id="2_pxgj2"]
 [ext_resource type="Script" uid="uid://qonxf7sblp5f" path="res://common/gameplay/encounter/encounter_controller.gd" id="4_a6hy3"]
 [ext_resource type="Script" uid="uid://bwm8u3xypysu8" path="res://common/gameplay/despawn/despawn_controller.gd" id="5_60flp"]
-[ext_resource type="Script" uid="uid://b1r85egboq2ak" path="res://game/wave_defense/wave_defense_controller.gd" id="6_wvdef"]
-[ext_resource type="PackedScene" path="res://game/ui/hud/wave_hud.tscn" id="7_wavhud"]
+[ext_resource type="Script" uid="uid://cqbsn4xt87m8m" path="res://game/wave_defense/wave_defense_controller.gd" id="6_wvdef"]
+[ext_resource type="PackedScene" path="res://game/ui/hud/wave_hud/wave_hud.tscn" id="7_wavhud"]
 
 [node name="Demo" type="Node2D" unique_id=535920825 node_paths=PackedStringArray("player", "player_spawn", "enemies_root", "debug_label", "encounter_controller", "despawn_controller", "wave_defense_controller", "wave_hud")]
 script = ExtResource("1_a6hy3")
