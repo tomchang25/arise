@@ -18,8 +18,8 @@ signal target_lost
 @export var navigation_agent: NavigationAgent2D
 
 @export_group("Path Update")
-@export var repath_distance_threshold := 8.0
 @export var target_update_interval := 0.2
+@export var repath_distance_threshold := 8.0
 @export var path_tick_interval := 0.2
 
 @export_group("Movement")
