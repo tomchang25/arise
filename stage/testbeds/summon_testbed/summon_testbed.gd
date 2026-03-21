@@ -22,15 +22,15 @@ const ACTION_RESET_DUMMIES := "summon_test_reset_dummies"
 
 
 func _ready() -> void:
-	_ensure_actions()
-	_bind_hud()
-	_update_debug_label()
+    _ensure_actions()
+    _bind_hud()
+    _update_debug_label()
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed(ACTION_RESET_DUMMIES):
-		_reset_dummies()
-		get_viewport().set_input_as_handled()
+    if event.is_action_pressed(ACTION_RESET_DUMMIES):
+        _reset_dummies()
+        get_viewport().set_input_as_handled()
 
 
 # -------------------------
@@ -39,14 +39,14 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _bind_hud() -> void:
-	var player_stats: Stats = null
-	if player is Player:
-		player_stats = (player as Player).stats
-	if player_hud and player_stats:
-		player_hud.bind(player_stats)
+    var player_stats: Stats = null
+    if player is Player:
+        player_stats = (player as Player).stats
+    if player_hud and player_stats:
+        player_hud.bind(player_stats)
 
-	if summon_hud and summon_manager:
-		summon_hud.bind(summon_manager)
+    if summon_hud and summon_manager:
+        summon_hud.bind(summon_manager)
 
 
 # -------------------------
@@ -55,11 +55,11 @@ func _bind_hud() -> void:
 
 
 func _reset_dummies() -> void:
-	if dummies_root == null:
-		return
-	for child in dummies_root.get_children():
-		if is_instance_valid(child) and child.has_method("reset_dummy"):
-			child.reset_dummy()
+    if dummies_root == null:
+        return
+    for child in dummies_root.get_children():
+        if is_instance_valid(child) and child.has_method("reset_dummy"):
+            child.reset_dummy()
 
 
 # -------------------------
@@ -68,12 +68,12 @@ func _reset_dummies() -> void:
 
 
 func _update_debug_label() -> void:
-	if debug_label == null:
-		return
-	debug_label.text = "\n".join([
-		"[1–4]  Summon unit",
-		"[R]    Reset dummies",
-	])
+    if debug_label == null:
+        return
+    debug_label.text = "\n".join([
+        "[1–4]  Summon unit",
+        "[R]    Reset dummies",
+    ])
 
 
 # -------------------------
@@ -82,13 +82,13 @@ func _update_debug_label() -> void:
 
 
 func _ensure_actions() -> void:
-	_ensure_key_action(ACTION_RESET_DUMMIES, KEY_R)
+    _ensure_key_action(ACTION_RESET_DUMMIES, KEY_R)
 
 
 func _ensure_key_action(action_name: StringName, keycode: Key) -> void:
-	if InputMap.has_action(action_name):
-		return
-	InputMap.add_action(action_name)
-	var input_event := InputEventKey.new()
-	input_event.physical_keycode = keycode
-	InputMap.action_add_event(action_name, input_event)
+    if InputMap.has_action(action_name):
+        return
+    InputMap.add_action(action_name)
+    var input_event := InputEventKey.new()
+    input_event.physical_keycode = keycode
+    InputMap.action_add_event(action_name, input_event)

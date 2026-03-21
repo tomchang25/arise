@@ -1,12 +1,12 @@
-[gd_scene format=3 uid="uid://main_hud_scene"]
+[gd_scene format=3 uid="uid://bl6qc51imn6xk"]
 
-[ext_resource type="Script" path="res://game/ui/hud/main_hud/main_hud.gd" id="1_mainhud"]
-[ext_resource type="PackedScene" path="res://game/ui/hud/player_hud/player_hud.tscn" id="2_phud"]
+[ext_resource type="Script" uid="uid://buoharlfgnpmx" path="res://game/ui/hud/main_hud/main_hud.gd" id="1_mainhud"]
+[ext_resource type="PackedScene" uid="uid://b6fkxs12rxtfw" path="res://game/ui/hud/player_hud/player_hud.tscn" id="2_phud"]
 [ext_resource type="PackedScene" path="res://game/ui/hud/debug_hud/debug_hud.tscn" id="3_dbghud"]
 [ext_resource type="PackedScene" path="res://game/ui/hud/wave_hud/wave_hud.tscn" id="4_wavehud"]
-[ext_resource type="PackedScene" path="res://game/ui/hud/summon_hud/summon_hud.tscn" id="5_sumhud"]
+[ext_resource type="PackedScene" uid="uid://g33b1cy1ovq" path="res://game/ui/hud/summon_hud/summon_hud.tscn" id="5_sumhud"]
 
-[node name="MainHUD" type="Control" node_paths=PackedStringArray("player_hud", "debug_hud", "wave_hud", "summon_hud")]
+[node name="MainHUD" type="Control" unique_id=1922058681 node_paths=PackedStringArray("player_hud", "debug_hud", "wave_hud", "summon_hud")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -19,10 +19,16 @@ debug_hud = NodePath("DebugHUD")
 wave_hud = NodePath("WaveHUD")
 summon_hud = NodePath("SummonHUD")
 
-[node name="PlayerHUD" parent="." instance=ExtResource("2_phud")]
+[node name="PlayerHUD" parent="." unique_id=89719240 instance=ExtResource("2_phud")]
+layout_mode = 1
 
-[node name="DebugHUD" parent="." instance=ExtResource("3_dbghud")]
+[node name="DebugHUD" parent="." unique_id=1580955801 instance=ExtResource("3_dbghud")]
+layout_mode = 1
 
-[node name="WaveHUD" parent="." instance=ExtResource("4_wavehud")]
+[node name="WaveHUD" parent="." unique_id=424478162 instance=ExtResource("4_wavehud")]
+layout_mode = 1
+offset_top = 213.0
+offset_bottom = 241.0
 
-[node name="SummonHUD" parent="." instance=ExtResource("5_sumhud")]
+[node name="SummonHUD" parent="." unique_id=376944848 instance=ExtResource("5_sumhud")]
+layout_mode = 1

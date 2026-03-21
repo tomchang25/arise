@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://31x7n43mme6c"]
 
-[ext_resource type="Script" uid="uid://bd4wrsrbdwesh" path="res://game/actors/enemies/types/ninja/red_ninja.gd" id="1_redninja"]
+[ext_resource type="Script" uid="uid://cybcp1mw4ydcs" path="res://game/actors/enemies/types/ninja/red_ninja.gd" id="1_redninja"]
 [ext_resource type="Material" uid="uid://4sxc1efucw5k" path="res://common/rendering/shaders/dynamic_color_overlay.tres" id="2_mat"]
 [ext_resource type="Resource" uid="uid://rq5f7puwasyb" path="res://game/actors/enemies/types/ninja/presets/ninja_red_data.tres" id="3_data"]
 [ext_resource type="Texture2D" uid="uid://c7rvngvjpf2nr" path="res://game/actors/enemies/types/ninja/assets/ninja_red.png" id="4_tex"]
@@ -27,13 +27,13 @@
 [ext_resource type="Script" uid="uid://bb0t2ovl7wifo" path="res://addons/beehave/nodes/beehave_tree.gd" id="26_btree"]
 [ext_resource type="Script" uid="uid://cw22yurt5l74k" path="res://addons/beehave/nodes/composites/selector_reactive.gd" id="27_nnul2"]
 [ext_resource type="Script" uid="uid://cg016dbe7gs1x" path="res://addons/beehave/nodes/composites/sequence.gd" id="29_seq"]
-[ext_resource type="Script" uid="uid://ia8xe33228ok" path="res://game/actors/enemies/ai/conditions/is_player_in_reach.gd" id="30_inreach"]
-[ext_resource type="Script" uid="uid://bb2wt4ldvjx70" path="res://game/actors/enemies/ai/actions/melee_attack_action.gd" id="31_melee"]
-[ext_resource type="Script" uid="uid://8kngjes24dy1" path="res://game/actors/enemies/ai/conditions/is_player_in_aggro_range.gd" id="32_inrange"]
-[ext_resource type="Script" uid="uid://cwdwi0llionpe" path="res://game/actors/enemies/ai/conditions/is_home_too_far.gd" id="32_nnul2"]
-[ext_resource type="Script" uid="uid://c7hxxghn10gj6" path="res://game/actors/enemies/ai/actions/chase_player_action.gd" id="33_chase"]
-[ext_resource type="Script" uid="uid://cp3miie2gv3e7" path="res://game/actors/enemies/ai/actions/return_home_action.gd" id="33_u2ujg"]
-[ext_resource type="Script" uid="uid://c2a51dwl67f3x" path="res://game/actors/enemies/ai/actions/idle_action.gd" id="34_idle"]
+[ext_resource type="Script" uid="uid://dby4m7bpfas57" path="res://game/actors/enemies/ai/conditions/is_player_in_reach.gd" id="30_inreach"]
+[ext_resource type="Script" uid="uid://bfsjlr7lyl2s0" path="res://game/actors/enemies/ai/actions/melee_attack_action.gd" id="31_melee"]
+[ext_resource type="Script" uid="uid://c78e6vldv836w" path="res://game/actors/enemies/ai/conditions/is_player_in_aggro_range.gd" id="32_inrange"]
+[ext_resource type="Script" uid="uid://nva4on8qs2rt" path="res://game/actors/enemies/ai/conditions/is_home_too_far.gd" id="32_nnul2"]
+[ext_resource type="Script" uid="uid://cj6x7oi0lxmoc" path="res://game/actors/enemies/ai/actions/chase_player_action.gd" id="33_chase"]
+[ext_resource type="Script" uid="uid://po7b7qp5njlw" path="res://game/actors/enemies/ai/actions/return_home_action.gd" id="33_u2ujg"]
+[ext_resource type="Script" uid="uid://c6g85tyjv4w6v" path="res://game/actors/enemies/ai/actions/idle_action.gd" id="34_idle"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_body"]
 radius = 2.0
@@ -202,7 +202,7 @@ drop_profile = ExtResource("24_drop")
 
 [node name="BeehaveTree" type="Node" parent="." unique_id=1035777613 node_paths=PackedStringArray("blackboard", "actor")]
 script = ExtResource("26_btree")
-blackboard = NodePath("@Node@51989")
+blackboard = NodePath("@Node@100474")
 actor = NodePath("..")
 
 [node name="MainAI" type="Node" parent="BeehaveTree" unique_id=416008838]
@@ -217,7 +217,6 @@ script = ExtResource("30_inreach")
 
 [node name="SlashAttack" type="Node" parent="BeehaveTree/MainAI/AttackSequence" unique_id=245208749]
 script = ExtResource("31_melee")
-attack_speed = 0.0
 
 [node name="ChaseSequence" type="Node" parent="BeehaveTree/MainAI" unique_id=1191885151]
 script = ExtResource("29_seq")
@@ -236,7 +235,6 @@ script = ExtResource("32_nnul2")
 
 [node name="ReturnHome" type="Node" parent="BeehaveTree/MainAI/ReturnHomeSequence" unique_id=265933730]
 script = ExtResource("33_u2ujg")
-metadata/_custom_type_script = "uid://cp3miie2gv3e7"
 
 [node name="Idle" type="Node" parent="BeehaveTree/MainAI" unique_id=1583752157]
 script = ExtResource("34_idle")

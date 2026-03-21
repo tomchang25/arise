@@ -16,7 +16,6 @@ func tick(actor: Node, _blackboard: Blackboard) -> int:
         return FAILURE
 
     if not enemy.is_player_in_reach():
-        enemy.stop_movement()
         return FAILURE
 
     var target := enemy.get_nearest_reachable_target()
@@ -26,7 +25,7 @@ func tick(actor: Node, _blackboard: Blackboard) -> int:
         var reach := _get_reach_radius(enemy)
         if reach > 0.0:
             var dist := enemy.global_position.distance_to(target.global_position)
-            var close_threshold := reach * 0.5
+            var close_threshold := reach * 0.25
             var creep_threshold := reach * 0.75
             if dist > creep_threshold:
                 enemy.move_to_position(target.global_position, attack_speed, close_threshold)

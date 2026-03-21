@@ -1,18 +1,18 @@
-[gd_scene format=3 uid="uid://summon_testbed_scene"]
+[gd_scene format=3 uid="uid://b8k68lphij87v"]
 
-[ext_resource type="Script" path="res://stage/testbeds/summon_testbed/summon_testbed.gd" id="1_stbed"]
+[ext_resource type="Script" uid="uid://cbmq8sekjdad2" path="res://stage/testbeds/summon_testbed/summon_testbed.gd" id="1_stbed"]
 [ext_resource type="PackedScene" uid="uid://i0w72n7e6is8" path="res://stage/systems/player_with_camera.tscn" id="2_player"]
 [ext_resource type="PackedScene" uid="uid://bfxutmk72t3gc" path="res://game/actors/summons/army_handler/army_handler.tscn" id="3_handler"]
-[ext_resource type="PackedScene" uid="uid://summon_manager_scene" path="res://game/summon/summon_manager.tscn" id="4_summon"]
+[ext_resource type="PackedScene" path="res://game/summon/summon_manager.tscn" id="4_summon"]
 [ext_resource type="PackedScene" uid="uid://bmlww50h5ia4c" path="res://game/actors/dummies/dummy.tscn" id="5_dummy"]
-[ext_resource type="PackedScene" path="res://stage/testbeds/summon_testbed/hud/summon_testbed_hud.tscn" id="6_hud"]
+[ext_resource type="PackedScene" uid="uid://c2gp0k5r8003m" path="res://stage/testbeds/summon_testbed/hud/summon_testbed_hud.tscn" id="6_hud"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_main"]
 vertices = PackedVector2Array(-500, -400, 500, -400, 500, 400, -500, 400)
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
 outlines = Array[PackedVector2Array]([PackedVector2Array(-500, -400, 500, -400, 500, 400, -500, 400)])
 
-[node name="SummonTestbed" type="Node2D" node_paths=PackedStringArray("player", "summon_manager", "dummies_root", "player_hud", "summon_hud", "debug_label")]
+[node name="SummonTestbed" type="Node2D" unique_id=1736815209 node_paths=PackedStringArray("player", "summon_manager", "dummies_root", "player_hud", "summon_hud", "debug_label")]
 y_sort_enabled = true
 script = ExtResource("1_stbed")
 player = NodePath("Player")
@@ -22,39 +22,38 @@ player_hud = NodePath("UI/SummonTestbedHUD/PlayerHUD")
 summon_hud = NodePath("UI/SummonTestbedHUD/SummonHUD")
 debug_label = NodePath("UI/DebugLabel")
 
-[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="." unique_id=517249394]
 navigation_polygon = SubResource("NavigationPolygon_main")
 
-[node name="ArmyHandler" parent="." instance=ExtResource("3_handler")]
+[node name="ArmyHandler" parent="." unique_id=1458199192 instance=ExtResource("3_handler")]
 
-[node name="SummonManager" parent="." instance=ExtResource("4_summon")]
+[node name="SummonManager" parent="." unique_id=1922368145 instance=ExtResource("4_summon")]
 debug_starting_souls = 100
 
-[node name="Dummies" type="Node2D" parent="."]
+[node name="Dummies" type="Node2D" parent="." unique_id=630596351]
 
-[node name="Dummy1" parent="Dummies" instance=ExtResource("5_dummy")]
+[node name="Dummy1" parent="Dummies" unique_id=1466564754 instance=ExtResource("5_dummy")]
 position = Vector2(120, 0)
 
-[node name="Dummy2" parent="Dummies" instance=ExtResource("5_dummy")]
+[node name="Dummy2" parent="Dummies" unique_id=169564300 instance=ExtResource("5_dummy")]
 position = Vector2(160, -60)
 
-[node name="Dummy3" parent="Dummies" instance=ExtResource("5_dummy")]
+[node name="Dummy3" parent="Dummies" unique_id=1513305997 instance=ExtResource("5_dummy")]
 position = Vector2(160, 60)
 
-[node name="Dummy4" parent="Dummies" instance=ExtResource("5_dummy")]
+[node name="Dummy4" parent="Dummies" unique_id=1485749644 instance=ExtResource("5_dummy")]
 position = Vector2(200, 0)
 
-[node name="Dummy5" parent="Dummies" instance=ExtResource("5_dummy")]
+[node name="Dummy5" parent="Dummies" unique_id=645096625 instance=ExtResource("5_dummy")]
 position = Vector2(-100, 120)
 
-[node name="Player" parent="." instance=ExtResource("2_player")]
-position = Vector2(0, 0)
+[node name="Player" parent="." unique_id=1972303607 instance=ExtResource("2_player")]
 
-[node name="UI" type="CanvasLayer" parent="."]
+[node name="UI" type="CanvasLayer" parent="." unique_id=526712145]
 
-[node name="SummonTestbedHUD" parent="UI" instance=ExtResource("6_hud")]
+[node name="SummonTestbedHUD" parent="UI" unique_id=895246478 instance=ExtResource("6_hud")]
 
-[node name="DebugLabel" type="Label" parent="UI"]
+[node name="DebugLabel" type="Label" parent="UI" unique_id=344395276]
 offset_left = 8.0
 offset_top = 140.0
 offset_right = 300.0

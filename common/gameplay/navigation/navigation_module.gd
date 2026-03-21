@@ -397,6 +397,10 @@ func _on_velocity_computed(safe_velocity: Vector2) -> void:
         _clear_path_velocity()
         return
 
+    if not _has_active_target():
+        _clear_path_velocity()
+        return
+
     _apply_path_velocity(safe_velocity)
 
 
