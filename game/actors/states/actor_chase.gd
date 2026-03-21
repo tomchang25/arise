@@ -31,13 +31,13 @@ func _update(_delta: float) -> void:
         return
 
     # Deaggro check (Enemy with deaggro zone).
-    if _has_deaggro() and _is_deaggrod():
+    if _has_deaggro() and actor.is_deaggro_active():
         change_state(ActorStateId.RETURN_TO_ANCHOR)
         return
 
     # Distance-based disengage (Army-like actors without deaggro).
     if not _has_deaggro():
-        var no_target := not _is_aggro_triggered()
+        var no_target := not actor.is_aggro_active()
         var too_far := actor.get_distance_to_anchor() > follow_threshold
         if no_target or too_far:
             change_state(ActorStateId.RETURN_TO_ANCHOR)
@@ -49,7 +49,7 @@ func _update(_delta: float) -> void:
         return
 
     # Move toward target.
-    var target := _get_nearest_target()
+    var target := actor.get_nearest_aggro_target()
     if target:
         var stop_dist := 0.0
         if actor.reach_detection:
@@ -60,23 +60,6 @@ func _update(_delta: float) -> void:
 # -------------------------
 # Internal helpers
 # -------------------------
-
-
-func _is_aggro_triggered() -> bool:
-    var army := actor as Army
-    if army:
-        return army.is_target_tracked()
-    var enemy := actor as Enemy
-    if enemy:
-        return enemy.is_player_in_aggro_range()
-    return false
-
-
-func _is_deaggrod() -> bool:
-    var enemy := actor as Enemy
-    if enemy:
-        return enemy.is_player_outside_deaggro_range()
-    return false
 
 
 func _has_deaggro() -> bool:
@@ -97,13 +80,3 @@ func _get_leash_distance() -> float:
     if enemy and enemy.data:
         return enemy.data.leash_distance
     return 0.0
-
-
-func _get_nearest_target() -> Node2D:
-    var army := actor as Army
-    if army:
-        return army.get_nearest_tracked_target()
-    var enemy := actor as Enemy
-    if enemy:
-        return enemy.get_nearest_aggro_target()
-    return null

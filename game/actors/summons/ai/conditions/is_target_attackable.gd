@@ -1,10 +1,10 @@
-## Returns SUCCESS if the army unit has at least one target within attack reach.
+## Returns SUCCESS if the actor has at least one target within attack reach.
 ## Returns FAILURE otherwise.
 class_name ArmyIsTargetAttackable
 extends ConditionLeaf
 
 func tick(actor: Node, _blackboard: Blackboard) -> int:
-    var army := actor as Army
-    if army == null:
+    var a := actor as Actor
+    if a == null:
         return FAILURE
-    return SUCCESS if army.is_target_attackable() else FAILURE
+    return SUCCESS if a.is_target_in_reach() else FAILURE

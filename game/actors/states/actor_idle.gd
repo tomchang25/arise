@@ -38,7 +38,7 @@ func _update(delta: float) -> void:
         return
 
     # Target enters aggro zone → chase
-    if _is_aggro_triggered():
+    if actor.is_aggro_active():
         change_state(ActorStateId.CHASE)
         return
 
@@ -51,20 +51,6 @@ func _update(delta: float) -> void:
 # -------------------------
 # Internal helpers
 # -------------------------
-
-
-## Returns true when the primary detection zone has at least one target.
-## For Army: track_detection; for Enemy: aggro_detection.
-func _is_aggro_triggered() -> bool:
-    var army := actor as Army
-    if army:
-        return army.is_target_tracked()
-
-    var enemy := actor as Enemy
-    if enemy:
-        return enemy.is_player_in_aggro_range()
-
-    return false
 
 
 func _has_wander() -> bool:

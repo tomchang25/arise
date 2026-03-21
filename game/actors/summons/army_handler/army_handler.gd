@@ -9,17 +9,33 @@ enum FormationType { RECTANGULAR, CIRCULAR }
 @export var grid_size := 12
 @export var formation_type: FormationType = FormationType.RECTANGULAR
 
+## When enabled, the anchor is updated to the player's world position every
+## [member track_interval] seconds. When disabled, the anchor stays wherever
+## it was last set (or where the player was when tracking was turned off).
+@export var track_player: bool = true
+
+## Seconds between automatic anchor updates when [member track_player] is true.
+## Set to 0 to update every physics frame.
+@export var track_interval: float = 0.0
+
 @onready var debug_timer: Timer = $DebugTimer
 
 var units: Array[Node]
 
-## Player reference — resolved at _ready(). ArmyHandler is the single source of
-## truth for each unit's anchor_position and updates it every physics frame.
+## Player reference — resolved at _ready().
 var _player: Node2D
+
+## The logical anchor position used to compute each unit's formation slot.
+## Stored as a plain Vector2 so that changing it does NOT move this Node2D
+## (and therefore does not displace any child nodes).
+var _anchor: Vector2 = Vector2.ZERO
 
 ## Per-unit grid offsets in world units, keyed by the unit node.
 ## Populated in add_unit(), cleared in remove_unit().
-var _unit_offsets: Dictionary = {}
+var _unit_offsets: Dictionary = { }
+
+## Accumulated time for periodic anchor updates.
+var _track_timer: float = 0.0
 
 ## --- GDScript Lifecycle ---
 
@@ -33,18 +49,26 @@ func _ready():
     reset_units()
 
     _player = get_tree().get_first_node_in_group("player")
-
-
-func _physics_process(_delta: float) -> void:
-    # Sync this handler's own position to the player so that anchor_positions
-    # (= global_position + per-unit offset) automatically follow the player.
     if _player:
-        global_position = _player.global_position
+        _anchor = _player.global_position
 
-    # Propagate anchor_position for every active unit from this node's position.
+
+func _physics_process(delta: float) -> void:
+    # Optionally sync the anchor to the player on a timer (or every frame when
+    # track_interval == 0).
+    if track_player and _player:
+        if track_interval <= 0.0:
+            _anchor = _player.global_position
+        else:
+            _track_timer += delta
+            if _track_timer >= track_interval:
+                _track_timer = 0.0
+                set_anchor(_player.global_position)
+
+    # Propagate anchor_position for every active unit from the current anchor.
     for unit in get_all_units():
         var offset: Vector2 = _unit_offsets.get(unit, Vector2.ZERO)
-        unit.anchor_position = global_position + offset
+        unit.anchor_position = _anchor + offset
 
 
 func _on_child_entered_tree(child: Node):
@@ -73,8 +97,16 @@ func _on_check_timer_timeout():
 
     # print(armies_state)
 
-
 ## --- Public API ---
+
+
+## Moves the formation anchor to [param new_position] and immediately updates
+## every unit's anchor_position. Does NOT move the Node2D itself.
+func set_anchor(new_position: Vector2) -> void:
+    _anchor = new_position
+    for unit in get_all_units():
+        var offset: Vector2 = _unit_offsets.get(unit, Vector2.ZERO)
+        unit.anchor_position = _anchor + offset
 
 
 func add_unit(unit: Node) -> bool:
@@ -88,8 +120,7 @@ func add_unit(unit: Node) -> bool:
     _unit_offsets[unit] = offset
 
     # Set initial anchor_position immediately so the unit starts at the right spot.
-    if _player:
-        unit.anchor_position = _player.global_position + offset
+    unit.anchor_position = _anchor + offset
 
     units[index] = unit
     unit_grid_changed.emit()
@@ -160,8 +191,7 @@ func _rebuild_formation() -> void:
         var grid := _convert_index_to_grid(index)
         var offset := grid * grid_size
         _unit_offsets[unit] = offset
-        if _player:
-            unit.anchor_position = _player.global_position + offset
+        unit.anchor_position = _anchor + offset
         units[index] = unit
 
     unit_grid_changed.emit()

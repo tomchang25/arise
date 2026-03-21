@@ -11,6 +11,17 @@ signal group_removed
 signal members_changed
 
 # -------------------------
+# Exports — Anchor tracking
+# -------------------------
+
+## When enabled, the anchor is updated to the player's world position every
+## [member track_interval] seconds instead of being fixed in place.
+@export var track_player: bool = false
+
+## Seconds between automatic anchor updates when [member track_player] is true.
+@export var track_interval: float = 5.0
+
+# -------------------------
 # Internal state
 # -------------------------
 
@@ -21,10 +32,20 @@ var _members: Array[Enemy] = []
 var _living_count: int = 0
 var _was_depleted: bool = false
 
-## Per-member anchor offsets relative to this group node's position.
+## The logical anchor position used to compute each member's formation slot.
+## Stored as a plain Vector2 so that changing it does NOT move children.
+var _anchor: Vector2 = Vector2.ZERO
+
+## Per-member anchor offsets relative to _anchor.
 ## Stored when a member is registered so anchor_position updates automatically
-## whenever the group node moves.
+## whenever set_anchor() is called.
 var _anchor_offsets: Dictionary = { }
+
+## Accumulated time for [member track_player] periodic updates.
+var _track_timer: float = 0.0
+
+## Cached player reference, resolved at _ready().
+var _player: Node2D
 
 # -------------------------
 # Lifecycle
@@ -35,13 +56,23 @@ func _ready() -> void:
     # Capture the node's world position as the pivot the moment it enters the tree.
     # The spawner should place the node at the desired center before add_child().
     spawn_pivot = global_position
+    _anchor = global_position
+
+    _player = get_tree().get_first_node_in_group("player")
 
 
-func _physics_process(_delta: float) -> void:
-    # Propagate updated anchor_positions whenever this group node moves.
+func _physics_process(delta: float) -> void:
+    # Optionally update the anchor to the player's position every N seconds.
+    if track_player and _player:
+        _track_timer += delta
+        if _track_timer >= track_interval:
+            _track_timer = 0.0
+            set_anchor(_player.global_position)
+
+    # Propagate updated anchor_positions to all living members.
     for member in get_alive_members():
         var offset: Vector2 = _anchor_offsets.get(member, Vector2.ZERO)
-        member.anchor_position = global_position + offset
+        member.anchor_position = _anchor + offset
 
 
 func _notification(what: int) -> void:
@@ -61,10 +92,10 @@ func register_member(enemy: Enemy) -> void:
     _members.append(enemy)
     _living_count += 1
 
-    # Store the member's anchor offset relative to this group's current position.
+    # Store the member's anchor offset relative to the current _anchor.
     # SpawnEnemyGroupAction sets enemy.anchor_position before calling register_member(),
     # so we capture it here as the authoritative offset.
-    _anchor_offsets[enemy] = enemy.anchor_position - global_position
+    _anchor_offsets[enemy] = enemy.anchor_position - _anchor
 
     if not enemy.died.is_connected(_on_member_died.bind(enemy)):
         enemy.died.connect(_on_member_died.bind(enemy))
@@ -74,6 +105,15 @@ func register_member(enemy: Enemy) -> void:
 # -------------------------
 # Public API
 # -------------------------
+
+
+## Moves the formation anchor to [param new_position] and immediately updates
+## every member's anchor_position. Does NOT move the Node2D itself.
+func set_anchor(new_position: Vector2) -> void:
+    _anchor = new_position
+    for member in get_alive_members():
+        var offset: Vector2 = _anchor_offsets.get(member, Vector2.ZERO)
+        member.anchor_position = _anchor + offset
 
 
 ## Returns the live centroid of all members.

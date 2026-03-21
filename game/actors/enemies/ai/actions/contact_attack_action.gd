@@ -19,7 +19,7 @@ func tick(actor: Node, _blackboard: Blackboard) -> int:
     if enemy == null:
         return FAILURE
 
-    if not enemy.is_player_in_reach():
+    if not enemy.is_target_in_reach():
         _deactivate(actor)
         return FAILURE
 

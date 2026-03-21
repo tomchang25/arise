@@ -47,7 +47,7 @@ func _update(delta: float) -> void:
 
     # Re-engage check
     var dist_to_anchor := actor.get_distance_to_anchor()
-    if dist_to_anchor <= re_engage_distance and _is_aggro_triggered():
+    if dist_to_anchor <= re_engage_distance and actor.is_aggro_active():
         change_state(ActorStateId.CHASE)
         return
 
@@ -66,17 +66,3 @@ func _on_navigation_finished() -> void:
 func _force_arrive() -> void:
     actor.global_position = actor.anchor_position
     change_state(ActorStateId.IDLE)
-
-# -------------------------
-# Internal helpers
-# -------------------------
-
-
-func _is_aggro_triggered() -> bool:
-    var army := actor as Army
-    if army:
-        return army.is_target_tracked()
-    var enemy := actor as Enemy
-    if enemy:
-        return enemy.is_player_in_aggro_range()
-    return false

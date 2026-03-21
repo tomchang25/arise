@@ -30,6 +30,8 @@ signal died(info)
 
 @export_group("Modules — Perception")
 @export var reach_detection: DetectionModule
+@export var aggro_detection: DetectionModule
+@export var deaggro_detection: DetectionModule
 
 @export_group("Modules — Movement")
 @export var movement_module: MovementModule
@@ -97,6 +99,10 @@ func _auto_wire_nodes() -> void:
         combat_module = find_child("CombatModule", true, false) as CombatModule
     if not reach_detection:
         reach_detection = find_child("ReachDetection", true, false) as DetectionModule
+    if not aggro_detection:
+        aggro_detection = find_child("AggroDetection", true, false) as DetectionModule
+    if not deaggro_detection:
+        deaggro_detection = find_child("DeaggroDetection", true, false) as DetectionModule
     if not movement_module:
         movement_module = find_child("MovementModule", true, false) as MovementModule
     if not navigation_module:
@@ -293,6 +299,28 @@ func get_facing_direction() -> Vector2:
 # -------------------------
 # Public API — perception (reach-based, shared by all actors)
 # -------------------------
+
+
+## True when the aggro detection zone has at least one target.
+func is_aggro_active() -> bool:
+    if aggro_detection == null:
+        return false
+    return aggro_detection.get_target_count(false) > 0
+
+
+## True when the deaggro detection zone has NO targets (target has left the zone).
+## Use this as the chase exit condition to prevent oscillation.
+func is_deaggro_active() -> bool:
+    if deaggro_detection == null:
+        return true
+    return deaggro_detection.get_target_count(false) == 0
+
+
+## Returns the closest target in the aggro detection zone, or null.
+func get_nearest_aggro_target() -> Node2D:
+    if aggro_detection == null:
+        return null
+    return aggro_detection.get_closest_target(false)
 
 
 ## True when there is at least one target within the reach (attack) detection zone.
