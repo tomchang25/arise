@@ -345,7 +345,9 @@ func _clear_all_groups() -> void:
 
 
 func _cleanup_invalid() -> void:
-    _active_groups = _active_groups.filter(func(g): return is_instance_valid(g))
+    for i in range(_active_groups.size() - 1, -1, -1):
+        if not is_instance_valid(_active_groups[i]):
+            _active_groups.remove_at(i)
 
 # -------------------------
 # Validation
