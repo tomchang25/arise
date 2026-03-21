@@ -202,7 +202,7 @@ drop_profile = ExtResource("24_drop")
 
 [node name="BeehaveTree" type="Node" parent="." unique_id=1035777613 node_paths=PackedStringArray("blackboard", "actor")]
 script = ExtResource("26_btree")
-blackboard = NodePath("@Node@19034")
+blackboard = NodePath("@Node@51989")
 actor = NodePath("..")
 
 [node name="MainAI" type="Node" parent="BeehaveTree" unique_id=416008838]
@@ -217,6 +217,7 @@ script = ExtResource("30_inreach")
 
 [node name="SlashAttack" type="Node" parent="BeehaveTree/MainAI/AttackSequence" unique_id=245208749]
 script = ExtResource("31_melee")
+attack_speed = 0.0
 
 [node name="ChaseSequence" type="Node" parent="BeehaveTree/MainAI" unique_id=1191885151]
 script = ExtResource("29_seq")
