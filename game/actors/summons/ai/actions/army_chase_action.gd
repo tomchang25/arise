@@ -23,6 +23,14 @@ func tick(actor: Node, _blackboard: Blackboard) -> int:
         army.stop_movement()
         return FAILURE
 
+    if target.global_position.distance_to(army.global_position) > follow_threshold:
+        army.stop_movement()
+        return FAILURE
+
+    if target.global_position.distance_to(army.player.global_position) > follow_threshold:
+        army.stop_movement()
+        return FAILURE
+
     var arrive_dist := army.data.attack_range / 2.0 if army.data else 25.0
     army.move_to_position(target.global_position, chase_speed, arrive_dist)
     army.set_facing_direction(
