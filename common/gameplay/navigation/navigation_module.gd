@@ -53,6 +53,7 @@ var _last_applied_target_position: Vector2 = Vector2.INF
 var _target_update_timer := 0.0
 var _path_tick_timer := 0.0
 var _finished_emitted := false
+var _arrive_distance_sq := arrive_distance * arrive_distance
 
 # -------------------------
 # Lifecycle
@@ -81,10 +82,11 @@ func _physics_process(delta: float) -> void:
         _clear_path_velocity()
         return
 
-    _target_update_timer += delta
-    if _target_update_timer >= target_update_interval:
-        _target_update_timer = 0.0
-        _refresh_target_position()
+    if _follow_target != null:
+        _target_update_timer += delta
+        if _target_update_timer >= target_update_interval:
+            _target_update_timer = 0.0
+            _refresh_target_position()
 
     _path_tick_timer += delta
     if _path_tick_timer < path_tick_interval:
@@ -171,7 +173,7 @@ func is_path_finished() -> bool:
     if _should_use_fallback_direct_path():
         if character == null or not _has_target_position:
             return true
-        return character.global_position.distance_to(_target_position) <= arrive_distance
+        return character.global_position.distance_squared_to(_target_position) <= _arrive_distance_sq
 
     if navigation_agent != null:
         return navigation_agent.is_navigation_finished()
@@ -242,6 +244,7 @@ func set_speed(value: float) -> void:
 
 func set_arrive_distance(value: float) -> void:
     arrive_distance = max(0.0, value)
+    _arrive_distance_sq = arrive_distance * arrive_distance
 
     if navigation_agent != null:
         navigation_agent.target_desired_distance = arrive_distance
@@ -323,6 +326,7 @@ func _refresh_target_position() -> void:
     if _follow_target != null:
         next_target = _follow_target.global_position
 
+    var position_changed := _target_position != next_target
     _target_position = next_target
     _has_target_position = true
 
@@ -335,7 +339,8 @@ func _refresh_target_position() -> void:
             navigation_agent.target_position = _target_position
             _last_applied_target_position = _target_position
 
-    target_changed.emit(_target_position)
+    if position_changed:
+        target_changed.emit(_target_position)
 
     if debug_print_state:
         print("[NavigationModule] target updated: ", _target_position)
@@ -351,7 +356,7 @@ func _fallback_direct_path() -> void:
         return
 
     var delta_to_target := _target_position - character.global_position
-    if delta_to_target.length() <= arrive_distance:
+    if delta_to_target.length_squared() <= _arrive_distance_sq:
         _clear_path_velocity()
         _emit_navigation_finished_once()
         return
