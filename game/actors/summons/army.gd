@@ -283,6 +283,8 @@ func get_nearest_attackable_target() -> Node2D:
 
 
 func get_current_state() -> State:
+    if state_machine == null:
+        return null
     return state_machine.current_state
 
 # -------------------------
