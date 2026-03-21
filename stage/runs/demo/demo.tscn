@@ -59,6 +59,7 @@ metadata/_custom_type_script = "uid://qonxf7sblp5f"
 [node name="DespawnController" type="Node2D" parent="." unique_id=544527338 node_paths=PackedStringArray("tracked_target")]
 script = ExtResource("5_60flp")
 tracked_target = NodePath("../Player")
+despawn_distance = 960.0
 draw_debug = true
 metadata/_custom_type_script = "uid://bwm8u3xypysu8"
 

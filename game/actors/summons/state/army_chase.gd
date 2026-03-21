@@ -1,6 +1,6 @@
 extends ArmyState
 
-@export var animation_state: String = Army.AnimationState.MOVE
+@export var animation_state: StringName = Army.ANIM_MOVE
 @export var follow_threshold: float = 100
 @export var chase_speed := 50
 
@@ -24,7 +24,8 @@ func _update(_delta: float) -> void:
 
     var nearest_enemy = target.get_nearest_tracked_target()
     if nearest_enemy:
-        target.move_to_position(nearest_enemy.global_position, chase_speed, target.attack_range / 2)
+        var arrive_dist := target.data.attack_range / 2.0 if target.data else 25.0
+        target.move_to_position(nearest_enemy.global_position, chase_speed, arrive_dist)
         target.set_facing_direction(target.global_position.direction_to(nearest_enemy.global_position), animation_state)
 
 

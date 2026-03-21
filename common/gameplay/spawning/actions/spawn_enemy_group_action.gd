@@ -77,21 +77,23 @@ func _resolve_member_counts(p: EnemyGroupProfile, rng: RandomNumberGenerator) ->
     if rolled_total < min_total:
         Debug.warn("SpawnEnemyGroupAction: rolled_total %s < min_total %s — check profile entry ranges" % [rolled_total, min_total])
 
-    # Trim excess from last entry first
+    # Trim excess from last entry first, then drop zeroed entries in one backwards pass.
     if rolled_total > max_total:
         var excess := rolled_total - max_total
         var i := pairs.size() - 1
-        while excess > 0 and i >= 0:
-            var trimmable: int = pairs[i][1]
-            var trim := mini(trimmable, excess)
-            pairs[i][1] -= trim
-            excess -= trim
+        while i >= 0:
+            if excess > 0:
+                var trimmable: int = pairs[i][1]
+                var trim := mini(trimmable, excess)
+                pairs[i][1] -= trim
+                excess -= trim
+            if pairs[i][1] == 0:
+                pairs.remove_at(i)
             i -= 1
+    else:
+        # No trimming needed — just drop any zero-count entries in one pass.
+        for i in range(pairs.size() - 1, -1, -1):
+            if pairs[i][1] == 0:
+                pairs.remove_at(i)
 
-    # Drop entries trimmed to zero
-    var result: Array = []
-    for pair in pairs:
-        if pair[1] > 0:
-            result.append(pair)
-
-    return result
+    return pairs
