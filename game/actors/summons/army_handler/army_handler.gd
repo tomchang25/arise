@@ -58,17 +58,12 @@ func _physics_process(delta: float) -> void:
     # track_interval == 0).
     if track_player and _player:
         if track_interval <= 0.0:
-            _anchor = _player.global_position
+            set_anchor(_player.global_position)
         else:
             _track_timer += delta
             if _track_timer >= track_interval:
                 _track_timer = 0.0
                 set_anchor(_player.global_position)
-
-    # Propagate anchor_position for every active unit from the current anchor.
-    for unit in get_all_units():
-        var offset: Vector2 = _unit_offsets.get(unit, Vector2.ZERO)
-        unit.anchor_position = _anchor + offset
 
 
 func _on_child_entered_tree(child: Node):

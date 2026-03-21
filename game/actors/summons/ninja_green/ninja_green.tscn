@@ -25,10 +25,10 @@
 [ext_resource type="Script" uid="uid://ds7jcv6cdv02p" path="res://common/gameplay/navigation/navigation_module.gd" id="18_nav"]
 [ext_resource type="Script" uid="uid://dldqypakv40re" path="res://common/gameplay/animation/animation_module.gd" id="19_anim"]
 [ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/framework/state_machine/state_machine.gd" id="20_statemachine"]
-[ext_resource type="Script" uid="uid://dtpcn0ydqfetw" path="res://game/actors/states/actor_idle.gd" id="21_idle"]
-[ext_resource type="Script" uid="uid://ccpaai32tn4c6" path="res://game/actors/states/actor_chase.gd" id="22_chase"]
-[ext_resource type="Script" uid="uid://s8lpdn6sk4ut" path="res://game/actors/states/actor_attack.gd" id="23_attack"]
-[ext_resource type="Script" uid="uid://c7sidn8kv7i3d" path="res://game/actors/states/actor_return_to_anchor.gd" id="24_return"]
+[ext_resource type="Script" uid="uid://buw12hs4rl23y" path="res://game/actors/states/actor_idle.gd" id="21_idle"]
+[ext_resource type="Script" uid="uid://bdtpmymrh152k" path="res://game/actors/states/actor_chase.gd" id="22_chase"]
+[ext_resource type="Script" uid="uid://cikpejrf13cy1" path="res://game/actors/states/actor_attack.gd" id="23_attack"]
+[ext_resource type="Script" uid="uid://c5oa2ppydf4o3" path="res://game/actors/states/actor_return_to_anchor.gd" id="24_return"]
 
 [sub_resource type="Resource" id="Resource_i7vl2"]
 script = ExtResource("3_lhn60")
@@ -134,10 +134,10 @@ node_connections = [&"output", 0, &"TimeScale", &"TimeScale", 0, &"StateMachine"
 [sub_resource type="CircleShape2D" id="CircleShape2D_y1gh6"]
 radius = 100.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_gmkq7"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_vhmd8"]
 radius = 50.0
 
-[node name="NinjaGreen" type="CharacterBody2D" unique_id=1952489733 node_paths=PackedStringArray("sprite", "hurtbox", "damage_receiver", "hit_feedback", "damage_number", "health_bar", "combat_module", "reach_detection", "aggro_detection", "movement_module", "navigation_module", "animation_module", "state_machine") groups=["armies"]]
+[node name="NinjaGreen" type="CharacterBody2D" unique_id=1952489733 node_paths=PackedStringArray("sprite", "hurtbox", "damage_receiver", "hit_feedback", "damage_number", "health_bar", "combat_module", "reach_detection", "aggro_detection", "deaggro_detection", "movement_module", "navigation_module", "animation_module", "state_machine") groups=["armies"]]
 collision_layer = 256
 collision_mask = 4
 motion_mode = 1
@@ -152,6 +152,7 @@ health_bar = NodePath("Module/HealthBar")
 combat_module = NodePath("Module/DetectionPivot/CombatModule")
 reach_detection = NodePath("Module/DetectionPivot/ReachDetection")
 aggro_detection = NodePath("Module/DetectionPivot/AggroDetection")
+deaggro_detection = NodePath("")
 movement_module = NodePath("Module/MovementModule")
 navigation_module = NodePath("Module/NavigationModule")
 animation_module = NodePath("Module/AnimationModule")
@@ -211,7 +212,7 @@ script = ExtResource("6_detect")
 radius = 50.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/ReachDetection" unique_id=1333937030]
-shape = SubResource("CircleShape2D_gmkq7")
+shape = SubResource("CircleShape2D_vhmd8")
 debug_color = Color(0.8627451, 0.23529412, 0.69803923, 0.23921569)
 
 [node name="HealthBar" parent="Module" unique_id=1501966175 instance=ExtResource("7_hbar")]
@@ -268,12 +269,16 @@ script = ExtResource("21_idle")
 
 [node name="Chase" type="Node" parent="StateMachine" unique_id=1191885151]
 script = ExtResource("22_chase")
+chase_speed = 100.0
 
 [node name="Attack" type="Node" parent="StateMachine" unique_id=245208749]
 script = ExtResource("23_attack")
+attack_speed = 100.0
 
 [node name="ReturnToAnchor" type="Node" parent="StateMachine" unique_id=267608458]
 script = ExtResource("24_return")
+back_speed = 100.0
+re_engage_distance = 50.0
 
 [node name="Sprite" type="Sprite2D" parent="." unique_id=1410171533]
 material = ExtResource("2_mat")
