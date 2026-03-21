@@ -137,7 +137,7 @@ radius = 100.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_lhn60"]
 radius = 50.0
 
-[node name="NinjaGreen" type="CharacterBody2D" unique_id=1952489733 node_paths=PackedStringArray("sprite", "hurtbox", "damage_receiver", "hit_feedback", "damage_number", "health_bar", "combat_module", "track_detection", "reach_detection", "movement_module", "navigation_module", "animation_module", "state_machine") groups=["armies"]]
+[node name="NinjaGreen" type="CharacterBody2D" unique_id=1952489733 node_paths=PackedStringArray("sprite", "hurtbox", "damage_receiver", "hit_feedback", "damage_number", "health_bar", "combat_module", "aggro_detection", "reach_detection", "movement_module", "navigation_module", "animation_module", "state_machine") groups=["armies"]]
 collision_layer = 256
 collision_mask = 4
 motion_mode = 1
@@ -150,7 +150,7 @@ hit_feedback = NodePath("Module/HitFeedbackModule")
 damage_number = NodePath("Module/DamageNumberModule")
 health_bar = NodePath("Module/HealthBar")
 combat_module = NodePath("Module/DetectionPivot/CombatModule")
-track_detection = NodePath("Module/DetectionPivot/TrackDetection")
+aggro_detection = NodePath("Module/DetectionPivot/AggroDetection")
 reach_detection = NodePath("Module/DetectionPivot/ReachDetection")
 movement_module = NodePath("Module/MovementModule")
 navigation_module = NodePath("Module/NavigationModule")
@@ -193,13 +193,13 @@ position = Vector2(0, -6)
 [node name="CombatModule" type="Node2D" parent="Module/DetectionPivot" unique_id=821495176]
 script = ExtResource("5_combat")
 
-[node name="TrackDetection" type="Area2D" parent="Module/DetectionPivot" unique_id=751129509]
+[node name="AggroDetection" type="Area2D" parent="Module/DetectionPivot" unique_id=751129509]
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 script = ExtResource("6_detect")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/TrackDetection" unique_id=19296424]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/AggroDetection" unique_id=19296424]
 shape = SubResource("CircleShape2D_5kexx")
 debug_color = Color(0, 0.6, 0.1764706, 0.23529412)
 
