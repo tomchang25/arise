@@ -10,6 +10,7 @@ extends AttackEffect
 @export_group("Projectile Visuals")
 @export var projectile_length: float = 40.0
 @export var projectile_width: float = 6.0
+@export var projectile_color: Color = Color.WHITE
 
 @onready var line_2d: Line2D = $Line2D
 
@@ -45,6 +46,7 @@ func _generate_projectile_shape() -> void:
 
 func _play_projectile_vfx(duration: float = 1.0) -> void:
     line_2d.clear_points()
+    line_2d.default_color = projectile_color
     line_2d.width = projectile_width
     line_2d.add_point(Vector2.ZERO)
     line_2d.add_point(Vector2(-projectile_length, 0.0))

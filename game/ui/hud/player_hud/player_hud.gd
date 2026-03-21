@@ -8,22 +8,13 @@ extends Control
 @export var stats: Stats
 
 @export_group("Bars")
-@export var hp_bar:   ResourceBarModule
+@export var hp_bar: ResourceBarModule
 @export var mana_bar: ResourceBarModule
 
 @export_group("Labels")
-@export var hp_label:   Label
+@export var hp_label: Label
 @export var mana_label: Label
 @export var gold_label: Label
-
-@export_group("Debug Buttons")
-@export var btn_damage: Button
-@export var btn_mana:   Button
-@export var btn_reset:  Button
-
-@export_group("Debug Settings")
-@export var debug_damage_amount: float = 150.0
-@export var debug_mana_cost:     float = 25.0
 
 # -------------------------
 # Lifecycle
@@ -31,8 +22,6 @@ extends Control
 
 
 func _ready() -> void:
-    _connect_buttons()
-
     if stats:
         bind(stats)
     else:
@@ -41,7 +30,6 @@ func _ready() -> void:
 
 func _exit_tree() -> void:
     _unbind()
-
 
 # -------------------------
 # Public API
@@ -63,7 +51,6 @@ func bind(target_stats: Stats) -> void:
 
     _force_sync_all()
 
-
 # -------------------------
 # Internal
 # -------------------------
@@ -80,15 +67,6 @@ func _unbind() -> void:
         stats.gold_changed.disconnect(_on_gold_changed)
     if stats.stats_recalculated.is_connected(_on_stats_recalculated):
         stats.stats_recalculated.disconnect(_on_stats_recalculated)
-
-
-func _connect_buttons() -> void:
-    if btn_damage and not btn_damage.pressed.is_connected(_on_btn_damage):
-        btn_damage.pressed.connect(_on_btn_damage)
-    if btn_mana and not btn_mana.pressed.is_connected(_on_btn_mana):
-        btn_mana.pressed.connect(_on_btn_mana)
-    if btn_reset and not btn_reset.pressed.is_connected(_on_btn_reset):
-        btn_reset.pressed.connect(_on_btn_reset)
 
 
 func _force_sync_all() -> void:
@@ -119,7 +97,6 @@ func _refresh_labels() -> void:
     if gold_label:
         gold_label.text = str(stats.gold)
 
-
 # -------------------------
 # Signal Callbacks
 # -------------------------
@@ -149,28 +126,4 @@ func _on_gold_changed(_v: int) -> void:
 
 
 func _on_stats_recalculated() -> void:
-    _force_sync_all()
-
-
-# -------------------------
-# Debug Button Handlers
-# -------------------------
-
-
-func _on_btn_damage() -> void:
-    if not stats:
-        return
-    stats.take_damage(debug_damage_amount)
-
-
-func _on_btn_mana() -> void:
-    if not stats:
-        return
-    stats.spend_mana(debug_mana_cost)
-
-
-func _on_btn_reset() -> void:
-    if not stats:
-        return
-    stats.reset_runtime_resources()
     _force_sync_all()
