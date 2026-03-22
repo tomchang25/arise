@@ -28,10 +28,13 @@ func execute(transform: Transform2D, ctx: SpawnContext) -> Node:
         instance = NodePool.acquire(scene, ctx.spawn_parent)
     else:
         instance = scene.instantiate()
-        ctx.spawn_parent.call_deferred("add_child", instance)
+
     if instance == null:
         Debug.warn("SpawnPackedSceneAction: failed to instantiate scene")
         return null
+
+    if not instance.is_inside_tree():
+        ctx.spawn_parent.call_deferred("add_child", instance)
 
     if instance is Node2D:
         var node_2d := instance as Node2D

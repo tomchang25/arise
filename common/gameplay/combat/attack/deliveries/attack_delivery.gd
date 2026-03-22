@@ -35,7 +35,6 @@ extends CharacterBody2D
 var lifetime_timer: Timer
 
 var _context: EffectContext
-var _pool_scene: PackedScene
 var _sequencer: PhaseSequencer
 var _trigger_component: TriggerComponent
 
@@ -48,10 +47,6 @@ func setup(ctx: EffectContext) -> void:
     _context = ctx
     _init_lifetime_timer(ctx.attack_lifetime)
     _autowire_trigger_component()
-
-
-func init_pool(scene: PackedScene) -> void:
-    _pool_scene = scene
 
 
 ## Start the lifetime failsafe timer and arm the TriggerComponent if present.
@@ -122,10 +117,7 @@ func _trigger_phases() -> void:
 
 
 func _on_phases_finished() -> void:
-    if _pool_scene != null:
-        NodePool.release(self, _pool_scene)
-    else:
-        queue_free()
+    queue_free()
 
 # -------------------------
 # Failsafe timeout
@@ -133,7 +125,4 @@ func _on_phases_finished() -> void:
 
 
 func _on_timeout() -> void:
-    if _pool_scene != null:
-        NodePool.release(self, _pool_scene)
-    else:
-        queue_free()
+    queue_free()

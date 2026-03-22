@@ -1,6 +1,6 @@
 extends Node
 
-var _pools: Dictionary = {}
+var _pools: Dictionary = { }
 
 
 func prewarm(scene: PackedScene, count: int, parent: Node) -> void:
@@ -12,11 +12,11 @@ func prewarm(scene: PackedScene, count: int, parent: Node) -> void:
 func acquire(scene: PackedScene, parent: Node) -> Node:
     var key := scene.resource_path
     if _pools.has(key) and not _pools[key].is_empty():
-        var node: Node = _pools[key].pop_back()
-        parent.add_child(node)
-        if node.has_method("reset"):
-            node.reset()
-        return node
+        var p: Node = _pools[key].pop_back()
+        parent.add_child(p)
+        if p.has_method("reset"):
+            p.reset()
+        return p
 
     var node := scene.instantiate()
     parent.add_child(node)
