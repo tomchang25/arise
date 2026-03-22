@@ -26,13 +26,13 @@ extends Control
 
 
 func _ready() -> void:
-	_connect_buttons()
-	if stats:
-		bind(stats)
+    _connect_buttons()
+    if stats:
+        bind(stats)
 
 
 func _exit_tree() -> void:
-	pass
+    pass
 
 
 # -------------------------
@@ -41,7 +41,7 @@ func _exit_tree() -> void:
 
 
 func bind(target_stats: Stats) -> void:
-	stats = target_stats
+    stats = target_stats
 
 
 # -------------------------
@@ -50,18 +50,18 @@ func bind(target_stats: Stats) -> void:
 
 
 func _connect_buttons() -> void:
-	if btn_hp_restore and not btn_hp_restore.pressed.is_connected(_on_hp_restore):
-		btn_hp_restore.pressed.connect(_on_hp_restore)
-	if btn_hp_damage and not btn_hp_damage.pressed.is_connected(_on_hp_damage):
-		btn_hp_damage.pressed.connect(_on_hp_damage)
-	if btn_mp_restore and not btn_mp_restore.pressed.is_connected(_on_mp_restore):
-		btn_mp_restore.pressed.connect(_on_mp_restore)
-	if btn_mp_spend and not btn_mp_spend.pressed.is_connected(_on_mp_spend):
-		btn_mp_spend.pressed.connect(_on_mp_spend)
-	if btn_soul_add and not btn_soul_add.pressed.is_connected(_on_soul_add):
-		btn_soul_add.pressed.connect(_on_soul_add)
-	if btn_soul_remove and not btn_soul_remove.pressed.is_connected(_on_soul_remove):
-		btn_soul_remove.pressed.connect(_on_soul_remove)
+    if btn_hp_restore and not btn_hp_restore.pressed.is_connected(_on_hp_restore):
+        btn_hp_restore.pressed.connect(_on_hp_restore)
+    if btn_hp_damage and not btn_hp_damage.pressed.is_connected(_on_hp_damage):
+        btn_hp_damage.pressed.connect(_on_hp_damage)
+    if btn_mp_restore and not btn_mp_restore.pressed.is_connected(_on_mp_restore):
+        btn_mp_restore.pressed.connect(_on_mp_restore)
+    if btn_mp_spend and not btn_mp_spend.pressed.is_connected(_on_mp_spend):
+        btn_mp_spend.pressed.connect(_on_mp_spend)
+    if btn_soul_add and not btn_soul_add.pressed.is_connected(_on_soul_add):
+        btn_soul_add.pressed.connect(_on_soul_add)
+    if btn_soul_remove and not btn_soul_remove.pressed.is_connected(_on_soul_remove):
+        btn_soul_remove.pressed.connect(_on_soul_remove)
 
 
 # -------------------------
@@ -70,30 +70,30 @@ func _connect_buttons() -> void:
 
 
 func _on_hp_restore() -> void:
-	if stats:
-		stats.recover_health(stats.current_max_health)
+    if stats:
+        stats.recover_health(stats.current_max_health)
 
 
 func _on_hp_damage() -> void:
-	if stats:
-		stats.take_damage(debug_damage_amount)
+    if stats:
+        stats.take_damage(debug_damage_amount)
 
 
 func _on_mp_restore() -> void:
-	if stats:
-		stats.add_mana(stats.current_max_mana)
+    if stats:
+        stats.add_mana(stats.current_max_mana)
 
 
 func _on_mp_spend() -> void:
-	if stats:
-		stats.spend_mana(debug_mana_cost)
+    if stats:
+        stats.spend_mana(debug_mana_cost)
 
 
 func _on_soul_add() -> void:
-	if stats:
-		stats.add_souls(debug_soul_amount)
+    if stats:
+        stats.add_souls(debug_soul_amount)
 
 
 func _on_soul_remove() -> void:
-	if stats:
-		stats.spend_souls(debug_soul_amount)
+    if stats:
+        stats.spend_souls(debug_soul_amount)

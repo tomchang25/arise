@@ -6,4 +6,4 @@ extends Resource
 
 
 func is_valid() -> bool:
-	return group_profile != null and group_profile.is_valid()
+    return group_profile != null and group_profile.is_valid()

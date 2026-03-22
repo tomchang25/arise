@@ -98,6 +98,12 @@ const MAX_SPAWN_DEPTH: int = 3
 
 var _parent_ctx: EffectContext
 
+# State for delta-accumulation repeating-emit loop (replaces per-tick create_timer).
+var _loop_active: bool = false
+var _loop_def: AttackDefinition = null
+var _loop_lifetime_remaining: float = 0.0
+var _loop_interval_acc: float = 0.0
+
 # -------------------------
 # PhaseEffect overrides
 # -------------------------
@@ -144,19 +150,42 @@ func play(duration: float = 0.0) -> void:
         _emit_burst(resolved_def)
         if duration > 0.0:
             await get_tree().create_timer(duration).timeout
+        finished.emit()
+        queue_free()
     else:
-        # Fire immediately, then on a repeating interval for the duration.
+        # Fire immediately, then drive repeating bursts via _process delta
+        # accumulation. Avoids allocating a new SceneTreeTimer on every interval
+        # tick and eliminates the per-tick coroutine suspend/resume overhead.
         _emit_burst(resolved_def)
-        var elapsed := 0.0
-        while elapsed + emit_interval < duration:
-            await get_tree().create_timer(emit_interval).timeout
-            elapsed += emit_interval
-            if not is_inside_tree():
-                break
-            _emit_burst(resolved_def)
+        if duration <= 0.0:
+            finished.emit()
+            queue_free()
+            return
+        _loop_def = resolved_def
+        _loop_lifetime_remaining = duration
+        _loop_interval_acc = 0.0
+        _loop_active = true
+        # play() returns here; _process drives intervals and final finished emit.
 
-    finished.emit()
-    queue_free()
+
+## Drives the repeating-emit loop via delta accumulation.
+## Only active when emit_interval > 0 and play() started a loop.
+func _process(delta: float) -> void:
+    if not _loop_active:
+        return
+
+    _loop_lifetime_remaining -= delta
+    if _loop_lifetime_remaining <= 0.0:
+        _loop_active = false
+        finished.emit()
+        queue_free()
+        return
+
+    _loop_interval_acc += delta
+    if _loop_interval_acc >= emit_interval:
+        _loop_interval_acc -= emit_interval
+        if is_inside_tree():
+            _emit_burst(_loop_def)
 
 # -------------------------
 # Internal

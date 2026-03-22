@@ -7,4 +7,4 @@ extends Resource
 
 
 func is_valid() -> bool:
-	return scene != null and max_count >= 1
+    return scene != null and max_count >= 1

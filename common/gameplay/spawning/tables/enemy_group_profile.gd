@@ -16,14 +16,14 @@ extends Resource
 
 
 func is_valid() -> bool:
-	if group_scene == null:
-		return false
+    if group_scene == null:
+        return false
 
-	if entries.is_empty():
-		return false
+    if entries.is_empty():
+        return false
 
-	for entry in entries:
-		if entry != null and entry.is_valid():
-			return true
+    for entry in entries:
+        if entry != null and entry.is_valid():
+            return true
 
-	return false
+    return false
