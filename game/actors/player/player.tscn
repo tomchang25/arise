@@ -30,7 +30,7 @@
 [ext_resource type="Script" uid="uid://csp44dwfwcqu0" path="res://game/actors/player/state/player_move_state.gd" id="14_b15sj"]
 [ext_resource type="Script" uid="uid://b44chxi8qaq70" path="res://common/gameplay/combat/attack/definitions/projectile_attack_definition.gd" id="14_il4ec"]
 [ext_resource type="PackedScene" uid="uid://c5uu71l3jwxu6" path="res://common/rendering/vfx/one_shot_hit_particles.tscn" id="15_m4n5g"]
-[ext_resource type="Script" uid="uid://c7cro78sslwe7" path="res://common/gameplay/movement/soft_collision.gd" id="16_3do8f"]
+[ext_resource type="Script" uid="uid://bhtdp3vwcylqh" path="res://common/gameplay/movement/soft_collision.gd" id="16_3do8f"]
 [ext_resource type="PackedScene" uid="uid://duohq0xpsyv1" path="res://common/rendering/vfx/explosion.tscn" id="16_6o7jk"]
 [ext_resource type="Resource" uid="uid://vp7463hsmyw0" path="res://common/audio/presets/sfx/default_damaged_audio.tres" id="17_747sf"]
 [ext_resource type="Resource" uid="uid://xsccf58mw7d5" path="res://common/audio/presets/sfx/default_blocked_audio.tres" id="18_5qatl"]
@@ -132,9 +132,9 @@ stats = ExtResource("2_64mjj")
 weapons = Array[ExtResource("8_747sf")]([SubResource("Resource_urqpf")])
 metadata/_custom_type_script = "uid://cfsw4hxa4kn3n"
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_64mjj"]
-radius = 4.0
-height = 12.0
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_3do8f"]
+radius = 2.0
+height = 6.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_fxn5h"]
 radius = 3.0
@@ -452,7 +452,7 @@ _data = {
 &"RollUp": SubResource("Animation_ivlxb")
 }
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_0fe1s"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_3do8f"]
 radius = 50.0
 
 [sub_resource type="Resource" id="Resource_5qatl"]
@@ -487,20 +487,17 @@ texture = ExtResource("2_e6ar1")
 offset = Vector2(0, -10)
 hframes = 60
 
-[node name="SoftCollision" type="Area2D" parent="." unique_id=1435397477 node_paths=PackedStringArray("character", "movement_module")]
-collision_mask = 3
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=99397275]
+z_index = 1
+rotation = 1.5707964
+shape = SubResource("CapsuleShape2D_3do8f")
+debug_color = Color(0.7529412, 0.35686275, 0, 0.59607846)
+
+[node name="SoftCollision" type="Node2D" parent="." unique_id=1859870386 node_paths=PackedStringArray("character", "movement_module")]
 script = ExtResource("16_3do8f")
 character = NodePath("..")
 movement_module = NodePath("../Module/MovementModule")
-separation_force = 200.0
-min_distance = 30.0
-ignored_pushers = Array[StringName]([&"armies"])
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="SoftCollision" unique_id=1649341033]
-z_index = 1
-rotation = 1.5707964
-shape = SubResource("CapsuleShape2D_64mjj")
-debug_color = Color(0.7529412, 0.05882353, 0, 0.59607846)
+metadata/_custom_type_script = "uid://bhtdp3vwcylqh"
 
 [node name="Hurtbox" type="Area2D" parent="." unique_id=101171387]
 position = Vector2(0, -8)
@@ -546,7 +543,7 @@ script = ExtResource("10_8nq4u")
 radius = 50.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/DetectionModule" unique_id=508858704]
-shape = SubResource("CircleShape2D_0fe1s")
+shape = SubResource("CircleShape2D_3do8f")
 debug_color = Color(0, 0.101960786, 0.69803923, 0.11764706)
 
 [node name="PickupCollectorModule" type="Area2D" parent="Module/DetectionPivot" unique_id=639109990 node_paths=PackedStringArray("owner_body", "inventory_owner", "magnet_shape")]
@@ -561,11 +558,12 @@ metadata/_custom_type_script = "uid://ce4d3x6pliud6"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/PickupCollectorModule" unique_id=1905794882]
 shape = SubResource("CircleShape2D_fxn5h")
-debug_color = Color(0.20869829, 0.15250799, 0.022646343, 0.41960785)
+debug_color = Color(0.20784314, 0.15294118, 0.023529412, 0.18039216)
 
 [node name="MovementModule" type="Node" parent="Module" unique_id=658364954 node_paths=PackedStringArray("character")]
 script = ExtResource("9_1bvv4")
 character = NodePath("../..")
+max_separation_speed = null
 
 [node name="AnimationModule" type="Node" parent="Module" unique_id=659370517 node_paths=PackedStringArray("actor", "animation_tree")]
 script = ExtResource("10_tiye0")

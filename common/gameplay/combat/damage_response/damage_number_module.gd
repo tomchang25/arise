@@ -16,13 +16,13 @@ extends Node
 @export var random_x_offset: float = 8.0
 
 @export_group("Filtering")
-@export var minimum_damage_to_show: float = 1.0
+@export var minimum_damage_to_show: float = 10.0
 @export var show_zero_damage: bool = false
 
 @export_group("Throttling")
 @export var enabled_throttle := true
 @export var max_spawns_per_frame := 6
-@export var max_active_numbers := 40
+@export var max_active_numbers := 20
 
 var _spawned_this_frame: int = 0
 var _last_spawn_frame: int = -1
