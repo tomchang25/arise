@@ -1,10 +1,11 @@
 @tool
 class_name SoftCollision
 extends Area2D
-
-## Soft collision/separation module that prevents CharacterBody2D nodes from
-## overlapping by injecting a distance-based separation force into their
-## MovementModule.knockback_velocity each physics frame.
+## Soft collision/separation module that prevents units from overlapping by
+## injecting a distance-based separation force into MovementModule.knockback_velocity.
+##
+## Uses get_overlapping_areas() — the neighbour only needs a SoftCollision (Area2D),
+## no CharacterBody2D CollisionShape required.
 ##
 ## Default configurations by entity type:
 ##   player  → ignored_pushers = ["armies"]
@@ -17,22 +18,15 @@ extends Area2D
 @export_group("Separation")
 ## Divides the received separation force. Higher mass = harder to push.
 @export var mass: float = 1.0
-## Base separation force applied at distance 0 between two bodies.
+## Base separation force applied at full overlap (dist = 0).
 @export var separation_force: float = 200.0
-## Maximum distance at which force is applied. Also sets the detection radius.
-@export var min_distance: float = 30.0:
-	set(value):
-		min_distance = max(value, 0.0)
-		if is_node_ready():
-			_update_shape_radius()
+## Maximum distance at which force is applied. Shape radius is kept in sync.
+@export var min_distance: float = 10.0:
+    set(value):
+        min_distance = max(value, 0.0)
+
 ## Maximum number of overlapping neighbours processed per physics frame.
-@export var max_neighbours: int = 10
-
-@export_group("Filtering")
-## Bodies belonging to any of these groups are ignored and will not push this body.
-@export var ignored_pushers: Array[StringName] = []
-
-var _collision_shape: CollisionShape2D
+@export var max_neighbours: int = 4
 
 # -------------------------
 # Lifecycle
@@ -40,78 +34,53 @@ var _collision_shape: CollisionShape2D
 
 
 func _init() -> void:
-	monitorable = false
-
-
-func _ready() -> void:
-	_setup_collision_shape()
-	_update_shape_radius()
+    monitorable = true
+    monitoring = true
 
 
 func _physics_process(_delta: float) -> void:
-	if movement_module == null or character == null:
-		return
+    if movement_module == null or character == null:
+        return
 
-	var bodies := get_overlapping_bodies()
-	var count := 0
+    var areas := get_overlapping_areas()
+    var count := 0
 
-	for body in bodies:
-		if count >= max_neighbours:
-			break
+    var total_separation := Vector2.ZERO
+    for area in areas:
+        if count >= max_neighbours:
+            break
 
-		if not body is CharacterBody2D:
-			continue
+        # Only interact with other SoftCollision areas
+        if not area is SoftCollision:
+            continue
 
-		if body == character:
-			continue
+        var neighbour := area as SoftCollision
 
-		var skip := false
-		for group in ignored_pushers:
-			if body.is_in_group(group):
-				skip = true
-				break
-		if skip:
-			continue
+        # Skip self (shouldn't happen but guard anyway)
+        if neighbour.character == character:
+            continue
 
-		var diff: Vector2 = character.global_position - body.global_position
-		var dist: float = diff.length()
+        var neighbour_body := neighbour.character
+        # Use character positions for accurate center-to-center distance
+        var source_pos := neighbour_body.global_position if neighbour_body != null else area.global_position
+        var diff: Vector2 = character.global_position - source_pos
+        var dist: float = diff.length()
 
-		if dist >= min_distance:
-			count += 1
-			continue
+        if dist >= min_distance:
+            count += 1
+            continue
 
-		var direction: Vector2
-		if dist > 0.0:
-			direction = diff / dist
-		else:
-			direction = Vector2(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0)).normalized()
+        var direction: Vector2
+        if dist > 0.0:
+            direction = diff / dist
+        else:
+            # Exact overlap: push in a random direction to break symmetry
+            direction = Vector2(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0)).normalized()
 
-		var force: float = separation_force * (1.0 - dist / min_distance) / mass
-		movement_module.knockback_velocity += direction * force
-		count += 1
+        var t := 1.0 - (dist / min_distance)
+        var force := separation_force * (t * t) / mass
 
-# -------------------------
-# Internal Helpers
-# -------------------------
+        total_separation += direction * force
+        count += 1
 
-
-func _setup_collision_shape() -> void:
-	if _collision_shape:
-		return
-
-	for child in get_children():
-		if child is CollisionShape2D:
-			_collision_shape = child
-			return
-
-	_collision_shape = CollisionShape2D.new()
-	_collision_shape.shape = CircleShape2D.new()
-	add_child(_collision_shape)
-
-
-func _update_shape_radius() -> void:
-	if not _collision_shape:
-		return
-	if not (_collision_shape.shape is CircleShape2D):
-		return
-	(_collision_shape.shape as CircleShape2D).radius = min_distance
+    movement_module.set_separation(total_separation)

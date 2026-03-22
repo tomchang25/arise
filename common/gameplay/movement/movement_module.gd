@@ -19,6 +19,7 @@ extends Node
 var manual_velocity: Vector2 = Vector2.ZERO
 var path_velocity: Vector2 = Vector2.ZERO
 var knockback_velocity: Vector2 = Vector2.ZERO
+var separation_velocity: Vector2 = Vector2.ZERO
 
 var use_manual := true
 var use_path := false
@@ -49,7 +50,7 @@ func _physics_process(delta: float) -> void:
 
     knockback_velocity = knockback_velocity.move_toward(Vector2.ZERO, knockback_friction * delta)
 
-    character.velocity = current_move + knockback_velocity
+    character.velocity = current_move + knockback_velocity + separation_velocity
     if character.velocity == Vector2.ZERO:
         return
 
@@ -86,15 +87,12 @@ func is_using_path_mode() -> bool:
     return use_path
 
 
-func stop_all_motion(force_clear_knockback: bool = true) -> void:
+func stop_all_motion(force_clear_knockback: bool = false) -> void:
     manual_velocity = Vector2.ZERO
     path_velocity = Vector2.ZERO
 
     if force_clear_knockback:
         knockback_velocity = Vector2.ZERO
-
-    if character != null:
-        character.velocity = Vector2.ZERO
 
 # -------------------------
 # Manual Control
@@ -176,6 +174,14 @@ func set_knockback_velocity(velocity: Vector2, velocity_cap: float = -1.0) -> vo
 
 func clear_knockback() -> void:
     knockback_velocity = Vector2.ZERO
+
+# -------------------------
+# Separation
+# -------------------------
+
+
+func set_separation(velocity: Vector2) -> void:
+    separation_velocity = velocity
 
 # -------------------------
 # Internal Helpers
