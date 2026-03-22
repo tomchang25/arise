@@ -1,16 +1,18 @@
 @tool
 class_name SoftCollision
-extends Area2D
+extends Node2D
 ## Soft collision/separation module that prevents units from overlapping by
 ## injecting a distance-based separation force into MovementModule.knockback_velocity.
 ##
-## Uses get_overlapping_areas() — the neighbour only needs a SoftCollision (Area2D),
-## no CharacterBody2D CollisionShape required.
+## Uses SpatialHash (Autoload) instead of Area2D — zero physics-engine overhead.
+## The node type is Node2D so it still has global_position, but no CollisionShape
+## is ever created, so Godot's broadphase/narrowphase never runs on these objects.
 ##
-## Default configurations by entity type:
-##   player  → ignored_pushers = ["armies"]
-##   army    → ignored_pushers = []
-##   enemy   → ignored_pushers = []
+## Setup:
+##   1. Add SpatialHash.gd as an Autoload named "SpatialHash".
+##   2. Replace the old Area2D SoftCollision node with this Node2D version.
+##   3. Make sure min_distance matches across all unit types, or set cell_size
+##      manually on the SpatialHash autoload before the first enemy spawns.
 
 @export var character: CharacterBody2D
 @export var movement_module: MovementModule
@@ -19,68 +21,87 @@ extends Area2D
 ## Divides the received separation force. Higher mass = harder to push.
 @export var mass: float = 1.0
 ## Base separation force applied at full overlap (dist = 0).
-@export var separation_force: float = 200.0
-## Maximum distance at which force is applied. Shape radius is kept in sync.
-@export var min_distance: float = 10.0:
+@export var separation_force: float = 100.0
+## Maximum distance at which force is applied.
+## Also drives SpatialHash.cell_size — keep this consistent across all units.
+@export var min_distance: float = 12.0:
     set(value):
         min_distance = max(value, 0.0)
 
 ## Maximum number of overlapping neighbours processed per physics frame.
 @export var max_neighbours: int = 4
 
-# -------------------------
+@export var crowd_block_start: float = 3.0
+@export var crowd_block_range: float = 5.0
+# ---------------------------------------------------------------------------
 # Lifecycle
-# -------------------------
+# ---------------------------------------------------------------------------
 
 
-func _init() -> void:
-    monitorable = true
-    monitoring = true
+func _ready() -> void:
+    if Engine.is_editor_hint() or character == null:
+        return
+
+    # Let this unit's min_distance set the global cell size.
+    # All units should share the same min_distance; the last one to call _ready()
+    # wins, but since they are equal it doesn't matter.
+    SpatialHash.cell_size = min_distance
+
+    SpatialHash.register(character)
+
+
+func _exit_tree() -> void:
+    if Engine.is_editor_hint() or character == null:
+        return
+    SpatialHash.unregister(character)
 
 
 func _physics_process(_delta: float) -> void:
-    if movement_module == null or character == null:
+    if Engine.is_editor_hint() or movement_module == null or character == null:
         return
 
-    var areas := get_overlapping_areas()
-    var count := 0
+    # Keep the hash up to date with this character's current position.
+    SpatialHash.move(character, character.global_position)
 
+    var candidates := SpatialHash.query_nearby(character.global_position, min_distance, max_neighbours)
+    var count := 0
     var total_separation := Vector2.ZERO
-    for area in areas:
+
+    for body in candidates:
         if count >= max_neighbours:
             break
 
-        # Only interact with other SoftCollision areas
-        if not area is SoftCollision:
+        # Skip self.
+        if body == character:
             continue
 
-        var neighbour := area as SoftCollision
-
-        # Skip self (shouldn't happen but guard anyway)
-        if neighbour.character == character:
-            continue
-
-        var neighbour_body := neighbour.character
-        # Use character positions for accurate center-to-center distance
-        var source_pos := neighbour_body.global_position if neighbour_body != null else area.global_position
-        var diff: Vector2 = character.global_position - source_pos
+        var diff: Vector2 = character.global_position - body.global_position
         var dist: float = diff.length()
 
         if dist >= min_distance:
-            count += 1
             continue
 
         var direction: Vector2
         if dist > 0.0:
             direction = diff / dist
         else:
-            # Exact overlap: push in a random direction to break symmetry
+            # Exact overlap: push in a random direction to break symmetry.
             direction = Vector2(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0)).normalized()
 
         var t := 1.0 - (dist / min_distance)
-        var force := separation_force * (t * t) / mass
+        var force := separation_force * t / mass
 
         total_separation += direction * force
         count += 1
 
+    var crowd_block_ratio := 0.0
+    var desired_move := movement_module.manual_velocity
+
+    if desired_move != Vector2.ZERO:
+        var density := SpatialHash.get_directional_density(character.global_position, desired_move)
+
+        crowd_block_ratio = clamp((density - crowd_block_start) / crowd_block_range, 0.0, 1.0)
+        crowd_block_ratio = crowd_block_ratio * crowd_block_ratio * (3.0 - 2.0 * crowd_block_ratio)
+
     movement_module.set_separation(total_separation)
+    movement_module.set_crowd_block_ratio(crowd_block_ratio)

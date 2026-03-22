@@ -16,6 +16,9 @@ extends Node
 @export var deceleration: float = 16000.0
 @export var knockback_friction: float = 1200.0
 
+@export_group("Separation")
+@export var max_separation_speed: float = 120.0
+
 var manual_velocity: Vector2 = Vector2.ZERO
 var path_velocity: Vector2 = Vector2.ZERO
 var knockback_velocity: Vector2 = Vector2.ZERO
@@ -23,6 +26,10 @@ var separation_velocity: Vector2 = Vector2.ZERO
 
 var use_manual := true
 var use_path := false
+
+var crowd_block_ratio: float = 0.0
+
+var _computed_velocity: Vector2 = Vector2.ZERO
 
 # -------------------------
 # Lifecycle
@@ -36,27 +43,29 @@ func _physics_process(delta: float) -> void:
     if character == null:
         return
 
+    var blocked_manual := manual_velocity * (1.0 - crowd_block_ratio)
     var target_move := Vector2.ZERO
 
     if use_manual:
-        target_move += manual_velocity
+        target_move += blocked_manual
 
     if use_path:
         target_move += path_velocity
 
-    var current_move := character.velocity - knockback_velocity
+    var current_move := _computed_velocity - knockback_velocity
     var rate := acceleration if target_move != Vector2.ZERO else deceleration
     current_move = current_move.move_toward(target_move, rate * delta)
 
     knockback_velocity = knockback_velocity.move_toward(Vector2.ZERO, knockback_friction * delta)
 
-    character.velocity = current_move + knockback_velocity + separation_velocity
-    if character.velocity == Vector2.ZERO:
+    _computed_velocity = current_move + knockback_velocity + separation_velocity
+    if _computed_velocity == Vector2.ZERO:
         return
 
     if use_direct_position:
-        character.global_position += character.velocity * delta
+        character.global_position += _computed_velocity * delta
     else:
+        character.velocity = _computed_velocity
         character.move_and_slide()
 
 # -------------------------
@@ -181,8 +190,11 @@ func clear_knockback() -> void:
 
 
 func set_separation(velocity: Vector2) -> void:
-    separation_velocity = velocity
+    separation_velocity = velocity.limit_length(max_separation_speed)
 
+
+func set_crowd_block_ratio(value: float) -> void:
+    crowd_block_ratio = clamp(value, 0.0, 1.0)
 # -------------------------
 # Internal Helpers
 # -------------------------

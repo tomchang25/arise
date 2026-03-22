@@ -5,7 +5,7 @@
 [ext_resource type="Material" uid="uid://4sxc1efucw5k" path="res://common/rendering/shaders/dynamic_color_overlay.tres" id="3_overlay"]
 [ext_resource type="Texture2D" uid="uid://6hy07tgfpu8b" path="res://game/actors/enemies/types/ninja/assets/ninja_yellow.png" id="4_6jhws"]
 [ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/gameplay/combat/hit_detection/hurtbox/hurtbox.gd" id="5_hurtbox"]
-[ext_resource type="Script" uid="uid://c7cro78sslwe7" path="res://common/gameplay/movement/soft_collision.gd" id="5_pwlan"]
+[ext_resource type="Script" uid="uid://bhtdp3vwcylqh" path="res://common/gameplay/movement/soft_collision.gd" id="5_pwlan"]
 [ext_resource type="AnimationLibrary" uid="uid://yx2utmx2c56c" path="res://game/actors/enemies/types/ninja/presets/ninja_animations.res" id="6_0sh5i"]
 [ext_resource type="Script" uid="uid://bb4mbrq1u7pl" path="res://common/gameplay/combat/combat_module.gd" id="6_combat"]
 [ext_resource type="AnimationNodeBlendTree" uid="uid://bkrdvp8xidai6" path="res://game/actors/enemies/types/ninja/presets/ninja_animation_node_blend_tree.tres" id="6_td03u"]
@@ -32,10 +32,6 @@
 [ext_resource type="Script" uid="uid://bdtpmymrh152k" path="res://game/actors/states/actor_chase.gd" id="28_chase"]
 [ext_resource type="Script" uid="uid://cikpejrf13cy1" path="res://game/actors/states/actor_attack.gd" id="29_attack"]
 [ext_resource type="Script" uid="uid://c5oa2ppydf4o3" path="res://game/actors/states/actor_return_to_anchor.gd" id="30_back"]
-
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_body"]
-radius = 2.0
-height = 12.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_hurtbox"]
 radius = 6.0
@@ -79,21 +75,11 @@ texture = ExtResource("4_6jhws")
 hframes = 4
 vframes = 7
 
-[node name="SoftCollision" type="Area2D" parent="." unique_id=1244823069 node_paths=PackedStringArray("character", "movement_module")]
-collision_layer = 2
-collision_mask = 259
+[node name="SoftCollision" type="Node2D" parent="." unique_id=201923417 node_paths=PackedStringArray("character", "movement_module")]
 script = ExtResource("5_pwlan")
 character = NodePath("..")
 movement_module = NodePath("../Module/MovementModule")
-separation_force = 50.0
-min_distance = 20.0
-max_neighbours = 10
-metadata/_custom_type_script = "uid://c7cro78sslwe7"
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="SoftCollision" unique_id=1490549208]
-rotation = 1.5708
-shape = SubResource("CapsuleShape2D_body")
-debug_color = Color(0.8509804, 0.14117648, 0.53333336, 0.4392157)
+metadata/_custom_type_script = "uid://bhtdp3vwcylqh"
 
 [node name="Hurtbox" type="Area2D" parent="." unique_id=1309115120]
 collision_layer = 2
@@ -193,6 +179,7 @@ debug_color = Color(0, 0.6, 0.69803923, 0.22352941)
 script = ExtResource("18_movement")
 character = NodePath("../..")
 use_direct_position = true
+max_separation_speed = null
 
 [node name="NavigationModule" type="Node2D" parent="Module" unique_id=105493594 node_paths=PackedStringArray("character", "movement")]
 script = ExtResource("19_navigation")
