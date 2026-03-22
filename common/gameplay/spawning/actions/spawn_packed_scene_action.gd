@@ -13,13 +13,9 @@ extends SpawnAction
 @export var scatter_radius: float = 0.0
 
 
-func execute(anchor: Node2D, ctx: SpawnContext) -> Node:
+func execute(transform: Transform2D, ctx: SpawnContext) -> Node:
     if scene == null:
         Debug.warn("SpawnPackedSceneAction: scene is null")
-        return null
-
-    if anchor == null:
-        Debug.warn("SpawnPackedSceneAction: anchor is null")
         return null
 
     if ctx == null or not is_instance_valid(ctx.spawn_parent):
@@ -37,10 +33,10 @@ func execute(anchor: Node2D, ctx: SpawnContext) -> Node:
         var node_2d := instance as Node2D
         var rng := ctx.get_rng()
 
-        var target_position := anchor.global_position
+        var target_position := transform.origin
 
         if local_offset != Vector2.ZERO:
-            target_position += local_offset.rotated(anchor.global_rotation)
+            target_position += local_offset.rotated(transform.get_rotation())
 
         if scatter_radius > 0.0:
             if ctx.validator != null:
@@ -55,6 +51,6 @@ func execute(anchor: Node2D, ctx: SpawnContext) -> Node:
         if random_rotation:
             node_2d.global_rotation = rng.randf_range(0.0, TAU)
         elif use_anchor_rotation:
-            node_2d.global_rotation = anchor.global_rotation
+            node_2d.global_rotation = transform.get_rotation()
 
     return instance

@@ -5,7 +5,7 @@ extends SpawnAction
 var profile: EnemyGroupProfile
 
 
-func execute(anchor: Node2D, ctx: SpawnContext) -> Node:
+func execute(transform: Transform2D, ctx: SpawnContext) -> Node:
     if profile == null:
         Debug.warn("SpawnEnemyGroupAction: profile is null")
         return null
@@ -14,17 +14,13 @@ func execute(anchor: Node2D, ctx: SpawnContext) -> Node:
         Debug.warn("SpawnEnemyGroupAction: ctx.spawn_parent is null or freed")
         return null
 
-    if anchor == null:
-        Debug.warn("SpawnEnemyGroupAction: anchor is null")
-        return null
-
     var group := profile.group_scene.instantiate() as EnemyGroup
     if group == null:
         Debug.warn("SpawnEnemyGroupAction: group_scene did not instantiate to EnemyGroup")
         return null
 
     # Position before add_child so spawn_pivot captures correctly in EnemyGroup._ready()
-    group.global_position = anchor.global_position
+    group.global_position = transform.origin
     ctx.spawn_parent.add_child(group)
 
     var rng := ctx.get_rng()
