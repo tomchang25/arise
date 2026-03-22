@@ -13,7 +13,7 @@ extends SpawnAction
 @export var scatter_radius: float = 0.0
 
 
-func execute(anchor: Node2D, ctx: SpawnContext) -> Node:
+func execute(transform: Transform2D, ctx: SpawnContext) -> Node:
     if table == null:
         Debug.warn("SpawnFromWeightedTableAction: table is null")
         return null
@@ -34,4 +34,4 @@ func execute(anchor: Node2D, ctx: SpawnContext) -> Node:
     packed_scene_action.local_offset = local_offset
     packed_scene_action.scatter_radius = scatter_radius
 
-    return packed_scene_action.execute(anchor, ctx)
+    return packed_scene_action.execute(transform, ctx)

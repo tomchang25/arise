@@ -28,7 +28,7 @@ func execute() -> Node:
         Debug.warn("SpawnPoint: ctx.spawn_parent is null or freed")
         return null
 
-    var placed_node := _action.execute(self, _ctx)
+    var placed_node := _action.execute(global_transform, _ctx)
     if placed_node != null:
         placed.emit(placed_node)
 

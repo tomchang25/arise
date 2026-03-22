@@ -15,7 +15,7 @@ static func execute_at_node(action: SpawnAction, anchor: Node2D, ctx: SpawnConte
         Debug.warn("SpawnExecutor: ctx.spawn_parent is null or freed")
         return null
 
-    return action.execute(anchor, ctx)
+    return action.execute(anchor.global_transform, ctx)
 
 
 static func execute_at_position(action: SpawnAction, global_position: Vector2, ctx: SpawnContext) -> Node:
@@ -27,11 +27,4 @@ static func execute_at_position(action: SpawnAction, global_position: Vector2, c
         Debug.warn("SpawnExecutor: ctx.spawn_parent is null or freed")
         return null
 
-    var temp_anchor := Node2D.new()
-    ctx.spawn_parent.add_child(temp_anchor)
-    temp_anchor.global_position = global_position
-
-    var result := action.execute(temp_anchor, ctx)
-
-    temp_anchor.queue_free()
-    return result
+    return action.execute(Transform2D(0.0, global_position), ctx)
