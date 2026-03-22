@@ -37,6 +37,7 @@ signal died(info)
 @export var movement_module: MovementModule
 @export var navigation_module: NavigationModule
 @export var animation_module: AnimationModule
+@export var soft_collision: SoftCollision
 
 @export_group("Modules — AI")
 @export var state_machine: StateMachine
@@ -111,6 +112,8 @@ func _auto_wire_nodes() -> void:
         navigation_module = find_child("NavigationModule", true, false) as NavigationModule
     if not animation_module:
         animation_module = find_child("AnimationModule", true, false) as AnimationModule
+    if not soft_collision:
+        soft_collision = find_child("SoftCollision", true, false) as SoftCollision
     if not state_machine:
         state_machine = find_child("StateMachine", true, false) as StateMachine
 
@@ -151,6 +154,10 @@ func _bind_modules() -> void:
     # --- Movement ---
     if movement_module:
         movement_module.character = self
+
+    if soft_collision:
+        soft_collision.character = self
+        soft_collision.movement_module = movement_module
 
     if navigation_module:
         navigation_module.character = self
