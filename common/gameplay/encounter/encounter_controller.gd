@@ -99,6 +99,7 @@ func start_next_round() -> void:
 
 ## Force-stops the encounter and cleans up all active groups.
 func end() -> void:
+    SpawnThrottle.clear(&"encounter_enemy")
     _state = EncounterState.IDLE
     _config = null
     _spawn_timer = 0.0
@@ -251,7 +252,7 @@ func _request_spawn() -> void:
         Debug.warn("EncounterController: group table returned null profile")
         return
 
-    _spawn_group(profile)
+    SpawnThrottle.enqueue(&"encounter_enemy", func(): _spawn_group(profile), 0.1)
 
 
 func _spawn_group(group_profile: EnemyGroupProfile) -> void:

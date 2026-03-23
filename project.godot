@@ -32,6 +32,7 @@ AudioManager="*res://global/autoload/audio_manager/audio_manager.gd"
 Debug="*uid://l63h0afxdmif"
 SpatialHash="*uid://b3r1aqsi2f3k"
 NodePool="*res://global/autoload/node_pool/node_pool.gd"
+SpawnThrottle="*res://global/autoload/spawn_throttle/spawn_throttle.gd"
 
 [debug]
 
