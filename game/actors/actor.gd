@@ -1,6 +1,7 @@
 ## Shared base class for all character actors (Army, Enemy, etc.).
 ## Consolidates the common module exports, animation constants, runtime state,
 ## and public API that was previously duplicated between Army and Enemy.
+@abstract
 @tool
 class_name Actor
 extends CharacterBody2D
@@ -30,8 +31,6 @@ signal died(info)
 
 @export_group("Modules — Perception")
 @export var reach_detection: DetectionModule
-@export var aggro_detection: DetectionModule
-@export var deaggro_detection: DetectionModule
 
 @export_group("Modules — Movement")
 @export var movement_module: MovementModule
@@ -102,10 +101,6 @@ func _auto_wire_nodes() -> void:
         combat_module = find_child("CombatModule", true, false) as CombatModule
     if not reach_detection:
         reach_detection = find_child("ReachDetection", true, false) as DetectionModule
-    if not aggro_detection:
-        aggro_detection = find_child("AggroDetection", true, false) as DetectionModule
-    if not deaggro_detection:
-        deaggro_detection = find_child("DeaggroDetection", true, false) as DetectionModule
     if not movement_module:
         movement_module = find_child("MovementModule", true, false) as MovementModule
     if not navigation_module:
@@ -172,72 +167,6 @@ func _bind_modules() -> void:
         animation_module.animation_finished.connect(_on_animation_finished)
 
 
-## Restores all runtime state to initial values. Subclasses override to
-## re-duplicate stats before calling super.reset().
-func reset() -> void:
-    velocity = Vector2.ZERO
-    anchor_position = Vector2.ZERO
-    dormant = false
-
-    if hurtbox:
-        hurtbox.reset()
-    if damage_receiver:
-        damage_receiver.reset()
-    if hit_feedback:
-        hit_feedback.reset()
-    if damage_number:
-        damage_number.reset()
-    if health_bar:
-        health_bar.reset()
-    if combat_module:
-        combat_module.reset()
-    if reach_detection:
-        reach_detection.reset()
-    if aggro_detection:
-        aggro_detection.reset()
-    if deaggro_detection:
-        deaggro_detection.reset()
-    if movement_module:
-        movement_module.reset()
-    if navigation_module:
-        navigation_module.reset()
-    if animation_module:
-        animation_module.reset()
-    if soft_collision:
-        soft_collision.reset()
-
-
-## Enables or disables all owned modules. Call set_enabled(false) to freeze
-## the actor silently; call set_enabled(true) to resume.
-func set_enabled(value: bool) -> void:
-    if hurtbox:
-        hurtbox.set_enabled(value)
-    if damage_receiver:
-        damage_receiver.set_enabled(value)
-    if hit_feedback:
-        hit_feedback.set_enabled(value)
-    if damage_number:
-        damage_number.set_enabled(value)
-    if health_bar:
-        health_bar.set_enabled(value)
-    if combat_module:
-        combat_module.set_enabled(value)
-    if reach_detection:
-        reach_detection.set_enabled(value)
-    if aggro_detection:
-        aggro_detection.set_enabled(value)
-    if deaggro_detection:
-        deaggro_detection.set_enabled(value)
-    if movement_module:
-        movement_module.set_enabled(value)
-    if navigation_module:
-        navigation_module.set_enabled(value)
-    if animation_module:
-        animation_module.set_enabled(value)
-    if soft_collision:
-        soft_collision.set_enabled(value)
-
-
 ## Reads weapon 0 attack 0 range from the combat module and applies it to
 ## reach_detection. Override in subclasses that set reach from data directly.
 func _bind_reach_detection() -> void:
@@ -267,6 +196,71 @@ func _on_died(info) -> void:
 func _on_animation_finished(anim_name: StringName) -> void:
     if String(ANIM_ATTACK) in String(anim_name):
         attack_finished.emit()
+
+# -------------------------
+# Public API — Base
+# -------------------------
+
+
+@abstract func get_data() -> ActorData
+
+
+## Restores all runtime state to initial values. Subclasses override to
+## re-duplicate stats before calling super.reset().
+func reset() -> void:
+    velocity = Vector2.ZERO
+    anchor_position = Vector2.ZERO
+    dormant = false
+
+    if hurtbox:
+        hurtbox.reset()
+    if damage_receiver:
+        damage_receiver.reset()
+    if hit_feedback:
+        hit_feedback.reset()
+    if damage_number:
+        damage_number.reset()
+    if health_bar:
+        health_bar.reset()
+    if combat_module:
+        combat_module.reset()
+    if reach_detection:
+        reach_detection.reset()
+    if movement_module:
+        movement_module.reset()
+    if navigation_module:
+        navigation_module.reset()
+    if animation_module:
+        animation_module.reset()
+    if soft_collision:
+        soft_collision.reset()
+
+
+## Enables or disables all owned modules. Call set_enabled(false) to freeze
+## the actor silently; call set_enabled(true) to resume.
+func set_enabled(value: bool) -> void:
+    if hurtbox:
+        hurtbox.set_enabled(value)
+    if damage_receiver:
+        damage_receiver.set_enabled(value)
+    if hit_feedback:
+        hit_feedback.set_enabled(value)
+    if damage_number:
+        damage_number.set_enabled(value)
+    if health_bar:
+        health_bar.set_enabled(value)
+    if combat_module:
+        combat_module.set_enabled(value)
+    if reach_detection:
+        reach_detection.set_enabled(value)
+    if movement_module:
+        movement_module.set_enabled(value)
+    if navigation_module:
+        navigation_module.set_enabled(value)
+    if animation_module:
+        animation_module.set_enabled(value)
+    if soft_collision:
+        soft_collision.set_enabled(value)
 
 # -------------------------
 # Public API — movement
@@ -371,31 +365,20 @@ func get_facing_direction() -> Vector2:
         return Vector2.RIGHT
     return animation_module.get_last_direction()
 
+
 # -------------------------
-# Public API — perception (reach-based, shared by all actors)
+# Public API — perception
 # -------------------------
+@abstract func is_aggro_active() -> bool
 
 
-## True when the aggro detection zone has at least one target.
-func is_aggro_active() -> bool:
-    if aggro_detection == null:
-        return false
-    return aggro_detection.get_target_count(false) > 0
+@abstract func is_deaggro_active() -> bool
 
 
-## True when the deaggro detection zone has NO targets (target has left the zone).
-## Use this as the chase exit condition to prevent oscillation.
-func is_deaggro_active() -> bool:
-    if deaggro_detection == null:
-        return true
-    return deaggro_detection.get_target_count(false) == 0
+@abstract func get_nearest_aggro_target() -> Node2D
 
 
-## Returns the closest target in the aggro detection zone, or null.
-func get_nearest_aggro_target() -> Node2D:
-    if aggro_detection == null:
-        return null
-    return aggro_detection.get_closest_target(false)
+@abstract func has_deaggro() -> bool
 
 
 ## True when there is at least one target within the reach (attack) detection zone.
@@ -405,11 +388,7 @@ func is_target_in_reach() -> bool:
     return reach_detection.get_target_count(false) > 0
 
 
-## Returns the closest target within the reach detection zone, or null.
-func get_nearest_reachable_target() -> Node2D:
-    if reach_detection == null:
-        return null
-    return reach_detection.get_closest_target(false)
+@abstract func get_leash_distance() -> float
 
 # -------------------------
 # Public API — state machine

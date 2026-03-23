@@ -11,7 +11,8 @@
 [sub_resource type="Resource" id="Resource_76gxa"]
 script = ExtResource("2_hkh4f")
 scene = ExtResource("4_4loag")
-max_count = 10
+min_count = 8
+max_count = 8
 metadata/_custom_type_script = "uid://4agufvpi7c62"
 
 [sub_resource type="PackedScene" id="PackedScene_s6cxp"]
@@ -33,7 +34,6 @@ _bundled = {
 script = ExtResource("40_hsid8")
 group_scene = SubResource("PackedScene_s6cxp")
 entries = Array[ExtResource("2_hkh4f")]([SubResource("Resource_76gxa")])
-max_total = 8
 metadata/_custom_type_script = "uid://dqd4tlipj2ii8"
 
 [sub_resource type="Resource" id="Resource_ovujv"]
