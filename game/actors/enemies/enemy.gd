@@ -26,6 +26,22 @@ enum ActorType {
 @export var loot_drop: LootDropModule
 
 # -------------------------
+# Group-driven aggro state
+# Set by EnemyGroup — enemies do not run their own detection.
+# -------------------------
+
+var group_aggroed: bool = false
+var group_target: Node2D = null
+
+# -------------------------
+# Abstract API — implementations
+# -------------------------
+
+
+func get_data() -> ActorData:
+    return data
+
+# -------------------------
 # Lifecycle
 # -------------------------
 
@@ -54,18 +70,15 @@ func _apply_data() -> void:
     stats = data.stats.duplicate() as Stats
     stats.setup_stats()
 
-    if aggro_detection and data.aggro_range > 0.0:
-        aggro_detection.set_collision_radius(data.aggro_range)
-
-    if deaggro_detection and data.deaggro_range > 0.0:
-        deaggro_detection.set_collision_radius(data.deaggro_range)
-
     # Initialize combat module — stats and weapons must always be set together.
     if combat_module:
         combat_module.setup(stats, data.weapons)
 
 
 func reset() -> void:
+    group_aggroed = false
+    group_target = null
+
     if data:
         stats = data.stats.duplicate() as Stats
         stats.setup_stats()
@@ -99,6 +112,9 @@ func _bind_modules() -> void:
         if data and data.drop_profile:
             loot_drop.drop_profile = data.drop_profile
 
+    if navigation_module:
+        navigation_module.enable_navigation_agent = false
+
 # -------------------------
 # Lifecycle callbacks
 # -------------------------
@@ -114,3 +130,26 @@ func _on_died(info) -> void:
 func _on_animation_finished(anim_name: StringName) -> void:
     if String(ANIM_ATTACK) in String(anim_name):
         attack_finished.emit()
+# -------------------------
+# Public API — perception
+# -------------------------
+
+
+func is_aggro_active() -> bool:
+    return group_aggroed
+
+
+func is_deaggro_active() -> bool:
+    return not group_aggroed
+
+
+func get_nearest_aggro_target() -> Node2D:
+    return group_target
+
+
+func has_deaggro() -> bool:
+    return data.has_deaggro if data else false
+
+
+func get_leash_distance() -> float:
+    return data.leash_distance if data else 0.0

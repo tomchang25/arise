@@ -28,6 +28,9 @@ func _init() -> void:
 func _enter() -> void:
     actor.play_animation(animation_state)
 
+    if actor.reach_detection:
+        actor.reach_detection.set_enabled(false)
+
     if not actor.attack_finished.is_connected(_on_attack_finished):
         actor.attack_finished.connect(_on_attack_finished)
 
@@ -35,32 +38,43 @@ func _enter() -> void:
 func _exit() -> void:
     actor.end_attack(weapon_index, attack_index)
 
+    if actor.reach_detection:
+        actor.reach_detection.set_enabled(true)
+
     if actor.attack_finished.is_connected(_on_attack_finished):
         actor.attack_finished.disconnect(_on_attack_finished)
 
 
 func _update(delta: float) -> void:
-    # Deaggro check (Enemy).
-    if _has_deaggro() and actor.is_deaggro_active():
+    # --- Exit conditions ---
+
+    # Enemy: group lost the player → return home
+    if actor.has_deaggro() and actor.is_deaggro_active():
         change_state(ActorStateId.RETURN_TO_ANCHOR)
         return
 
-    # Anchor-distance check (Army).
-    if not _has_deaggro():
+    # Army: no target or drifted too far from player → return home
+    if not actor.has_deaggro():
         if not actor.is_aggro_active() or actor.get_distance_to_anchor() > follow_threshold:
             change_state(ActorStateId.RETURN_TO_ANCHOR)
             return
 
-    # Target moved out of reach → hand off to chase.
-    if not actor.is_target_in_reach():
+    # --- Target validation (reach_detection is OFF, use distance instead) ---
+
+    # get_nearest_aggro_target() works for both Enemy (group_target) and Army (aggro_detection)
+    var target := actor.get_nearest_aggro_target()
+    if not target:
         change_state(ActorStateId.CHASE)
         return
 
-    var target := actor.get_nearest_reachable_target()
-    if not target:
+    var reach := _get_reach_radius()
+    if reach > 0.0 and actor.global_position.distance_to(target.global_position) > reach:
+        # Target walked out of melee range → hand back to Chase
+        change_state(ActorStateId.CHASE)
         return
 
-    # Fire when ready.
+    # --- Attack ---
+
     if actor.can_attack(weapon_index, attack_index):
         actor.play_animation(animation_state, 1.0, true)
         actor.perform_attack(target.global_position, weapon_index, attack_index)
@@ -69,12 +83,12 @@ func _update(delta: float) -> void:
             animation_state,
         )
 
-    # Slow creep: nudge toward target in the outer band.
-    var reach := _get_reach_radius()
+    # --- Slow creep: keep closing distance while attacking ---
+
     if reach > 0.0:
         var dist := actor.global_position.distance_to(target.global_position)
-        var close_threshold := reach * 0.5
-        var creep_threshold := reach * 0.75
+        var close_threshold := reach * 0.5 # stop zone — inside this, don't move
+        var creep_threshold := reach * 0.75 # outer band — start creeping inward
 
         if dist <= close_threshold:
             actor.stop_movement()
@@ -101,13 +115,3 @@ func _get_reach_radius() -> float:
     if actor.reach_detection:
         return actor.reach_detection.radius
     return 0.0
-
-
-func _has_deaggro() -> bool:
-    var army := actor as Army
-    if army and army.data:
-        return army.data.has_deaggro
-    var enemy := actor as Enemy
-    if enemy and enemy.data:
-        return enemy.data.has_deaggro
-    return false

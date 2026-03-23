@@ -28,18 +28,17 @@ func _enter() -> void:
 
 func _update(delta: float) -> void:
     # Leash check — return home if too far from anchor.
-    var leash := _get_leash_distance()
-    if leash > 0.0 and actor.get_distance_to_anchor() > leash:
+    if actor.get_leash_distance() > 0.0 and actor.get_distance_to_anchor() > actor.get_leash_distance():
         change_state(ActorStateId.RETURN_TO_ANCHOR)
         return
 
     # Deaggro check (Enemy with deaggro zone).
-    if _has_deaggro() and actor.is_deaggro_active():
+    if actor.has_deaggro() and actor.is_deaggro_active():
         change_state(ActorStateId.RETURN_TO_ANCHOR)
         return
 
     # Distance-based disengage (Army-like actors without deaggro).
-    if not _has_deaggro():
+    if not actor.has_deaggro():
         var no_target := not actor.is_aggro_active()
         var too_far := actor.get_distance_to_anchor() > follow_threshold
         if no_target or too_far:
@@ -65,26 +64,3 @@ func _update(delta: float) -> void:
                 actor.global_position.direction_to(target.global_position),
                 Actor.ANIM_MOVE,
             )
-# -------------------------
-# Internal helpers
-# -------------------------
-
-
-func _has_deaggro() -> bool:
-    var army := actor as Army
-    if army and army.data:
-        return army.data.has_deaggro
-    var enemy := actor as Enemy
-    if enemy and enemy.data:
-        return enemy.data.has_deaggro
-    return false
-
-
-func _get_leash_distance() -> float:
-    var army := actor as Army
-    if army and army.data:
-        return army.data.leash_distance
-    var enemy := actor as Enemy
-    if enemy and enemy.data:
-        return enemy.data.leash_distance
-    return 0.0

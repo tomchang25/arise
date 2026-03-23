@@ -24,6 +24,13 @@ signal members_changed
 @export var dormant_distance: float = 480.0
 @export var dormant_check_interval: float = 1.0
 
+## Distance from group center at which members aggro the player.
+@export var aggro_range: float = 240.0
+
+## Distance from group center at which members deaggro.
+## Should be larger than aggro_range to prevent oscillation.
+@export var deaggro_range: float = 320.0
+
 # -------------------------
 # Internal state
 # -------------------------
@@ -53,6 +60,12 @@ var _player: Node2D
 # Dormant when player is too far away.
 var _dormant_timer: float = 0.0
 var dormant: bool = false
+
+var _aggroed: bool = false
+var _aggro_timer: float = 0.0
+
+# How often to run the distance-based aggro check (seconds).
+const AGGRO_CHECK_INTERVAL := 0.1
 
 # -------------------------
 # Lifecycle
@@ -84,6 +97,12 @@ func _physics_process(delta: float) -> void:
 
     if dormant:
         return
+
+    # Distance-based aggro check — replaces per-actor Area2D detection.
+    _aggro_timer += delta
+    if _aggro_timer >= AGGRO_CHECK_INTERVAL:
+        _aggro_timer = 0.0
+        _update_aggro_state()
 
     # Propagate updated anchor_positions to all living members.
     for member in get_alive_members():
@@ -180,6 +199,27 @@ func force_kill() -> void:
 # -------------------------
 
 
+func _update_aggro_state() -> void:
+    if not _player:
+        return
+
+    var dist := _player.global_position.distance_to(get_center())
+
+    if not _aggroed and dist < aggro_range:
+        _aggroed = true
+        for member in get_alive_members():
+            member.group_aggroed = true
+            member.group_target = _player
+            member.state_machine.request_transition(ActorState.ActorStateId.CHASE)
+
+    elif _aggroed and dist > deaggro_range:
+        _aggroed = false
+        for member in get_alive_members():
+            member.group_aggroed = false
+            member.group_target = null
+            member.state_machine.request_transition(ActorState.ActorStateId.RETURN_TO_ANCHOR)
+
+
 func _on_member_died(_info, enemy: Enemy) -> void:
     var idx := _members.find(enemy)
     if idx != -1:
@@ -208,3 +248,4 @@ func _update_dormant_state() -> void:
     dormant = should_sleep
     for member in get_alive_members():
         member.dormant = should_sleep
+        member.set_enabled(not should_sleep)

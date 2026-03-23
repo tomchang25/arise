@@ -26,6 +26,9 @@ var _enabled: bool = true
 @export var max_speed := 100.0
 @export var arrive_distance := 5.0
 
+@export_group("Navigation")
+@export var enable_navigation_agent := false
+
 @export_group("Avoidance")
 @export var enable_avoidance := false:
     set(value):
@@ -39,7 +42,6 @@ var _enabled: bool = true
 
 @export_group("Debug")
 @export var debug_print_state := false
-@export var debug_disable_navigation_agent := false
 @export var debug_draw := false
 @export var debug_color_path := Color(0.2, 0.8, 1.0, 0.9)
 @export var debug_color_target := Color(1.0, 0.3, 0.3, 0.9)
@@ -367,7 +369,7 @@ func _refresh_target_position() -> void:
 
 
 func _should_use_fallback_direct_path() -> bool:
-    return navigation_agent == null or debug_disable_navigation_agent
+    return navigation_agent == null or not enable_navigation_agent
 
 
 func _fallback_direct_path() -> void:
