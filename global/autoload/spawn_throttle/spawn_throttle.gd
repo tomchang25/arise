@@ -4,7 +4,9 @@ extends Node
 ## The singleton drains each channel at its configured interval.
 ##
 ## Usage:
-##   SpawnThrottle.enqueue("damage_number", func(): spawn_damage_number(amount, info))
+##   SpawnThrottle.enqueue("damage_number", spawn_damage_number.bind(amount, info))
+##   Invalid callables (freed objects) are skipped automatically.
+##   WARNING: Do not use lambdas — they are always valid even if the captured object is freed.
 
 signal slot_executed(channel: StringName)
 
@@ -26,6 +28,9 @@ func _process(delta: float) -> void:
 
         data.timer = data.interval
         var fn: Callable = data.queue.pop_front()
+        if not fn.is_valid():
+            # Callable may have been freed.
+            continue
         fn.call()
         slot_executed.emit(channel)
 

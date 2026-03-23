@@ -63,7 +63,7 @@ func _on_damaged(amount: float, _new_health: float, info: EffectContext) -> void
     if not _should_show(amount):
         return
 
-    SpawnThrottle.enqueue(&"damage_number", func(): spawn_damage_number(amount, info))
+    SpawnThrottle.enqueue(&"damage_number", spawn_damage_number.bind(amount, info))
 
 
 func spawn_damage_number(amount: float, info: EffectContext = null) -> void:
@@ -85,6 +85,10 @@ func spawn_damage_number(amount: float, info: EffectContext = null) -> void:
     request.setup_direct(_spawn_action, _get_spawn_position(), ctx)
 
     var result := await request.execute()
+
+    if not is_instance_valid(self):
+        return
+
     if not result.success:
         return
 
