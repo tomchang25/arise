@@ -17,17 +17,25 @@ func _caller() -> String:
         return "%s::%s" % [script_src.get_file(), func_name]
     return "unknown"
 
-
 # -------------------------
 # Raw Debug
 # -------------------------
+
+
+func get_caller() -> String:
+    var stack = get_stack()
+    if stack.size() > 2:
+        var s = stack[2]
+        var script_src = s.get("source", "")
+        var func_name = s.get("function", "")
+        return "%s::%s" % [script_src.get_file(), func_name]
+    return "unknown"
 
 
 func debug(msg: Variant) -> void:
     if not enabled:
         return
     print_debug(msg)
-
 
 # -------------------------
 # Structured Logs

@@ -101,9 +101,15 @@ func _notification(what: int) -> void:
 # -------------------------
 
 
-func register_member(enemy: Enemy) -> void:
+func register_member(enemy: Enemy, setup_position: Vector2 = Vector2.ZERO) -> void:
     if _members.has(enemy):
         return
+
+    if position == Vector2.ZERO:
+        push_warning("EnemyGroup.register_member() called with null position")
+    else:
+        enemy.global_position = setup_position
+        enemy.anchor_position = setup_position
 
     _members.append(enemy)
     _living_count += 1

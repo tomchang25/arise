@@ -12,18 +12,18 @@ extends Resource
 @export var max_total: int = 10
 
 @export_group("Spawn Scatter")
-@export var spawn_radius: float = 60.0
+@export var spawn_radius: float = 30.0
 
 
 func is_valid() -> bool:
-	if group_scene == null:
-		return false
+    if group_scene == null:
+        return false
 
-	if entries.is_empty():
-		return false
+    if entries.is_empty():
+        return false
 
-	for entry in entries:
-		if entry != null and entry.is_valid():
-			return true
+    for entry in entries:
+        if entry != null and entry.is_valid():
+            return true
 
-	return false
+    return false
