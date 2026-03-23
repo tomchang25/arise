@@ -2,13 +2,10 @@ class_name Hitbox
 extends Area2D
 
 signal hit_enemy
+@export var enabled: bool = true:
+    set = set_enabled
 
-@export var enabled = true:
-    set(value):
-        enabled = value
-        set_deferred("monitoring", value)
-        if not value:
-            _hit_times.clear()
+var _enabled: bool = true
 
 ## Seconds between repeated hits on the same victim.
 ## 0 = hit once on enter only, never repeat.
@@ -43,14 +40,14 @@ func _ready() -> void:
     area_entered.connect(_on_area_entered)
     area_exited.connect(_on_area_exited)
     monitorable = false
-    monitoring = enabled
+    monitoring = _enabled
 
     _setup_collision_shape()
     _setup_collision_layers()
 
 
 func _process(_delta: float) -> void:
-    if not enabled or damage_interval <= 0.0:
+    if not _enabled or damage_interval <= 0.0:
         return
 
     # Purge stale records for victims that left without triggering area_exited.
@@ -68,13 +65,13 @@ func _process(_delta: float) -> void:
 
 
 func _on_area_entered(area: Area2D) -> void:
-    if not enabled:
+    if not _enabled:
         return
     _try_hit(area)
 
 
 func _on_area_exited(area: Area2D) -> void:
-    if not enabled or not clear_records_on_exit:
+    if not _enabled or not clear_records_on_exit:
         return
     _hit_times.erase(area)
 
@@ -124,6 +121,28 @@ func _setup_collision_shape() -> void:
     # If shape is null, the CollisionShape2D keeps whatever was authored in the scene.
     if shape != null:
         collision_node.shape = shape
+
+
+func reset() -> void:
+    _enabled = true
+    set_deferred("monitoring", true)
+    context = null
+    _hit_times.clear()
+
+
+func set_enabled(value: bool) -> void:
+    _enabled = value
+    set_deferred("monitoring", _enabled)
+    if not _enabled:
+        _stop_runtime_state()
+
+
+func is_enabled() -> bool:
+    return _enabled
+
+
+func _stop_runtime_state() -> void:
+    _hit_times.clear()
 
 
 func _setup_collision_layers() -> void:

@@ -1,7 +1,8 @@
 class_name DamageNumberModule
 extends Node
 
-@export var enabled: bool = true
+@export var enabled: bool = true:
+    set = set_enabled
 
 @export_group("Dependencies")
 @export var damage_receiver: DamageReceiverModule
@@ -24,6 +25,8 @@ extends Node
 @export var max_spawns_per_frame := 6
 @export var max_active_numbers := 20
 
+var _enabled: bool = true
+
 var _spawned_this_frame: int = 0
 var _last_spawn_frame: int = -1
 
@@ -44,8 +47,28 @@ func _ready() -> void:
         damage_receiver.damaged.connect(_on_damaged)
 
 
+func reset() -> void:
+    _enabled = true
+    _spawned_this_frame = 0
+    _last_spawn_frame = -1
+
+
+func set_enabled(value: bool) -> void:
+    _enabled = value
+    if not _enabled:
+        _stop_runtime_state()
+
+
+func is_enabled() -> bool:
+    return _enabled
+
+
+func _stop_runtime_state() -> void:
+    pass
+
+
 func _on_damaged(amount: float, _new_health: float, info: EffectContext) -> void:
-    if not enabled:
+    if not _enabled:
         return
 
     if not _should_show(amount):
@@ -58,7 +81,7 @@ func _on_damaged(amount: float, _new_health: float, info: EffectContext) -> void
 
 
 func spawn_damage_number(amount: float, info: EffectContext = null) -> void:
-    if not enabled:
+    if not _enabled:
         return
 
     if _spawn_action == null:

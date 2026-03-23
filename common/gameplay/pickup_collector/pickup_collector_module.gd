@@ -9,11 +9,9 @@ signal pickup_collected(pickup: BasePickup)
 const PICKUP_MASK := 1 << 31
 
 @export var enabled := true:
-    set(value):
-        enabled = value
-        if not enabled:
-            _stop_runtime_state()
-        _refresh_runtime_state()
+    set = set_enabled
+
+var _enabled: bool = true
 
 @export_group("Dependencies")
 @export var owner_body: Node2D
@@ -55,7 +53,7 @@ func _ready() -> void:
 
 
 func _physics_process(_delta: float) -> void:
-    if not enabled:
+    if not _enabled:
         return
 
     _cleanup_invalid_pickups()
@@ -69,19 +67,26 @@ func _physics_process(_delta: float) -> void:
         else:
             pickup.clear_magnet_target(self)
 
-
 # -------------------------
 # Common API
 # -------------------------
 
 
+func reset() -> void:
+    _stop_runtime_state()
+    _enabled = true
+    _refresh_runtime_state()
+
+
 func set_enabled(value: bool) -> void:
-    enabled = value
+    _enabled = value
+    if not _enabled:
+        _stop_runtime_state()
+    _refresh_runtime_state()
 
 
 func is_enabled() -> bool:
-    return enabled
-
+    return _enabled
 
 # -------------------------
 # Pickup Query
@@ -99,14 +104,13 @@ func get_overlapping_pickups() -> Array[BasePickup]:
             pickups.append(pickup)
     return pickups
 
-
 # -------------------------
 # Pickup Collection
 # -------------------------
 
 
 func can_collect_pickup(pickup: BasePickup) -> bool:
-    if not enabled:
+    if not _enabled:
         return false
 
     if pickup == null:
@@ -133,14 +137,13 @@ func collect_pickup(pickup: BasePickup) -> bool:
 
     return false
 
-
 # -------------------------
 # Resource Collection
 # -------------------------
 
 
 func can_collect_resource(resource_data: ResourceData, amount: int = 1) -> bool:
-    if not enabled:
+    if not _enabled:
         return false
     if resource_data == null:
         return false
@@ -260,14 +263,13 @@ func add_gold(amount: int) -> bool:
 
     return stats.add_gold(amount)
 
-
 # -------------------------
 # Item Collection
 # -------------------------
 
 
 func can_collect_item(item_data: ItemData, amount: int = 1) -> bool:
-    if not enabled:
+    if not _enabled:
         return false
     if item_data == null:
         return false
@@ -291,16 +293,15 @@ func collect_item(item_data: ItemData, amount: int = 1) -> bool:
     inventory_owner.add_item(item_data, amount)
     return true
 
-
 # -------------------------
 # Internal Helpers
 # -------------------------
 
 
 func _refresh_runtime_state() -> void:
-    set_monitoring(enabled)
-    set_monitorable(enabled)
-    set_physics_process(enabled)
+    set_monitoring(_enabled)
+    set_monitorable(_enabled)
+    set_physics_process(_enabled)
 
 
 func _refresh_magnet_shape() -> void:
@@ -350,14 +351,13 @@ func _stop_runtime_state() -> void:
     _pickups_in_range.clear()
     set_physics_process(false)
 
-
 # -------------------------
 # Signals / Callbacks
 # -------------------------
 
 
 func _on_area_entered(area: Area2D) -> void:
-    if not enabled:
+    if not _enabled:
         return
 
     if area is BasePickup:

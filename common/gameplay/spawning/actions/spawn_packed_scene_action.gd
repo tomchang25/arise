@@ -2,6 +2,8 @@ class_name SpawnPackedSceneAction
 extends SpawnAction
 
 @export var scene: PackedScene
+
+@export_group("Pooling")
 @export var use_pool: bool = false
 
 @export_group("Transform")
@@ -23,18 +25,11 @@ func execute(transform: Transform2D, ctx: SpawnContext) -> Node:
         Debug.warn("SpawnPackedSceneAction: ctx.spawn_parent is null or freed")
         return null
 
-    var instance: Node
-    if use_pool:
-        instance = NodePool.acquire(scene, ctx.spawn_parent)
-    else:
-        instance = scene.instantiate()
+    var instance := NodeRegistry.acquire(scene, ctx.spawn_parent, use_pool)
 
     if instance == null:
         Debug.warn("SpawnPackedSceneAction: failed to instantiate scene")
         return null
-
-    if not instance.is_inside_tree():
-        ctx.spawn_parent.call_deferred("add_child", instance)
 
     if instance is Node2D:
         var node_2d := instance as Node2D
@@ -61,3 +56,23 @@ func execute(transform: Transform2D, ctx: SpawnContext) -> Node:
             node_2d.global_rotation = transform.get_rotation()
 
     return instance
+
+
+static func create(
+        p_scene: PackedScene,
+        p_use_pool: bool = true,
+        p_use_anchor_position: bool = true,
+        p_use_anchor_rotation: bool = false,
+        p_random_rotation: bool = false,
+        p_local_offset: Vector2 = Vector2.ZERO,
+        p_scatter_radius: float = 0.0,
+) -> SpawnPackedSceneAction:
+    var action := SpawnPackedSceneAction.new()
+    action.scene = p_scene
+    action.use_pool = p_use_pool
+    action.use_anchor_position = p_use_anchor_position
+    action.use_anchor_rotation = p_use_anchor_rotation
+    action.random_rotation = p_random_rotation
+    action.local_offset = p_local_offset
+    action.scatter_radius = p_scatter_radius
+    return action

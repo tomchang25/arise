@@ -75,6 +75,13 @@ func execute_attack(target_position: Vector2) -> void:
     _execute_attack_logic(target_position)
 
 
+func reset() -> void:
+    super.reset()
+    locked = false
+    if cooldown_timer:
+        cooldown_timer.stop()
+
+
 ## Start the cooldown. Call immediately after execute_attack for auto-end,
 ## or defer to an animation_finished signal for animation-driven flow.
 func end_attack() -> void:

@@ -6,6 +6,9 @@ signal target_entered(target: Node2D)
 signal target_exited(target: Node2D)
 signal targets_changed(targets: Array[Node2D])
 
+@export var enabled: bool = true:
+    set = set_enabled
+
 @export var obstacle_mask: int = 4
 
 @export var radius: float = 100.0:
@@ -14,6 +17,8 @@ signal targets_changed(targets: Array[Node2D])
         if is_node_ready():
             _setup_collision_shape()
             _set_collision_radius(radius)
+
+var _enabled: bool = true
 
 var _collision_shape: CollisionShape2D
 var _entities_in_range: Array[Node2D] = []
@@ -61,6 +66,23 @@ func _set_collision_radius(new_radius: float) -> void:
         return
 
     (_collision_shape.shape as CircleShape2D).radius = new_radius
+
+
+func reset() -> void:
+    _enabled = true
+    _entities_in_range.clear()
+    set_monitoring(true)
+
+
+func set_enabled(value: bool) -> void:
+    _enabled = value
+    set_monitoring(value)
+    if not value:
+        _entities_in_range.clear()
+
+
+func is_enabled() -> bool:
+    return _enabled
 
 
 func set_collision_radius(new_radius: float) -> void:
