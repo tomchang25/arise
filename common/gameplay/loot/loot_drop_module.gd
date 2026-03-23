@@ -190,6 +190,10 @@ func _roll_entry_amount(entry: LootDropEntry) -> int:
 
 
 func _spawn_entry(entry: LootDropEntry, amount: int, spawn_ctx: SpawnContext) -> Node:
+    return call_deferred("_do_spawn_entry", entry, amount, spawn_ctx) # push past physics flush
+
+
+func _do_spawn_entry(entry: LootDropEntry, amount: int, spawn_ctx: SpawnContext) -> Node:
     if entry.pickup_scene == null:
         Debug.invalid("entry.pickup_scene is null")
         return null

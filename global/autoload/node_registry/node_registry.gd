@@ -54,8 +54,6 @@ func acquire(scene: PackedScene, parent: Node, pooled: bool = false) -> Node:
     parent.add_child(node)
     if node.has_method("reset"):
         node.reset()
-    else:
-        push_warning("NodeRegistry.acquire: scene '%s' has no reset() method" % key)
 
     return node
 
