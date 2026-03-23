@@ -46,9 +46,7 @@ func execute(transform: Transform2D, ctx: SpawnContext) -> Node:
             if enemy == null:
                 Debug.warn("SpawnEnemyGroupAction: scene did not instantiate to Enemy")
                 continue
-
-            enemy.anchor_position = enemy_pos
-            group.register_member(enemy)
+            group.register_member(enemy, enemy_pos)
 
     return group
 

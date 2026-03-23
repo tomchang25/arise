@@ -98,7 +98,7 @@ func start_next_round() -> void:
 
 
 ## Force-stops the encounter and cleans up all active groups.
-func end() -> void:
+func end(need_cleanup: bool = false) -> void:
     _state = EncounterState.IDLE
     _config = null
     _spawn_timer = 0.0
@@ -106,7 +106,9 @@ func end() -> void:
     _groups_killed = 0
     _pending_spawns = 0
     _force_kill_pending = false
-    _clear_all_groups()
+
+    if need_cleanup:
+        _clear_all_groups()
 
 
 func is_active() -> bool:
