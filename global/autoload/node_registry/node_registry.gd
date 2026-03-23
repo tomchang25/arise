@@ -80,5 +80,7 @@ func release(node: Node) -> void:
 
     _registry[key].append(node)
 
-    if node.has_method("on_pooled"):
-        node.on_pooled()
+    if node.has_method("set_enabled"):
+        node.set_enabled(false)
+    else:
+        push_warning("NodeRegistry.release: scene '%s' has no set_enabled() method" % key)
