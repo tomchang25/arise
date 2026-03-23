@@ -4,12 +4,10 @@ extends Area2D
 signal collected(collector: Node, pickup_collector_module: PickupCollectorModule)
 signal despawned
 
-@export var enabled := true:
+# Inspector proxy — delegates to set_enabled() so both runtime and editor use the same path.
+@export var enabled: bool = true:
     set(value):
-        enabled = value
-        if not enabled:
-            _stop_runtime_state()
-        _refresh_runtime_state()
+        set_enabled(value)
 
 @export_group("Collection")
 @export var collect_delay: float = 0.0
@@ -27,10 +25,12 @@ signal despawned
 @export_group("Dependencies")
 @export var collect_audio_event: AudioEvent
 
-var _can_collect := false
-var _is_collecting := false
-var _is_collected := false
-var _lifetime_left := 0.0
+var _enabled: bool = true
+
+var _can_collect: bool
+var _is_collecting: bool
+var _is_collected: bool
+var _lifetime_left: float
 var _magnet_target: PickupCollectorModule
 
 # -------------------------
@@ -45,15 +45,12 @@ func _ready() -> void:
     if not area_entered.is_connected(_on_area_entered):
         area_entered.connect(_on_area_entered)
 
-    _can_collect = collect_delay <= 0.0
-    if use_lifetime:
-        _lifetime_left = lifetime
-
+    _init_runtime_state()
     _refresh_runtime_state()
 
 
 func _physics_process(delta: float) -> void:
-    if not enabled:
+    if not _enabled:
         return
     if _is_collected:
         return
@@ -66,19 +63,49 @@ func _physics_process(delta: float) -> void:
     if magnet_enabled:
         _update_magnet(delta)
 
+# -------------------------
+# Runtime state
+# -------------------------
+
+
+func _init_runtime_state() -> void:
+    _can_collect = collect_delay <= 0.0
+    _is_collecting = false
+    _is_collected = false
+    _lifetime_left = lifetime if use_lifetime else 0.0
+    _magnet_target = null
+
+
+func _refresh_runtime_state() -> void:
+    set_physics_process(_enabled and (magnet_enabled or use_lifetime))
+
+
+func _stop_runtime_state() -> void:
+    _is_collecting = false
+    _magnet_target = null
+    set_physics_process(false)
 
 # -------------------------
 # Common API
 # -------------------------
 
 
+func reset() -> void:
+    _init_runtime_state()
+    set_enabled(true)
+
+
 func set_enabled(value: bool) -> void:
-    enabled = value
+    if _enabled == value:
+        return
+    _enabled = value
+    if not _enabled:
+        _stop_runtime_state()
+    _refresh_runtime_state()
 
 
 func is_enabled() -> bool:
-    return enabled
-
+    return _enabled
 
 # -------------------------
 # Pickup Control
@@ -86,7 +113,7 @@ func is_enabled() -> bool:
 
 
 func try_collect(candidate: Node) -> void:
-    if not enabled:
+    if not _enabled:
         return
     if not _can_collect:
         return
@@ -118,7 +145,7 @@ func try_collect(candidate: Node) -> void:
 
 
 func begin_magnet_pull(pickup_collector_module: PickupCollectorModule) -> void:
-    if not enabled:
+    if not _enabled:
         return
     if not magnet_enabled:
         return
@@ -140,21 +167,9 @@ func clear_magnet_target(source: PickupCollectorModule = null) -> void:
     if _magnet_target == source:
         _magnet_target = null
 
-
-# -------------------------
-# Feature APIs
-# -------------------------
-
-# func setup_pickup() -> void:
-#     pass
-
 # -------------------------
 # Internal Helpers
 # -------------------------
-
-
-func _refresh_runtime_state() -> void:
-    set_physics_process(enabled and (magnet_enabled or use_lifetime))
 
 
 func _resolve_pickup_collector_module(candidate: Node) -> PickupCollectorModule:
@@ -228,13 +243,6 @@ func _update_magnet(delta: float) -> void:
         return
 
     global_position = global_position.move_toward(target_position, magnet_speed * delta)
-
-
-func _stop_runtime_state() -> void:
-    _is_collecting = false
-    _magnet_target = null
-    set_physics_process(false)
-
 
 # -------------------------
 # Signals / Callbacks

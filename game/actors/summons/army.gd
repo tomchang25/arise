@@ -48,6 +48,23 @@ func _apply_data() -> void:
         combat_module.setup(stats, data.weapons)
 
 
+func reset() -> void:
+    if data:
+        stats = data.stats.duplicate() as Stats
+        stats.setup_stats()
+        if hurtbox:
+            hurtbox.owner_stats = stats
+        if damage_receiver:
+            damage_receiver.stats = stats
+        if hit_feedback:
+            hit_feedback.stats = stats
+        if health_bar:
+            health_bar.bind(stats)
+        if combat_module:
+            combat_module.setup(stats, data.weapons)
+    super.reset()
+
+
 ## Army sets reach_detection radius directly from data.attack_range in _apply_data(),
 ## so skip the combat_module lookup that the base class would otherwise perform.
 func _bind_reach_detection() -> void:

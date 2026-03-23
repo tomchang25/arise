@@ -25,7 +25,7 @@ func execute(transform: Transform2D, ctx: SpawnContext) -> Node:
         Debug.warn("SpawnPackedSceneAction: ctx.spawn_parent is null or freed")
         return null
 
-    var instance := NodePool.acquire(scene, ctx.spawn_parent, use_pool)
+    var instance := NodeRegistry.acquire(scene, ctx.spawn_parent, use_pool)
 
     if instance == null:
         Debug.warn("SpawnPackedSceneAction: failed to instantiate scene")

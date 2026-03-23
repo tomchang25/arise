@@ -4,10 +4,9 @@ extends Node
 signal loot_dropped
 
 @export var enabled := true:
-    set(value):
-        enabled = value
-        if not enabled:
-            _stop_runtime_state()
+    set = set_enabled
+
+var _enabled: bool = true
 
 @export_group("Dependencies")
 @export var owner_node: Node2D
@@ -31,19 +30,23 @@ func _ready() -> void:
         if owner_node == null:
             Debug.warn("LootDropModule: owner_node is null and owner is not Node2D — wire it manually")
 
-
 # -------------------------
 # Common API
 # -------------------------
 
 
+func reset() -> void:
+    _enabled = true
+
+
 func set_enabled(value: bool) -> void:
-    enabled = value
+    _enabled = value
+    if not _enabled:
+        _stop_runtime_state()
 
 
 func is_enabled() -> bool:
-    return enabled
-
+    return _enabled
 
 # -------------------------
 # Loot Drop
@@ -51,7 +54,7 @@ func is_enabled() -> bool:
 
 
 func drop_loot() -> void:
-    if not enabled:
+    if not _enabled:
         return
 
     if not is_inside_tree():
@@ -103,7 +106,7 @@ func drop_loot() -> void:
             Debug.invalid("no valid entries after filtering")
             continue
 
-        for _i in range(table.rolls):
+        for i in range(table.rolls):
             var entry := _pick_weighted_entry(valid_entries)
             if entry == null:
                 continue
@@ -122,7 +125,6 @@ func drop_loot() -> void:
     if did_spawn:
         loot_dropped.emit()
 
-
 # -------------------------
 # Internal Helpers
 # -------------------------
@@ -134,7 +136,7 @@ func _build_spawn_context() -> SpawnContext:
         return null
 
     var spawn_ctx := SpawnContext.new()
-    spawn_ctx.setup(parent, 0, owner_node, {"spawn_reason": "loot_drop"})
+    spawn_ctx.setup(parent, 0, owner_node, { "spawn_reason": "loot_drop" })
     return spawn_ctx
 
 
@@ -188,6 +190,10 @@ func _roll_entry_amount(entry: LootDropEntry) -> int:
 
 
 func _spawn_entry(entry: LootDropEntry, amount: int, spawn_ctx: SpawnContext) -> Node:
+    return call_deferred("_do_spawn_entry", entry, amount, spawn_ctx) # push past physics flush
+
+
+func _do_spawn_entry(entry: LootDropEntry, amount: int, spawn_ctx: SpawnContext) -> Node:
     if entry.pickup_scene == null:
         Debug.invalid("entry.pickup_scene is null")
         return null
@@ -236,4 +242,4 @@ func _setup_spawned_loot_instance(instance: Node, entry: LootDropEntry, amount: 
 
 
 func _stop_runtime_state() -> void:
-    pass  # Loot drop is one-shot — no timers or ongoing processes to cancel
+    pass # Loot drop is one-shot — no timers or ongoing processes to cancel

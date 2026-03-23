@@ -196,6 +196,36 @@ func can_attack(weapon_index: int, attack_index: int) -> bool:
 # -------------------------
 
 
+func reset() -> void:
+    _range_overrides.clear()
+    for handle in _handles:
+        if handle == null:
+            continue
+        handle.enabled = true
+        for module in handle.attack_modules:
+            if module != null:
+                module.reset()
+
+
+func set_enabled(value: bool) -> void:
+    for handle in _handles:
+        if handle == null:
+            continue
+        for module in handle.attack_modules:
+            if module != null:
+                module.enabled = value
+
+
+func is_enabled() -> bool:
+    for handle in _handles:
+        if handle == null:
+            continue
+        for module in handle.attack_modules:
+            if module != null and module.enabled:
+                return true
+    return false
+
+
 ## Enable or disable an entire weapon.
 ## This gates future perform_attack calls on all modules in this weapon.
 ## It does NOT deactivate any currently live attached hitboxes —

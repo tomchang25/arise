@@ -29,6 +29,17 @@ func _ready() -> void:
     super._ready()
     _refresh_visual()
 
+# -------------------------
+# Common API
+# -------------------------
+
+
+func reset() -> void:
+    # Clear item-level state before restoring base pickup state.
+    item_data = null
+    amount = 1
+    _refresh_visual()
+    super.reset()
 
 # -------------------------
 # Feature APIs
@@ -39,7 +50,6 @@ func setup_item(data: ItemData, stack_amount: int) -> void:
     item_data = data
     amount = max(stack_amount, 1)
     _refresh_visual()
-
 
 # -------------------------
 # Internal Helpers

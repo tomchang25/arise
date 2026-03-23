@@ -541,6 +541,75 @@ func get_pickup_collector_module() -> PickupCollectorModule:
 # -------------------------
 
 
+func reset() -> void:
+    velocity = Vector2.ZERO
+    _dodge_requested = false
+
+    if data and data.stats:
+        stats = data.stats.duplicate() as Stats
+        _ensure_stats()
+        if not data.debug_modes_changed.is_connected(_enforce_debug_modes):
+            data.debug_modes_changed.connect(_enforce_debug_modes)
+        if not stats.stats_recalculated.is_connected(_on_stats_recalculated):
+            stats.stats_recalculated.connect(_on_stats_recalculated)
+        if hurtbox:
+            hurtbox.owner_stats = stats
+        if damage_receiver:
+            damage_receiver.stats = stats
+        if hit_feedback:
+            hit_feedback.stats = stats
+        if health_bar:
+            health_bar.bind(stats)
+        if combat_module:
+            combat_module.setup(stats, data.weapons)
+        if pickup_collector:
+            pickup_collector.stats = stats
+
+    if hurtbox:
+        hurtbox.reset()
+    if damage_receiver:
+        damage_receiver.reset()
+    if hit_feedback:
+        hit_feedback.reset()
+    if damage_number:
+        damage_number.reset()
+    if health_bar:
+        health_bar.reset()
+    if combat_module:
+        combat_module.reset()
+    if reach_detection:
+        reach_detection.reset()
+    if movement_module:
+        movement_module.reset()
+    if animation_module:
+        animation_module.reset()
+    if pickup_collector:
+        pickup_collector.reset()
+
+
+func set_enabled(value: bool) -> void:
+    if hurtbox:
+        hurtbox.set_enabled(value)
+    if damage_receiver:
+        damage_receiver.set_enabled(value)
+    if hit_feedback:
+        hit_feedback.set_enabled(value)
+    if damage_number:
+        damage_number.set_enabled(value)
+    if health_bar:
+        health_bar.set_enabled(value)
+    if combat_module:
+        combat_module.set_enabled(value)
+    if reach_detection:
+        reach_detection.set_enabled(value)
+    if movement_module:
+        movement_module.set_enabled(value)
+    if animation_module:
+        animation_module.set_enabled(value)
+    if pickup_collector:
+        pickup_collector.set_enabled(value)
+
+
 func reset_position(new_position: Vector2) -> void:
     global_position = new_position
     if state_machine:

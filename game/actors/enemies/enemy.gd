@@ -70,6 +70,31 @@ func _apply_data() -> void:
         combat_module.setup(stats, data.weapons)
 
 
+func reset() -> void:
+    if data:
+        stats = data.stats.duplicate() as Stats
+        stats.setup_stats()
+        if hurtbox:
+            hurtbox.owner_stats = stats
+        if damage_receiver:
+            damage_receiver.stats = stats
+        if hit_feedback:
+            hit_feedback.stats = stats
+        if health_bar:
+            health_bar.bind(stats)
+        if combat_module:
+            combat_module.setup(stats, data.weapons)
+    super.reset()
+    if loot_drop:
+        loot_drop.reset()
+
+
+func set_enabled(value: bool) -> void:
+    super.set_enabled(value)
+    if loot_drop:
+        loot_drop.set_enabled(value)
+
+
 func _bind_modules() -> void:
     super._bind_modules()
 
