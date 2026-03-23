@@ -68,16 +68,22 @@ func _physics_process(delta: float) -> void:
 # -------------------------
 
 
-func _refresh_runtime_state() -> void:
-    set_physics_process(_enabled and (magnet_enabled or use_lifetime))
-
-
 func _init_runtime_state() -> void:
     _can_collect = collect_delay <= 0.0
     _is_collecting = false
     _is_collected = false
     _lifetime_left = lifetime if use_lifetime else 0.0
     _magnet_target = null
+
+
+func _refresh_runtime_state() -> void:
+    set_physics_process(_enabled and (magnet_enabled or use_lifetime))
+
+
+func _stop_runtime_state() -> void:
+    _is_collecting = false
+    _magnet_target = null
+    set_physics_process(false)
 
 # -------------------------
 # Common API
@@ -237,12 +243,6 @@ func _update_magnet(delta: float) -> void:
         return
 
     global_position = global_position.move_toward(target_position, magnet_speed * delta)
-
-
-func _stop_runtime_state() -> void:
-    _is_collecting = false
-    _magnet_target = null
-    set_physics_process(false)
 
 # -------------------------
 # Signals / Callbacks
