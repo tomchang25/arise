@@ -99,6 +99,9 @@ func _bind_modules() -> void:
         if data and data.drop_profile:
             loot_drop.drop_profile = data.drop_profile
 
+    if navigation_module:
+        navigation_module.enable_navigation_agent = false
+
 # -------------------------
 # Lifecycle callbacks
 # -------------------------
