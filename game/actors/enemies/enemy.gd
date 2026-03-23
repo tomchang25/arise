@@ -151,5 +151,12 @@ func has_deaggro() -> bool:
     return data.has_deaggro if data else false
 
 
+func is_target_in_reach() -> bool:
+    if group_target == null:
+        return false
+    var reach := get_attack_range()
+    return reach > 0.0 and global_position.distance_to(group_target.global_position) <= reach
+
+
 func get_leash_distance() -> float:
     return data.leash_distance if data else 0.0

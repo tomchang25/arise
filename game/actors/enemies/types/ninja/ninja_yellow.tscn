@@ -19,7 +19,6 @@
 [ext_resource type="Resource" uid="uid://vp7463hsmyw0" path="res://common/audio/presets/sfx/default_damaged_audio.tres" id="14_sfx_damaged"]
 [ext_resource type="Resource" uid="uid://xsccf58mw7d5" path="res://common/audio/presets/sfx/default_blocked_audio.tres" id="15_sfx_blocked"]
 [ext_resource type="Resource" uid="uid://csppceje2neh5" path="res://common/audio/presets/sfx/default_died_audio.tres" id="16_sfx_died"]
-[ext_resource type="Script" uid="uid://hyy86fs5b0fs" path="res://common/gameplay/detection/detection_module.gd" id="17_detection"]
 [ext_resource type="Script" uid="uid://w30s7yqi1p3d" path="res://common/gameplay/movement/movement_module.gd" id="18_movement"]
 [ext_resource type="Script" uid="uid://ds7jcv6cdv02p" path="res://common/gameplay/navigation/navigation_module.gd" id="19_navigation"]
 [ext_resource type="Script" uid="uid://dldqypakv40re" path="res://common/gameplay/animation/animation_module.gd" id="20_animmod"]
@@ -37,10 +36,7 @@
 radius = 6.0
 height = 16.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_pwlan"]
-radius = 40.0
-
-[node name="NinjaYellow" type="CharacterBody2D" unique_id=1130231603 node_paths=PackedStringArray("loot_drop", "sprite", "hurtbox", "damage_receiver", "hit_feedback", "damage_number", "health_bar", "combat_module", "reach_detection", "movement_module", "navigation_module", "animation_module", "soft_collision", "state_machine") groups=["enemies"]]
+[node name="NinjaYellow" type="CharacterBody2D" unique_id=1130231603 node_paths=PackedStringArray("loot_drop", "sprite", "hurtbox", "damage_receiver", "hit_feedback", "damage_number", "health_bar", "combat_module", "movement_module", "navigation_module", "animation_module", "soft_collision", "state_machine") groups=["enemies"]]
 collision_layer = 2
 collision_mask = 0
 script = ExtResource("1_enemy")
@@ -53,7 +49,6 @@ hit_feedback = NodePath("Module/HitFeedbackModule")
 damage_number = NodePath("Module/DamageNumberModule")
 health_bar = NodePath("Module/HealthBar")
 combat_module = NodePath("Module/CombatModule")
-reach_detection = NodePath("Module/ReachDetection")
 movement_module = NodePath("Module/MovementModule")
 navigation_module = NodePath("Module/NavigationModule")
 animation_module = NodePath("Module/AnimationModule")
@@ -69,7 +64,6 @@ vframes = 7
 
 [node name="SoftCollision" type="Node2D" parent="." unique_id=201923417 node_paths=PackedStringArray("character", "movement_module")]
 script = ExtResource("5_pwlan")
-enabled = null
 character = NodePath("..")
 movement_module = NodePath("../Module/MovementModule")
 metadata/_custom_type_script = "uid://bhtdp3vwcylqh"
@@ -134,18 +128,6 @@ died_audio = ExtResource("16_sfx_died")
 script = ExtResource("10_dmgnum")
 damage_receiver = NodePath("../DamageReceiverModule")
 damage_number_scene = ExtResource("11_dmgnum_scene")
-
-[node name="ReachDetection" type="Area2D" parent="Module" unique_id=430639735]
-position = Vector2(0, -6)
-collision_layer = 0
-monitorable = false
-script = ExtResource("17_detection")
-enabled = null
-radius = 40.0
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Module/ReachDetection" unique_id=1152141690]
-shape = SubResource("CircleShape2D_pwlan")
-debug_color = Color(0, 0.6, 0.69803923, 0.22352941)
 
 [node name="MovementModule" type="Node" parent="Module" unique_id=265278886 node_paths=PackedStringArray("character")]
 script = ExtResource("18_movement")

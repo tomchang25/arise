@@ -28,18 +28,12 @@ func _init() -> void:
 func _enter() -> void:
     actor.play_animation(animation_state)
 
-    if actor.reach_detection:
-        actor.reach_detection.set_enabled(false)
-
     if not actor.attack_finished.is_connected(_on_attack_finished):
         actor.attack_finished.connect(_on_attack_finished)
 
 
 func _exit() -> void:
     actor.end_attack(weapon_index, attack_index)
-
-    if actor.reach_detection:
-        actor.reach_detection.set_enabled(true)
 
     if actor.attack_finished.is_connected(_on_attack_finished):
         actor.attack_finished.disconnect(_on_attack_finished)
@@ -67,7 +61,7 @@ func _update(delta: float) -> void:
         change_state(ActorStateId.CHASE)
         return
 
-    var reach := _get_reach_radius()
+    var reach := actor.get_attack_range()
     if reach > 0.0 and actor.global_position.distance_to(target.global_position) > reach:
         # Target walked out of melee range → hand back to Chase
         change_state(ActorStateId.CHASE)
@@ -105,13 +99,3 @@ func _update(delta: float) -> void:
 
 func _on_attack_finished() -> void:
     actor.end_attack(weapon_index, attack_index)
-
-# -------------------------
-# Internal helpers
-# -------------------------
-
-
-func _get_reach_radius() -> float:
-    if actor.reach_detection:
-        return actor.reach_detection.radius
-    return 0.0

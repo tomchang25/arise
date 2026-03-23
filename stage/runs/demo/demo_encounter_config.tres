@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://bnght76nweh38" path="res://common/gameplay/encounter/encounter_group_entry.gd" id="1_l6dtp"]
 [ext_resource type="Script" uid="uid://4agufvpi7c62" path="res://common/gameplay/spawning/tables/group_member_entry.gd" id="2_hkh4f"]
 [ext_resource type="PackedScene" uid="uid://buchtmrw1gbrr" path="res://game/actors/enemies/types/ninja/ninja_yellow.tscn" id="4_4loag"]
-[ext_resource type="Script" uid="uid://cscr8c257tepu" path="res://game/actors/enemies/enemy_group/enemy_group.gd" id="39_ot0t8"]
+[ext_resource type="PackedScene" uid="uid://cssols6rmii6m" path="res://game/actors/enemies/enemy_group/enemy_group.tscn" id="4_djk5q"]
 [ext_resource type="Script" uid="uid://dqd4tlipj2ii8" path="res://common/gameplay/spawning/tables/enemy_group_profile.gd" id="40_hsid8"]
 [ext_resource type="Script" uid="uid://sgjwmvk38ykj" path="res://common/gameplay/encounter/encounter_group_table.gd" id="44_oy635"]
 [ext_resource type="Script" uid="uid://bs5epdft4ockv" path="res://common/gameplay/encounter/encounter_config.gd" id="45_ylq1s"]
@@ -15,24 +15,9 @@ min_count = 8
 max_count = 8
 metadata/_custom_type_script = "uid://4agufvpi7c62"
 
-[sub_resource type="PackedScene" id="PackedScene_s6cxp"]
-_bundled = {
-"conn_count": 0,
-"conns": PackedInt32Array(),
-"editable_instances": [],
-"id_paths": [PackedInt32Array()],
-"names": PackedStringArray("EnemyGroup", "Node2D", "script", "WaitTimer", "Timer", "autostart"),
-"node_count": 2,
-"node_ids": PackedInt32Array(0, 0),
-"node_paths": [NodePath(".")],
-"nodes": PackedInt32Array(-1, -1, 1, 0, -1, 1, 2, 0, 0, 1073741824, 0, 4, 3, -1, 1, 5, 1, 0),
-"variants": [ExtResource("39_ot0t8"), true],
-"version": 3
-}
-
 [sub_resource type="Resource" id="Resource_cejx2"]
 script = ExtResource("40_hsid8")
-group_scene = SubResource("PackedScene_s6cxp")
+group_scene = ExtResource("4_djk5q")
 entries = Array[ExtResource("2_hkh4f")]([SubResource("Resource_76gxa")])
 metadata/_custom_type_script = "uid://dqd4tlipj2ii8"
 

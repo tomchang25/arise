@@ -13,7 +13,7 @@ var _rng: RandomNumberGenerator
 
 # Deprecated: use SpawnContext.create() instead
 func setup(parent: Node = null, setup_seed: int = 0, source: Node = null, extra_metadata: Dictionary = { }) -> void:
-    push_warning("[%s]: SpawnContext.setup() is deprecated, use SpawnContext.create() instead" % Debug.get_caller())
+    # push_warning("[%s]: SpawnContext.setup() is deprecated, use SpawnContext.create() instead" % Debug.get_caller())
     spawn_parent = parent
     rng_seed = setup_seed
     source_node = source

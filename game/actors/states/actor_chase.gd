@@ -56,9 +56,7 @@ func _update(delta: float) -> void:
         _move_timer = 0.0
         var target := actor.get_nearest_aggro_target()
         if target:
-            var stop_dist := 0.0
-            if actor.reach_detection:
-                stop_dist = actor.reach_detection.radius * 0.5
+            var stop_dist := actor.get_attack_range() * 0.5
             actor.move_to_position(target.global_position, chase_speed, stop_dist)
             actor.set_facing_direction(
                 actor.global_position.direction_to(target.global_position),

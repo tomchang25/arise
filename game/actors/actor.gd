@@ -29,9 +29,6 @@ signal died(info)
 @export var health_bar: HealthBarModule
 @export var combat_module: CombatModule
 
-@export_group("Modules — Perception")
-@export var reach_detection: DetectionModule
-
 @export_group("Modules — Movement")
 @export var movement_module: MovementModule
 @export var navigation_module: NavigationModule
@@ -99,8 +96,6 @@ func _auto_wire_nodes() -> void:
         health_bar = find_child("HealthBar", true, false) as HealthBarModule
     if not combat_module:
         combat_module = find_child("CombatModule", true, false) as CombatModule
-    if not reach_detection:
-        reach_detection = find_child("ReachDetection", true, false) as DetectionModule
     if not movement_module:
         movement_module = find_child("MovementModule", true, false) as MovementModule
     if not navigation_module:
@@ -142,10 +137,6 @@ func _bind_modules() -> void:
     if health_bar:
         health_bar.bind(stats)
 
-    # --- Perception: reach radius from weapon 0 attack 0 range ---
-    if not Engine.is_editor_hint():
-        _bind_reach_detection()
-
     # --- Movement ---
     if movement_module:
         movement_module.character = self
@@ -165,23 +156,6 @@ func _bind_modules() -> void:
     # --- Animation signals ---
     if animation_module and not animation_module.animation_finished.is_connected(_on_animation_finished):
         animation_module.animation_finished.connect(_on_animation_finished)
-
-
-## Reads weapon 0 attack 0 range from the combat module and applies it to
-## reach_detection. Override in subclasses that set reach from data directly.
-func _bind_reach_detection() -> void:
-    if reach_detection == null:
-        return
-
-    if combat_module == null:
-        push_warning(name + ": reach_detection present but combat_module is null — radius not set.")
-        return
-
-    var attack_range := combat_module.get_attack_range(0, 0)
-    if attack_range > 0.0:
-        reach_detection.set_collision_radius(attack_range)
-    else:
-        push_warning(name + ": attack range returned 0 — reach_detection radius not set.")
 
 # -------------------------
 # Lifecycle callbacks
@@ -224,8 +198,6 @@ func reset() -> void:
         health_bar.reset()
     if combat_module:
         combat_module.reset()
-    if reach_detection:
-        reach_detection.reset()
     if movement_module:
         movement_module.reset()
     if navigation_module:
@@ -251,8 +223,6 @@ func set_enabled(value: bool) -> void:
         health_bar.set_enabled(value)
     if combat_module:
         combat_module.set_enabled(value)
-    if reach_detection:
-        reach_detection.set_enabled(value)
     if movement_module:
         movement_module.set_enabled(value)
     if navigation_module:
@@ -381,11 +351,7 @@ func get_facing_direction() -> Vector2:
 @abstract func has_deaggro() -> bool
 
 
-## True when there is at least one target within the reach (attack) detection zone.
-func is_target_in_reach() -> bool:
-    if reach_detection == null:
-        return false
-    return reach_detection.get_target_count(false) > 0
+@abstract func is_target_in_reach() -> bool
 
 
 @abstract func get_leash_distance() -> float
