@@ -23,25 +23,25 @@ enum Mode { THREE_LAYER, TWO_LAYER }
 @export var mode: Mode = Mode.THREE_LAYER
 
 @export_group("Bars")
-@export var under_bar:  TextureProgressBar
-@export var damage_bar: TextureProgressBar   ## Only used in THREE_LAYER mode
-@export var fill_bar:   TextureProgressBar
+@export var under_bar: TextureProgressBar
+@export var damage_bar: TextureProgressBar ## Only used in THREE_LAYER mode
+@export var fill_bar: TextureProgressBar
 
 @export_group("Tween")
-@export var fill_tween_duration:   float = 0.15  ## How fast fill_bar catches up on heal / MP change
-@export var damage_delay:          float = 0.25  ## THREE_LAYER: seconds before damage_bar starts shrinking
-@export var damage_tween_duration: float = 0.35  ## THREE_LAYER: duration of damage_bar shrink tween
+@export var fill_tween_duration: float = 0.15 ## How fast fill_bar catches up on heal / MP change
+@export var damage_delay: float = 0.25 ## THREE_LAYER: seconds before damage_bar starts shrinking
+@export var damage_tween_duration: float = 0.35 ## THREE_LAYER: duration of damage_bar shrink tween
 
 # -------------------------
 # Internal
 # -------------------------
 
 var _current_value: float = 100.0
-var _max_value:     float = 100.0
+var _max_value: float = 100.0
 
 var _damage_delay_timer: Timer
-var _damage_tween:       Tween
-var _fill_tween:         Tween
+var _damage_tween: Tween
+var _fill_tween: Tween
 
 # -------------------------
 # Lifecycle
@@ -58,16 +58,30 @@ func _ready() -> void:
 func _exit_tree() -> void:
     _stop_all_anims()
 
-
 # -------------------------
 # Public API
 # -------------------------
 
 
+func reset() -> void:
+    _stop_all_anims()
+    _sync_all()
+
+
+func set_enabled(value: bool) -> void:
+    visible = value
+    if not value:
+        _stop_all_anims()
+
+
+func is_enabled() -> bool:
+    return visible
+
+
 ## Set a new value, triggering the appropriate animation.
 func set_value(current: float, maximum: float) -> void:
     var old_value := _current_value
-    _max_value    = max(1.0, maximum)
+    _max_value = max(1.0, maximum)
     _current_value = clamp(current, 0.0, _max_value)
     _apply_range()
     _animate(old_value)
@@ -75,12 +89,11 @@ func set_value(current: float, maximum: float) -> void:
 
 ## Force-sync all bars to current value with no animation (e.g. on first bind).
 func force_sync(current: float, maximum: float) -> void:
-    _max_value     = max(1.0, maximum)
+    _max_value = max(1.0, maximum)
     _current_value = clamp(current, 0.0, _max_value)
     _apply_range()
     _stop_all_anims()
     _sync_all()
-
 
 # -------------------------
 # Internal — Wiring
@@ -89,22 +102,21 @@ func force_sync(current: float, maximum: float) -> void:
 
 func _auto_wire() -> void:
     if not under_bar:
-        under_bar  = find_child("UnderBar",  true, false) as TextureProgressBar
+        under_bar = find_child("UnderBar", true, false) as TextureProgressBar
     if not damage_bar:
         damage_bar = find_child("DamageBar", true, false) as TextureProgressBar
     if not fill_bar:
-        fill_bar   = find_child("FillBar",   true, false) as TextureProgressBar
+        fill_bar = find_child("FillBar", true, false) as TextureProgressBar
 
 
 func _ensure_timer() -> void:
     if _damage_delay_timer and is_instance_valid(_damage_delay_timer):
         return
     _damage_delay_timer = Timer.new()
-    _damage_delay_timer.name     = "DamageDelayTimer"
+    _damage_delay_timer.name = "DamageDelayTimer"
     _damage_delay_timer.one_shot = true
     _damage_delay_timer.timeout.connect(_on_damage_delay_timeout)
     add_child(_damage_delay_timer)
-
 
 # -------------------------
 # Internal — Range + Sync
@@ -112,9 +124,9 @@ func _ensure_timer() -> void:
 
 
 func _apply_range() -> void:
-    _set_bar_range(under_bar,  _max_value)
+    _set_bar_range(under_bar, _max_value)
     _set_bar_range(damage_bar, _max_value)
-    _set_bar_range(fill_bar,   _max_value)
+    _set_bar_range(fill_bar, _max_value)
     # UnderBar is always the full dark trough
     if under_bar:
         under_bar.value = _max_value
@@ -132,7 +144,6 @@ func _sync_all() -> void:
         fill_bar.value = _current_value
     if damage_bar:
         damage_bar.value = _current_value
-
 
 # -------------------------
 # Internal — Animation
@@ -202,7 +213,6 @@ func _stop_all_anims() -> void:
     if _fill_tween and is_instance_valid(_fill_tween):
         _fill_tween.kill()
     _fill_tween = null
-
 
 # -------------------------
 # Signal Callbacks

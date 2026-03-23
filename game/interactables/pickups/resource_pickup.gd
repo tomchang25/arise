@@ -27,6 +27,17 @@ func _ready() -> void:
     super._ready()
     _refresh_visual()
 
+# -------------------------
+# Common API
+# -------------------------
+
+
+func reset() -> void:
+    # Clear resource-level state before restoring base pickup state.
+    resource_data = null
+    amount = 1
+    _refresh_visual()
+    super.reset()
 
 # -------------------------
 # Feature APIs
@@ -37,7 +48,6 @@ func setup_resource(data: ResourceData, stack_amount: int) -> void:
     resource_data = data
     amount = max(stack_amount, 1)
     _refresh_visual()
-
 
 # -------------------------
 # Internal Helpers

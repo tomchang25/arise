@@ -172,6 +172,72 @@ func _bind_modules() -> void:
         animation_module.animation_finished.connect(_on_animation_finished)
 
 
+## Restores all runtime state to initial values. Subclasses override to
+## re-duplicate stats before calling super.reset().
+func reset() -> void:
+    velocity = Vector2.ZERO
+    anchor_position = Vector2.ZERO
+    dormant = false
+
+    if hurtbox:
+        hurtbox.reset()
+    if damage_receiver:
+        damage_receiver.reset()
+    if hit_feedback:
+        hit_feedback.reset()
+    if damage_number:
+        damage_number.reset()
+    if health_bar:
+        health_bar.reset()
+    if combat_module:
+        combat_module.reset()
+    if reach_detection:
+        reach_detection.reset()
+    if aggro_detection:
+        aggro_detection.reset()
+    if deaggro_detection:
+        deaggro_detection.reset()
+    if movement_module:
+        movement_module.reset()
+    if navigation_module:
+        navigation_module.reset()
+    if animation_module:
+        animation_module.reset()
+    if soft_collision:
+        soft_collision.reset()
+
+
+## Enables or disables all owned modules. Call set_enabled(false) to freeze
+## the actor silently; call set_enabled(true) to resume.
+func set_enabled(value: bool) -> void:
+    if hurtbox:
+        hurtbox.set_enabled(value)
+    if damage_receiver:
+        damage_receiver.set_enabled(value)
+    if hit_feedback:
+        hit_feedback.set_enabled(value)
+    if damage_number:
+        damage_number.set_enabled(value)
+    if health_bar:
+        health_bar.set_enabled(value)
+    if combat_module:
+        combat_module.set_enabled(value)
+    if reach_detection:
+        reach_detection.set_enabled(value)
+    if aggro_detection:
+        aggro_detection.set_enabled(value)
+    if deaggro_detection:
+        deaggro_detection.set_enabled(value)
+    if movement_module:
+        movement_module.set_enabled(value)
+    if navigation_module:
+        navigation_module.set_enabled(value)
+    if animation_module:
+        animation_module.set_enabled(value)
+    if soft_collision:
+        soft_collision.set_enabled(value)
+
+
 ## Reads weapon 0 attack 0 range from the combat module and applies it to
 ## reach_detection. Override in subclasses that set reach from data directly.
 func _bind_reach_detection() -> void:

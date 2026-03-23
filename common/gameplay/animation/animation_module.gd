@@ -4,11 +4,10 @@ extends Node
 
 signal animation_finished(anim_name: StringName)
 
-@export var enabled := true:
-    set(value):
-        enabled = value
-        if not enabled:
-            _stop_runtime_state()
+@export var enabled: bool = true:
+    set = set_enabled
+
+var _enabled: bool = true
 
 @export var actor: Node2D
 @export var animation_tree: AnimationTree
@@ -42,15 +41,20 @@ func _ready() -> void:
 # -------------------------
 
 
-func set_enabled(value: bool, restore_defaults: bool = true) -> void:
-    enabled = value
+func reset() -> void:
+    _enabled = true
+    _last_direction = Vector2.DOWN
+    set_time_scale(1.0)
 
-    if not enabled and restore_defaults:
+
+func set_enabled(value: bool) -> void:
+    _enabled = value
+    if not _enabled:
         _stop_runtime_state()
 
 
 func is_enabled() -> bool:
-    return enabled
+    return _enabled
 
 
 func has_animation_tree() -> bool:
@@ -66,7 +70,7 @@ func has_playback() -> bool:
 
 
 func travel(state_name: StringName, force_restart: bool = false) -> void:
-    if not enabled:
+    if not _enabled:
         return
 
     if _playback == null:
@@ -83,7 +87,7 @@ func travel(state_name: StringName, force_restart: bool = false) -> void:
 
 
 func set_blend_position(direction: Vector2, state_name: StringName) -> void:
-    if not enabled:
+    if not _enabled:
         return
 
     if animation_tree == null:

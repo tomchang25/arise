@@ -14,6 +14,9 @@ extends Node2D
 ##   3. Make sure min_distance matches across all unit types, or set cell_size
 ##      manually on the SpatialHash autoload before the first enemy spawns.
 
+@export var enabled := true:
+    set = set_enabled
+
 @export var character: CharacterBody2D
 @export var movement_module: MovementModule
 
@@ -33,6 +36,9 @@ extends Node2D
 
 @export var crowd_block_start: float = 3.0
 @export var crowd_block_range: float = 5.0
+
+var _enabled: bool = true
+
 # ---------------------------------------------------------------------------
 # Lifecycle
 # ---------------------------------------------------------------------------
@@ -56,8 +62,23 @@ func _exit_tree() -> void:
     SpatialHash.unregister(character)
 
 
+func reset() -> void:
+    _enabled = true
+    if movement_module:
+        movement_module.set_separation(Vector2.ZERO)
+        movement_module.set_crowd_block_ratio(0.0)
+
+
+func set_enabled(value: bool) -> void:
+    _enabled = value
+    set_physics_process(value)
+    if not value and movement_module:
+        movement_module.set_separation(Vector2.ZERO)
+        movement_module.set_crowd_block_ratio(0.0)
+
+
 func _physics_process(_delta: float) -> void:
-    if Engine.is_editor_hint() or movement_module == null or character == null:
+    if Engine.is_editor_hint() or not _enabled or movement_module == null or character == null:
         return
 
     # Keep the hash up to date with this character's current position.

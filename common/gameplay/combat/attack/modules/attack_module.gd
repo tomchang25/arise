@@ -1,6 +1,7 @@
 @abstract
 class_name AttackModule
 extends Node2D
+
 ## Shared abstract base for all attack module types.
 ##
 ## DetachedAttackModule and AttachedAttackModule both extend this class,
@@ -15,17 +16,27 @@ extends Node2D
 ## AttachedAttackModule maps execute_attack → activate and end_attack → deactivate.
 ## DetachedAttackModule uses execute_attack for fire-and-forget and end_attack to
 ## start the cooldown timer.
+@export var enabled: bool = true:
+    set = set_enabled
 
-var enabled: bool = true:
-    set(value):
-        if enabled == value:
-            return
-        enabled = value
-        _on_enabled_changed(value)
+var _enabled: bool = true
 
 
 @abstract
 func can_attack() -> bool
+
+
+func reset() -> void:
+    _enabled = true
+
+
+func set_enabled(value: bool) -> void:
+    _enabled = value
+    _on_enabled_changed(value)
+
+
+func is_enabled() -> bool:
+    return _enabled
 
 
 func execute_attack(_target_position: Vector2) -> void:

@@ -1,7 +1,8 @@
 class_name DamageNumberModule
 extends Node
 
-@export var enabled: bool = true
+@export var enabled: bool = true:
+    set = set_enabled
 
 @export_group("Dependencies")
 @export var damage_receiver: DamageReceiverModule
@@ -19,6 +20,7 @@ extends Node
 @export var minimum_damage_to_show: float = 10.0
 @export var show_zero_damage: bool = false
 
+var _enabled: bool = true
 var _spawn_action: SpawnPackedSceneAction
 
 
@@ -36,15 +38,33 @@ func _ready() -> void:
         damage_receiver.damaged.connect(_on_damaged)
 
 
+func reset() -> void:
+    _enabled = true
+
+
+func set_enabled(value: bool) -> void:
+    _enabled = value
+    if not _enabled:
+        _stop_runtime_state()
+
+
+func is_enabled() -> bool:
+    return _enabled
+
+
+func _stop_runtime_state() -> void:
+    pass
+
+
 func _on_damaged(amount: float, _new_health: float, info: EffectContext) -> void:
-    if not enabled or not _should_show(amount):
+    if not _enabled:
         return
 
     SpawnThrottle.enqueue(&"damage_number", func(): spawn_damage_number(amount, info))
 
 
 func spawn_damage_number(amount: float, info: EffectContext = null) -> void:
-    if not enabled:
+    if not _enabled:
         return
 
     if _spawn_action == null:
