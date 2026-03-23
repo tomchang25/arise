@@ -20,16 +20,7 @@ extends Node
 @export var minimum_damage_to_show: float = 10.0
 @export var show_zero_damage: bool = false
 
-@export_group("Throttling")
-@export var enabled_throttle := true
-@export var max_spawns_per_frame := 6
-@export var max_active_numbers := 20
-
 var _enabled: bool = true
-
-var _spawned_this_frame: int = 0
-var _last_spawn_frame: int = -1
-
 var _spawn_action: SpawnPackedSceneAction
 
 
@@ -49,8 +40,6 @@ func _ready() -> void:
 
 func reset() -> void:
     _enabled = true
-    _spawned_this_frame = 0
-    _last_spawn_frame = -1
 
 
 func set_enabled(value: bool) -> void:
@@ -74,10 +63,7 @@ func _on_damaged(amount: float, _new_health: float, info: EffectContext) -> void
     if not _should_show(amount):
         return
 
-    if enabled_throttle and not _can_spawn_now():
-        return
-
-    spawn_damage_number(amount, info)
+    SpawnThrottle.enqueue(&"damage_number", spawn_damage_number.bind(amount, info))
 
 
 func spawn_damage_number(amount: float, info: EffectContext = null) -> void:
@@ -99,6 +85,10 @@ func spawn_damage_number(amount: float, info: EffectContext = null) -> void:
     request.setup_direct(_spawn_action, _get_spawn_position(), ctx)
 
     var result := await request.execute()
+
+    if not is_instance_valid(self):
+        return
+
     if not result.success:
         return
 
@@ -112,8 +102,6 @@ func spawn_damage_number(amount: float, info: EffectContext = null) -> void:
         is_crit = randf() < clamp(info.source_stats.current_crit_chance + info.definition.crit_bonus, 0.0, 1.0)
     number.setup(amount, is_crit)
 
-    _register_spawn()
-
 # -------------------------
 # Internal
 # -------------------------
@@ -123,31 +111,6 @@ func _should_show(amount: float) -> bool:
     if show_zero_damage and amount <= 0.0:
         return true
     return amount >= minimum_damage_to_show
-
-
-func _can_spawn_now() -> bool:
-    _sync_frame_counter()
-
-    if _spawned_this_frame >= max_spawns_per_frame:
-        return false
-
-    var spawn_parent := SpawnContext.resolve_spawn_parent(spawn_group, self)
-    if is_instance_valid(spawn_parent) and spawn_parent.get_child_count() >= max_active_numbers:
-        return false
-
-    return true
-
-
-func _register_spawn() -> void:
-    _sync_frame_counter()
-    _spawned_this_frame += 1
-
-
-func _sync_frame_counter() -> void:
-    var current_frame := Engine.get_process_frames()
-    if current_frame != _last_spawn_frame:
-        _last_spawn_frame = current_frame
-        _spawned_this_frame = 0
 
 
 func _get_spawn_position() -> Vector2:

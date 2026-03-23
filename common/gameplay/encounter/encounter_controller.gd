@@ -99,6 +99,7 @@ func start_next_round() -> void:
 
 ## Force-stops the encounter and cleans up all active groups.
 func end(need_cleanup: bool = false) -> void:
+    SpawnThrottle.clear(&"encounter_enemy")
     _state = EncounterState.IDLE
     _config = null
     _spawn_timer = 0.0
@@ -170,8 +171,7 @@ func _begin_round() -> void:
 func _run_pacing_tick() -> void:
     _cleanup_invalid()
 
-    var active := _active_groups.size()
-
+    var active := _active_groups.size() + _pending_spawns
     if _is_kill_budget_exhausted():
         return
 
@@ -188,6 +188,7 @@ func _run_pacing_tick() -> void:
         count = mini(count, budget_left)
 
     for i in range(count):
+        _pending_spawns += 1
         _request_spawn()
 
 
@@ -203,7 +204,7 @@ func _is_kill_budget_exhausted() -> bool:
 
     # Wave mode: hard stop once (killed + active) reaches the budget.
     # Player must clear remaining stragglers themselves.
-    return (_groups_killed + _active_groups.size()) >= _groups_to_kill
+    return (_groups_killed + _active_groups.size() + _pending_spawns) >= _groups_to_kill
 
 
 func _kill_budget_remaining() -> int:
@@ -253,7 +254,7 @@ func _request_spawn() -> void:
         Debug.warn("EncounterController: group table returned null profile")
         return
 
-    _spawn_group(profile)
+    SpawnThrottle.enqueue(&"encounter_enemy", _spawn_group.bind(profile), 0.1)
 
 
 func _spawn_group(group_profile: EnemyGroupProfile) -> void:
@@ -278,7 +279,6 @@ func _spawn_group(group_profile: EnemyGroupProfile) -> void:
     else:
         position = resolved as Vector2
 
-    _pending_spawns += 1
     var action := SpawnEnemyGroupAction.new()
     action.profile = group_profile
 
