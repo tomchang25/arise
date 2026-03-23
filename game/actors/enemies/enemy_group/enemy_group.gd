@@ -79,6 +79,9 @@ func _ready() -> void:
 
     _player = get_tree().get_first_node_in_group("player")
 
+    if not detection_module:
+        detection_module = find_child("DetectionModule", true, false) as DetectionModule
+
     if detection_module:
         detection_module.radius = deaggro_range
 
