@@ -140,6 +140,57 @@ func _inject_stats_events() -> void:
 # -------------------------
 
 
+func reset() -> void:
+    global_position = _spawn_pos
+    velocity = Vector2.ZERO
+
+    if data:
+        stats = data.stats.duplicate()
+        _ensure_stats()
+        if hurtbox:
+            hurtbox.owner_stats = stats
+        if damage_receiver:
+            damage_receiver.stats = stats
+        if hit_feedback:
+            hit_feedback.stats = stats
+        if health_bar:
+            health_bar.bind(stats)
+        if combat_module and data.weapons.size() > 0:
+            combat_module.setup(stats, data.weapons)
+
+    if hurtbox:
+        hurtbox.reset()
+    if damage_receiver:
+        damage_receiver.reset()
+    if hit_feedback:
+        hit_feedback.reset()
+    if damage_number:
+        damage_number.reset()
+    if health_bar:
+        health_bar.reset()
+    if combat_module:
+        combat_module.reset()
+    if movement_module:
+        movement_module.reset()
+
+
+func set_enabled(value: bool) -> void:
+    if hurtbox:
+        hurtbox.set_enabled(value)
+    if damage_receiver:
+        damage_receiver.set_enabled(value)
+    if hit_feedback:
+        hit_feedback.set_enabled(value)
+    if damage_number:
+        damage_number.set_enabled(value)
+    if health_bar:
+        health_bar.set_enabled(value)
+    if combat_module:
+        combat_module.set_enabled(value)
+    if movement_module:
+        movement_module.set_enabled(value)
+
+
 func heal(amount: float) -> void:
     if not stats:
         return

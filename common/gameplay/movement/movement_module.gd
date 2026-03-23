@@ -73,6 +73,18 @@ func _physics_process(delta: float) -> void:
 # -------------------------
 
 
+func reset() -> void:
+    enabled = true
+    manual_velocity = Vector2.ZERO
+    path_velocity = Vector2.ZERO
+    knockback_velocity = Vector2.ZERO
+    separation_velocity = Vector2.ZERO
+    _computed_velocity = Vector2.ZERO
+    use_manual = true
+    use_path = false
+    crowd_block_ratio = 0.0
+
+
 func set_enabled(value: bool, clear_motion: bool = true) -> void:
     enabled = value
 

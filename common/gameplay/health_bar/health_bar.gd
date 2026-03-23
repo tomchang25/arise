@@ -43,6 +43,18 @@ func _exit_tree() -> void:
     _unbind()
 
 
+func reset() -> void:
+    _stop_damage_anim()
+    if stats:
+        _refresh(true)
+
+
+func set_enabled(value: bool) -> void:
+    visible = value
+    if not value:
+        _stop_damage_anim()
+
+
 func bind(target_stats: Stats) -> void:
     _unbind()
     stats = target_stats

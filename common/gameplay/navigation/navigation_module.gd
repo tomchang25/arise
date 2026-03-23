@@ -158,6 +158,14 @@ func _draw() -> void:
 # -------------------------
 
 
+func reset() -> void:
+    enabled = true
+    clear_target()
+    _target_update_timer = 0.0
+    _path_tick_timer = 0.0
+    _process_skip = 0
+
+
 func set_enabled(value: bool, clear_target_data: bool = true) -> void:
     enabled = value
 

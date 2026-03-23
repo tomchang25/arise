@@ -75,6 +75,12 @@ func _physics_process(_delta: float) -> void:
 # -------------------------
 
 
+func reset() -> void:
+    _stop_runtime_state()
+    enabled = true
+    _refresh_runtime_state()
+
+
 func set_enabled(value: bool) -> void:
     enabled = value
 

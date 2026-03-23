@@ -42,6 +42,12 @@ func _ready() -> void:
 # -------------------------
 
 
+func reset() -> void:
+    enabled = true
+    _last_direction = Vector2.DOWN
+    set_time_scale(1.0)
+
+
 func set_enabled(value: bool, restore_defaults: bool = true) -> void:
     enabled = value
 

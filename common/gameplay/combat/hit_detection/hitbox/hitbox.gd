@@ -126,6 +126,16 @@ func _setup_collision_shape() -> void:
         collision_node.shape = shape
 
 
+func reset() -> void:
+    enabled = true
+    context = null
+    _hit_times.clear()
+
+
+func set_enabled(value: bool) -> void:
+    enabled = value
+
+
 func _setup_collision_layers() -> void:
     set_collision_layer_value(1, false)
     set_collision_mask_value(1, false)

@@ -28,6 +28,10 @@ var enabled: bool = true:
 func can_attack() -> bool
 
 
+func reset() -> void:
+    enabled = true
+
+
 func execute_attack(_target_position: Vector2) -> void:
     push_warning("%s: execute_attack() is not implemented" % get_class())
 

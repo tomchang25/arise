@@ -44,6 +44,16 @@ func _ready() -> void:
         damage_receiver.damaged.connect(_on_damaged)
 
 
+func reset() -> void:
+    enabled = true
+    _spawned_this_frame = 0
+    _last_spawn_frame = -1
+
+
+func set_enabled(value: bool) -> void:
+    enabled = value
+
+
 func _on_damaged(amount: float, _new_health: float, info: EffectContext) -> void:
     if not enabled:
         return

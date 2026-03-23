@@ -49,6 +49,8 @@ extends Node
 @export var blocked_audio: SpatialAudioEvent
 @export var died_audio: SpatialAudioEvent
 
+var enabled: bool = true
+
 var _flash_tween: Tween
 var _cached_targets: Array[CanvasItem] = []
 
@@ -72,12 +74,29 @@ func _ready() -> void:
             damage_receiver.died.connect(_on_died)
 
 
+func reset() -> void:
+    enabled = true
+    if _flash_tween and _flash_tween.is_valid():
+        _flash_tween.kill()
+    _flash_tween = null
+
+
+func set_enabled(value: bool) -> void:
+    enabled = value
+    if not enabled:
+        if _flash_tween and _flash_tween.is_valid():
+            _flash_tween.kill()
+        _flash_tween = null
+
+
 func _get_flash_time_from_invuln() -> float:
     var t := stats.invuln_time
     return min(t * 1.2, t + 0.1)
 
 
 func _on_damaged(_amount: float, _new_hp: float, info: EffectContext) -> void:
+    if not enabled:
+        return
     if not info:
         return
 
@@ -95,11 +114,15 @@ func _on_damaged(_amount: float, _new_hp: float, info: EffectContext) -> void:
 
 
 func _on_blocked(_info: EffectContext) -> void:
+    if not enabled:
+        return
     if enabled_sfx and blocked_audio:
         _play_audio_event(blocked_audio)
 
 
 func _on_died(info: EffectContext) -> void:
+    if not enabled:
+        return
     if enabled_particles:
         _spawn_death_particles(info)
 

@@ -37,6 +37,10 @@ func _ready() -> void:
 # -------------------------
 
 
+func reset() -> void:
+    enabled = true
+
+
 func set_enabled(value: bool) -> void:
     enabled = value
 

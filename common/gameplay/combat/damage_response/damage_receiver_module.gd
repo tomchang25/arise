@@ -88,6 +88,15 @@ func _calculate_damage(ctx: EffectContext) -> float:
     return dmg
 
 
+func reset() -> void:
+    enabled = true
+    _invuln_until_msec = 0
+
+
+func set_enabled(value: bool) -> void:
+    enabled = value
+
+
 func is_invulnerable() -> bool:
     return Time.get_ticks_msec() < _invuln_until_msec
 

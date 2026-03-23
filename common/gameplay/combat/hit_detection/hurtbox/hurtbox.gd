@@ -42,6 +42,14 @@ func _setup_collision_layers() -> void:
             set_collision_layer_value(Global.ENEMY_HURTBOX, true)
 
 
+func reset() -> void:
+    enabled = true
+
+
+func set_enabled(value: bool) -> void:
+    enabled = value
+
+
 func receive_hit(context: EffectContext) -> void:
     if not enabled:
         return

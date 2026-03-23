@@ -63,6 +63,12 @@ func execute_attack(_target_position: Vector2) -> void:
     is_active = true
     _set_hitbox_active(true)
 
+func reset() -> void:
+    super.reset()
+    is_active = false
+    _set_hitbox_active(false)
+
+
 ## Deactivates the hitbox.
 ## Disable the hitbox.
 ## Always runs regardless of the enabled flag — teardown must never be suppressed.

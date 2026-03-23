@@ -64,6 +64,17 @@ func _exit_tree() -> void:
 # -------------------------
 
 
+func reset() -> void:
+    _stop_all_anims()
+    _sync_all()
+
+
+func set_enabled(value: bool) -> void:
+    visible = value
+    if not value:
+        _stop_all_anims()
+
+
 ## Set a new value, triggering the appropriate animation.
 func set_value(current: float, maximum: float) -> void:
     var old_value := _current_value

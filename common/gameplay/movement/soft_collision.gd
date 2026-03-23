@@ -33,6 +33,9 @@ extends Node2D
 
 @export var crowd_block_start: float = 3.0
 @export var crowd_block_range: float = 5.0
+
+var enabled: bool = true
+
 # ---------------------------------------------------------------------------
 # Lifecycle
 # ---------------------------------------------------------------------------
@@ -56,8 +59,23 @@ func _exit_tree() -> void:
     SpatialHash.unregister(character)
 
 
+func reset() -> void:
+    enabled = true
+    if movement_module:
+        movement_module.set_separation(Vector2.ZERO)
+        movement_module.set_crowd_block_ratio(0.0)
+
+
+func set_enabled(value: bool) -> void:
+    enabled = value
+    set_physics_process(value)
+    if not value and movement_module:
+        movement_module.set_separation(Vector2.ZERO)
+        movement_module.set_crowd_block_ratio(0.0)
+
+
 func _physics_process(_delta: float) -> void:
-    if Engine.is_editor_hint() or movement_module == null or character == null:
+    if Engine.is_editor_hint() or not enabled or movement_module == null or character == null:
         return
 
     # Keep the hash up to date with this character's current position.
