@@ -73,7 +73,7 @@ func _run_next_phase() -> void:
 
     var phase_def: EffectPhaseDefinition = _phases[_current_index]
     _current_index += 1
-    
+
     if phase_def == null:
         push_warning(
             "PhaseSequencer: null EffectPhaseDefinition at index %d — skipping" \
@@ -99,9 +99,13 @@ func _run_next_phase() -> void:
     # Instantiate the phase effect. The root node must extend PhaseEffect —
     # either an AttackEffect (hitbox branch) or a DeliveryEmitter (spawn branch).
     var spawn_ctx := SpawnContext.new()
-    spawn_ctx.setup(get_parent(), 0, null, {})
-    var spawn_action := SpawnPackedSceneAction.create(phase_def.effect_scene, true)
+    spawn_ctx.setup(get_parent(), 0, null, { })
+
+    var spawn_action := SpawnPackedSceneAction.create(phase_def.effect_scene)
+    spawn_action.use_pool = true
+
     var effect := SpawnExecutor.execute_at_node(spawn_action, get_parent() as Node2D, spawn_ctx) as PhaseEffect
+
     if effect == null:
         push_error(
             "PhaseSequencer: effect_scene at index %d did not instantiate to PhaseEffect" \

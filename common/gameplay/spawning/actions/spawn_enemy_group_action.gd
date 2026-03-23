@@ -41,7 +41,10 @@ func execute(transform: Transform2D, ctx: SpawnContext) -> Node:
             var member_ctx := SpawnContext.new()
             member_ctx.setup(group, ctx.rng_seed, ctx.source_node, ctx.metadata)
             member_ctx.validator = ctx.validator
-            var spawn_action := SpawnPackedSceneAction.create(scene, true)
+
+            var spawn_action := SpawnPackedSceneAction.create(scene)
+            spawn_action.use_pool = true
+
             var enemy := SpawnExecutor.execute_at_position(spawn_action, enemy_pos, member_ctx) as Enemy
             if enemy == null:
                 Debug.warn("SpawnEnemyGroupAction: scene did not instantiate to Enemy")

@@ -54,9 +54,12 @@ func summon(type_index: int) -> bool:
     if army_type.scene == null or _army_handler == null:
         return false
 
-    var spawn_action := SpawnPackedSceneAction.create(army_type.scene, true)
+    var spawn_action := SpawnPackedSceneAction.create(army_type.scene)
+    spawn_action.use_pool = true
+
     var spawn_ctx := SpawnContext.new()
-    spawn_ctx.setup(_army_handler, 0, _player, {})
+    spawn_ctx.setup(_army_handler, 0, _player, { })
+
     var unit := SpawnExecutor.execute_at_position(spawn_action, _player.global_position, spawn_ctx) as Army
     if unit == null:
         return false
