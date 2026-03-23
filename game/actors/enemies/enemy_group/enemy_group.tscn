@@ -1,9 +1,18 @@
-[gd_scene load_steps=2 format=3 uid="uid://cssols6rmii6m"]
+[gd_scene format=3 uid="uid://cssols6rmii6m"]
 
 [ext_resource type="Script" uid="uid://cscr8c257tepu" path="res://game/actors/enemies/enemy_group/enemy_group.gd" id="1_mb4my"]
+[ext_resource type="Script" uid="uid://hyy86fs5b0fs" path="res://common/gameplay/detection/detection_module.gd" id="2_62t7i"]
 
-[node name="EnemyGroup" type="Node2D"]
+[node name="EnemyGroup" type="Node2D" unique_id=951725354 node_paths=PackedStringArray("detection_module")]
 script = ExtResource("1_mb4my")
+detection_module = NodePath("DetectionModule")
 
-[node name="WaitTimer" type="Timer" parent="."]
+[node name="DetectionModule" type="Area2D" parent="." unique_id=1124588444]
+collision_layer = 2
+collision_mask = 257
+monitorable = false
+script = ExtResource("2_62t7i")
+metadata/_custom_type_script = "uid://hyy86fs5b0fs"
+
+[node name="WaitTimer" type="Timer" parent="." unique_id=1688168976]
 autostart = true

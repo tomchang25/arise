@@ -46,9 +46,7 @@ func _update(delta: float) -> void:
             return
 
     # Target within reach → attack.
-    var _reach_target := actor.get_nearest_aggro_target()
-    var _reach := actor.get_attack_range()
-    if _reach_target and _reach > 0.0 and actor.global_position.distance_to(_reach_target.global_position) <= _reach:
+    if actor.is_target_in_reach():
         change_state(ActorStateId.ATTACK)
         return
 

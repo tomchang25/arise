@@ -157,7 +157,6 @@ func _bind_modules() -> void:
     if animation_module and not animation_module.animation_finished.is_connected(_on_animation_finished):
         animation_module.animation_finished.connect(_on_animation_finished)
 
-
 # -------------------------
 # Lifecycle callbacks
 # -------------------------
@@ -350,6 +349,9 @@ func get_facing_direction() -> Vector2:
 
 
 @abstract func has_deaggro() -> bool
+
+
+@abstract func is_target_in_reach() -> bool
 
 
 @abstract func get_leash_distance() -> float

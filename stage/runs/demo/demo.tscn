@@ -54,13 +54,17 @@ position = Vector2(-2.481, 0)
 
 [node name="EnemiesRoot" type="Node2D" parent="." unique_id=1162309402]
 
-[node name="EncounterController" type="Node" parent="." unique_id=349715817 node_paths=PackedStringArray("enemies_root")]
+[node name="EnemiesContainer" type="Node2D" parent="." unique_id=1803677512]
+
+[node name="EncounterController" type="Node" parent="." unique_id=349715817 node_paths=PackedStringArray("enemies_root", "enemies_container")]
 script = ExtResource("4_a6hy3")
 enemies_root = NodePath("../EnemiesRoot")
+enemies_container = NodePath("../EnemiesContainer")
 metadata/_custom_type_script = "uid://qonxf7sblp5f"
 
 [node name="DespawnController" type="Node2D" parent="." unique_id=544527338 node_paths=PackedStringArray("tracked_target")]
 script = ExtResource("5_60flp")
+enabled = false
 tracked_target = NodePath("../Player")
 despawn_distance = 960.0
 draw_debug = true

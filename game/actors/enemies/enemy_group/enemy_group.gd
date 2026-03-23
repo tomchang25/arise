@@ -14,13 +14,6 @@ signal members_changed
 # Exports — Anchor tracking
 # -------------------------
 
-## When enabled, the anchor is updated to the player's world position every
-## [member track_interval] seconds instead of being fixed in place.
-@export var track_player: bool = false
-
-## Seconds between automatic anchor updates when [member track_player] is true.
-@export var track_interval: float = 5.0
-
 @export var dormant_distance: float = 480.0
 @export var dormant_check_interval: float = 1.0
 
@@ -35,6 +28,10 @@ signal members_changed
 ## Radius is set to deaggro_range in _ready().
 @export var detection_module: DetectionModule
 
+## Maximum distance any member may stray from spawn_pivot before being
+## forced back home. Set to 0 to disable leashing entirely.
+@export var leash_distance: float = 300.0
+
 # -------------------------
 # Internal state
 # -------------------------
@@ -46,17 +43,10 @@ var _members: Array[Enemy] = []
 var _living_count: int = 0
 var _was_depleted: bool = false
 
-## The logical anchor position used to compute each member's formation slot.
-## Stored as a plain Vector2 so that changing it does NOT move children.
-var _anchor: Vector2 = Vector2.ZERO
-
 ## Per-member anchor offsets relative to _anchor.
 ## Stored when a member is registered so anchor_position updates automatically
 ## whenever set_anchor() is called.
 var _anchor_offsets: Dictionary = { }
-
-## Accumulated time for [member track_player] periodic updates.
-var _track_timer: float = 0.0
 
 ## Accumulated time for position update (every POSITION_UPDATE_INTERVAL seconds).
 var _position_timer: float = 0.0
@@ -72,6 +62,8 @@ var dormant: bool = false
 var _aggroed: bool = false
 var _aggro_timer: float = 0.0
 
+var _returning_to_spawn: bool = false
+
 # How often to run the distance-based aggro check (seconds).
 const AGGRO_CHECK_INTERVAL := 0.1
 
@@ -84,7 +76,6 @@ func _ready() -> void:
     # Capture the node's world position as the pivot the moment it enters the tree.
     # The spawner should place the node at the desired center before add_child().
     spawn_pivot = global_position
-    _anchor = global_position
 
     _player = get_tree().get_first_node_in_group("player")
 
@@ -93,13 +84,6 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
-    # Optionally update the anchor to the player's position every N seconds.
-    if track_player and _player:
-        _track_timer += delta
-        if _track_timer >= track_interval:
-            _track_timer = 0.0
-            set_anchor(_player.global_position)
-
     # Dormant check
     _dormant_timer += delta
     if _dormant_timer >= dormant_check_interval:
@@ -112,6 +96,20 @@ func _physics_process(delta: float) -> void:
         _position_timer = 0.0
         global_position = get_center()
 
+        # Propagate updated anchor_positions to all living members.
+        for member in get_alive_members():
+            var offset: Vector2 = _anchor_offsets.get(member, Vector2.ZERO)
+            if _returning_to_spawn:
+                member.anchor_position = spawn_pivot
+            else:
+                member.anchor_position = global_position + offset
+
+        # Leash check runs after position update so global_position is current.
+        _check_leash()
+
+        if _returning_to_spawn:
+            if global_position.distance_to(spawn_pivot) < (leash_distance / 4):
+                _returning_to_spawn = false
     if dormant:
         return
 
@@ -160,15 +158,6 @@ func register_member(enemy: Enemy, setup_position: Vector2 = Vector2.ZERO) -> vo
 # -------------------------
 
 
-## Moves the formation anchor to [param new_position] and immediately updates
-## every member's anchor_position. Does NOT move the Node2D itself.
-func set_anchor(new_position: Vector2) -> void:
-    _anchor = new_position
-    for member in get_alive_members():
-        var offset: Vector2 = _anchor_offsets.get(member, Vector2.ZERO)
-        member.anchor_position = _anchor + offset
-
-
 ## Returns the live centroid of all members.
 ## Falls back to spawn_pivot when all members are dead (minimap icon stays in place).
 func get_center() -> Vector2:
@@ -215,28 +204,66 @@ func _update_aggro_state() -> void:
     if not _player:
         return
 
+    if _returning_to_spawn:
+        return
+
     var dist := _player.global_position.distance_to(global_position)
 
     if not _aggroed and dist < aggro_range:
         _aggroed = true
-        var group_target: Node2D = detection_module.get_closest_target(false) if detection_module else _player
-        for member in get_alive_members():
-            member.group_aggroed = true
-            member.group_target = group_target
-            member.state_machine.request_transition(ActorState.ActorStateId.CHASE)
+        _assign_targets_to_members()
 
     elif _aggroed:
-        var group_target: Node2D = detection_module.get_closest_target(false) if detection_module else null
-        if group_target == null:
+        # Deaggro if no targets remain in detection range.
+        if detection_module == null or detection_module.get_closest_target(false) == null:
             _aggroed = false
+            _returning_to_spawn = true
             for member in get_alive_members():
                 member.group_aggroed = false
                 member.group_target = null
-                member.state_machine.request_transition(ActorState.ActorStateId.RETURN_TO_ANCHOR)
         else:
-            # Push updated group_target to all members every aggro tick (target may switch).
-            for member in get_alive_members():
-                member.group_target = group_target
+            # Re-assign each tick so members switch target if a closer one appears.
+            _assign_targets_to_members()
+
+
+func _assign_targets_to_members() -> void:
+    var targets: Array[Node2D] = detection_module.get_targets(false) if detection_module else [_player]
+    for member in get_alive_members():
+        member.group_aggroed = true
+        member.group_target = _get_closest_target_to(member.global_position, targets)
+
+
+func _get_closest_target_to(origin: Vector2, targets: Array[Node2D]) -> Node2D:
+    var closest: Node2D = null
+    var min_dist_sq := INF
+    for target in targets:
+        if not is_instance_valid(target):
+            continue
+        var d := origin.distance_squared_to(target.global_position)
+        if d < min_dist_sq:
+            min_dist_sq = d
+            closest = target
+    return closest
+
+
+func _check_leash() -> void:
+    if leash_distance <= 0.0:
+        return
+
+    # Use group center (global_position) as the leash reference — if the whole
+    # group has drifted too far from spawn_pivot, pull everyone back at once.
+    if global_position.distance_to(spawn_pivot) <= leash_distance:
+        return
+
+    _aggroed = false
+    _returning_to_spawn = true
+    for member in get_alive_members():
+        # Reset each member's anchor to their original spawn slot so
+        # RETURN_TO_ANCHOR navigates home, not the now-distant center.
+        var offset: Vector2 = _anchor_offsets.get(member, Vector2.ZERO)
+        member.anchor_position = spawn_pivot + offset
+        member.group_aggroed = false
+        member.group_target = null
 
 
 func _on_member_died(_info, enemy: Enemy) -> void:
@@ -256,6 +283,12 @@ func _on_member_died(_info, enemy: Enemy) -> void:
 
 func _update_dormant_state() -> void:
     if not _player:
+        return
+
+    if _returning_to_spawn:
+        return
+
+    if _aggroed:
         return
 
     var dist := _player.global_position.distance_to(global_position)
