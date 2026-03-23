@@ -11,7 +11,9 @@ var validator: SpawnPositionValidator = null
 var _rng: RandomNumberGenerator
 
 
+# Deprecated: use SpawnContext.create() instead
 func setup(parent: Node = null, setup_seed: int = 0, source: Node = null, extra_metadata: Dictionary = { }) -> void:
+    push_warning("[%s]: SpawnContext.setup() is deprecated, use SpawnContext.create() instead" % Debug.get_caller())
     spawn_parent = parent
     rng_seed = setup_seed
     source_node = source
@@ -52,3 +54,19 @@ static func resolve_spawn_parent(spawn_group: String, source: Node = null) -> No
         Debug.warn("SpawnContext: spawn_group '%s' not found, falling back to current_scene" % spawn_group)
 
     return tree.current_scene
+
+
+static func create(
+        parent: Node = null,
+        new_rng_seed: int = 0,
+        new_source_node: Node = null,
+        new_validator: SpawnPositionValidator = null,
+        new_metadata: Dictionary = { },
+) -> SpawnContext:
+    var ctx := SpawnContext.new()
+    ctx.spawn_parent = parent
+    ctx.rng_seed = new_rng_seed
+    ctx.source_node = new_source_node
+    ctx.metadata = new_metadata
+    ctx.validator = new_validator
+    return ctx

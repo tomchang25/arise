@@ -282,8 +282,9 @@ func _spawn_group(group_profile: EnemyGroupProfile) -> void:
     var action := SpawnEnemyGroupAction.new()
     action.profile = group_profile
 
-    var ctx := SpawnContext.new()
-    ctx.setup(enemies_root, _rng.randi(), self)
+    var ctx := SpawnContext.create(enemies_root)
+    ctx.rng_seed = _rng.randi()
+    ctx.source_node = self
     ctx.validator = spawn_validator
 
     var spawned := await SpawnWarningExecutor.execute_at_position(warning_point_scene, action, position, ctx)

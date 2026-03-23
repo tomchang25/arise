@@ -38,8 +38,7 @@ func execute(transform: Transform2D, ctx: SpawnContext) -> Node:
             else:
                 enemy_pos = group.spawn_pivot + SpatialRandomUtils.random_point_in_circle(Vector2.ZERO, profile.spawn_radius, rng)
 
-            var member_ctx := SpawnContext.new()
-            member_ctx.setup(group, ctx.rng_seed, ctx.source_node, ctx.metadata)
+            var member_ctx := SpawnContext.create(group, ctx.rng_seed, ctx.source_node, ctx.validator, ctx.metadata)
             member_ctx.validator = ctx.validator
 
             var spawn_action := SpawnPackedSceneAction.create(scene)
