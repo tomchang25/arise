@@ -65,7 +65,6 @@ func _ready() -> void:
         encounter_controller.round_cleared.connect(_on_round_cleared)
         encounter_controller.group_depleted.connect(_on_group_depleted)
 
-
 # -------------------------
 # Public API
 # -------------------------

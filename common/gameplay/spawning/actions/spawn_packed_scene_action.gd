@@ -60,10 +60,10 @@ func execute(transform: Transform2D, ctx: SpawnContext) -> Node:
 
 static func create(
         p_scene: PackedScene,
-        p_use_pool: bool = true,
         p_use_anchor_position: bool = true,
         p_use_anchor_rotation: bool = false,
         p_random_rotation: bool = false,
+        p_use_pool: bool = false,
         p_local_offset: Vector2 = Vector2.ZERO,
         p_scatter_radius: float = 0.0,
 ) -> SpawnPackedSceneAction:

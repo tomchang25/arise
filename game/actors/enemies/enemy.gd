@@ -38,11 +38,6 @@ func _ready() -> void:
     _apply_data()
     _bind_modules()
 
-    if anchor_position == Vector2.ZERO:
-        push_warning("Enemy: anchor_position not set. Assign it at spawn time.")
-    else:
-        global_position = anchor_position
-
 
 func _auto_wire_nodes() -> void:
     super._auto_wire_nodes()
