@@ -2,6 +2,8 @@ class_name Hitbox
 extends Area2D
 
 signal hit_enemy
+@export var enabled: bool = true:
+    set = set_enabled
 
 var _enabled: bool = true
 

@@ -2,6 +2,9 @@
 class_name MovementModule
 extends Node
 
+@export var enabled := true:
+    set = set_enabled
+
 var _enabled: bool = true
 
 @export var character: CharacterBody2D

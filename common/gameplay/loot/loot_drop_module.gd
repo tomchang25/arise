@@ -3,6 +3,9 @@ extends Node
 
 signal loot_dropped
 
+@export var enabled := true:
+    set = set_enabled
+
 var _enabled: bool = true
 
 @export_group("Dependencies")
@@ -27,7 +30,6 @@ func _ready() -> void:
         if owner_node == null:
             Debug.warn("LootDropModule: owner_node is null and owner is not Node2D — wire it manually")
 
-
 # -------------------------
 # Common API
 # -------------------------
@@ -45,7 +47,6 @@ func set_enabled(value: bool) -> void:
 
 func is_enabled() -> bool:
     return _enabled
-
 
 # -------------------------
 # Loot Drop
@@ -105,7 +106,7 @@ func drop_loot() -> void:
             Debug.invalid("no valid entries after filtering")
             continue
 
-        for _i in range(table.rolls):
+        for i in range(table.rolls):
             var entry := _pick_weighted_entry(valid_entries)
             if entry == null:
                 continue
@@ -124,7 +125,6 @@ func drop_loot() -> void:
     if did_spawn:
         loot_dropped.emit()
 
-
 # -------------------------
 # Internal Helpers
 # -------------------------
@@ -136,7 +136,7 @@ func _build_spawn_context() -> SpawnContext:
         return null
 
     var spawn_ctx := SpawnContext.new()
-    spawn_ctx.setup(parent, 0, owner_node, {"spawn_reason": "loot_drop"})
+    spawn_ctx.setup(parent, 0, owner_node, { "spawn_reason": "loot_drop" })
     return spawn_ctx
 
 
@@ -238,4 +238,4 @@ func _setup_spawned_loot_instance(instance: Node, entry: LootDropEntry, amount: 
 
 
 func _stop_runtime_state() -> void:
-    pass  # Loot drop is one-shot — no timers or ongoing processes to cancel
+    pass # Loot drop is one-shot — no timers or ongoing processes to cancel

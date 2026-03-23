@@ -6,6 +6,9 @@ signal navigation_finished
 signal target_changed(target_position: Vector2)
 signal target_lost
 
+@export var enabled := true:
+    set = set_enabled
+
 var _enabled: bool = true
 
 @export_group("References")

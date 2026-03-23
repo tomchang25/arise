@@ -4,6 +4,9 @@ extends Node
 
 signal animation_finished(anim_name: StringName)
 
+@export var enabled: bool = true:
+    set = set_enabled
+
 var _enabled: bool = true
 
 @export var actor: Node2D

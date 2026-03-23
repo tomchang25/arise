@@ -8,6 +8,9 @@ signal pickup_collected(pickup: BasePickup)
 
 const PICKUP_MASK := 1 << 31
 
+@export var enabled := true:
+    set = set_enabled
+
 var _enabled: bool = true
 
 @export_group("Dependencies")
@@ -64,7 +67,6 @@ func _physics_process(_delta: float) -> void:
         else:
             pickup.clear_magnet_target(self)
 
-
 # -------------------------
 # Common API
 # -------------------------
@@ -86,7 +88,6 @@ func set_enabled(value: bool) -> void:
 func is_enabled() -> bool:
     return _enabled
 
-
 # -------------------------
 # Pickup Query
 # -------------------------
@@ -102,7 +103,6 @@ func get_overlapping_pickups() -> Array[BasePickup]:
         if pickup != null and is_instance_valid(pickup):
             pickups.append(pickup)
     return pickups
-
 
 # -------------------------
 # Pickup Collection
@@ -136,7 +136,6 @@ func collect_pickup(pickup: BasePickup) -> bool:
         return collect_item(pickup.item_data, pickup.amount)
 
     return false
-
 
 # -------------------------
 # Resource Collection
@@ -264,7 +263,6 @@ func add_gold(amount: int) -> bool:
 
     return stats.add_gold(amount)
 
-
 # -------------------------
 # Item Collection
 # -------------------------
@@ -294,7 +292,6 @@ func collect_item(item_data: ItemData, amount: int = 1) -> bool:
 
     inventory_owner.add_item(item_data, amount)
     return true
-
 
 # -------------------------
 # Internal Helpers
@@ -353,7 +350,6 @@ func _stop_runtime_state() -> void:
 
     _pickups_in_range.clear()
     set_physics_process(false)
-
 
 # -------------------------
 # Signals / Callbacks

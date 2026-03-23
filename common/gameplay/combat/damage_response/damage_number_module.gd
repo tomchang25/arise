@@ -1,7 +1,8 @@
 class_name DamageNumberModule
 extends Node
 
-var _enabled: bool = true
+@export var enabled: bool = true:
+    set = set_enabled
 
 @export_group("Dependencies")
 @export var damage_receiver: DamageReceiverModule
@@ -23,6 +24,8 @@ var _enabled: bool = true
 @export var enabled_throttle := true
 @export var max_spawns_per_frame := 6
 @export var max_active_numbers := 20
+
+var _enabled: bool = true
 
 var _spawned_this_frame: int = 0
 var _last_spawn_frame: int = -1

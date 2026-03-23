@@ -216,6 +216,16 @@ func set_enabled(value: bool) -> void:
                 module.enabled = value
 
 
+func is_enabled() -> bool:
+    for handle in _handles:
+        if handle == null:
+            continue
+        for module in handle.attack_modules:
+            if module != null and module.enabled:
+                return true
+    return false
+
+
 ## Enable or disable an entire weapon.
 ## This gates future perform_attack calls on all modules in this weapon.
 ## It does NOT deactivate any currently live attached hitboxes —

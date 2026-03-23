@@ -16,7 +16,7 @@ extends Control
 @export_group("Damage Animation")
 @export var delay_after_damage: float = 0.25
 @export var damage_bar_tween_duration: float = 0.35
-@export var heal_bar_tween_duration: float = 0.15  # when HP increases, how fast damage bar catches up
+@export var heal_bar_tween_duration: float = 0.15 # when HP increases, how fast damage bar catches up
 
 var _damage_delay_timer: Timer
 var _damage_tween: Tween
@@ -53,6 +53,10 @@ func set_enabled(value: bool) -> void:
     visible = value
     if not value:
         _stop_damage_anim()
+
+
+func is_enabled() -> bool:
+    return visible
 
 
 func bind(target_stats: Stats) -> void:

@@ -4,6 +4,9 @@ extends Area2D
 
 signal get_hit(context: EffectContext)
 
+@export var enabled: bool = true:
+    set = set_enabled
+
 var _enabled: bool = true
 
 var owner_stats: Stats:
