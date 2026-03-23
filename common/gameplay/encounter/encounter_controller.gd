@@ -18,6 +18,7 @@ signal group_removed(group: EnemyGroup)
 
 @export_group("Dependencies")
 @export var enemies_root: Node2D
+@export var enemies_container: Node2D
 
 @export_group("Warning Spawn")
 @export var warning_point_scene: PackedScene = preload("res://common/gameplay/spawning/points/warning_spawn_point.tscn")
@@ -266,6 +267,10 @@ func _spawn_group(group_profile: EnemyGroupProfile) -> void:
         Debug.warn("EncounterController: enemies_root is null or freed")
         return
 
+    if not is_instance_valid(enemies_container):
+        Debug.warn("EncounterController: enemies_container is null or freed")
+        return
+
     var resolved: Variant = _resolve_spawn_position()
     if resolved == null:
         Debug.warn("EncounterController: could not resolve spawn position")
@@ -281,6 +286,7 @@ func _spawn_group(group_profile: EnemyGroupProfile) -> void:
 
     var action := SpawnEnemyGroupAction.new()
     action.profile = group_profile
+    action.enemies_container = enemies_container
 
     var ctx := SpawnContext.create(enemies_root)
     ctx.rng_seed = _rng.randi()

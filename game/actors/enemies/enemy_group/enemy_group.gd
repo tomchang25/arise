@@ -31,6 +31,10 @@ signal members_changed
 ## Should be larger than aggro_range to prevent oscillation.
 @export var deaggro_range: float = 320.0
 
+## Detection area used for aggro targeting and deaggro — wired in scene.
+## Radius is set to deaggro_range in _ready().
+@export var detection_module: DetectionModule
+
 # -------------------------
 # Internal state
 # -------------------------
@@ -53,6 +57,10 @@ var _anchor_offsets: Dictionary = { }
 
 ## Accumulated time for [member track_player] periodic updates.
 var _track_timer: float = 0.0
+
+## Accumulated time for position update (every POSITION_UPDATE_INTERVAL seconds).
+var _position_timer: float = 0.0
+const POSITION_UPDATE_INTERVAL := 0.1
 
 ## Cached player reference, resolved at _ready().
 var _player: Node2D
@@ -80,6 +88,9 @@ func _ready() -> void:
 
     _player = get_tree().get_first_node_in_group("player")
 
+    if detection_module:
+        detection_module.radius = deaggro_range
+
 
 func _physics_process(delta: float) -> void:
     # Optionally update the anchor to the player's position every N seconds.
@@ -95,6 +106,12 @@ func _physics_process(delta: float) -> void:
         _dormant_timer = 0.0
         _update_dormant_state()
 
+    # Update group position to the live centroid every POSITION_UPDATE_INTERVAL seconds.
+    _position_timer += delta
+    if _position_timer >= POSITION_UPDATE_INTERVAL:
+        _position_timer = 0.0
+        global_position = get_center()
+
     if dormant:
         return
 
@@ -103,11 +120,6 @@ func _physics_process(delta: float) -> void:
     if _aggro_timer >= AGGRO_CHECK_INTERVAL:
         _aggro_timer = 0.0
         _update_aggro_state()
-
-    # Propagate updated anchor_positions to all living members.
-    for member in get_alive_members():
-        var offset: Vector2 = _anchor_offsets.get(member, Vector2.ZERO)
-        member.anchor_position = _anchor + offset
 
 
 func _notification(what: int) -> void:
@@ -133,10 +145,10 @@ func register_member(enemy: Enemy, setup_position: Vector2 = Vector2.ZERO) -> vo
     _members.append(enemy)
     _living_count += 1
 
-    # Store the member's anchor offset relative to the current _anchor.
+    # Store the member's anchor offset relative to the current group position.
     # SpawnEnemyGroupAction sets enemy.anchor_position before calling register_member(),
     # so we capture it here as the authoritative offset.
-    _anchor_offsets[enemy] = enemy.anchor_position - _anchor
+    _anchor_offsets[enemy] = enemy.anchor_position - global_position
 
     if not enemy.died.is_connected(_on_member_died.bind(enemy)):
         enemy.died.connect(_on_member_died.bind(enemy))
@@ -203,21 +215,28 @@ func _update_aggro_state() -> void:
     if not _player:
         return
 
-    var dist := _player.global_position.distance_to(get_center())
+    var dist := _player.global_position.distance_to(global_position)
 
     if not _aggroed and dist < aggro_range:
         _aggroed = true
+        var group_target: Node2D = detection_module.get_closest_target(false) if detection_module else _player
         for member in get_alive_members():
             member.group_aggroed = true
-            member.group_target = _player
+            member.group_target = group_target
             member.state_machine.request_transition(ActorState.ActorStateId.CHASE)
 
-    elif _aggroed and dist > deaggro_range:
-        _aggroed = false
-        for member in get_alive_members():
-            member.group_aggroed = false
-            member.group_target = null
-            member.state_machine.request_transition(ActorState.ActorStateId.RETURN_TO_ANCHOR)
+    elif _aggroed:
+        var group_target: Node2D = detection_module.get_closest_target(false) if detection_module else null
+        if group_target == null:
+            _aggroed = false
+            for member in get_alive_members():
+                member.group_aggroed = false
+                member.group_target = null
+                member.state_machine.request_transition(ActorState.ActorStateId.RETURN_TO_ANCHOR)
+        else:
+            # Push updated group_target to all members every aggro tick (target may switch).
+            for member in get_alive_members():
+                member.group_target = group_target
 
 
 func _on_member_died(_info, enemy: Enemy) -> void:
@@ -239,7 +258,7 @@ func _update_dormant_state() -> void:
     if not _player:
         return
 
-    var dist := _player.global_position.distance_to(_anchor)
+    var dist := _player.global_position.distance_to(global_position)
     var should_sleep := dist > dormant_distance
 
     if should_sleep == dormant:

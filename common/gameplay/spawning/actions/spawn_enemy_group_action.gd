@@ -4,6 +4,9 @@ extends SpawnAction
 # The group profile to spawn from.
 var profile: EnemyGroupProfile
 
+# Container node for enemy instances — set by EncounterController before execute().
+var enemies_container: Node
+
 
 func execute(transform: Transform2D, ctx: SpawnContext) -> Node:
     if profile == null:
@@ -12,6 +15,10 @@ func execute(transform: Transform2D, ctx: SpawnContext) -> Node:
 
     if ctx == null or not is_instance_valid(ctx.spawn_parent):
         Debug.warn("SpawnEnemyGroupAction: ctx.spawn_parent is null or freed")
+        return null
+
+    if enemies_container == null:
+        Debug.warn("SpawnEnemyGroupAction: enemies_container is null")
         return null
 
     var group := profile.group_scene.instantiate() as EnemyGroup
@@ -38,7 +45,7 @@ func execute(transform: Transform2D, ctx: SpawnContext) -> Node:
             else:
                 enemy_pos = group.spawn_pivot + SpatialRandomUtils.random_point_in_circle(Vector2.ZERO, profile.spawn_radius, rng)
 
-            var member_ctx := SpawnContext.create(group, ctx.rng_seed, ctx.source_node, ctx.validator, ctx.metadata)
+            var member_ctx := SpawnContext.create(enemies_container, ctx.rng_seed, ctx.source_node, ctx.validator, ctx.metadata)
             member_ctx.validator = ctx.validator
 
             var spawn_action := SpawnPackedSceneAction.create(scene)

@@ -9,6 +9,7 @@ extends Actor
 @export var data: ArmyData
 
 @export_group("Modules — Perception")
+@export var reach_detection: DetectionModule
 @export var aggro_detection: DetectionModule
 @export var deaggro_detection: DetectionModule
 
@@ -44,6 +45,8 @@ func _ready() -> void:
 
 func _auto_wire_nodes() -> void:
     super._auto_wire_nodes()
+    if not reach_detection:
+        reach_detection = find_child("ReachDetection", true, false) as DetectionModule
     if not aggro_detection:
         aggro_detection = find_child("AggroDetection", true, false) as DetectionModule
     if not deaggro_detection:
@@ -64,6 +67,7 @@ func _apply_data() -> void:
     if reach_detection and data.attack_range > 0.0:
         reach_detection.set_collision_radius(data.attack_range)
 
+
     if combat_module:
         combat_module.setup(stats, data.weapons)
 
@@ -83,6 +87,8 @@ func reset() -> void:
         if combat_module:
             combat_module.setup(stats, data.weapons)
     super.reset()
+    if reach_detection:
+        reach_detection.reset()
     if aggro_detection:
         aggro_detection.reset()
     if deaggro_detection:
@@ -91,16 +97,12 @@ func reset() -> void:
 
 func set_enabled(value: bool) -> void:
     super.set_enabled(value)
+    if reach_detection:
+        reach_detection.set_enabled(value)
     if aggro_detection:
         aggro_detection.set_enabled(value)
     if deaggro_detection:
         deaggro_detection.set_enabled(value)
-
-
-## Army sets reach_detection radius directly from data.attack_range in _apply_data(),
-## so skip the combat_module lookup that the base class would otherwise perform.
-func _bind_reach_detection() -> void:
-    pass
 
 # -------------------------
 # Lifecycle callbacks
@@ -114,6 +116,10 @@ func _on_died(_info) -> void:
 # -------------------------
 # Public API — perception
 # -------------------------
+
+
+func is_target_in_reach() -> bool:
+    return reach_detection.get_target_count(false) > 0 if reach_detection else false
 
 
 func is_aggro_active() -> bool:
