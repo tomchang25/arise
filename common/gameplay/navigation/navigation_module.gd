@@ -6,11 +6,7 @@ signal navigation_finished
 signal target_changed(target_position: Vector2)
 signal target_lost
 
-@export var enabled := true:
-    set(value):
-        enabled = value
-        if not enabled:
-            _stop_runtime_state()
+var _enabled: bool = true
 
 @export_group("References")
 @export var character: CharacterBody2D
@@ -74,7 +70,7 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
-    if not enabled:
+    if not _enabled:
         return
 
     _process_skip += 1
@@ -159,22 +155,21 @@ func _draw() -> void:
 
 
 func reset() -> void:
-    enabled = true
+    _enabled = true
     clear_target()
     _target_update_timer = 0.0
     _path_tick_timer = 0.0
     _process_skip = 0
 
 
-func set_enabled(value: bool, clear_target_data: bool = true) -> void:
-    enabled = value
-
-    if not enabled and clear_target_data:
+func set_enabled(value: bool) -> void:
+    _enabled = value
+    if not _enabled:
         _stop_runtime_state()
 
 
 func is_enabled() -> bool:
-    return enabled
+    return _enabled
 
 
 func stop() -> void:
@@ -291,7 +286,7 @@ func set_avoidance_priority(value: float) -> void:
 func debug_print_target_state() -> void:
     print(
         {
-            "enabled": enabled,
+            "enabled": _enabled,
             "has_target": has_target(),
             "target_position": _target_position,
             "follow_target": _follow_target,
@@ -415,7 +410,7 @@ func _emit_navigation_finished_once() -> void:
 
 
 func _on_velocity_computed(safe_velocity: Vector2) -> void:
-    if not enabled:
+    if not _enabled:
         _clear_path_velocity()
         return
 

@@ -2,11 +2,7 @@
 class_name MovementModule
 extends Node
 
-@export var enabled := true:
-    set(value):
-        enabled = value
-        if not enabled:
-            _stop_runtime_state()
+var _enabled: bool = true
 
 @export var character: CharacterBody2D
 @export var use_direct_position := false
@@ -37,7 +33,7 @@ var _computed_velocity: Vector2 = Vector2.ZERO
 
 
 func _physics_process(delta: float) -> void:
-    if not enabled:
+    if not _enabled:
         return
 
     if character == null:
@@ -74,7 +70,7 @@ func _physics_process(delta: float) -> void:
 
 
 func reset() -> void:
-    enabled = true
+    _enabled = true
     manual_velocity = Vector2.ZERO
     path_velocity = Vector2.ZERO
     knockback_velocity = Vector2.ZERO
@@ -85,15 +81,14 @@ func reset() -> void:
     crowd_block_ratio = 0.0
 
 
-func set_enabled(value: bool, clear_motion: bool = true) -> void:
-    enabled = value
-
-    if not enabled and clear_motion:
+func set_enabled(value: bool) -> void:
+    _enabled = value
+    if not _enabled:
         _stop_runtime_state()
 
 
 func is_enabled() -> bool:
-    return enabled
+    return _enabled
 
 
 func has_character() -> bool:
@@ -121,14 +116,14 @@ func stop_all_motion(force_clear_knockback: bool = false) -> void:
 
 
 func set_manual_velocity(velocity: Vector2) -> void:
-    if not enabled:
+    if not _enabled:
         return
 
     manual_velocity = velocity
 
 
 func set_move_direction(direction: Vector2, speed: float) -> void:
-    if not enabled:
+    if not _enabled:
         return
 
     if direction == Vector2.ZERO:
@@ -153,7 +148,7 @@ func set_manual_mode() -> void:
 
 
 func set_path_velocity(velocity: Vector2) -> void:
-    if not enabled:
+    if not _enabled:
         return
 
     path_velocity = velocity
@@ -174,7 +169,7 @@ func set_path_mode() -> void:
 
 
 func apply_knockback(impulse: Vector2, velocity_cap: float = -1.0) -> void:
-    if not enabled:
+    if not _enabled:
         return
 
     knockback_velocity += impulse
@@ -184,7 +179,7 @@ func apply_knockback(impulse: Vector2, velocity_cap: float = -1.0) -> void:
 
 
 func set_knockback_velocity(velocity: Vector2, velocity_cap: float = -1.0) -> void:
-    if not enabled:
+    if not _enabled:
         return
 
     knockback_velocity = velocity

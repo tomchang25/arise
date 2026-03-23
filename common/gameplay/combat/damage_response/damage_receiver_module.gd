@@ -5,7 +5,8 @@ signal damaged(amount: float, new_health: float, context: EffectContext)
 signal blocked(context: EffectContext)
 signal died(context: EffectContext)
 
-@export var enabled: bool = true
+var _enabled: bool = true
+
 @export var stats: Stats
 @export var hurtbox: Hurtbox
 
@@ -33,7 +34,7 @@ func _auto_wire() -> void:
 
 
 func _on_hurtbox_hit(ctx: EffectContext) -> void:
-    if not enabled or not stats or not ctx:
+    if not _enabled or not stats or not ctx:
         push_warning("DamageReceiverModule: _on_hurtbox_hit: invalid arguments")
         return
 
@@ -89,12 +90,22 @@ func _calculate_damage(ctx: EffectContext) -> float:
 
 
 func reset() -> void:
-    enabled = true
+    _enabled = true
     _invuln_until_msec = 0
 
 
 func set_enabled(value: bool) -> void:
-    enabled = value
+    _enabled = value
+    if not _enabled:
+        _stop_runtime_state()
+
+
+func is_enabled() -> bool:
+    return _enabled
+
+
+func _stop_runtime_state() -> void:
+    pass
 
 
 func is_invulnerable() -> bool:

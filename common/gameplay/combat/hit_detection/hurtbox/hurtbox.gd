@@ -4,10 +4,7 @@ extends Area2D
 
 signal get_hit(context: EffectContext)
 
-@export var enabled = true:
-    set(value):
-        enabled = value
-        set_deferred("monitorable", value)
+var _enabled: bool = true
 
 var owner_stats: Stats:
     set(value):
@@ -24,7 +21,7 @@ func _ready() -> void:
     if not owner_stats and owner.get("stats"):
         owner_stats = owner.stats
 
-    set_deferred("monitorable", enabled)
+    set_deferred("monitorable", _enabled)
     _setup_collision_layers()
 
 
@@ -43,14 +40,26 @@ func _setup_collision_layers() -> void:
 
 
 func reset() -> void:
-    enabled = true
+    _enabled = true
+    set_deferred("monitorable", true)
 
 
 func set_enabled(value: bool) -> void:
-    enabled = value
+    _enabled = value
+    set_deferred("monitorable", _enabled)
+    if not _enabled:
+        _stop_runtime_state()
+
+
+func is_enabled() -> bool:
+    return _enabled
+
+
+func _stop_runtime_state() -> void:
+    pass
 
 
 func receive_hit(context: EffectContext) -> void:
-    if not enabled:
+    if not _enabled:
         return
     get_hit.emit(context)

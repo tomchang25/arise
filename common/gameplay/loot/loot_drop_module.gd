@@ -3,11 +3,7 @@ extends Node
 
 signal loot_dropped
 
-@export var enabled := true:
-    set(value):
-        enabled = value
-        if not enabled:
-            _stop_runtime_state()
+var _enabled: bool = true
 
 @export_group("Dependencies")
 @export var owner_node: Node2D
@@ -38,15 +34,17 @@ func _ready() -> void:
 
 
 func reset() -> void:
-    enabled = true
+    _enabled = true
 
 
 func set_enabled(value: bool) -> void:
-    enabled = value
+    _enabled = value
+    if not _enabled:
+        _stop_runtime_state()
 
 
 func is_enabled() -> bool:
-    return enabled
+    return _enabled
 
 
 # -------------------------
@@ -55,7 +53,7 @@ func is_enabled() -> bool:
 
 
 func drop_loot() -> void:
-    if not enabled:
+    if not _enabled:
         return
 
     if not is_inside_tree():
