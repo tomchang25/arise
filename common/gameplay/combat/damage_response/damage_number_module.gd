@@ -60,6 +60,9 @@ func _on_damaged(amount: float, _new_health: float, info: EffectContext) -> void
     if not _enabled:
         return
 
+    if not _should_show(amount):
+        return
+
     SpawnThrottle.enqueue(&"damage_number", func(): spawn_damage_number(amount, info))
 
 
