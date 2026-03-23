@@ -1,5 +1,4 @@
 extends Node
-
 ## Global spawn stagger manager.
 ## Callers enqueue a request with a channel key and a Callable.
 ## The singleton drains each channel at its configured interval.
@@ -9,10 +8,10 @@ extends Node
 
 signal slot_executed(channel: StringName)
 
-const DEFAULT_INTERVAL := 0.05  # seconds between slots per channel
+const DEFAULT_INTERVAL := 0.05 # seconds between slots per channel
 
 # { channel -> { interval: float, timer: float, queue: Array[Callable] } }
-var _channels: Dictionary = {}
+var _channels: Dictionary = { }
 
 
 func _process(delta: float) -> void:
