@@ -54,10 +54,14 @@ func summon(type_index: int) -> bool:
     if army_type.scene == null or _army_handler == null:
         return false
 
-    var unit = army_type.scene.instantiate()
+    var spawn_action := SpawnPackedSceneAction.create(army_type.scene, true)
+    var spawn_ctx := SpawnContext.new()
+    spawn_ctx.setup(_army_handler, 0, _player, {})
+    var unit := SpawnExecutor.execute_at_position(spawn_action, _player.global_position, spawn_ctx) as Army
+    if unit == null:
+        return false
+
     unit.modulate = army_type.color
-    _army_handler.add_child(unit)
-    unit.global_position = _player.global_position
 
     _tracked_units[type_index].append(unit)
     _counts[type_index] += 1

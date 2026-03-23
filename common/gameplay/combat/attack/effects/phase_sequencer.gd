@@ -98,7 +98,10 @@ func _run_next_phase() -> void:
 
     # Instantiate the phase effect. The root node must extend PhaseEffect —
     # either an AttackEffect (hitbox branch) or a DeliveryEmitter (spawn branch).
-    var effect := phase_def.effect_scene.instantiate() as PhaseEffect
+    var spawn_ctx := SpawnContext.new()
+    spawn_ctx.setup(get_parent(), 0, null, {})
+    var spawn_action := SpawnPackedSceneAction.create(phase_def.effect_scene, true)
+    var effect := SpawnExecutor.execute_at_node(spawn_action, get_parent() as Node2D, spawn_ctx) as PhaseEffect
     if effect == null:
         push_error(
             "PhaseSequencer: effect_scene at index %d did not instantiate to PhaseEffect" \
@@ -106,9 +109,6 @@ func _run_next_phase() -> void:
         )
         _run_next_phase()
         return
-
-    # Parent is AttackDelivery — effect lives as a sibling-child of the delivery.
-    get_parent().add_child(effect)
 
     # Build a per-phase context fork so phase overrides don't bleed into other phases.
     var phase_ctx := _parent_ctx.build_phase_override(phase_def)

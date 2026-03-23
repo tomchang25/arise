@@ -198,13 +198,15 @@ func _do_spawn_entry(entry: LootDropEntry, amount: int, spawn_ctx: SpawnContext)
         Debug.invalid("entry.pickup_scene is null")
         return null
 
-    var spawn_action := SpawnPackedSceneAction.new()
-    spawn_action.scene = entry.pickup_scene
-    spawn_action.use_anchor_position = true
-    spawn_action.use_anchor_rotation = false
-    spawn_action.random_rotation = false
-    spawn_action.local_offset = Vector2.ZERO
-    spawn_action.scatter_radius = maxf(entry.scatter_radius, 0.0)
+    var spawn_action := SpawnPackedSceneAction.create(
+        entry.pickup_scene,
+        true,
+        true,
+        false,
+        false,
+        Vector2.ZERO,
+        maxf(entry.scatter_radius, 0.0),
+    )
 
     var instance := SpawnExecutor.execute_at_node(spawn_action, owner_node, spawn_ctx)
     if instance == null:

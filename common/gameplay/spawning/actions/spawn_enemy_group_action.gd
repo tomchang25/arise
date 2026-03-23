@@ -31,19 +31,23 @@ func execute(transform: Transform2D, ctx: SpawnContext) -> Node:
         var count: int = pair[1]
 
         for i in range(count):
-            var enemy := scene.instantiate() as Enemy
-            if enemy == null:
-                Debug.warn("SpawnEnemyGroupAction: scene did not instantiate to Enemy")
-                continue
-
             var enemy_pos: Vector2
             if ctx.validator != null and profile.spawn_radius > 0.0:
                 var found := SpawnPositionFinder.find_position_in_radius(group.spawn_pivot, profile.spawn_radius, ctx.validator, rng)
                 enemy_pos = found if found != null else group.spawn_pivot
             else:
                 enemy_pos = group.spawn_pivot + SpatialRandomUtils.random_point_in_circle(Vector2.ZERO, profile.spawn_radius, rng)
+
+            var member_ctx := SpawnContext.new()
+            member_ctx.setup(group, ctx.rng_seed, ctx.source_node, ctx.metadata)
+            member_ctx.validator = ctx.validator
+            var spawn_action := SpawnPackedSceneAction.create(scene, true)
+            var enemy := SpawnExecutor.execute_at_position(spawn_action, enemy_pos, member_ctx) as Enemy
+            if enemy == null:
+                Debug.warn("SpawnEnemyGroupAction: scene did not instantiate to Enemy")
+                continue
+
             enemy.anchor_position = enemy_pos
-            group.add_child(enemy)
             group.register_member(enemy)
 
     return group
