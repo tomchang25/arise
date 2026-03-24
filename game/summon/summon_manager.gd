@@ -93,8 +93,8 @@ func summon(type_index: int) -> bool:
     # Determine the container: use armies_container if set, otherwise current scene root.
     var container: Node = armies_container if armies_container else get_tree().current_scene
 
-    var spawn_ctx := SpawnContext.new()
-    spawn_ctx.setup(container, 0, _player, { })
+    var spawn_ctx := SpawnContext.create(container)
+    spawn_ctx.source_node = _player
 
     var unit := SpawnExecutor.execute_at_position(spawn_action, _player.global_position, spawn_ctx) as Army
     if unit == null:
