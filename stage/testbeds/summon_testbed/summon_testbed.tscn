@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" path="res://game/summon/summon_manager.tscn" id="4_summon"]
 [ext_resource type="PackedScene" uid="uid://bmlww50h5ia4c" path="res://game/actors/dummies/dummy.tscn" id="5_dummy"]
 [ext_resource type="PackedScene" uid="uid://c2gp0k5r8003m" path="res://stage/testbeds/summon_testbed/hud/summon_testbed_hud.tscn" id="6_hud"]
+[ext_resource type="PackedScene" uid="uid://b5mwl9rkvp2t8" path="res://game/actors/summons/army_group/army_group.tscn" id="7_armygroup"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_main"]
 vertices = PackedVector2Array(-500, -400, 500, -400, 500, 400, -500, 400)
@@ -26,6 +27,18 @@ debug_label = NodePath("UI/DebugLabel")
 navigation_polygon = SubResource("NavigationPolygon_main")
 
 [node name="ArmyHandler" parent="." unique_id=1458199192 instance=ExtResource("3_handler")]
+
+[node name="ArmyGroup1" parent="." unique_id=100000001 instance=ExtResource("7_armygroup")]
+group_id = 1
+
+[node name="ArmyGroup2" parent="." unique_id=100000002 instance=ExtResource("7_armygroup")]
+group_id = 2
+
+[node name="ArmyGroup3" parent="." unique_id=100000003 instance=ExtResource("7_armygroup")]
+group_id = 3
+
+[node name="ArmyGroup4" parent="." unique_id=100000004 instance=ExtResource("7_armygroup")]
+group_id = 4
 
 [node name="SummonManager" parent="." unique_id=1922368145 instance=ExtResource("4_summon")]
 debug_starting_souls = 100

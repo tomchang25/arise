@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://7hsl65dchouj" path="res://game/actors/summons/army_data.gd" id="6_armydata"]
 [ext_resource type="Script" uid="uid://i2xvg4o1geuj" path="res://common/gameplay/combat/attack/data/weapon_data.gd" id="7_wpndata"]
 [ext_resource type="Resource" uid="uid://ci3t141brem18" path="res://stage/testbeds/combat_sandbox/mini_slash.tres" id="8_slash"]
+[ext_resource type="PackedScene" uid="uid://b5mwl9rkvp2t8" path="res://game/actors/summons/army_group/army_group.tscn" id="9_armygroup"]
 
 [sub_resource type="Resource" id="Resource_stats"]
 script = ExtResource("5_stats")
@@ -42,6 +43,18 @@ unit_data = SubResource("Resource_armydata")
 navigation_polygon = SubResource("NavigationPolygon_main")
 
 [node name="ArmyHandler" parent="." unique_id=1698022111 instance=ExtResource("4_handler")]
+
+[node name="ArmyGroup1" parent="." unique_id=300000001 instance=ExtResource("9_armygroup")]
+group_id = 1
+
+[node name="ArmyGroup2" parent="." unique_id=300000002 instance=ExtResource("9_armygroup")]
+group_id = 2
+
+[node name="ArmyGroup3" parent="." unique_id=300000003 instance=ExtResource("9_armygroup")]
+group_id = 3
+
+[node name="ArmyGroup4" parent="." unique_id=300000004 instance=ExtResource("9_armygroup")]
+group_id = 4
 
 [node name="SpawnOrigin" type="Marker2D" parent="." unique_id=1485462247]
 position = Vector2(60, 0)
