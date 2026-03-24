@@ -42,6 +42,7 @@ func bind(manager: SummonManager) -> void:
     summon_manager.souls_changed.connect(_on_souls_changed)
     summon_manager.active_group_changed.connect(_on_active_group_changed)
     summon_manager.group_count_changed.connect(_on_group_count_changed)
+    summon_manager.cooldown_changed.connect(_on_cooldown_changed)
 
     _build_groups()
     _build_cards()
@@ -63,6 +64,8 @@ func _unbind() -> void:
         summon_manager.active_group_changed.disconnect(_on_active_group_changed)
     if summon_manager.group_count_changed.is_connected(_on_group_count_changed):
         summon_manager.group_count_changed.disconnect(_on_group_count_changed)
+    if summon_manager.cooldown_changed.is_connected(_on_cooldown_changed):
+        summon_manager.cooldown_changed.disconnect(_on_cooldown_changed)
 
 
 func _build_groups() -> void:
@@ -292,6 +295,11 @@ func _on_active_group_changed(group_index: int) -> void:
 func _on_group_count_changed(group_index: int, count: int) -> void:
     if group_index < _group_count_labels.size():
         _group_count_labels[group_index].text = str(count)
+
+
+func _on_cooldown_changed(type_index: int, remaining: float, total: float) -> void:
+    if type_index < _cards.size():
+        _cards[type_index].set_cooldown(remaining, total)
 
 
 func _refresh_affordability() -> void:

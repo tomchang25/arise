@@ -5,6 +5,7 @@ signal counts_changed(type_index: int, current: int, max_count: int)
 signal souls_changed(souls: int)
 signal active_group_changed(group_index: int)
 signal group_count_changed(group_index: int, count: int)
+signal cooldown_changed(type_index: int, remaining: float, total: float)
 
 @export var army_types: Array[SummonType] = []
 @export var debug_starting_souls: int = 0
@@ -21,6 +22,8 @@ var _groups: Array
 var _counts: Array[int] = []
 var _tracked_units: Array = [] # Array of Arrays, one per type
 var _active_group_index: int = 0
+var _cooldowns: Array[float] = []
+var _cooldown_totals: Array[float] = []
 
 
 func _ready() -> void:
@@ -37,11 +40,22 @@ func _ready() -> void:
     _tracked_units.resize(army_types.size())
     for i in army_types.size():
         _tracked_units[i] = []
+    _cooldowns.resize(army_types.size())
+    _cooldowns.fill(0.0)
+    _cooldown_totals.resize(army_types.size())
+    _cooldown_totals.fill(0.0)
 
     if _player and _player.stats:
         _player.stats.souls_changed.connect(_on_souls_changed)
         if debug_starting_souls > 0:
             _player.stats.add_souls(debug_starting_souls)
+
+
+func _process(delta: float) -> void:
+    for i in _cooldowns.size():
+        if _cooldowns[i] > 0.0:
+            _cooldowns[i] = maxf(0.0, _cooldowns[i] - delta)
+            cooldown_changed.emit(i, _cooldowns[i], _cooldown_totals[i])
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -76,6 +90,9 @@ func summon(type_index: int) -> bool:
 
     var army_type: SummonType = army_types[type_index]
 
+    if _cooldowns[type_index] > 0.0:
+        return false
+
     if _counts[type_index] >= army_type.max_count:
         return false
 
@@ -86,31 +103,35 @@ func summon(type_index: int) -> bool:
     if army_type.scene == null or active_group == null:
         return false
 
-    # --- Spawn the unit ---
-    var spawn_action := SpawnPackedSceneAction.create(army_type.scene)
-    spawn_action.use_pool = true
-
     # Determine the container: use armies_container if set, otherwise current scene root.
     var container: Node = armies_container if armies_container else get_tree().current_scene
 
-    var spawn_ctx := SpawnContext.create(container)
-    spawn_ctx.source_node = _player
+    # --- Spawn summon_count units per activation ---
+    var spawned := 0
+    for _i in army_type.summon_count:
+        var spawn_action := SpawnPackedSceneAction.create(army_type.scene)
+        spawn_action.use_pool = true
+        var spawn_ctx := SpawnContext.create(container)
+        spawn_ctx.source_node = _player
+        var unit := SpawnExecutor.execute_at_position(spawn_action, _player.global_position, spawn_ctx) as Army
+        if unit == null:
+            continue
+        unit.modulate = army_type.color
+        active_group.register_member(unit, _player.global_position)
+        _tracked_units[type_index].append(unit)
+        _counts[type_index] += 1
+        unit.tree_exiting.connect(_on_unit_removed.bind(type_index, unit))
+        spawned += 1
 
-    var unit := SpawnExecutor.execute_at_position(spawn_action, _player.global_position, spawn_ctx) as Army
-    if unit == null:
+    if spawned == 0:
         return false
 
-    unit.modulate = army_type.color
-
-    # --- Register with the active group instead of parenting ---
-    # register_member() assigns the formation slot and sets anchor_position.
-    active_group.register_member(unit, _player.global_position)
-
-    _tracked_units[type_index].append(unit)
-    _counts[type_index] += 1
     counts_changed.emit(type_index, _counts[type_index], army_type.max_count)
 
-    unit.tree_exiting.connect(_on_unit_removed.bind(type_index, unit))
+    if army_type.cooldown > 0.0:
+        _cooldowns[type_index] = army_type.cooldown
+        _cooldown_totals[type_index] = army_type.cooldown
+        cooldown_changed.emit(type_index, _cooldowns[type_index], _cooldown_totals[type_index])
 
     return true
 
