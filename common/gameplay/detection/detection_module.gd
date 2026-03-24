@@ -76,6 +76,7 @@ func reset() -> void:
 
 func set_enabled(value: bool) -> void:
     _enabled = value
+    enabled = _enabled
     set_monitoring(value)
     if not value:
         _entities_in_range.clear()

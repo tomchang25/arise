@@ -62,7 +62,7 @@ texture = ExtResource("4_6jhws")
 hframes = 4
 vframes = 7
 
-[node name="SoftCollision" type="Node2D" parent="." unique_id=201923417 node_paths=PackedStringArray("character", "movement_module")]
+[node name="SoftCollision" type="Node2D" parent="." unique_id=201923417 node_paths=PackedStringArray("character", "movement_module") groups=["enemies"]]
 script = ExtResource("5_pwlan")
 character = NodePath("..")
 movement_module = NodePath("../Module/MovementModule")
