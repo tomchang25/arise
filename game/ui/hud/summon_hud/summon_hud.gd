@@ -42,6 +42,7 @@ func bind(manager: SummonManager) -> void:
     summon_manager.souls_changed.connect(_on_souls_changed)
     summon_manager.active_group_changed.connect(_on_active_group_changed)
     summon_manager.group_count_changed.connect(_on_group_count_changed)
+    summon_manager.cooldown_changed.connect(_on_cooldown_changed)
 
     _build_groups()
     _build_cards()
@@ -63,6 +64,8 @@ func _unbind() -> void:
         summon_manager.active_group_changed.disconnect(_on_active_group_changed)
     if summon_manager.group_count_changed.is_connected(_on_group_count_changed):
         summon_manager.group_count_changed.disconnect(_on_group_count_changed)
+    if summon_manager.cooldown_changed.is_connected(_on_cooldown_changed):
+        summon_manager.cooldown_changed.disconnect(_on_cooldown_changed)
 
 
 func _build_groups() -> void:
@@ -261,12 +264,12 @@ func _refresh_all() -> void:
 func _refresh_card(type_index: int) -> void:
     if type_index >= _cards.size() or summon_manager == null:
         return
-    _cards[type_index].update_count(
-        summon_manager.get_count(type_index),
-        summon_manager.get_max(type_index),
-    )
+    var current := summon_manager.get_count(type_index)
+    var max_count := summon_manager.get_max(type_index)
+    _cards[type_index].update_count(current, max_count)
     var can_afford := summon_manager.get_souls() >= summon_manager.get_cost(type_index)
-    _cards[type_index].set_affordable(can_afford)
+    var at_limit := max_count > 0 and current >= max_count
+    _cards[type_index].set_disabled_state(can_afford, at_limit)
 
 # -------------------------
 # Signal Callbacks
@@ -294,9 +297,17 @@ func _on_group_count_changed(group_index: int, count: int) -> void:
         _group_count_labels[group_index].text = str(count)
 
 
+func _on_cooldown_changed(type_index: int, remaining: float, total: float) -> void:
+    if type_index < _cards.size():
+        _cards[type_index].set_cooldown(remaining, total)
+
+
 func _refresh_affordability() -> void:
     if summon_manager == null:
         return
     for i in _cards.size():
         var can_afford := summon_manager.get_souls() >= summon_manager.get_cost(i)
-        _cards[i].set_affordable(can_afford)
+        var current := summon_manager.get_count(i)
+        var max_count := summon_manager.get_max(i)
+        var at_limit := max_count > 0 and current >= max_count
+        _cards[i].set_disabled_state(can_afford, at_limit)
