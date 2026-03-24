@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://cscr8c257tepu" path="res://game/actors/enemies/enemy_group/enemy_group.gd" id="1_mb4my"]
 [ext_resource type="Script" uid="uid://hyy86fs5b0fs" path="res://common/gameplay/detection/detection_module.gd" id="2_62t7i"]
 
-[node name="EnemyGroup" type="Node2D" unique_id=951725354 node_paths=PackedStringArray("detection_module")]
+[node name="EnemyGroup" type="Node2D" unique_id=951725354 node_paths=PackedStringArray("detection_module") groups=["enemy_group"]]
 script = ExtResource("1_mb4my")
 detection_module = NodePath("DetectionModule")
 
