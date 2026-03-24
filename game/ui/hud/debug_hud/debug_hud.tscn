@@ -1,26 +1,32 @@
-[gd_scene format=3 uid="uid://debug_hud_scene"]
+[gd_scene format=3 uid="uid://cnabh4prk8x13"]
 
-[ext_resource type="Script" path="res://game/ui/hud/debug_hud/debug_hud.gd" id="1_dbghud"]
+[ext_resource type="Script" uid="uid://nv2hkpoytu8x" path="res://game/ui/hud/debug_hud/debug_hud.gd" id="1_dbghud"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
 bg_color = Color(0.05, 0.05, 0.08, 0.85)
-border_color = Color(0.5, 0.3, 0.5, 0.8)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
+border_color = Color(0.5, 0.3, 0.5, 0.8)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
-corner_radius_bottom_left = 4
 corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
-[node name="DebugHUD" type="Control" node_paths=PackedStringArray("btn_hp_restore", "btn_hp_damage", "btn_mp_restore", "btn_mp_spend", "btn_soul_add", "btn_soul_remove")]
+[node name="DebugHUD" type="Control" unique_id=154958752 node_paths=PackedStringArray("btn_hp_restore", "btn_hp_damage", "btn_mp_restore", "btn_mp_spend", "btn_soul_add", "btn_soul_remove")]
 layout_mode = 3
-anchors_preset = 15
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_left = 80.0
+offset_top = -120.0
+offset_right = 80.0
+offset_bottom = -120.0
+grow_horizontal = 0
+grow_vertical = 0
 script = ExtResource("1_dbghud")
 btn_hp_restore = NodePath("TopRightPanel/Margin/VBox/HPRow/BtnHPRestore")
 btn_hp_damage = NodePath("TopRightPanel/Margin/VBox/HPRow/BtnHPDamage")
@@ -29,117 +35,115 @@ btn_mp_spend = NodePath("TopRightPanel/Margin/VBox/MPRow/BtnMPSpend")
 btn_soul_add = NodePath("TopRightPanel/Margin/VBox/SoulRow/BtnSoulAdd")
 btn_soul_remove = NodePath("TopRightPanel/Margin/VBox/SoulRow/BtnSoulRemove")
 
-[node name="TopRightPanel" type="PanelContainer" parent="."]
+[node name="TopRightPanel" type="PanelContainer" parent="." unique_id=1239578743]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -220.0
 offset_top = 8.0
-offset_right = -8.0
-offset_bottom = 114.0
+offset_right = -93.0
+offset_bottom = 108.0
 grow_horizontal = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
-[node name="Margin" type="MarginContainer" parent="TopRightPanel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="Margin" type="MarginContainer" parent="TopRightPanel" unique_id=701795651]
+layout_mode = 2
 theme_override_constants/margin_left = 8
 theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 8
 
-[node name="VBox" type="VBoxContainer" parent="TopRightPanel/Margin"]
+[node name="VBox" type="VBoxContainer" parent="TopRightPanel/Margin" unique_id=1418590775]
 layout_mode = 2
 theme_override_constants/separation = 5
 
-[node name="TitleLabel" type="Label" parent="TopRightPanel/Margin/VBox"]
-layout_mode = 2
+[node name="TitleLabel" type="Label" parent="TopRightPanel/Margin/VBox" unique_id=1083571416]
 modulate = Color(0.8, 0.8, 0.8, 0.7)
+layout_mode = 2
 theme_override_font_sizes/font_size = 8
 text = "DEBUG"
 horizontal_alignment = 1
 
-[node name="HPRow" type="HBoxContainer" parent="TopRightPanel/Margin/VBox"]
+[node name="HPRow" type="HBoxContainer" parent="TopRightPanel/Margin/VBox" unique_id=510178452]
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="HPRowLabel" type="Label" parent="TopRightPanel/Margin/VBox/HPRow"]
-layout_mode = 2
+[node name="HPRowLabel" type="Label" parent="TopRightPanel/Margin/VBox/HPRow" unique_id=912851273]
 modulate = Color(1, 0.4, 0.4, 0.9)
+custom_minimum_size = Vector2(20, 12)
+layout_mode = 2
+size_flags_horizontal = 0
 theme_override_font_sizes/font_size = 8
 text = "HP"
-size_flags_horizontal = 0
+horizontal_alignment = 1
 vertical_alignment = 1
-custom_minimum_size = Vector2(20, 0)
 
-[node name="BtnHPRestore" type="Button" parent="TopRightPanel/Margin/VBox/HPRow"]
-custom_minimum_size = Vector2(80, 18)
+[node name="BtnHPRestore" type="Button" parent="TopRightPanel/Margin/VBox/HPRow" unique_id=1190063988]
+custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 8
 text = "HP +"
 
-[node name="BtnHPDamage" type="Button" parent="TopRightPanel/Margin/VBox/HPRow"]
-custom_minimum_size = Vector2(80, 18)
+[node name="BtnHPDamage" type="Button" parent="TopRightPanel/Margin/VBox/HPRow" unique_id=1039183620]
+custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 8
 text = "HP -"
 
-[node name="MPRow" type="HBoxContainer" parent="TopRightPanel/Margin/VBox"]
+[node name="MPRow" type="HBoxContainer" parent="TopRightPanel/Margin/VBox" unique_id=2081140689]
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="MPRowLabel" type="Label" parent="TopRightPanel/Margin/VBox/MPRow"]
+[node name="MPRowLabel" type="Label" parent="TopRightPanel/Margin/VBox/MPRow" unique_id=1733847810]
+modulate = Color(0.4, 0.6, 1, 0.9)
+custom_minimum_size = Vector2(20, 12)
 layout_mode = 2
-modulate = Color(0.4, 0.6, 1.0, 0.9)
+size_flags_horizontal = 0
 theme_override_font_sizes/font_size = 8
 text = "MP"
-size_flags_horizontal = 0
+horizontal_alignment = 1
 vertical_alignment = 1
-custom_minimum_size = Vector2(20, 0)
 
-[node name="BtnMPRestore" type="Button" parent="TopRightPanel/Margin/VBox/MPRow"]
-custom_minimum_size = Vector2(80, 18)
+[node name="BtnMPRestore" type="Button" parent="TopRightPanel/Margin/VBox/MPRow" unique_id=502828411]
+custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 8
 text = "MP +"
 
-[node name="BtnMPSpend" type="Button" parent="TopRightPanel/Margin/VBox/MPRow"]
-custom_minimum_size = Vector2(80, 18)
+[node name="BtnMPSpend" type="Button" parent="TopRightPanel/Margin/VBox/MPRow" unique_id=1345310434]
+custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 8
 text = "MP -"
 
-[node name="SoulRow" type="HBoxContainer" parent="TopRightPanel/Margin/VBox"]
+[node name="SoulRow" type="HBoxContainer" parent="TopRightPanel/Margin/VBox" unique_id=49250985]
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="SoulRowLabel" type="Label" parent="TopRightPanel/Margin/VBox/SoulRow"]
+[node name="SoulRowLabel" type="Label" parent="TopRightPanel/Margin/VBox/SoulRow" unique_id=1617239558]
+modulate = Color(0.8, 0.6, 1, 0.9)
+custom_minimum_size = Vector2(20, 12)
 layout_mode = 2
-modulate = Color(0.8, 0.6, 1.0, 0.9)
+size_flags_horizontal = 0
 theme_override_font_sizes/font_size = 8
 text = "Soul"
-size_flags_horizontal = 0
+horizontal_alignment = 1
 vertical_alignment = 1
-custom_minimum_size = Vector2(20, 0)
 
-[node name="BtnSoulAdd" type="Button" parent="TopRightPanel/Margin/VBox/SoulRow"]
-custom_minimum_size = Vector2(80, 18)
+[node name="BtnSoulAdd" type="Button" parent="TopRightPanel/Margin/VBox/SoulRow" unique_id=1037611556]
+custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 8
 text = "Soul +"
 
-[node name="BtnSoulRemove" type="Button" parent="TopRightPanel/Margin/VBox/SoulRow"]
-custom_minimum_size = Vector2(80, 18)
+[node name="BtnSoulRemove" type="Button" parent="TopRightPanel/Margin/VBox/SoulRow" unique_id=1017478426]
+custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 8

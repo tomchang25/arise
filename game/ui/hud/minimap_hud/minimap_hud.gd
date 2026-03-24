@@ -8,15 +8,15 @@ extends Control
 # Constants
 # -------------------------
 
-const MAP_SIZE   := Vector2(160.0, 160.0)
-const WORLD_MIN  := Vector2(-800.0, -800.0)
+const MAP_SIZE := Vector2(80.0, 80.0)
+const WORLD_MIN := Vector2(-800.0, -800.0)
 const WORLD_SIZE := Vector2(1600.0, 1600.0)
 
-const COLOR_BG     := Color(0.0, 0.0, 0.0, 0.6)
+const COLOR_BG := Color(0.0, 0.0, 0.0, 0.6)
 const COLOR_BORDER := Color(1.0, 1.0, 1.0, 0.3)
 const COLOR_PLAYER := Color.CYAN
-const COLOR_ENEMY  := Color.RED
-const COLOR_ARMY   := Color.GREEN
+const COLOR_ENEMY := Color.RED
+const COLOR_ARMY := Color.GREEN
 
 # -------------------------
 # Exports
