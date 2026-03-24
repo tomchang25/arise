@@ -264,12 +264,12 @@ func _refresh_all() -> void:
 func _refresh_card(type_index: int) -> void:
     if type_index >= _cards.size() or summon_manager == null:
         return
-    _cards[type_index].update_count(
-        summon_manager.get_count(type_index),
-        summon_manager.get_max(type_index),
-    )
+    var current := summon_manager.get_count(type_index)
+    var max_count := summon_manager.get_max(type_index)
+    _cards[type_index].update_count(current, max_count)
     var can_afford := summon_manager.get_souls() >= summon_manager.get_cost(type_index)
-    _cards[type_index].set_affordable(can_afford)
+    var at_limit := max_count > 0 and current >= max_count
+    _cards[type_index].set_disabled_state(can_afford, at_limit)
 
 # -------------------------
 # Signal Callbacks
@@ -307,4 +307,7 @@ func _refresh_affordability() -> void:
         return
     for i in _cards.size():
         var can_afford := summon_manager.get_souls() >= summon_manager.get_cost(i)
-        _cards[i].set_affordable(can_afford)
+        var current := summon_manager.get_count(i)
+        var max_count := summon_manager.get_max(i)
+        var at_limit := max_count > 0 and current >= max_count
+        _cards[i].set_disabled_state(can_afford, at_limit)
