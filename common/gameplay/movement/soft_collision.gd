@@ -21,6 +21,10 @@ extends Node2D
 @export var movement_module: MovementModule
 
 @export_group("Separation")
+## Which group this unit belongs to. Use CollisionMaskManager.layer(&"group_name").
+@export var collision_layer: int = 0
+## Which groups this unit pushes. Use CollisionMaskManager.mask([...]).
+@export var collision_mask: int = 0
 ## Divides the received separation force. Higher mass = harder to push.
 @export var mass: float = 1.0
 ## Base separation force applied at full overlap (dist = 0).
@@ -53,7 +57,7 @@ func _ready() -> void:
     # wins, but since they are equal it doesn't matter.
     SpatialHash.cell_size = min_distance
 
-    SpatialHash.register(character)
+    SpatialHash.register(character, collision_layer)
 
 
 func _exit_tree() -> void:
@@ -95,6 +99,11 @@ func _physics_process(_delta: float) -> void:
         # Skip self.
         if body == character:
             continue
+
+        if collision_mask != 0:
+            var body_layer := SpatialHash.get_layer(body)
+            if (collision_mask & body_layer) == 0:
+                continue
 
         var diff: Vector2 = character.global_position - body.global_position
         var dist: float = diff.length()
