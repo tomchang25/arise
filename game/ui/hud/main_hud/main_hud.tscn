@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://b6fkxs12rxtfw" path="res://game/ui/hud/player_hud/player_hud.tscn" id="2_phud"]
 [ext_resource type="PackedScene" path="res://game/ui/hud/debug_hud/debug_hud.tscn" id="3_dbghud"]
 [ext_resource type="PackedScene" path="res://game/ui/hud/wave_hud/wave_hud.tscn" id="4_wavehud"]
-[ext_resource type="PackedScene" uid="uid://g33b1cy1ovq" path="res://game/ui/hud/summon_hud/summon_hud.tscn" id="5_sumhud"]
+[ext_resource type="PackedScene" path="res://game/ui/hud/summon_hud/summon_hud.tscn" id="5_sumhud"]
 
 [node name="MainHUD" type="Control" unique_id=1922058681 node_paths=PackedStringArray("player_hud", "debug_hud", "wave_hud", "summon_hud")]
 layout_mode = 3
@@ -32,3 +32,7 @@ offset_bottom = 241.0
 
 [node name="SummonHUD" parent="." unique_id=376944848 instance=ExtResource("5_sumhud")]
 layout_mode = 1
+offset_left = -160.0
+offset_top = -138.0
+offset_right = 160.0
+offset_bottom = -10.0
