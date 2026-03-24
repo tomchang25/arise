@@ -1,18 +1,13 @@
 ## Shared chase state for all actors.
 ##
-## Moves toward the nearest detected target. Exit conditions differ by data flags:
-##   has_deaggro   → exit to RETURN_TO_ANCHOR when target leaves deaggro zone (Enemy)
-##   leash_distance > 0 → exit to RETURN_TO_ANCHOR when too far from anchor
-##   (no flags)    → exit to RETURN_TO_ANCHOR when no target or anchor too far (Army)
+## Moves toward the nearest detected target. Exit when the group clears aggro.
 ##
 ## Transitions:
-##   → RETURN_TO_ANCHOR  if deaggro'd, leashed, or no target while far from anchor
+##   → RETURN_TO_ANCHOR  if deaggro'd or no target (group-driven)
 ##   → ATTACK            if target enters reach zone
 extends ActorState
 
 @export var chase_speed: float = 150.0
-## Distance threshold used when has_deaggro is false (Army-like actors).
-@export var follow_threshold: float = 100.0
 @export var move_update_interval: float = 0.1
 
 var _move_timer: float = 0.0
@@ -27,23 +22,10 @@ func _enter() -> void:
 
 
 func _update(delta: float) -> void:
-    # Leash check — return home if too far from anchor.
-    if actor.get_leash_distance() > 0.0 and actor.get_distance_to_anchor() > actor.get_leash_distance():
+    # Group cleared aggro → return home.
+    if not actor.is_aggro_active():
         change_state(ActorStateId.RETURN_TO_ANCHOR)
         return
-
-    # Deaggro check (Enemy with deaggro zone).
-    if actor.has_deaggro() and actor.is_deaggro_active():
-        change_state(ActorStateId.RETURN_TO_ANCHOR)
-        return
-
-    # Distance-based disengage (Army-like actors without deaggro).
-    if not actor.has_deaggro():
-        var no_target := not actor.is_aggro_active()
-        var too_far := actor.get_distance_to_anchor() > follow_threshold
-        if no_target or too_far:
-            change_state(ActorStateId.RETURN_TO_ANCHOR)
-            return
 
     # Target within reach → attack.
     if actor.is_target_in_reach():

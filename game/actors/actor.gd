@@ -354,8 +354,6 @@ func get_facing_direction() -> Vector2:
 @abstract func is_target_in_reach() -> bool
 
 
-@abstract func get_leash_distance() -> float
-
 # -------------------------
 # Public API — state machine
 # -------------------------

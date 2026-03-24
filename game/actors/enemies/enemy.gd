@@ -158,5 +158,3 @@ func is_target_in_reach() -> bool:
     return reach > 0.0 and global_position.distance_to(group_target.global_position) <= reach
 
 
-func get_leash_distance() -> float:
-    return data.leash_distance if data else 0.0

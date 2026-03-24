@@ -1,16 +1,13 @@
 ## Attacks the nearest enemy within reach.
 ## Keeps the unit slowly repositioning toward the target while in attack range.
 ## Returns RUNNING while the target remains attackable.
-## Returns FAILURE when the target moves out of reach or the unit drifts too
-## far from the player — the SelectorReactive will then re-evaluate the tree
-## and fall back to the Chase or Follow branch as appropriate.
+## Returns FAILURE when the target moves out of reach — the SelectorReactive
+## will then re-evaluate the tree and fall back to the Chase or Follow branch.
 class_name ArmyAttackAction
 extends ActionLeaf
 
 @export var weapon_index: int = 0
 @export var attack_index: int = 0
-## Maximum distance from the player before the unit abandons the attack.
-@export var follow_threshold: float = 250.0
 ## Slow creep speed while repositioning during the attack.
 @export var attack_speed: float = 50.0
 
@@ -18,10 +15,6 @@ extends ActionLeaf
 func tick(actor: Node, _blackboard: Blackboard) -> int:
     var army := actor as Army
     if army == null:
-        return FAILURE
-
-    if army.get_distance_to_anchor() > follow_threshold:
-        army.stop_movement()
         return FAILURE
 
     var target := army.get_nearest_reachable_target()

@@ -38,6 +38,10 @@ enum FormationType { RECTANGULAR, CIRCULAR }
 ## Distance at which members deaggro. Should be larger than aggro_range.
 @export var deaggro_range: float = 160.0
 
+## Maximum distance the group center may stray from the anchor before members
+## are forced back. Set to 0 to disable leashing entirely.
+@export var leash_distance: float = 300.0
+
 # -------------------------
 # Internal state
 # -------------------------
@@ -67,6 +71,8 @@ var _player: Node2D
 var _aggroed: bool = false
 var _aggro_timer: float = 0.0
 const AGGRO_CHECK_INTERVAL := 0.1
+
+var _returning_to_spawn: bool = false
 
 # -------------------------
 # Lifecycle
@@ -106,6 +112,13 @@ func _physics_process(delta: float) -> void:
         var alive := get_all_units()
         if not alive.is_empty():
             global_position = _get_center(alive)
+
+        # Leash check runs after position update so global_position is current.
+        _check_leash()
+
+        if _returning_to_spawn:
+            if global_position.distance_to(_anchor) < (leash_distance / 4.0):
+                _returning_to_spawn = false
 
     # Aggro check.
     _aggro_timer += delta
@@ -253,6 +266,9 @@ func _update_aggro_state() -> void:
     if detection_module == null:
         return
 
+    if _returning_to_spawn:
+        return
+
     if not _aggroed:
         # Aggro when any enemy enters aggro_range of the group center.
         var nearest := _get_nearest_enemy()
@@ -272,6 +288,21 @@ func _update_aggro_state() -> void:
         else:
             # Re-assign each tick so members switch to a closer target if one appears.
             _assign_targets_to_members()
+
+
+func _check_leash() -> void:
+    if leash_distance <= 0.0:
+        return
+
+    if global_position.distance_to(_anchor) <= leash_distance:
+        return
+
+    _aggroed = false
+    _returning_to_spawn = true
+    for unit in get_all_units():
+        var army := unit as Army
+        army.group_aggroed = false
+        army.group_target = null
 
 
 func _assign_targets_to_members() -> void:
