@@ -15,10 +15,10 @@ extends Resource
 ## When true, the actor may enter a WANDER state while idle near its anchor.
 @export var has_wander: bool = false
 
-## When true, the actor uses a deaggro detection zone to exit chase/attack states.
-## Set to false for actors that disengage purely by distance threshold (e.g. army units).
-@export var has_deaggro: bool = false
+# ## When true, the actor uses a deaggro detection zone to exit chase/attack states.
+# ## Set to false for actors that disengage purely by distance threshold (e.g. army units).
+# @export var has_deaggro: bool = false
 
-## Maximum distance from anchor_position before the actor forcibly returns home.
-## A value of 0 disables leashing entirely.
-@export var leash_distance: float = 0.0
+# ## Maximum distance from anchor_position before the actor forcibly returns home.
+# ## A value of 0 disables leashing entirely.
+# @export var leash_distance: float = 0.0

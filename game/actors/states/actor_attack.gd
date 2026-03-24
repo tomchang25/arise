@@ -3,7 +3,7 @@
 ## Fires the primary weapon at the nearest reachable target, with optional slow creep.
 ##
 ## Transitions:
-##   → RETURN_TO_ANCHOR  if deaggro'd or anchor too far (Enemy / Army respectively)
+##   → RETURN_TO_ANCHOR  if group clears aggro
 ##   → CHASE             if target moves out of reach
 extends ActorState
 
@@ -14,8 +14,6 @@ extends ActorState
 ## Slow-creep speed while repositioning inside the attack state.
 @export var attack_speed: float = 30.0
 
-## Threshold used by non-deaggro actors (Army) to exit when too far from anchor.
-@export var follow_threshold: float = 200.0
 @export var move_update_interval: float = 0.1
 
 var _move_timer: float = 0.0
@@ -42,16 +40,10 @@ func _exit() -> void:
 func _update(delta: float) -> void:
     # --- Exit conditions ---
 
-    # Enemy: group lost the player → return home
-    if actor.has_deaggro() and actor.is_deaggro_active():
+    # Group cleared aggro → return home.
+    if actor.is_deaggro_active():
         change_state(ActorStateId.RETURN_TO_ANCHOR)
         return
-
-    # Army: no target or drifted too far from player → return home
-    if not actor.has_deaggro():
-        if not actor.is_aggro_active() or actor.get_distance_to_anchor() > follow_threshold:
-            change_state(ActorStateId.RETURN_TO_ANCHOR)
-            return
 
     # --- Target validation (reach_detection is OFF, use distance instead) ---
 

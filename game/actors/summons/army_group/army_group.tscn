@@ -7,11 +7,12 @@
 y_sort_enabled = true
 script = ExtResource("1_armygrp")
 detection_module = NodePath("DetectionModule")
+leash_distance = 240.0
 
 [node name="DetectionModule" type="Area2D" parent="." unique_id=1416516153]
 collision_layer = 256
 collision_mask = 2
 monitorable = false
 script = ExtResource("2_vfccc")
-radius = 320.0
+radius = 160.0
 metadata/_custom_type_script = "uid://hyy86fs5b0fs"

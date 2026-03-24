@@ -146,9 +146,8 @@ func is_deaggro_active() -> bool:
 func get_nearest_aggro_target() -> Node2D:
     return group_target
 
-
-func has_deaggro() -> bool:
-    return data.has_deaggro if data else false
+# func has_deaggro() -> bool:
+#     return data.has_deaggro if data else false
 
 
 func is_target_in_reach() -> bool:
@@ -156,7 +155,3 @@ func is_target_in_reach() -> bool:
         return false
     var reach := get_attack_range()
     return reach > 0.0 and global_position.distance_to(group_target.global_position) <= reach
-
-
-func get_leash_distance() -> float:
-    return data.leash_distance if data else 0.0
