@@ -25,13 +25,13 @@ metadata/_custom_type_script = "uid://dcrgnkuqtpd50"
 [node name="Dummies" type="Node2D" parent="." unique_id=664775263]
 
 [node name="Dummy" parent="Dummies" unique_id=306738905 instance=ExtResource("4_k6ada")]
-position = Vector2(217, 65)
+position = Vector2(261, 58)
 
 [node name="Dummy2" parent="Dummies" unique_id=1806552245 instance=ExtResource("4_k6ada")]
-position = Vector2(127, 100)
+position = Vector2(103, 68)
 
 [node name="Dummy3" parent="Dummies" unique_id=261152419 instance=ExtResource("4_k6ada")]
-position = Vector2(112, 35)
+position = Vector2(106, 42)
 
 [node name="Dummy4" parent="Dummies" unique_id=1036995995 instance=ExtResource("4_k6ada")]
-position = Vector2(67, 60)
+position = Vector2(81, 50)
