@@ -3,6 +3,8 @@ extends Node
 
 signal counts_changed(type_index: int, current: int, max_count: int)
 signal souls_changed(souls: int)
+signal active_group_changed(group_index: int)
+signal group_count_changed(group_index: int, count: int)
 
 @export var army_types: Array[SummonType] = []
 @export var debug_starting_souls: int = 0
@@ -11,12 +13,16 @@ var _player: Player
 var _groups: Array[ArmyGroup]
 var _counts: Array[int] = []
 var _tracked_units: Array = [] # Array of Arrays, one per type
+var _active_group_index: int = 0
 
 
 func _ready() -> void:
     _player = get_tree().get_first_node_in_group("player")
     _groups = get_tree().get_nodes_in_group("army_group")
     _groups.sort_custom(func(a, b): return a.group_id < b.group_id)
+
+    for i in _groups.size():
+        _groups[i].unit_grid_changed.connect(_on_group_count_changed.bind(i))
 
     _counts.resize(army_types.size())
     _counts.fill(0)
@@ -31,9 +37,22 @@ func _ready() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-    for i in army_types.size():
+    # 1–4: select active group
+    for i in 4:
         if event.is_action_pressed("summon_%d" % (i + 1)):
-            summon(i)
+            _set_active_group(i)
+            return
+    # F1–F4: summon type to active group
+    if event is InputEventKey and event.pressed and not event.echo:
+        match event.physical_keycode:
+            KEY_F1:
+                summon(0)
+            KEY_F2:
+                summon(1)
+            KEY_F3:
+                summon(2)
+            KEY_F4:
+                summon(3)
 
 # -------------------------
 # Public API
@@ -44,7 +63,7 @@ func summon(type_index: int) -> bool:
     if type_index < 0 or type_index >= army_types.size():
         return false
 
-    if type_index >= _groups.size():
+    if _active_group_index >= _groups.size():
         return false
 
     var army_type: SummonType = army_types[type_index]
@@ -55,14 +74,14 @@ func summon(type_index: int) -> bool:
     if _player == null or not _player.stats.spend_souls(army_type.soul_cost):
         return false
 
-    if army_type.scene == null or _groups[type_index] == null:
+    if army_type.scene == null or _groups[_active_group_index] == null:
         return false
 
     var spawn_action := SpawnPackedSceneAction.create(army_type.scene)
     spawn_action.use_pool = true
 
     var spawn_ctx := SpawnContext.new()
-    spawn_ctx.setup(_groups[type_index], 0, _player, { })
+    spawn_ctx.setup(_groups[_active_group_index], 0, _player, { })
 
     var unit := SpawnExecutor.execute_at_position(spawn_action, _player.global_position, spawn_ctx) as Army
     if unit == null:
@@ -102,9 +121,30 @@ func get_cost(type_index: int) -> int:
         return army_types[type_index].soul_cost
     return 0
 
+
+func get_active_group() -> int:
+    return _active_group_index
+
+
+func get_group_count(group_index: int) -> int:
+    if group_index >= _groups.size():
+        return 0
+    return _groups[group_index].get_all_units().size()
+
 # -------------------------
 # Private
 # -------------------------
+
+
+func _set_active_group(index: int) -> void:
+    if index < 0 or index >= _groups.size():
+        return
+    _active_group_index = index
+    active_group_changed.emit(_active_group_index)
+
+
+func _on_group_count_changed(group_index: int) -> void:
+    group_count_changed.emit(group_index, get_group_count(group_index))
 
 
 func _on_unit_removed(type_index: int, unit: Node) -> void:

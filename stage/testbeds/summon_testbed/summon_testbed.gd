@@ -69,7 +69,8 @@ func _update_debug_label() -> void:
         return
     debug_label.text = "\n".join(
         [
-            "[1–4]  Summon unit",
+            "[1–4]  Select group",
+            "[F1–F4]  Summon type",
             "[R]    Reset dummies",
         ],
     )
