@@ -16,6 +16,8 @@ var _cells: Dictionary = { }
 # Maps each registered character to its current cell key so we can remove it cheaply.
 var _char_to_cell: Dictionary = { }
 
+var _char_to_layer: Dictionary = { }
+
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
@@ -23,10 +25,11 @@ var _char_to_cell: Dictionary = { }
 
 ## Register a character so it can be found by neighbours.
 ## Call once from SoftCollision._ready().
-func register(character: CharacterBody2D) -> void:
+func register(character: CharacterBody2D, collision_layer: int = 0) -> void:
     var key := _cell_key(character.global_position)
     _insert(character, key)
     _char_to_cell[character] = key
+    _char_to_layer[character] = collision_layer
 
 
 ## Unregister a character (e.g. on enemy death / queue_free).
@@ -37,6 +40,7 @@ func unregister(character: CharacterBody2D) -> void:
     var key: Vector2i = _char_to_cell[character]
     _remove(character, key)
     _char_to_cell.erase(character)
+    _char_to_layer.erase(character)
 
 
 ## Update a character's position in the hash.
@@ -74,6 +78,11 @@ func query_nearby(pos: Vector2, radius: float, max_results: int = 4) -> Array:
                     if results.size() >= max_results:
                         return results
     return results
+
+
+## Returns the stored collision_layer for a character, or 0xFFFFFFFF if not found.
+func get_layer(character: CharacterBody2D) -> int:
+    return _char_to_layer.get(character, 0xFFFFFFFF)
 
 
 func get_directional_density(pos: Vector2, move_dir: Vector2) -> float:

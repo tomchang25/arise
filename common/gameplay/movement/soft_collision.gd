@@ -21,6 +21,20 @@ extends Node2D
 @export var movement_module: MovementModule
 
 @export_group("Separation")
+
+## The group this unit belongs to (e.g. "enemy", "player", "army").
+## Automatically converts to a collision_layer bitmask via CollisionMaskManager.
+@export var layer_name: StringName = &"":
+    set(value):
+        layer_name = value
+        collision_layer = CollisionMaskManager.layer(value)
+
+## The groups this unit pushes. Each entry is a group name (e.g. &"enemy", &"army").
+@export var mask_names: Array[StringName] = []:
+    set(value):
+        mask_names = value
+        collision_mask = CollisionMaskManager.mask(mask_names)
+
 ## Divides the received separation force. Higher mass = harder to push.
 @export var mass: float = 1.0
 ## Base separation force applied at full overlap (dist = 0).
@@ -36,6 +50,11 @@ extends Node2D
 
 @export var crowd_block_start: float = 3.0
 @export var crowd_block_range: float = 5.0
+
+## Which group this unit belongs to. Use CollisionMaskManager.layer(&"group_name").
+@export var collision_layer: int = 0
+## Which groups this unit pushes. Use CollisionMaskManager.mask([...]).
+@export var collision_mask: int = 0
 
 var _enabled: bool = true
 
@@ -53,7 +72,7 @@ func _ready() -> void:
     # wins, but since they are equal it doesn't matter.
     SpatialHash.cell_size = min_distance
 
-    SpatialHash.register(character)
+    SpatialHash.register(character, collision_layer)
 
 
 func _exit_tree() -> void:
@@ -95,6 +114,11 @@ func _physics_process(_delta: float) -> void:
         # Skip self.
         if body == character:
             continue
+
+        if collision_mask != 0:
+            var body_layer := SpatialHash.get_layer(body)
+            if (collision_mask & body_layer) == 0:
+                continue
 
         var diff: Vector2 = character.global_position - body.global_position
         var dist: float = diff.length()

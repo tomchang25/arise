@@ -134,12 +134,14 @@ radius = 100.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_vhmd8"]
 radius = 50.0
 
-[node name="NinjaGreen" type="CharacterBody2D" unique_id=1952489733 node_paths=PackedStringArray("sprite", "hurtbox", "damage_receiver", "hit_feedback", "damage_number", "health_bar", "combat_module", "reach_detection", "aggro_detection", "movement_module", "navigation_module", "animation_module", "state_machine") groups=["armies"]]
+[node name="NinjaGreen" type="CharacterBody2D" unique_id=1952489733 node_paths=PackedStringArray("reach_detection", "aggro_detection", "sprite", "hurtbox", "damage_receiver", "hit_feedback", "damage_number", "health_bar", "combat_module", "movement_module", "navigation_module", "animation_module", "soft_collision", "state_machine") groups=["armies"]]
 collision_layer = 256
 collision_mask = 4
 motion_mode = 1
 script = ExtResource("1_13omc")
 data = SubResource("Resource_btvt0")
+reach_detection = NodePath("Module/DetectionPivot/ReachDetection")
+aggro_detection = NodePath("Module/DetectionPivot/AggroDetection")
 sprite = NodePath("Sprite")
 hurtbox = NodePath("Hurtbox")
 damage_receiver = NodePath("Module/DamageReceiverModule")
@@ -147,11 +149,10 @@ hit_feedback = NodePath("Module/HitFeedbackModule")
 damage_number = NodePath("Module/DamageNumberModule")
 health_bar = NodePath("Module/HealthBar")
 combat_module = NodePath("Module/DetectionPivot/CombatModule")
-reach_detection = NodePath("Module/DetectionPivot/ReachDetection")
-aggro_detection = NodePath("Module/DetectionPivot/AggroDetection")
 movement_module = NodePath("Module/MovementModule")
 navigation_module = NodePath("Module/NavigationModule")
 animation_module = NodePath("Module/AnimationModule")
+soft_collision = NodePath("SoftCollision")
 state_machine = NodePath("StateMachine")
 
 [node name="Sprite" type="Sprite2D" parent="." unique_id=1410171533]
@@ -165,6 +166,10 @@ vframes = 7
 script = ExtResource("8_gmkq7")
 character = NodePath("..")
 movement_module = NodePath("../Module/MovementModule")
+layer_name = &"army"
+mask_names = Array[StringName]([&"player", &"army", &"enemy"])
+collision_layer = 256
+collision_mask = 259
 metadata/_custom_type_script = "uid://bhtdp3vwcylqh"
 
 [node name="Hurtbox" type="Area2D" parent="." unique_id=103917815]
@@ -256,7 +261,6 @@ damage_number_scene = ExtResource("16_dmgnumscn")
 [node name="MovementModule" type="Node" parent="Module" unique_id=810572988 node_paths=PackedStringArray("character")]
 script = ExtResource("17_move")
 character = NodePath("../..")
-max_separation_speed = null
 
 [node name="AnimationModule" type="Node" parent="Module" unique_id=998838272 node_paths=PackedStringArray("actor", "animation_tree")]
 script = ExtResource("19_anim")
