@@ -8,20 +8,17 @@ extends Actor
 
 @export var data: ArmyData
 
-@export_group("Modules — Perception")
-@export var reach_detection: DetectionModule
-@export var aggro_detection: DetectionModule
-@export var deaggro_detection: DetectionModule
-
 # -------------------------
-# Runtime state — Army-specific
+# Group-driven aggro state
+# Set by ArmyGroup — units do not run their own detection.
 # -------------------------
 
-var player: Node2D
+var group_aggroed: bool = false
+var group_target: Node2D = null
 
 # -------------------------
 # Public API — Base
-# -------------------------
+# --------------------------
 
 
 func get_data() -> ArmyData:
@@ -40,18 +37,6 @@ func _ready() -> void:
     _apply_data()
     _bind_modules()
 
-    player = get_tree().get_first_node_in_group("player")
-
-
-func _auto_wire_nodes() -> void:
-    super._auto_wire_nodes()
-    if not reach_detection:
-        reach_detection = find_child("ReachDetection", true, false) as DetectionModule
-    if not aggro_detection:
-        aggro_detection = find_child("AggroDetection", true, false) as DetectionModule
-    if not deaggro_detection:
-        deaggro_detection = find_child("DeaggroDetection", true, false) as DetectionModule
-
 
 func _apply_data() -> void:
     if data == null:
@@ -61,18 +46,14 @@ func _apply_data() -> void:
     stats = data.stats.duplicate() as Stats
     stats.setup_stats()
 
-    if aggro_detection and data.aggro_range > 0.0:
-        aggro_detection.set_collision_radius(data.aggro_range)
-
-    if reach_detection and data.attack_range > 0.0:
-        reach_detection.set_collision_radius(data.attack_range)
-
-
     if combat_module:
         combat_module.setup(stats, data.weapons)
 
 
 func reset() -> void:
+    group_aggroed = false
+    group_target = null
+
     if data:
         stats = data.stats.duplicate() as Stats
         stats.setup_stats()
@@ -87,22 +68,10 @@ func reset() -> void:
         if combat_module:
             combat_module.setup(stats, data.weapons)
     super.reset()
-    if reach_detection:
-        reach_detection.reset()
-    if aggro_detection:
-        aggro_detection.reset()
-    if deaggro_detection:
-        deaggro_detection.reset()
 
 
 func set_enabled(value: bool) -> void:
     super.set_enabled(value)
-    if reach_detection:
-        reach_detection.set_enabled(value)
-    if aggro_detection:
-        aggro_detection.set_enabled(value)
-    if deaggro_detection:
-        deaggro_detection.set_enabled(value)
 
 # -------------------------
 # Lifecycle callbacks
@@ -118,24 +87,27 @@ func _on_died(_info) -> void:
 # -------------------------
 
 
-func is_target_in_reach() -> bool:
-    return reach_detection.get_target_count(false) > 0 if reach_detection else false
-
-
 func is_aggro_active() -> bool:
-    return aggro_detection.get_target_count(false) > 0 if aggro_detection else false
+    return group_aggroed
 
 
 func is_deaggro_active() -> bool:
-    return deaggro_detection.get_target_count(false) == 0 if deaggro_detection else true
+    return not group_aggroed
 
 
 func get_nearest_aggro_target() -> Node2D:
-    return aggro_detection.get_closest_target(false) if aggro_detection else null
+    return group_target
 
 
 func has_deaggro() -> bool:
     return data.has_deaggro if data else false
+
+
+func is_target_in_reach() -> bool:
+    if group_target == null:
+        return false
+    var reach := get_attack_range()
+    return reach > 0.0 and global_position.distance_to(group_target.global_position) <= reach
 
 
 func get_leash_distance() -> float:

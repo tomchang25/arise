@@ -10,7 +10,6 @@
 [ext_resource type="Script" uid="uid://i2xvg4o1geuj" path="res://common/gameplay/combat/attack/data/weapon_data.gd" id="4_m1dpv"]
 [ext_resource type="Script" uid="uid://bb4mbrq1u7pl" path="res://common/gameplay/combat/combat_module.gd" id="5_combat"]
 [ext_resource type="Resource" uid="uid://ci3t141brem18" path="res://stage/testbeds/combat_sandbox/mini_slash.tres" id="5_ho0hb"]
-[ext_resource type="Script" uid="uid://hyy86fs5b0fs" path="res://common/gameplay/detection/detection_module.gd" id="6_detect"]
 [ext_resource type="PackedScene" uid="uid://d0tswwb1d3smv" path="res://common/gameplay/health_bar/health_bar.tscn" id="7_hbar"]
 [ext_resource type="Script" uid="uid://dpi3inldik0ho" path="res://common/gameplay/combat/damage_response/damage_receiver_module.gd" id="8_dmgrcv"]
 [ext_resource type="Script" uid="uid://bhtdp3vwcylqh" path="res://common/gameplay/movement/soft_collision.gd" id="8_gmkq7"]
@@ -128,20 +127,12 @@ nodes/TimeScale/node = SubResource("AnimationNodeTimeScale_y5i28")
 nodes/TimeScale/position = Vector2(60, 120)
 node_connections = [&"output", 0, &"TimeScale", &"TimeScale", 0, &"StateMachine"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_gmkq7"]
-radius = 100.0
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_vhmd8"]
-radius = 50.0
-
-[node name="NinjaGreen" type="CharacterBody2D" unique_id=1952489733 node_paths=PackedStringArray("reach_detection", "aggro_detection", "sprite", "hurtbox", "damage_receiver", "hit_feedback", "damage_number", "health_bar", "combat_module", "movement_module", "navigation_module", "animation_module", "soft_collision", "state_machine") groups=["armies"]]
+[node name="NinjaGreen" type="CharacterBody2D" unique_id=1952489733 node_paths=PackedStringArray("sprite", "hurtbox", "damage_receiver", "hit_feedback", "damage_number", "health_bar", "combat_module", "movement_module", "navigation_module", "animation_module", "soft_collision", "state_machine") groups=["armies"]]
 collision_layer = 256
 collision_mask = 4
 motion_mode = 1
 script = ExtResource("1_13omc")
 data = SubResource("Resource_btvt0")
-reach_detection = NodePath("Module/DetectionPivot/ReachDetection")
-aggro_detection = NodePath("Module/DetectionPivot/AggroDetection")
 sprite = NodePath("Sprite")
 hurtbox = NodePath("Hurtbox")
 damage_receiver = NodePath("Module/DamageReceiverModule")
@@ -204,29 +195,6 @@ position = Vector2(0, -6)
 
 [node name="CombatModule" type="Node2D" parent="Module/DetectionPivot" unique_id=821495176]
 script = ExtResource("5_combat")
-
-[node name="AggroDetection" type="Area2D" parent="Module/DetectionPivot" unique_id=751129509]
-collision_layer = 0
-collision_mask = 2
-monitorable = false
-script = ExtResource("6_detect")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/AggroDetection" unique_id=19296424]
-shape = SubResource("CircleShape2D_gmkq7")
-debug_color = Color(0, 0.6, 0.1764706, 0.23529412)
-
-[node name="ReachDetection" type="Area2D" parent="Module/DetectionPivot" unique_id=401014540]
-collision_layer = 0
-collision_mask = 2
-monitorable = false
-script = ExtResource("6_detect")
-radius = 50.0
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/ReachDetection" unique_id=1333937030]
-shape = SubResource("CircleShape2D_vhmd8")
-debug_color = Color(0.8627451, 0.23529412, 0.69803923, 0.23921569)
-metadata/_edit_group_ = true
-metadata/_edit_lock_ = true
 
 [node name="HealthBar" parent="Module" unique_id=1501966175 instance=ExtResource("7_hbar")]
 anchors_preset = 5

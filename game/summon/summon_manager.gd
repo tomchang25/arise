@@ -9,7 +9,14 @@ signal group_count_changed(group_index: int, count: int)
 @export var army_types: Array[SummonType] = []
 @export var debug_starting_souls: int = 0
 
+## Container node where spawned Army units will be added as children.
+## If null, units are added to the current scene root.
+@export var armies_container: Node
+
+var group_count := 0
+
 var _player: Player
+
 var _groups: Array
 var _counts: Array[int] = []
 var _tracked_units: Array = [] # Array of Arrays, one per type
@@ -21,7 +28,8 @@ func _ready() -> void:
     _groups = get_tree().get_nodes_in_group("army_group")
     _groups.sort_custom(func(a, b): return a.group_id < b.group_id)
 
-    for i in _groups.size():
+    group_count = _groups.size()
+    for i in group_count:
         _groups[i].unit_grid_changed.connect(_on_group_count_changed.bind(i))
 
     _counts.resize(army_types.size())
@@ -74,20 +82,29 @@ func summon(type_index: int) -> bool:
     if _player == null or not _player.stats.spend_souls(army_type.soul_cost):
         return false
 
-    if army_type.scene == null or _groups[_active_group_index] == null:
+    var active_group: ArmyGroup = _groups[_active_group_index]
+    if army_type.scene == null or active_group == null:
         return false
 
+    # --- Spawn the unit ---
     var spawn_action := SpawnPackedSceneAction.create(army_type.scene)
     spawn_action.use_pool = true
 
-    var spawn_ctx := SpawnContext.new()
-    spawn_ctx.setup(_groups[_active_group_index], 0, _player, { })
+    # Determine the container: use armies_container if set, otherwise current scene root.
+    var container: Node = armies_container if armies_container else get_tree().current_scene
+
+    var spawn_ctx := SpawnContext.create(container)
+    spawn_ctx.source_node = _player
 
     var unit := SpawnExecutor.execute_at_position(spawn_action, _player.global_position, spawn_ctx) as Army
     if unit == null:
         return false
 
     unit.modulate = army_type.color
+
+    # --- Register with the active group instead of parenting ---
+    # register_member() assigns the formation slot and sets anchor_position.
+    active_group.register_member(unit, _player.global_position)
 
     _tracked_units[type_index].append(unit)
     _counts[type_index] += 1
@@ -129,7 +146,7 @@ func get_active_group() -> int:
 func get_group_count(group_index: int) -> int:
     if group_index >= _groups.size():
         return 0
-    return _groups[group_index].get_all_units().size()
+    return _groups[group_index].get_unit_count()
 
 # -------------------------
 # Private

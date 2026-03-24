@@ -1,9 +1,15 @@
+@tool
 class_name ArmyGroup
 extends Node2D
 
+## Emitted whenever the member list or slot changes (for UI / minimap).
 signal unit_grid_changed
 
 enum FormationType { RECTANGULAR, CIRCULAR }
+
+# -------------------------
+# Exports — Formation
+# -------------------------
 
 @export var group_id: int
 @export var size := 100
@@ -12,47 +18,78 @@ enum FormationType { RECTANGULAR, CIRCULAR }
 
 ## When enabled, the anchor is updated to the player's world position every
 ## [member track_interval] seconds. When disabled, the anchor stays wherever
-## it was last set (or where the player was when tracking was turned off).
+## it was last set.
 @export var track_player: bool = true
 
 ## Seconds between automatic anchor updates when [member track_player] is true.
 ## Set to 0 to update every physics frame.
-@export var track_interval: float = 0.0
+@export var track_interval: float = 0.05
 
+# -------------------------
+# Exports — Aggro
+# -------------------------
+
+## Detection area used for target acquisition — set radius to desired aggro range in scene.
+@export var detection_module: DetectionModule
+
+## Distance from group center at which members aggro nearby enemies.
+@export var aggro_range: float = 120.0
+
+## Distance at which members deaggro. Should be larger than aggro_range.
+@export var deaggro_range: float = 160.0
+
+# -------------------------
+# Internal state
+# -------------------------
+
+## Slot array — null means the slot is empty, otherwise holds the registered Army unit.
 var units: Array[Node]
 
-## Player reference — resolved at _ready().
-var _player: Node2D
-
 ## The logical anchor position used to compute each unit's formation slot.
-## Stored as a plain Vector2 so that changing it does NOT move this Node2D
-## (and therefore does not displace any child nodes).
+## Stored as a plain Vector2 so changing it does NOT move this Node2D.
 var _anchor: Vector2 = Vector2.ZERO
 
-## Per-unit grid offsets in world units, keyed by the unit node.
-## Populated in add_unit(), cleared in remove_unit().
+## Per-unit grid offsets in world units, keyed by unit node.
+## Populated in register_member(), cleared on unit death / removal.
 var _unit_offsets: Dictionary = { }
 
 ## Accumulated time for periodic anchor updates.
 var _track_timer: float = 0.0
 
-## --- GDScript Lifecycle ---
+## Accumulated time for position update (every POSITION_UPDATE_INTERVAL seconds).
+var _position_timer: float = 0.0
+const POSITION_UPDATE_INTERVAL := 0.1
+
+## Player reference — resolved at _ready().
+var _player: Node2D
+
+## Aggro state — set by _update_aggro_state(), pushed to all members.
+var _aggroed: bool = false
+var _aggro_timer: float = 0.0
+const AGGRO_CHECK_INTERVAL := 0.1
+
+# -------------------------
+# Lifecycle
+# -------------------------
 
 
-func _ready():
-    child_entered_tree.connect(_on_child_entered_tree)
-    child_exiting_tree.connect(_on_child_exiting_tree)
+func _ready() -> void:
+    _player = get_tree().get_first_node_in_group("player")
+
+    if not detection_module:
+        detection_module = find_child("DetectionModule", true, false) as DetectionModule
+
+    if detection_module:
+        detection_module.radius = deaggro_range
 
     reset_units()
 
-    _player = get_tree().get_first_node_in_group("player")
     if _player:
         _anchor = _player.global_position
 
 
 func _physics_process(delta: float) -> void:
-    # Optionally sync the anchor to the player on a timer (or every frame when
-    # track_interval == 0).
+    # Sync anchor to player position.
     if track_player and _player:
         if track_interval <= 0.0:
             set_anchor(_player.global_position)
@@ -62,17 +99,62 @@ func _physics_process(delta: float) -> void:
                 _track_timer = 0.0
                 set_anchor(_player.global_position)
 
+    # Update group node position to living member centroid.
+    _position_timer += delta
+    if _position_timer >= POSITION_UPDATE_INTERVAL:
+        _position_timer = 0.0
+        var alive := get_all_units()
+        if not alive.is_empty():
+            global_position = _get_center(alive)
 
-func _on_child_entered_tree(child: Node):
-    if child is CharacterBody2D:
-        add_unit(child)
+    # Aggro check.
+    _aggro_timer += delta
+    if _aggro_timer >= AGGRO_CHECK_INTERVAL:
+        _aggro_timer = 0.0
+        _update_aggro_state()
+
+# -------------------------
+# Member registry
+# -------------------------
 
 
-func _on_child_exiting_tree(child: Node):
-    if child is CharacterBody2D:
-        remove_unit(child)
+## Register [param unit] with this group at a formation slot near [param setup_position].
+## The unit's scene-tree parent is managed externally — this only stores the reference.
+func register_member(unit: Army, setup_position: Vector2 = Vector2.ZERO) -> bool:
+    # Reject if already registered.
+    for i in size:
+        if units[i] == unit:
+            return false
 
-## --- Public API ---
+    var index := get_first_empty_slot()
+    if index == -1:
+        return false
+
+    # Place unit at its formation slot.
+    var grid := _convert_index_to_grid(index)
+    var offset := grid * grid_size
+    _unit_offsets[unit] = offset
+
+    unit.global_position = setup_position
+    unit.anchor_position = _anchor + offset
+
+    units[index] = unit
+    unit_grid_changed.emit()
+
+    # Listen for removal so the slot is freed automatically.
+    if not unit.tree_exiting.is_connected(_on_unit_exiting_tree.bind(unit)):
+        unit.tree_exiting.connect(_on_unit_exiting_tree.bind(unit))
+
+    return true
+
+
+## Manually unregister [param unit] from this group without freeing it.
+func unregister_member(unit: Army) -> bool:
+    return _remove_unit(unit)
+
+# -------------------------
+# Public API — anchor / formation
+# -------------------------
 
 
 ## Moves the formation anchor to [param new_position] and immediately updates
@@ -84,63 +166,35 @@ func set_anchor(new_position: Vector2) -> void:
         unit.anchor_position = _anchor + offset
 
 
-func add_unit(unit: Node) -> bool:
-    var index = get_first_empty_slot()
-
-    if index == -1:
-        return false
-
-    var grid := _convert_index_to_grid(index)
-    var offset := grid * grid_size
-    _unit_offsets[unit] = offset
-
-    # Set initial anchor_position immediately so the unit starts at the right spot.
-    unit.anchor_position = _anchor + offset
-
-    units[index] = unit
-    unit_grid_changed.emit()
-
-    return true
-
-
-func remove_unit(unit: Node) -> bool:
-    var index = units.find(unit)
-
-    if index == -1:
-        return false
-
-    units[index] = null
-    _unit_offsets.erase(unit)
-    unit_grid_changed.emit()
-
-    return true
-
-
-func reset_units():
-    units.clear()
-    _unit_offsets.clear()
-
-    for i in range(size):
-        units.append(null)
-
-    unit_grid_changed.emit()
-
-
 func get_first_empty_slot() -> int:
     for i in range(size):
         if units[i] == null:
             return i
-
     return -1
 
 
 func get_all_units() -> Array[Node]:
-    var temp = units.filter(func(unit): return unit != null)
-    return temp
+    var result: Array[Node] = []
+    for u in units:
+        if u != null and is_instance_valid(u):
+            result.append(u)
+    return result
+
+
+func get_unit_count() -> int:
+    return get_all_units().size()
 
 
 func is_grid_full() -> bool:
     return get_first_empty_slot() == -1
+
+
+func reset_units() -> void:
+    units.clear()
+    _unit_offsets.clear()
+    for i in range(size):
+        units.append(null)
+    unit_grid_changed.emit()
 
 
 ## Changes the active formation type and re-assigns grid positions for all
@@ -149,10 +203,11 @@ func set_formation_type(type: FormationType) -> void:
     formation_type = type
     _rebuild_formation()
 
-## --- Private ---
+# -------------------------
+# Internal — formation
+# -------------------------
 
 
-## Re-assigns grid positions for all active units using the current formation_type.
 func _rebuild_formation() -> void:
     var all_units := get_all_units()
     for i in range(size):
@@ -170,6 +225,105 @@ func _rebuild_formation() -> void:
         units[index] = unit
 
     unit_grid_changed.emit()
+
+
+func _remove_unit(unit: Node) -> bool:
+    var index := units.find(unit)
+    if index == -1:
+        return false
+
+    units[index] = null
+    _unit_offsets.erase(unit)
+    unit_grid_changed.emit()
+    return true
+
+
+func _get_center(alive: Array[Node]) -> Vector2:
+    var sum := Vector2.ZERO
+    for u in alive:
+        sum += (u as Node2D).global_position
+    return sum / float(alive.size())
+
+# -------------------------
+# Internal — aggro
+# -------------------------
+
+
+func _update_aggro_state() -> void:
+    if detection_module == null:
+        return
+
+    if not _aggroed:
+        # Aggro when any enemy enters aggro_range of the group center.
+        var nearest := _get_nearest_enemy()
+        if nearest != null:
+            var dist := nearest.global_position.distance_squared_to(global_position)
+            if dist < aggro_range * aggro_range:
+                _aggroed = true
+                _assign_targets_to_members()
+    else:
+        # Deaggro when no targets remain in detection (deaggro) range.
+        var target := detection_module.get_closest_target(false)
+        if target == null:
+            _aggroed = false
+            for unit in get_all_units():
+                (unit as Army).group_aggroed = false
+                (unit as Army).group_target = null
+        else:
+            # Re-assign each tick so members switch to a closer target if one appears.
+            _assign_targets_to_members()
+
+
+func _assign_targets_to_members() -> void:
+    var targets: Array[Node2D] = detection_module.get_targets(false) if detection_module else []
+    for unit in get_all_units():
+        var army := unit as Army
+        army.group_aggroed = true
+        army.group_target = _get_closest_target_to(army.global_position, targets)
+
+
+func _get_nearest_enemy() -> Node2D:
+    # Use detection_module targets if already available; otherwise fall back to
+    # a manual distance check against all enemies in the scene.
+    if detection_module:
+        return detection_module.get_closest_target(false)
+
+    var enemies := get_tree().get_nodes_in_group("enemies")
+    var closest: Node2D = null
+    var min_dist_sq := INF
+    for e in enemies:
+        if not is_instance_valid(e):
+            continue
+        var d := (e as Node2D).global_position.distance_squared_to(global_position)
+        if d < min_dist_sq:
+            min_dist_sq = d
+            closest = e as Node2D
+    return closest
+
+
+func _get_closest_target_to(origin: Vector2, targets: Array[Node2D]) -> Node2D:
+    var closest: Node2D = null
+    var min_dist_sq := INF
+    for target in targets:
+        if not is_instance_valid(target):
+            continue
+        var d := origin.distance_squared_to(target.global_position)
+        if d < min_dist_sq:
+            min_dist_sq = d
+            closest = target
+    return closest
+
+# -------------------------
+# Callbacks
+# -------------------------
+
+
+func _on_unit_exiting_tree(unit: Node) -> void:
+    _remove_unit(unit)
+
+# -------------------------
+# Formation math (unchanged)
+# -------------------------
 
 
 func _convert_index_to_grid(index: int) -> Vector2:

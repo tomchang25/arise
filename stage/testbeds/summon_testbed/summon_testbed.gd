@@ -1,11 +1,12 @@
 ## Summon System Testbed
-## Tests the full summon pipeline: summoning ninja_green units, pathfinding,
+## Tests the full summon pipeline: summoning units, pathfinding,
 ## combat against dummy targets, and SummonHUD + PlayerHUD integration.
 ##
 ## Keybinds
 ## --------
-##   [1–4] — Summon unit type (handled by SummonManager)
-##   [R]   — Reset all dummy targets to their spawn positions
+##   [1–4]    — Select active group
+##   [F1–F4]  — Summon unit type into active group
+##   [R]      — Reset all dummy targets to their spawn positions
 extends Node2D
 
 const ACTION_RESET_DUMMIES := "summon_test_reset_dummies"
@@ -69,9 +70,9 @@ func _update_debug_label() -> void:
         return
     debug_label.text = "\n".join(
         [
-            "[1–4]  Select group",
+            "[1–4]    Select group",
             "[F1–F4]  Summon type",
-            "[R]    Reset dummies",
+            "[R]      Reset dummies",
         ],
     )
 
