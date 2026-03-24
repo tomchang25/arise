@@ -23,7 +23,7 @@ func _enter() -> void:
 
 func _update(delta: float) -> void:
     # Group cleared aggro → return home.
-    if not actor.is_aggro_active():
+    if actor.is_deaggro_active():
         change_state(ActorStateId.RETURN_TO_ANCHOR)
         return
 

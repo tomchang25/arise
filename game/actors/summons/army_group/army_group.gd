@@ -40,7 +40,7 @@ enum FormationType { RECTANGULAR, CIRCULAR }
 
 ## Maximum distance the group center may stray from the anchor before members
 ## are forced back. Set to 0 to disable leashing entirely.
-@export var leash_distance: float = 300.0
+@export var leash_distance: float = 200.0
 
 # -------------------------
 # Internal state

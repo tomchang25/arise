@@ -347,12 +347,10 @@ func get_facing_direction() -> Vector2:
 
 @abstract func get_nearest_aggro_target() -> Node2D
 
-
-@abstract func has_deaggro() -> bool
+# @abstract func has_deaggro() -> bool
 
 
 @abstract func is_target_in_reach() -> bool
-
 
 # -------------------------
 # Public API — state machine
