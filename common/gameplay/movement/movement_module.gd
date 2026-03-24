@@ -58,8 +58,6 @@ func _physics_process(delta: float) -> void:
     knockback_velocity = knockback_velocity.move_toward(Vector2.ZERO, knockback_friction * delta)
 
     _computed_velocity = current_move + knockback_velocity + separation_velocity
-    if _computed_velocity == Vector2.ZERO:
-        return
 
     if use_direct_position:
         character.global_position += _computed_velocity * delta

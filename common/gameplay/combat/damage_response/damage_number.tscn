@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://b8a1mocdkedih" path="res://common/gameplay/combat/damage_response/damage_number.gd" id="1_qur0h"]
 
 [node name="DamageNumber" type="Node2D" unique_id=1525366246]
+z_index = 4096
 script = ExtResource("1_qur0h")
 
 [node name="Label" type="Label" parent="." unique_id=1630944759]

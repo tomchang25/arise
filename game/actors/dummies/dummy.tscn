@@ -31,8 +31,8 @@ metadata/_custom_type_script = "uid://bkgf2cii3bfri"
 
 [sub_resource type="Resource" id="Resource_gtxs5"]
 script = ExtResource("2_6s4ru")
-stats = SubResource("Resource_bjyc7")
 drop_profile = ExtResource("20_7gd1t")
+stats = SubResource("Resource_bjyc7")
 metadata/_custom_type_script = "uid://boqrgdnjxi8n8"
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_lvn57"]
