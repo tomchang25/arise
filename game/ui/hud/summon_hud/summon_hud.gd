@@ -66,7 +66,7 @@ func _unbind() -> void:
 
 
 func _build_groups() -> void:
-    if group_cards_container == null:
+    if group_cards_container == null or summon_manager == null:
         return
 
     for child in group_cards_container.get_children():
@@ -75,7 +75,8 @@ func _build_groups() -> void:
     _group_count_labels.clear()
     _group_styles.clear()
 
-    for i in 4:
+    # Drive count from the actual number of groups the manager knows about
+    for i in summon_manager.group_count:
         var result := _create_group_indicator(i)
         var panel: PanelContainer = result[0]
         var count_lbl: Label = result[1]
@@ -174,6 +175,8 @@ func _build_cards() -> void:
         var hotkey: String = hotkeys[i] if i < hotkeys.size() else "F%d" % (i + 1)
         var card := _create_card(army_type)
         cards_container.add_child(card)
+        # setup() must be called AFTER add_child() so the card is in the tree,
+        # but label refs are direct variables (not @onready), so order doesn't matter.
         card.setup(army_type, hotkey)
         _cards.append(card)
 
@@ -235,6 +238,10 @@ func _create_card(army_type: SummonType) -> SummonCard:
     count_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     vbox.add_child(count_lbl)
 
+    # Hand label references directly to the card — avoids @onready path lookups
+    # on nodes that don't exist in the scene tree yet when the card is constructed.
+    card.init_labels(key_lbl, name_lbl, cost_lbl, count_lbl)
+
     return card
 
 
@@ -244,9 +251,8 @@ func _refresh_all() -> void:
 
     if summon_manager:
         _update_group_highlight(summon_manager.get_active_group())
-        for i in 4:
-            if i < _group_count_labels.size():
-                _group_count_labels[i].text = str(summon_manager.get_group_count(i))
+        for i in _group_count_labels.size():
+            _group_count_labels[i].text = str(summon_manager.get_group_count(i))
 
     for i in _cards.size():
         _refresh_card(i)
