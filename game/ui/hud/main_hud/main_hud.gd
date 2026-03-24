@@ -5,10 +5,11 @@ extends Control
 ## Call bind_player(), bind_wave(), and bind_summon() after the scene is ready
 ## to wire each sub-HUD to its respective manager.
 
-@export var player_hud:  PlayerHUD
-@export var debug_hud:   DebugHUD
-@export var wave_hud:    WaveHUD
-@export var summon_hud:  SummonHUD
+@export var player_hud:   PlayerHUD
+@export var debug_hud:    DebugHUD
+@export var wave_hud:     WaveHUD
+@export var summon_hud:   SummonHUD
+@export var minimap_hud:  MinimapHUD
 
 
 ## Binds both player_hud and debug_hud to the given Stats object.
