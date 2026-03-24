@@ -171,7 +171,7 @@ func _build_cards() -> void:
     var hotkeys := ["F1", "F2", "F3", "F4"]
     for i in summon_manager.army_types.size():
         var army_type: SummonType = summon_manager.army_types[i]
-        var hotkey := hotkeys[i] if i < hotkeys.size() else "F%d" % (i + 1)
+        var hotkey: String = hotkeys[i] if i < hotkeys.size() else "F%d" % (i + 1)
         var card := _create_card(army_type)
         cards_container.add_child(card)
         card.setup(army_type, hotkey)

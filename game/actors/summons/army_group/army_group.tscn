@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://b5mwl9rkvp2t8"]
+[gd_scene format=3 uid="uid://b5mwmarkvp2t8"]
 
 [ext_resource type="Script" uid="uid://daqxgm7hkn3p5" path="res://game/actors/summons/army_group/army_group.gd" id="1_armygrp"]
 

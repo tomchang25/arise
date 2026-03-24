@@ -10,7 +10,7 @@ signal group_count_changed(group_index: int, count: int)
 @export var debug_starting_souls: int = 0
 
 var _player: Player
-var _groups: Array[ArmyGroup]
+var _groups: Array
 var _counts: Array[int] = []
 var _tracked_units: Array = [] # Array of Arrays, one per type
 var _active_group_index: int = 0
