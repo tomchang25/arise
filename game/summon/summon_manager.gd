@@ -8,14 +8,15 @@ signal souls_changed(souls: int)
 @export var debug_starting_souls: int = 0
 
 var _player: Player
-var _army_handler: ArmyHandler
+var _groups: Array[ArmyGroup]
 var _counts: Array[int] = []
 var _tracked_units: Array = [] # Array of Arrays, one per type
 
 
 func _ready() -> void:
     _player = get_tree().get_first_node_in_group("player")
-    _army_handler = get_tree().get_first_node_in_group("army_handler")
+    _groups = get_tree().get_nodes_in_group("army_group")
+    _groups.sort_custom(func(a, b): return a.group_id < b.group_id)
 
     _counts.resize(army_types.size())
     _counts.fill(0)
@@ -43,6 +44,9 @@ func summon(type_index: int) -> bool:
     if type_index < 0 or type_index >= army_types.size():
         return false
 
+    if type_index >= _groups.size():
+        return false
+
     var army_type: SummonType = army_types[type_index]
 
     if _counts[type_index] >= army_type.max_count:
@@ -51,14 +55,14 @@ func summon(type_index: int) -> bool:
     if _player == null or not _player.stats.spend_souls(army_type.soul_cost):
         return false
 
-    if army_type.scene == null or _army_handler == null:
+    if army_type.scene == null or _groups[type_index] == null:
         return false
 
     var spawn_action := SpawnPackedSceneAction.create(army_type.scene)
     spawn_action.use_pool = true
 
     var spawn_ctx := SpawnContext.new()
-    spawn_ctx.setup(_army_handler, 0, _player, { })
+    spawn_ctx.setup(_groups[type_index], 0, _player, { })
 
     var unit := SpawnExecutor.execute_at_position(spawn_action, _player.global_position, spawn_ctx) as Army
     if unit == null:

@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://bfxutmk72t3gc" path="res://game/actors/summons/army_handler/army_handler.tscn" id="8_summon"]
 [ext_resource type="PackedScene" path="res://game/summon/summon_manager.tscn" id="9_summon"]
 [ext_resource type="PackedScene" path="res://game/ui/hud/summon_hud/summon_hud.tscn" id="10_summon"]
+[ext_resource type="PackedScene" uid="uid://b5mwl9rkvp2t8" path="res://game/actors/summons/army_group/army_group.tscn" id="11_armygroup"]
 
 [sub_resource type="Resource" id="Resource_ptvfu"]
 resource_local_to_scene = true
@@ -91,6 +92,18 @@ zoom = Vector2(0.2, 0.2)
 script = ExtResource("7_dv6ov")
 
 [node name="ArmyHandler" parent="." instance=ExtResource("8_summon")]
+
+[node name="ArmyGroup1" parent="." unique_id=200000001 instance=ExtResource("11_armygroup")]
+group_id = 1
+
+[node name="ArmyGroup2" parent="." unique_id=200000002 instance=ExtResource("11_armygroup")]
+group_id = 2
+
+[node name="ArmyGroup3" parent="." unique_id=200000003 instance=ExtResource("11_armygroup")]
+group_id = 3
+
+[node name="ArmyGroup4" parent="." unique_id=200000004 instance=ExtResource("11_armygroup")]
+group_id = 4
 
 [node name="SummonManager" parent="." instance=ExtResource("9_summon")]
 debug_starting_souls = 100
