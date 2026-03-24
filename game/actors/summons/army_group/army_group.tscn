@@ -7,6 +7,7 @@
 y_sort_enabled = true
 script = ExtResource("1_armygrp")
 detection_module = NodePath("DetectionModule")
+leash_distance = 240.0
 
 [node name="DetectionModule" type="Area2D" parent="." unique_id=1416516153]
 collision_layer = 256
