@@ -66,6 +66,10 @@ vframes = 7
 script = ExtResource("5_pwlan")
 character = NodePath("..")
 movement_module = NodePath("../Module/MovementModule")
+layer_name = &"enemy"
+mask_names = Array[StringName]([&"player", &"army", &"enemy"])
+collision_layer = 2
+collision_mask = 259
 metadata/_custom_type_script = "uid://bhtdp3vwcylqh"
 
 [node name="Hurtbox" type="Area2D" parent="." unique_id=1309115120]

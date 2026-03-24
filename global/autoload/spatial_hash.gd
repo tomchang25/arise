@@ -16,7 +16,7 @@ var _cells: Dictionary = { }
 # Maps each registered character to its current cell key so we can remove it cheaply.
 var _char_to_cell: Dictionary = { }
 
-var _char_to_layer: Dictionary = {}
+var _char_to_layer: Dictionary = { }
 
 # ---------------------------------------------------------------------------
 # Public API

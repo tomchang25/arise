@@ -497,6 +497,10 @@ debug_color = Color(0.7529412, 0.35686275, 0, 0.59607846)
 script = ExtResource("16_3do8f")
 character = NodePath("..")
 movement_module = NodePath("../Module/MovementModule")
+layer_name = &"player"
+mask_names = Array[StringName]([&"enemy"])
+collision_layer = 1
+collision_mask = 2
 metadata/_custom_type_script = "uid://bhtdp3vwcylqh"
 
 [node name="Hurtbox" type="Area2D" parent="." unique_id=101171387]
@@ -563,7 +567,6 @@ debug_color = Color(0.20784314, 0.15294118, 0.023529412, 0.18039216)
 [node name="MovementModule" type="Node" parent="Module" unique_id=658364954 node_paths=PackedStringArray("character")]
 script = ExtResource("9_1bvv4")
 character = NodePath("../..")
-max_separation_speed = null
 
 [node name="AnimationModule" type="Node" parent="Module" unique_id=659370517 node_paths=PackedStringArray("actor", "animation_tree")]
 script = ExtResource("10_tiye0")

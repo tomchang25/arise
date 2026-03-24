@@ -1,7 +1,6 @@
 class_name CollisionMaskManager
 
-const _GROUPS: Dictionary = {&"player": 1, &"enemy": 2, &"army": 9}
-
+const _GROUPS: Dictionary = { &"player": 1, &"enemy": 2, &"army": 9 }
 
 # --- Build ---
 
@@ -26,7 +25,6 @@ static func layer_to_name(layer_value: int) -> StringName:
             return group
     return &""
 
-
 # --- Modify ---
 
 
@@ -48,7 +46,6 @@ static func add_layer(current_mask: int, layer_value: int) -> int:
 ## Returns mask with a raw layer value removed.
 static func remove_layer(current_mask: int, layer_value: int) -> int:
     return current_mask & ~layer_value
-
 
 # --- Inspect ---
 

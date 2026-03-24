@@ -21,10 +21,20 @@ extends Node2D
 @export var movement_module: MovementModule
 
 @export_group("Separation")
-## Which group this unit belongs to. Use CollisionMaskManager.layer(&"group_name").
-@export var collision_layer: int = 0
-## Which groups this unit pushes. Use CollisionMaskManager.mask([...]).
-@export var collision_mask: int = 0
+
+## The group this unit belongs to (e.g. "enemy", "player", "army").
+## Automatically converts to a collision_layer bitmask via CollisionMaskManager.
+@export var layer_name: StringName = &"":
+    set(value):
+        layer_name = value
+        collision_layer = CollisionMaskManager.layer(value)
+
+## The groups this unit pushes. Each entry is a group name (e.g. &"enemy", &"army").
+@export var mask_names: Array[StringName] = []:
+    set(value):
+        mask_names = value
+        collision_mask = CollisionMaskManager.mask(mask_names)
+
 ## Divides the received separation force. Higher mass = harder to push.
 @export var mass: float = 1.0
 ## Base separation force applied at full overlap (dist = 0).
@@ -40,6 +50,11 @@ extends Node2D
 
 @export var crowd_block_start: float = 3.0
 @export var crowd_block_range: float = 5.0
+
+## Which group this unit belongs to. Use CollisionMaskManager.layer(&"group_name").
+@export var collision_layer: int = 0
+## Which groups this unit pushes. Use CollisionMaskManager.mask([...]).
+@export var collision_mask: int = 0
 
 var _enabled: bool = true
 
