@@ -32,8 +32,19 @@ func _physics_process(delta: float) -> void:
 
     _travel_distance -= (_direction * _speed * delta).length()
     if _travel_distance <= 0.0:
-        queue_free()
+        NodeRegistry.release(self)
 
 
 func _on_wall_hit() -> void:
     trigger()
+
+
+func reset() -> void:
+    super.reset()
+    _speed = 500.0
+    _direction = Vector2.RIGHT
+    _travel_distance = 0.0
+
+
+func set_enabled(value: bool) -> void:
+    super.set_enabled(value)

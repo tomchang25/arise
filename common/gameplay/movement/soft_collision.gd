@@ -56,7 +56,29 @@ extends Node2D
 ## Which groups this unit pushes. Use CollisionMaskManager.mask([...]).
 @export var collision_mask: int = 0
 
+@export_group("Tick Update")
+
+## When enabled, separation is only recalculated every [tick_interval] seconds.
+## The SpatialHash position update still runs every physics frame so other units
+## can query this unit accurately; only the force calculation is throttled.
+@export var tick_enabled: bool = true
+
+## How often (in seconds) to recalculate separation force when tick_enabled is true.
+## e.g. 0.1 = 10 Hz, 0.5 = 2 Hz.
+@export_range(0.016, 5.0, 0.016, "suffix:s") var tick_interval: float = 0.1
+
+## Stagger tick phases across units so they don't all recalculate on the same frame.
+## When true, each unit starts with a random phase offset within [0, tick_interval).
+@export var tick_stagger: bool = true
+
 var _enabled: bool = true
+
+# Cached results written on each tick and applied every physics frame.
+var _cached_separation: Vector2 = Vector2.ZERO
+var _cached_crowd_block: float = 0.0
+
+# Accumulated time since the last tick recalculation.
+var _tick_accumulator: float = 0.0
 
 # ---------------------------------------------------------------------------
 # Lifecycle
@@ -74,6 +96,10 @@ func _ready() -> void:
 
     SpatialHash.register(character, collision_layer)
 
+    # Spread tick phases so units don't all fire on the same frame.
+    if tick_stagger:
+        _tick_accumulator = randf_range(0.0, tick_interval)
+
 
 func _exit_tree() -> void:
     if Engine.is_editor_hint() or character == null:
@@ -82,13 +108,18 @@ func _exit_tree() -> void:
 
 
 func reset() -> void:
+    enabled = true
     _enabled = true
+    _cached_separation = Vector2.ZERO
+    _cached_crowd_block = 0.0
+    _tick_accumulator = 0.0
     if movement_module:
         movement_module.set_separation(Vector2.ZERO)
         movement_module.set_crowd_block_ratio(0.0)
 
 
 func set_enabled(value: bool) -> void:
+    enabled = value
     _enabled = value
     set_physics_process(value)
     if not value and movement_module:
@@ -96,13 +127,33 @@ func set_enabled(value: bool) -> void:
         movement_module.set_crowd_block_ratio(0.0)
 
 
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
     if Engine.is_editor_hint() or not _enabled or movement_module == null or character == null:
         return
 
-    # Keep the hash up to date with this character's current position.
+    # Always keep the hash position current so neighbours query correctly.
     SpatialHash.move(character, character.global_position)
 
+    if tick_enabled:
+        _tick_accumulator += delta
+        if _tick_accumulator >= tick_interval:
+            _tick_accumulator -= tick_interval
+            _recalculate_separation()
+        # Apply the most recently cached values every frame for smooth motion.
+        movement_module.set_separation(_cached_separation)
+        movement_module.set_crowd_block_ratio(_cached_crowd_block)
+    else:
+        # Original behaviour: recalculate every physics frame.
+        _recalculate_separation()
+        movement_module.set_separation(_cached_separation)
+        movement_module.set_crowd_block_ratio(_cached_crowd_block)
+
+# ---------------------------------------------------------------------------
+# Separation calculation (shared by both tick and non-tick paths)
+# ---------------------------------------------------------------------------
+
+
+func _recalculate_separation() -> void:
     var candidates := SpatialHash.query_nearby(character.global_position, min_distance, max_neighbours)
     var count := 0
     var total_separation := Vector2.ZERO
@@ -152,5 +203,5 @@ func _physics_process(_delta: float) -> void:
         crowd_block_ratio = clamp((density - crowd_block_start) / crowd_block_range, 0.0, 1.0)
         crowd_block_ratio = crowd_block_ratio * crowd_block_ratio * (3.0 - 2.0 * crowd_block_ratio)
 
-    movement_module.set_separation(total_separation)
-    movement_module.set_crowd_block_ratio(crowd_block_ratio)
+    _cached_separation = total_separation
+    _cached_crowd_block = crowd_block_ratio

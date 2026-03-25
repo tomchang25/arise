@@ -71,6 +71,9 @@ mask_names = Array[StringName]([&"player", &"army", &"enemy"])
 crowd_block_start = 3.0
 collision_layer = 2
 collision_mask = 259
+tick_enabled = null
+tick_interval = null
+tick_stagger = null
 metadata/_custom_type_script = "uid://bhtdp3vwcylqh"
 
 [node name="Hurtbox" type="Area2D" parent="." unique_id=1309115120]
@@ -157,6 +160,7 @@ drop_profile = ExtResource("25_com4q")
 [node name="StateMachine" type="Node" parent="." unique_id=166535569 node_paths=PackedStringArray("initial_state")]
 script = ExtResource("25_statemachine")
 initial_state = NodePath("Idle")
+tick_interval = 0.496
 
 [node name="Idle" type="Node" parent="StateMachine" unique_id=824543003]
 script = ExtResource("26_idle")

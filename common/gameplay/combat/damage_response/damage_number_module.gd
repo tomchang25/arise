@@ -1,3 +1,4 @@
+@tool
 class_name DamageNumberModule
 extends Node
 
@@ -29,10 +30,8 @@ func _ready() -> void:
         push_warning("DamageNumberModule: damage_number_scene is not assigned.")
         return
 
-    _spawn_action = SpawnPackedSceneAction.new()
-    _spawn_action.scene = damage_number_scene
-    _spawn_action.use_anchor_position = true
-    _spawn_action.use_anchor_rotation = false
+    _spawn_action = SpawnPackedSceneAction.create(damage_number_scene)
+    _spawn_action.use_pool = false
 
     if damage_receiver and not damage_receiver.damaged.is_connected(_on_damaged):
         damage_receiver.damaged.connect(_on_damaged)
@@ -43,6 +42,7 @@ func reset() -> void:
 
 
 func set_enabled(value: bool) -> void:
+    enabled = value
     _enabled = value
     if not _enabled:
         _stop_runtime_state()

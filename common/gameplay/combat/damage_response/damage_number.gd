@@ -50,6 +50,29 @@ func setup(amount: float, is_crit: bool = false) -> void:
     _play_anim(is_crit)
 
 
+func reset() -> void:
+    if _tween and _tween.is_valid():
+        _tween.kill()
+    _tween = null
+    scale = Vector2.ONE
+    modulate = Color(1, 1, 1, 1)
+    rotation = 0.0
+    position = Vector2.ZERO
+    visible = true
+
+
+func set_enabled(value: bool) -> void:
+    if not value:
+        if _tween and _tween.is_valid():
+            _tween.kill()
+        _tween = null
+        visible = false
+
+
+func _on_tween_finished() -> void:
+    NodeRegistry.release(self)
+
+
 func _apply_style(is_crit: bool) -> void:
     var settings := _label.label_settings
     if settings == null:
@@ -112,4 +135,4 @@ func _play_anim(is_crit: bool) -> void:
         lifetime * 0.55,
     ).set_delay(lifetime * 0.45).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 
-    _tween.finished.connect(queue_free)
+    _tween.finished.connect(_on_tween_finished)

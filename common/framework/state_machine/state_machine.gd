@@ -10,6 +10,26 @@ var states: Dictionary = { }
 ## Guards against re-entrant transitions triggered during enter() or exit().
 var _transitioning: bool = false
 
+@export_group("Tick Update")
+
+## When enabled, current_state.update() and current_state.physics_update() are
+## only called every [tick_interval] seconds instead of every frame/physics frame.
+## Transitions, enter(), and exit() are never throttled — they always fire immediately.
+@export var tick_enabled: bool = true
+
+## How often (in seconds) to call update() and physics_update() when tick_enabled is true.
+## e.g. 0.1 = 10 Hz, 0.5 = 2 Hz.
+@export_range(0.016, 5.0, 0.016, "suffix:s") var tick_interval: float = 0.1
+
+## Stagger tick phases so multiple StateMachines in the scene don't all fire on
+## the same frame. Each instance starts with a random phase in [0, tick_interval).
+@export var tick_stagger: bool = true
+
+# Accumulated time for _process tick.
+var _process_accumulator: float = 0.0
+# Accumulated time for _physics_process tick.
+var _physics_accumulator: float = 0.0
+
 
 func _ready() -> void:
     if target and not target.is_node_ready():
@@ -36,17 +56,39 @@ func _ready() -> void:
         push_error("StateMachine initial_state is not registered in children")
         return
 
+    # Spread tick phases so multiple machines don't all fire on the same frame.
+    if tick_stagger:
+        var offset := randf_range(0.0, tick_interval)
+        _process_accumulator = offset
+        _physics_accumulator = offset
+
     current_state = initial_state
     current_state.enter()
 
 
 func _process(delta: float) -> void:
-    if current_state:
+    if current_state == null:
+        return
+
+    if tick_enabled:
+        _process_accumulator += delta
+        if _process_accumulator >= tick_interval:
+            _process_accumulator -= tick_interval
+            current_state.update(tick_interval)
+    else:
         current_state.update(delta)
 
 
 func _physics_process(delta: float) -> void:
-    if current_state:
+    if current_state == null:
+        return
+
+    if tick_enabled:
+        _physics_accumulator += delta
+        if _physics_accumulator >= tick_interval:
+            _physics_accumulator -= tick_interval
+            current_state.physics_update(tick_interval)
+    else:
         current_state.physics_update(delta)
 
 
@@ -101,8 +143,17 @@ func request_transition(to: int, force: bool = false) -> void:
 ## Shared transition logic. Never call this directly — use
 ## _on_transition_requested (internal) or request_transition (external).
 func _do_transition(new_state: State) -> void:
+    if new_state == current_state:
+        return
+
     _transitioning = true
     current_state.exit()
     current_state = new_state
     current_state.enter()
     _transitioning = false
+
+    # Reset accumulators on transition so the new state gets a full tick interval
+    # before its first update — avoids a leftover accumulator from the old state
+    # causing an immediate tick on entry.
+    _process_accumulator = 0.0
+    _physics_accumulator = 0.0
