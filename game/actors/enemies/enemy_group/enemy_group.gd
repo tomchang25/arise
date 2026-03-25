@@ -34,7 +34,7 @@ signal members_changed
 
 ## Speed (units/sec) at which target_position creeps toward the player when
 ## not aggroed and not returning to spawn.
-@export var chase_speed: float = 20.0
+@export var chase_speed: float = 5.0
 
 # -------------------------
 # Internal state
