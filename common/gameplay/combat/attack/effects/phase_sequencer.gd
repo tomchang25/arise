@@ -130,6 +130,7 @@ func _run_next_phase() -> void:
     # Forward the attacker source so effects can draw direction lines and monitor
     # attacker validity via quit_on_source_invalid.
     effect.attacker_source = phase_ctx.attacker_source
+    effect.quit_on_source_invalid = phase_def.quit_on_source_invalid
 
     # Wire force_quit to unblock the await below and stop remaining phases.
     effect.force_quit.connect(

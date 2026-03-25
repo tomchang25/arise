@@ -44,7 +44,7 @@ signal force_quit
 ## When true, _process() monitors attacker_source validity and emits force_quit
 ## if the attacker node is freed during this phase.
 ## Set to true on any effect that should stop when its attacker is destroyed.
-@export var quit_on_source_invalid: bool = false
+var quit_on_source_invalid: bool = false
 
 ## Live reference to the original attacker node. Set by PhaseSequencer after
 ## setup() so all effects can access the attacker for visuals or validity checks,
@@ -81,6 +81,7 @@ func play(_duration: float = 0.0) -> void:
 func reset() -> void:
     attacker_source = null
     set_process(true)
+    quit_on_source_invalid = false
     visible = true
 
 

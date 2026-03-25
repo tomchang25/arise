@@ -74,3 +74,7 @@ enum KnockbackMode {
 ## re-entering will trigger a hit again.
 ## If false, a victim hit once is immune for the entire phase lifetime.
 @export var clear_records_on_exit: bool = false
+
+@export_group("Lifetime")
+## If true, PhaseSequencer cancels remaining phases when the attacker is freed.
+@export var quit_on_source_invalid: bool = false
