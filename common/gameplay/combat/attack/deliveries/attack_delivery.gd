@@ -117,7 +117,7 @@ func _trigger_phases() -> void:
 
 
 func _on_phases_finished() -> void:
-    queue_free()
+    NodeRegistry.release(self)
 
 # -------------------------
 # Failsafe timeout
@@ -125,4 +125,26 @@ func _on_phases_finished() -> void:
 
 
 func _on_timeout() -> void:
-    queue_free()
+    NodeRegistry.release(self)
+
+# -------------------------
+# Pool lifecycle
+# -------------------------
+
+
+func reset() -> void:
+    _context = null
+    _wait_for_effect = false
+    _trigger_component = null
+    if _sequencer != null:
+        _sequencer.queue_free()
+        _sequencer = null
+    if lifetime_timer != null:
+        lifetime_timer.queue_free()
+        lifetime_timer = null
+
+
+func set_enabled(value: bool) -> void:
+    set_physics_process(value)
+    if not value and lifetime_timer != null:
+        lifetime_timer.stop()

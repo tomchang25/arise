@@ -23,3 +23,15 @@ func setup(ctx: EffectContext) -> void:
 
     if trigger_timer:
         trigger_timer.connect("timeout", trigger)
+
+
+func reset() -> void:
+    if trigger_timer and trigger_timer.timeout.is_connected(trigger):
+        trigger_timer.timeout.disconnect(trigger)
+    super.reset()
+
+
+func set_enabled(value: bool) -> void:
+    super.set_enabled(value)
+    if not value and trigger_timer:
+        trigger_timer.stop()

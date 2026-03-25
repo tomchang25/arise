@@ -229,10 +229,7 @@ func _spawn_child_delivery(def: AttackDefinition, origin: Vector2, dir: Vector2)
         push_error("DeliveryEmitter: resolved definition has no attack_scene")
         return
 
-    var action := SpawnPackedSceneAction.new()
-    action.scene = child_ctx.attack_scene
-    action.use_anchor_position = true
-    action.use_anchor_rotation = false
+    var action := SpawnPackedSceneAction.create(child_ctx.attack_scene, true, false, false, true)
 
     var spawn_ctx := SpawnContext.new()
     spawn_ctx.setup(spawn_parent, 0, self)
