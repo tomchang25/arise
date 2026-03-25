@@ -44,9 +44,10 @@ func setup(ctx: EffectContext) -> void:
     if hitbox and hitbox.shape == null:
         var rect := RectangleShape2D.new()
         rect.size = Vector2(beam_length, beam_width)
+        # RectangleShape2D is centred at the CollisionShape2D origin by default,
+        # so the hitbox naturally spans ±beam_length/2 around the delivery origin
+        # (the target position), matching the telegraph rectangle.
         hitbox.shape = rect
-        # Centre the rectangle so it spans 0 → beam_length on local +X.
-        hitbox.position = Vector2(beam_length * 0.5, 0.0)
 
 
 func play(duration: float = 5.0) -> void:
@@ -64,17 +65,18 @@ func play(duration: float = 5.0) -> void:
 
 func _build_beam_vfx() -> void:
     var hw := beam_width * 0.5
+    var hl := beam_length * 0.5
 
-    # Semi-transparent filled beam.
+    # Semi-transparent filled beam, centred on delivery origin (target position).
     var fill_color := beam_color
     fill_color.a = fill_alpha
     _beam_fill = Polygon2D.new()
     _beam_fill.color = fill_color
     _beam_fill.polygon = PackedVector2Array([
-        Vector2(0.0,        -hw),
-        Vector2(beam_length, -hw),
-        Vector2(beam_length,  hw),
-        Vector2(0.0,          hw),
+        Vector2(-hl, -hw),
+        Vector2( hl, -hw),
+        Vector2( hl,  hw),
+        Vector2(-hl,  hw),
     ])
     add_child(_beam_fill)
 
@@ -84,10 +86,10 @@ func _build_beam_vfx() -> void:
     _beam_outline.default_color = beam_color
     _beam_outline.joint_mode = Line2D.LINE_JOINT_ROUND
     _beam_outline.closed = true
-    _beam_outline.add_point(Vector2(0.0,        -hw))
-    _beam_outline.add_point(Vector2(beam_length, -hw))
-    _beam_outline.add_point(Vector2(beam_length,  hw))
-    _beam_outline.add_point(Vector2(0.0,          hw))
+    _beam_outline.add_point(Vector2(-hl, -hw))
+    _beam_outline.add_point(Vector2( hl, -hw))
+    _beam_outline.add_point(Vector2( hl,  hw))
+    _beam_outline.add_point(Vector2(-hl,  hw))
     add_child(_beam_outline)
 
 

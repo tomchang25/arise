@@ -66,8 +66,10 @@ func play(duration: float = 5.0) -> void:
 
 func _build_visuals() -> void:
     var hw := beam_width * 0.5
+    var hl := beam_length * 0.5
 
-    # Rectangle outline extending in local +x.
+    # Rectangle outline centred on the delivery origin (target position).
+    # Extends ±hl in the delivery's forward (+X) direction.
     _rect_outline = Line2D.new()
     _rect_outline.width = ring_width
     _rect_outline.default_color = ring_color
@@ -75,10 +77,10 @@ func _build_visuals() -> void:
     _rect_outline.begin_cap_mode = Line2D.LINE_CAP_ROUND
     _rect_outline.end_cap_mode = Line2D.LINE_CAP_ROUND
     _rect_outline.closed = true
-    _rect_outline.add_point(Vector2(0.0,        -hw))
-    _rect_outline.add_point(Vector2(beam_length, -hw))
-    _rect_outline.add_point(Vector2(beam_length,  hw))
-    _rect_outline.add_point(Vector2(0.0,          hw))
+    _rect_outline.add_point(Vector2(-hl, -hw))
+    _rect_outline.add_point(Vector2( hl, -hw))
+    _rect_outline.add_point(Vector2( hl,  hw))
+    _rect_outline.add_point(Vector2(-hl,  hw))
     add_child(_rect_outline)
 
     # Line from attacker back to this delivery marker (updated in _process).
