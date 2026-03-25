@@ -6,7 +6,9 @@
 [resource]
 script = ExtResource("1_imrk8")
 limiter_key = &"blocked"
-volume_db = -5.0
+max_per_window = 8
+window_sec = 0.5
+volume_db = -10.0
 bus_id = 1
 streams = Array[AudioStream]([ExtResource("2_co4kv")])
 use_random_pitch = true

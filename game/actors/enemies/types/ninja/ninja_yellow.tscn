@@ -9,7 +9,6 @@
 [ext_resource type="AnimationLibrary" uid="uid://yx2utmx2c56c" path="res://game/actors/enemies/types/ninja/presets/ninja_animations.res" id="6_0sh5i"]
 [ext_resource type="Script" uid="uid://bb4mbrq1u7pl" path="res://common/gameplay/combat/combat_module.gd" id="6_combat"]
 [ext_resource type="AnimationNodeBlendTree" uid="uid://bkrdvp8xidai6" path="res://game/actors/enemies/types/ninja/presets/ninja_animation_node_blend_tree.tres" id="6_td03u"]
-[ext_resource type="Script" uid="uid://d1yimk3mk35ag" path="res://common/gameplay/combat/attack/modules/place_attack_module.gd" id="7_melee"]
 [ext_resource type="Script" uid="uid://dpi3inldik0ho" path="res://common/gameplay/combat/damage_response/damage_receiver_module.gd" id="8_dmgreceiver"]
 [ext_resource type="Script" uid="uid://duxq84e027el0" path="res://common/gameplay/combat/damage_response/hit_feedback_module.gd" id="9_hitfeedback"]
 [ext_resource type="Script" uid="uid://6jeesy7iltw" path="res://common/gameplay/combat/damage_response/damage_number_module.gd" id="10_dmgnum"]
@@ -68,12 +67,8 @@ character = NodePath("..")
 movement_module = NodePath("../Module/MovementModule")
 layer_name = &"enemy"
 mask_names = Array[StringName]([&"player", &"army", &"enemy"])
-crowd_block_start = 3.0
 collision_layer = 2
 collision_mask = 259
-tick_enabled = null
-tick_interval = null
-tick_stagger = null
 metadata/_custom_type_script = "uid://bhtdp3vwcylqh"
 
 [node name="Hurtbox" type="Area2D" parent="." unique_id=1309115120]
@@ -115,9 +110,6 @@ grow_horizontal = 2
 position = Vector2(0, -6)
 script = ExtResource("6_combat")
 
-[node name="MeleeAttackModule" type="Node2D" parent="Module/CombatModule" unique_id=240177820]
-script = ExtResource("7_melee")
-
 [node name="DamageReceiverModule" type="Node" parent="Module" unique_id=1150826965 node_paths=PackedStringArray("hurtbox")]
 script = ExtResource("8_dmgreceiver")
 hurtbox = NodePath("../../Hurtbox")
@@ -146,6 +138,7 @@ use_direct_position = true
 script = ExtResource("19_navigation")
 character = NodePath("../..")
 movement = NodePath("../MovementModule")
+max_speed = 50.0
 
 [node name="AnimationModule" type="Node" parent="Module" unique_id=2098592232 node_paths=PackedStringArray("actor", "animation_tree")]
 script = ExtResource("20_animmod")

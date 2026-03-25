@@ -6,6 +6,9 @@
 [resource]
 script = ExtResource("1_n5f47")
 limiter_key = &"died"
+max_per_window = 4
+window_sec = 1.0
+volume_db = -20.0
 bus_id = 1
 streams = Array[AudioStream]([ExtResource("2_n5f47")])
 use_random_pitch = true
