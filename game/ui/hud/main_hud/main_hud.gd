@@ -35,3 +35,9 @@ func bind_wave(controller: WaveDefenseController) -> void:
 func bind_summon(manager: SummonManager) -> void:
     if summon_hud:
         summon_hud.bind(manager)
+
+
+func _unhandled_input(event: InputEvent) -> void:
+    if event.is_action_pressed(&"ui_cancel"):
+        settings_menu.open()
+        get_viewport().set_input_as_handled()
