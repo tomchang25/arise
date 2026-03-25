@@ -499,9 +499,11 @@ character = NodePath("..")
 movement_module = NodePath("../Module/MovementModule")
 layer_name = &"player"
 mask_names = Array[StringName]([&"enemy"])
-crowd_block_start = 2.0
 collision_layer = 1
 collision_mask = 2
+tick_enabled = null
+tick_interval = null
+tick_stagger = null
 metadata/_custom_type_script = "uid://bhtdp3vwcylqh"
 
 [node name="Hurtbox" type="Area2D" parent="." unique_id=101171387]
