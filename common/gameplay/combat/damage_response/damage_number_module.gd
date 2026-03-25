@@ -63,7 +63,9 @@ func _on_damaged(amount: float, _new_health: float, info: EffectContext) -> void
     if not _should_show(amount):
         return
 
-    SpawnThrottle.enqueue(&"damage_number", spawn_damage_number.bind(amount, info), 0.01)
+    # Skipping throttle — victim may be freed before the slot drains, suppressing the number.
+    # SpawnThrottle.enqueue(&"damage_number", spawn_damage_number.bind(amount, info), 0.01)
+    spawn_damage_number(amount, info)
 
 
 func spawn_damage_number(amount: float, info: EffectContext = null) -> void:
