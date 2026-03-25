@@ -85,7 +85,7 @@ func get_layer(character: CharacterBody2D) -> int:
     return _char_to_layer.get(character, 0xFFFFFFFF)
 
 
-func get_directional_density(pos: Vector2, move_dir: Vector2) -> float:
+func get_directional_density(pos: Vector2, move_dir: Vector2, mask: int = 0) -> float:
     var center := _cell_key(pos)
     var dir := move_dir.normalized()
     var density := 0.0
@@ -96,19 +96,21 @@ func get_directional_density(pos: Vector2, move_dir: Vector2) -> float:
             if not _cells.has(key):
                 continue
 
-            var count: int = _cells[key].size()
-            if count <= 0:
-                continue
-
-            var offset := Vector2(dx, dy)
             var weight := 0.35
-
+            var offset := Vector2(dx, dy)
             if offset != Vector2.ZERO:
                 weight += max(offset.normalized().dot(dir), 0.0)
+
+            # Count only bodies that pass the mask filter
+            var count := 0
+            for body in _cells[key]:
+                if mask == 0 or (_char_to_layer.get(body, 0) & mask) != 0:
+                    count += 1
 
             density += count * weight
 
     return density
+
 # ---------------------------------------------------------------------------
 # Internal helpers
 # ---------------------------------------------------------------------------

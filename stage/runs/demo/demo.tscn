@@ -8,8 +8,8 @@
 [ext_resource type="Script" uid="uid://bwm8u3xypysu8" path="res://common/gameplay/despawn/despawn_controller.gd" id="5_60flp"]
 [ext_resource type="Script" uid="uid://cqbsn4xt87m8m" path="res://game/wave_defense/wave_defense_controller.gd" id="6_wvdef"]
 [ext_resource type="PackedScene" uid="uid://bl6qc51imn6xk" path="res://game/ui/hud/main_hud/main_hud.tscn" id="7_mainhud"]
-[ext_resource type="PackedScene" path="res://game/summon/summon_manager.tscn" id="8_summon"]
-[ext_resource type="PackedScene" path="res://game/actors/summons/army_group/army_group.tscn" id="10_armygroup"]
+[ext_resource type="PackedScene" uid="uid://dnmq30kfm6svo" path="res://game/summon/summon_manager.tscn" id="8_summon"]
+[ext_resource type="PackedScene" uid="uid://b5mwmarkvp2t8" path="res://game/actors/summons/army_group/army_group.tscn" id="10_armygroup"]
 
 [node name="Demo" type="Node2D" unique_id=535920825 node_paths=PackedStringArray("player", "player_spawn", "enemies_root", "debug_label", "encounter_controller", "despawn_controller", "wave_defense_controller", "main_hud", "summon_manager")]
 script = ExtResource("1_a6hy3")

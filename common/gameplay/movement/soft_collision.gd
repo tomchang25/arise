@@ -48,7 +48,7 @@ extends Node2D
 ## Maximum number of overlapping neighbours processed per physics frame.
 @export var max_neighbours: int = 4
 
-@export var crowd_block_start: float = 3.0
+@export var crowd_block_start: float = 2.0
 @export var crowd_block_range: float = 5.0
 
 ## Which group this unit belongs to. Use CollisionMaskManager.layer(&"group_name").
@@ -143,7 +143,11 @@ func _physics_process(_delta: float) -> void:
     var desired_move := movement_module.manual_velocity
 
     if desired_move != Vector2.ZERO:
-        var density := SpatialHash.get_directional_density(character.global_position, desired_move)
+        var density := SpatialHash.get_directional_density(
+            character.global_position,
+            desired_move,
+            collision_mask,
+        )
 
         crowd_block_ratio = clamp((density - crowd_block_start) / crowd_block_range, 0.0, 1.0)
         crowd_block_ratio = crowd_block_ratio * crowd_block_ratio * (3.0 - 2.0 * crowd_block_ratio)
