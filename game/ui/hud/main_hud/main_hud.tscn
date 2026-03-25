@@ -8,23 +8,23 @@
 [ext_resource type="PackedScene" uid="uid://f4pdd61gb16u" path="res://game/ui/hud/minimap_hud/minimap_hud.tscn" id="6_mmhud"]
 [ext_resource type="PackedScene" uid="uid://d218k012ltkq5" path="res://game/ui/settings/settings_menu.tscn" id="7_settings"]
 
-[node name="MainHUD" type="Control" unique_id=1922058681 node_paths=PackedStringArray("player_hud", "debug_hud", "wave_hud", "summon_hud", "settings_button", "settings_menu")]
+[node name="MainHUD" type="Control" unique_id=1922058681 node_paths=PackedStringArray("debug_hud", "wave_hud", "summon_hud", "settings_button", "settings_menu")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 script = ExtResource("1_mainhud")
-player_hud = NodePath("PlayerHUD")
 debug_hud = NodePath("DebugHUD")
 wave_hud = NodePath("WaveHUD")
 summon_hud = NodePath("SummonHUD")
 settings_button = NodePath("SettingsButton")
 settings_menu = NodePath("SettingsMenu")
 
-[node name="PlayerHUD" parent="." unique_id=89719240 instance=ExtResource("2_phud")]
-layout_mode = 1
+[node name="PlayerHUD" parent="." unique_id=627799983 instance=ExtResource("2_phud")]
+layout_mode = 0
 
 [node name="DebugHUD" parent="." unique_id=1580955801 instance=ExtResource("3_dbghud")]
 layout_mode = 1

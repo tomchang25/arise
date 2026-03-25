@@ -11,7 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://dnmq30kfm6svo" path="res://game/summon/summon_manager.tscn" id="8_summon"]
 [ext_resource type="PackedScene" uid="uid://b5mwmarkvp2t8" path="res://game/actors/summons/army_group/army_group.tscn" id="10_armygroup"]
 
-[node name="Demo" type="Node2D" unique_id=535920825 node_paths=PackedStringArray("player", "player_spawn", "enemies_root", "debug_label", "encounter_controller", "despawn_controller", "wave_defense_controller", "main_hud", "summon_manager")]
+[node name="Demo" type="Node2D" unique_id=535920825 node_paths=PackedStringArray("player", "player_spawn", "enemies_root", "debug_label", "encounter_controller", "despawn_controller", "wave_defense_controller", "main_hud")]
 script = ExtResource("1_a6hy3")
 player = NodePath("Player")
 player_spawn = NodePath("PlayerSpawn")
@@ -22,7 +22,6 @@ despawn_controller = NodePath("DespawnController")
 wave_defense_controller = NodePath("WaveDefenseController")
 encounter_config = ExtResource("2_60flp")
 main_hud = NodePath("UI/MainHUD")
-summon_manager = NodePath("SummonManager")
 
 [node name="Tilemaps" type="Node2D" parent="." unique_id=606999450]
 
@@ -91,7 +90,7 @@ metadata/_edit_use_anchors_ = true
 
 [node name="MainHUD" parent="UI" unique_id=231930507 instance=ExtResource("7_mainhud")]
 
-[node name="SummonManager" parent="." unique_id=1124833830 instance=ExtResource("8_summon")]
+[node name="SummonManager" parent="." unique_id=745671814 instance=ExtResource("8_summon")]
 
 [node name="ArmyGroup1" parent="." unique_id=400000001 instance=ExtResource("10_armygroup")]
 group_id = 1

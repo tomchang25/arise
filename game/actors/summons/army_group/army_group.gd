@@ -16,9 +16,13 @@ enum FormationType { RECTANGULAR, CIRCULAR }
 @export var grid_size := 12
 @export var formation_type: FormationType = FormationType.RECTANGULAR
 
-## Default world-space anchor position for this group.
-## Set per-group in the scene inspector.
-@export var spawn_position: Vector2
+## Relative offset from this node's position used as the spawn anchor.
+## The resolved world-space position is global_position + spawn_position_offset.
+@export var spawn_position_offset: Vector2 = Vector2.ZERO
+
+## Seconds between automatic anchor updates when [member track_player] is true.
+## Set to 0 to update every physics frame.
+@export var track_interval: float = 0.05
 
 # -------------------------
 # Exports — Aggro
@@ -59,6 +63,9 @@ var _anchor: Vector2 = Vector2.ZERO
 ## Populated in register_member(), cleared on unit death / removal.
 var _unit_offsets: Dictionary = { }
 
+## Accumulated time for periodic anchor updates.
+var _track_timer: float = 0.0
+
 ## Accumulated time for position update (every POSITION_UPDATE_INTERVAL seconds).
 var _position_timer: float = 0.0
 const POSITION_UPDATE_INTERVAL := 0.1
@@ -89,7 +96,10 @@ func _ready() -> void:
 
     reset_units()
 
-    target_position = spawn_position
+    # TODO: Remove after summon_manager handles spawn position resolution.
+    spawn_position_offset = Vector2(-40, -40)
+
+    player_offset = spawn_position_offset
     _anchor = target_position
 
 
@@ -97,7 +107,15 @@ func _physics_process(delta: float) -> void:
     # Update target_position if tracking player with an offset.
     if player_offset != Vector2.ZERO and _player:
         target_position = _player.global_position + player_offset
-        set_anchor(target_position)
+        if track_interval <= 0.0:
+            set_anchor(target_position)
+        else:
+            _track_timer += delta
+            if _track_timer >= track_interval:
+                _track_timer = 0.0
+
+                target_position = _player.global_position + player_offset
+                set_anchor(target_position)
 
     # Update group node position to living member centroid.
     _position_timer += delta
@@ -188,10 +206,10 @@ func set_target_relative(offset: Vector2) -> void:
     set_anchor(target_position)
 
 
-## Resets target_position to spawn_position and stops player tracking.
+## Resets target_position to the resolved spawn position and stops player tracking.
 func reset_to_spawn() -> void:
-    target_position = spawn_position
-    player_offset = Vector2.ZERO
+    player_offset = spawn_position_offset
+    target_position = _player.global_position + spawn_position_offset
     set_anchor(target_position)
 
 

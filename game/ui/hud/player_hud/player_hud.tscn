@@ -3,7 +3,6 @@
 [ext_resource type="Script" uid="uid://fnhjwnsjscxt" path="res://game/ui/hud/player_hud/player_hud.gd" id="1_phud"]
 [ext_resource type="Script" uid="uid://dwqgm0byaj1lc" path="res://common/gameplay/resource_bar/resource_bar_module.gd" id="2_resbar"]
 [ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="3_05i12"]
-[ext_resource type="Texture2D" uid="uid://bknli33ylfnny" path="res://game/ui/hud/assets/hud_panel_bg.png" id="3_panel"]
 [ext_resource type="Texture2D" uid="uid://b6fmmss8v4g7g" path="res://assets/arts/icon_health.png" id="5_ichp"]
 [ext_resource type="Texture2D" uid="uid://ctflar11dekan" path="res://assets/arts/icon_mana.png" id="6_icmp"]
 [ext_resource type="Texture2D" uid="uid://bcdapcub4mgyt" path="res://assets/arts/icon_gold.png" id="7_icgold"]
@@ -19,58 +18,61 @@ mana = 100.0
 base_max_health = 1000.0
 metadata/_custom_type_script = "uid://bkgf2cii3bfri"
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sg6vc"]
+bg_color = Color(0.05, 0.05, 0.08, 0.85)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.5, 0.3, 0.5, 0.8)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
 [node name="PlayerHUD" type="Control" unique_id=627799983 node_paths=PackedStringArray("hp_bar", "mana_bar", "hp_label", "mana_label", "gold_label")]
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 0
+offset_right = 240.0
+offset_bottom = 120.0
+mouse_filter = 2
 script = ExtResource("1_phud")
 stats = SubResource("Resource_6uwpt")
-hp_bar = NodePath("TopLeftPanel/Margin/VBox/HPSection/HPBar")
-mana_bar = NodePath("TopLeftPanel/Margin/VBox/MPSection/MPBar")
-hp_label = NodePath("TopLeftPanel/Margin/VBox/HPSection/TitleRow/HPLabel")
-mana_label = NodePath("TopLeftPanel/Margin/VBox/MPSection/TitleRow/MPLabel")
-gold_label = NodePath("BottomLeft/GoldRow/GoldLabel")
+hp_bar = NodePath("TopRightPanel/Margin/VBox/HPSection/HPBar")
+mana_bar = NodePath("TopRightPanel/Margin/VBox/MPSection/MPBar")
+hp_label = NodePath("TopRightPanel/Margin/VBox/HPSection/TitleRow/HPLabel")
+mana_label = NodePath("TopRightPanel/Margin/VBox/MPSection/TitleRow/MPLabel")
+gold_label = NodePath("TopRightPanel/Margin/VBox/GoldRow/GoldLabel")
 
-[node name="TopLeftPanel" type="NinePatchRect" parent="." unique_id=788933733]
-layout_mode = 1
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 252.0
-offset_bottom = 92.0
-texture = ExtResource("3_panel")
-patch_margin_left = 8
-patch_margin_top = 8
-patch_margin_right = 8
-patch_margin_bottom = 8
-
-[node name="Margin" type="MarginContainer" parent="TopLeftPanel" unique_id=1134311979]
+[node name="TopRightPanel" type="PanelContainer" parent="." unique_id=2081055463]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 10
+theme_override_styles/panel = SubResource("StyleBoxFlat_sg6vc")
+
+[node name="Margin" type="MarginContainer" parent="TopRightPanel" unique_id=1818057307]
+layout_mode = 2
+theme_override_constants/margin_left = 8
 theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 10
+theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 8
 
-[node name="VBox" type="VBoxContainer" parent="TopLeftPanel/Margin" unique_id=1523383117]
+[node name="VBox" type="VBoxContainer" parent="TopRightPanel/Margin" unique_id=1523383117]
 layout_mode = 2
 theme_override_constants/separation = 7
 
-[node name="HPSection" type="VBoxContainer" parent="TopLeftPanel/Margin/VBox" unique_id=1644152745]
+[node name="HPSection" type="VBoxContainer" parent="TopRightPanel/Margin/VBox" unique_id=1644152745]
 layout_mode = 2
 theme_override_constants/separation = 3
 
-[node name="TitleRow" type="HBoxContainer" parent="TopLeftPanel/Margin/VBox/HPSection" unique_id=2122207421]
+[node name="TitleRow" type="HBoxContainer" parent="TopRightPanel/Margin/VBox/HPSection" unique_id=2122207421]
 layout_mode = 2
 theme_override_constants/separation = 5
 
-[node name="HPIcon" type="TextureRect" parent="TopLeftPanel/Margin/VBox/HPSection/TitleRow" unique_id=1543834955]
+[node name="HPIcon" type="TextureRect" parent="TopRightPanel/Margin/VBox/HPSection/TitleRow" unique_id=1543834955]
 texture_filter = 1
 custom_minimum_size = Vector2(14, 14)
 layout_mode = 2
@@ -78,13 +80,13 @@ size_flags_vertical = 4
 texture = ExtResource("5_ichp")
 stretch_mode = 5
 
-[node name="HPTitle" type="Label" parent="TopLeftPanel/Margin/VBox/HPSection/TitleRow" unique_id=1532223387]
+[node name="HPTitle" type="Label" parent="TopRightPanel/Margin/VBox/HPSection/TitleRow" unique_id=1532223387]
 modulate = Color(1, 1, 1, 0.65)
 layout_mode = 2
 theme_override_font_sizes/font_size = 8
 text = "HP"
 
-[node name="HPLabel" type="Label" parent="TopLeftPanel/Margin/VBox/HPSection/TitleRow" unique_id=1370838717]
+[node name="HPLabel" type="Label" parent="TopRightPanel/Margin/VBox/HPSection/TitleRow" unique_id=1370838717]
 modulate = Color(1, 1, 1, 0.9)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -92,7 +94,7 @@ theme_override_font_sizes/font_size = 8
 text = "1000 / 1000"
 horizontal_alignment = 2
 
-[node name="HPBar" type="Control" parent="TopLeftPanel/Margin/VBox/HPSection" unique_id=2060240670 node_paths=PackedStringArray("under_bar", "damage_bar", "fill_bar")]
+[node name="HPBar" type="Control" parent="TopRightPanel/Margin/VBox/HPSection" unique_id=2060240670 node_paths=PackedStringArray("under_bar", "damage_bar", "fill_bar")]
 custom_minimum_size = Vector2(220, 14)
 layout_mode = 2
 script = ExtResource("2_resbar")
@@ -100,7 +102,7 @@ under_bar = NodePath("UnderBar")
 damage_bar = NodePath("DamageBar")
 fill_bar = NodePath("FillBar")
 
-[node name="UnderBar" type="TextureProgressBar" parent="TopLeftPanel/Margin/VBox/HPSection/HPBar" unique_id=1538174893]
+[node name="UnderBar" type="TextureProgressBar" parent="TopRightPanel/Margin/VBox/HPSection/HPBar" unique_id=1538174893]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -112,7 +114,7 @@ nine_patch_stretch = true
 texture_under = ExtResource("8_hpunder")
 texture_progress = ExtResource("8_hpunder")
 
-[node name="DamageBar" type="TextureProgressBar" parent="TopLeftPanel/Margin/VBox/HPSection/HPBar" unique_id=36652465]
+[node name="DamageBar" type="TextureProgressBar" parent="TopRightPanel/Margin/VBox/HPSection/HPBar" unique_id=36652465]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -123,7 +125,7 @@ value = 100.0
 nine_patch_stretch = true
 texture_progress = ExtResource("9_hpdmg")
 
-[node name="FillBar" type="TextureProgressBar" parent="TopLeftPanel/Margin/VBox/HPSection/HPBar" unique_id=833826144]
+[node name="FillBar" type="TextureProgressBar" parent="TopRightPanel/Margin/VBox/HPSection/HPBar" unique_id=833826144]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -134,15 +136,15 @@ value = 100.0
 nine_patch_stretch = true
 texture_progress = ExtResource("10_hpfull")
 
-[node name="MPSection" type="VBoxContainer" parent="TopLeftPanel/Margin/VBox" unique_id=1740967969]
+[node name="MPSection" type="VBoxContainer" parent="TopRightPanel/Margin/VBox" unique_id=1740967969]
 layout_mode = 2
 theme_override_constants/separation = 3
 
-[node name="TitleRow" type="HBoxContainer" parent="TopLeftPanel/Margin/VBox/MPSection" unique_id=295564186]
+[node name="TitleRow" type="HBoxContainer" parent="TopRightPanel/Margin/VBox/MPSection" unique_id=295564186]
 layout_mode = 2
 theme_override_constants/separation = 5
 
-[node name="MPIcon" type="TextureRect" parent="TopLeftPanel/Margin/VBox/MPSection/TitleRow" unique_id=1461792528]
+[node name="MPIcon" type="TextureRect" parent="TopRightPanel/Margin/VBox/MPSection/TitleRow" unique_id=1461792528]
 texture_filter = 1
 custom_minimum_size = Vector2(14, 14)
 layout_mode = 2
@@ -150,13 +152,13 @@ size_flags_vertical = 4
 texture = ExtResource("6_icmp")
 stretch_mode = 5
 
-[node name="MPTitle" type="Label" parent="TopLeftPanel/Margin/VBox/MPSection/TitleRow" unique_id=18261246]
+[node name="MPTitle" type="Label" parent="TopRightPanel/Margin/VBox/MPSection/TitleRow" unique_id=18261246]
 modulate = Color(1, 1, 1, 0.65)
 layout_mode = 2
 theme_override_font_sizes/font_size = 8
 text = "MP"
 
-[node name="MPLabel" type="Label" parent="TopLeftPanel/Margin/VBox/MPSection/TitleRow" unique_id=279980775]
+[node name="MPLabel" type="Label" parent="TopRightPanel/Margin/VBox/MPSection/TitleRow" unique_id=279980775]
 modulate = Color(1, 1, 1, 0.9)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -164,7 +166,7 @@ theme_override_font_sizes/font_size = 8
 text = "100 / 100"
 horizontal_alignment = 2
 
-[node name="MPBar" type="Control" parent="TopLeftPanel/Margin/VBox/MPSection" unique_id=973176162 node_paths=PackedStringArray("under_bar", "fill_bar")]
+[node name="MPBar" type="Control" parent="TopRightPanel/Margin/VBox/MPSection" unique_id=973176162 node_paths=PackedStringArray("under_bar", "fill_bar")]
 custom_minimum_size = Vector2(220, 9)
 layout_mode = 2
 script = ExtResource("2_resbar")
@@ -173,7 +175,7 @@ under_bar = NodePath("UnderBar")
 fill_bar = NodePath("FillBar")
 fill_tween_duration = 0.35
 
-[node name="UnderBar" type="TextureProgressBar" parent="TopLeftPanel/Margin/VBox/MPSection/MPBar" unique_id=222659821]
+[node name="UnderBar" type="TextureProgressBar" parent="TopRightPanel/Margin/VBox/MPSection/MPBar" unique_id=222659821]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -185,7 +187,7 @@ nine_patch_stretch = true
 texture_under = ExtResource("11_mpunder")
 texture_progress = ExtResource("11_mpunder")
 
-[node name="FillBar" type="TextureProgressBar" parent="TopLeftPanel/Margin/VBox/MPSection/MPBar" unique_id=1145985703]
+[node name="FillBar" type="TextureProgressBar" parent="TopRightPanel/Margin/VBox/MPSection/MPBar" unique_id=1145985703]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -196,19 +198,11 @@ value = 100.0
 nine_patch_stretch = true
 texture_progress = ExtResource("12_mpfull")
 
-[node name="BottomLeft" type="HBoxContainer" parent="." unique_id=1478235854]
-layout_mode = 1
-offset_left = 11.0
-offset_top = 95.0
-offset_right = 141.0
-offset_bottom = 113.0
-theme_override_constants/separation = 0
-
-[node name="GoldRow" type="HBoxContainer" parent="BottomLeft" unique_id=1070856241]
+[node name="GoldRow" type="HBoxContainer" parent="TopRightPanel/Margin/VBox" unique_id=1070856241]
 layout_mode = 2
 theme_override_constants/separation = 5
 
-[node name="GoldIcon" type="TextureRect" parent="BottomLeft/GoldRow" unique_id=2128200613]
+[node name="GoldIcon" type="TextureRect" parent="TopRightPanel/Margin/VBox/GoldRow" unique_id=2128200613]
 texture_filter = 1
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
@@ -216,7 +210,7 @@ size_flags_vertical = 4
 texture = ExtResource("7_icgold")
 stretch_mode = 5
 
-[node name="GoldLabel" type="Label" parent="BottomLeft/GoldRow" unique_id=1261645759]
+[node name="GoldLabel" type="Label" parent="TopRightPanel/Margin/VBox/GoldRow" unique_id=1261645759]
 modulate = Color(1, 0.88, 0.35, 1)
 layout_mode = 2
 theme_override_font_sizes/font_size = 8
