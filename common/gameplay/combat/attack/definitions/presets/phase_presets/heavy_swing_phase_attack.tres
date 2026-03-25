@@ -1,12 +1,11 @@
-[gd_resource type="Resource" script_class="EffectPhaseDefinition" format=3 uid="uid://k4n0p7cyzmhv6"]
+[gd_resource type="Resource" script_class="EffectPhaseDefinition" format=3 uid="uid://deuaj3ihu7qen"]
 
-[ext_resource type="Script" uid="uid://cmymyo0y1aoi7" path="res://common/gameplay/combat/attack/definitions/effect_phase_definition.gd" id="1_hspa"]
-[ext_resource type="PackedScene" uid="uid://d5m8p3bqhvz7n" path="res://common/gameplay/combat/attack/effects/presets/heavy_swing_burst_effect.tscn" id="2_hspa"]
+[ext_resource type="PackedScene" uid="uid://8d41ehwo5gv" path="res://common/gameplay/combat/attack/effects/presets/heavy_swing_burst_effect.tscn" id="1_njvs8"]
+[ext_resource type="Script" uid="uid://cmymyo0y1aoi7" path="res://common/gameplay/combat/attack/definitions/effect_phase_definition.gd" id="2_7m6ki"]
 
 [resource]
-script = ExtResource("1_hspa")
-effect_scene = ExtResource("2_hspa")
-lifetime = 0.2
+script = ExtResource("2_7m6ki")
+effect_scene = ExtResource("1_njvs8")
 knockback_mode = 1
 knockback_force = 200.0
 max_targets = -1
