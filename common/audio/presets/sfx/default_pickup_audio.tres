@@ -7,7 +7,7 @@
 script = ExtResource("1_a333j")
 limiter_key = &"pickup"
 max_per_window = 8
-window_sec = 1.0
+window_sec = 0.5
 volume_db = -10.0
 bus_id = 1
 streams = Array[AudioStream]([ExtResource("2_a333j")])

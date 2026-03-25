@@ -65,7 +65,7 @@ extends Node2D
 
 ## How often (in seconds) to recalculate separation force when tick_enabled is true.
 ## e.g. 0.1 = 10 Hz, 0.5 = 2 Hz.
-@export_range(0.016, 5.0, 0.016, "suffix:s") var tick_interval: float = 0.1
+@export_range(0.016, 5.0, 0.016, "suffix:s") var tick_interval: float = 0.05
 
 ## Stagger tick phases across units so they don't all recalculate on the same frame.
 ## When true, each unit starts with a random phase offset within [0, tick_interval).
@@ -191,7 +191,10 @@ func _recalculate_separation() -> void:
         count += 1
 
     var crowd_block_ratio := 0.0
+
     var desired_move := movement_module.manual_velocity
+    if desired_move == Vector2.ZERO:
+        desired_move = movement_module.path_velocity
 
     if desired_move != Vector2.ZERO:
         var density := SpatialHash.get_directional_density(
@@ -203,5 +206,5 @@ func _recalculate_separation() -> void:
         crowd_block_ratio = clamp((density - crowd_block_start) / crowd_block_range, 0.0, 1.0)
         crowd_block_ratio = crowd_block_ratio * crowd_block_ratio * (3.0 - 2.0 * crowd_block_ratio)
 
-    _cached_separation = total_separation
+    _cached_separation = total_separation.limit_length(separation_force / mass)
     _cached_crowd_block = crowd_block_ratio

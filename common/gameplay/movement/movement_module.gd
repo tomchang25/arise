@@ -43,13 +43,14 @@ func _physics_process(delta: float) -> void:
         return
 
     var blocked_manual := manual_velocity * (1.0 - crowd_block_ratio)
+    var blocked_path := path_velocity * (1.0 - crowd_block_ratio)
     var target_move := Vector2.ZERO
 
     if use_manual:
         target_move += blocked_manual
 
     if use_path:
-        target_move += path_velocity
+        target_move += blocked_path
 
     var current_move := _computed_velocity - knockback_velocity
     var rate := acceleration if target_move != Vector2.ZERO else deceleration
@@ -64,7 +65,6 @@ func _physics_process(delta: float) -> void:
     else:
         character.velocity = _computed_velocity
         character.move_and_slide()
-
 
 # -------------------------
 # Common API
@@ -199,7 +199,8 @@ func clear_knockback() -> void:
 
 
 func set_separation(velocity: Vector2) -> void:
-    separation_velocity = velocity.limit_length(max_separation_speed)
+    var target := velocity.limit_length(max_separation_speed)
+    separation_velocity = separation_velocity.lerp(target, 0.3)
 
 
 func set_crowd_block_ratio(value: float) -> void:
