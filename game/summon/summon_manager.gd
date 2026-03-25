@@ -1,5 +1,5 @@
 class_name SummonManager
-extends Node
+extends Node2D
 
 signal counts_changed(type_index: int, current: int, max_count: int)
 signal souls_changed(souls: int)
@@ -64,6 +64,7 @@ func _unhandled_input(event: InputEvent) -> void:
         if event.is_action_pressed("summon_%d" % (i + 1)):
             _set_active_group(i)
             return
+
     # F1–F4: summon type to active group
     if event is InputEventKey and event.pressed and not event.echo:
         match event.physical_keycode:
@@ -75,6 +76,23 @@ func _unhandled_input(event: InputEvent) -> void:
                 summon(2)
             KEY_F4:
                 summon(3)
+
+    # Mouse: control active group target position
+    if event is InputEventMouseButton and event.pressed:
+        if _active_group_index >= _groups.size():
+            return
+        var active_group: ArmyGroup = _groups[_active_group_index]
+        if active_group == null:
+            return
+        var mouse_world_pos := get_global_mouse_position()
+        match event.button_index:
+            MOUSE_BUTTON_RIGHT:
+                if event.shift_pressed:
+                    active_group.set_target_relative(mouse_world_pos - _player.global_position)
+                else:
+                    active_group.set_target(mouse_world_pos)
+            MOUSE_BUTTON_MIDDLE:
+                active_group.reset_to_spawn()
 
 # -------------------------
 # Public API
@@ -104,11 +122,11 @@ func summon(type_index: int) -> bool:
         return false
 
     # Determine the container: use armies_container if set, otherwise current scene root.
-    var container: Node = armies_container if armies_container else get_tree().current_scene
+    var container: Node = armies_container if armies_container else self
 
     # --- Spawn summon_count units per activation ---
     var spawned := 0
-    for _i in army_type.summon_count:
+    for i in army_type.summon_count:
         var spawn_action := SpawnPackedSceneAction.create(army_type.scene)
         spawn_action.use_pool = true
         var spawn_ctx := SpawnContext.create(container)

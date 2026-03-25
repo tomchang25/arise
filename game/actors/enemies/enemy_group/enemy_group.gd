@@ -32,12 +32,20 @@ signal members_changed
 ## forced back home. Set to 0 to disable leashing entirely.
 @export var leash_distance: float = 300.0
 
+## Speed (units/sec) at which target_position creeps toward the player when
+## not aggroed and not returning to spawn.
+@export var chase_speed: float = 5.0
+
 # -------------------------
 # Internal state
 # -------------------------
 
 ## Frozen spawn position — set once by the spawner, never changes.
 var spawn_pivot: Vector2 = Vector2.ZERO
+
+## Slowly advances toward the player each tick when not aggroed.
+## Initialized to spawn_pivot in _ready().
+var target_position: Vector2 = Vector2.ZERO
 
 var _members: Array[Enemy] = []
 var _living_count: int = 0
@@ -76,6 +84,7 @@ func _ready() -> void:
     # Capture the node's world position as the pivot the moment it enters the tree.
     # The spawner should place the node at the desired center before add_child().
     spawn_pivot = global_position
+    target_position = spawn_pivot
 
     _player = get_tree().get_first_node_in_group("player")
 
@@ -105,7 +114,7 @@ func _physics_process(delta: float) -> void:
             if _returning_to_spawn:
                 member.anchor_position = spawn_pivot
             else:
-                member.anchor_position = global_position + offset
+                member.anchor_position = target_position + offset
 
         # Leash check runs after position update so global_position is current.
         _check_leash()
@@ -214,6 +223,7 @@ func _update_aggro_state() -> void:
 
     if not _aggroed and dist < aggro_range:
         _aggroed = true
+        _wake_all_members()
         _assign_targets_to_members()
 
     elif _aggroed:
@@ -255,16 +265,17 @@ func _check_leash() -> void:
 
     # Use group center (global_position) as the leash reference — if the whole
     # group has drifted too far from spawn_pivot, pull everyone back at once.
-    if global_position.distance_to(spawn_pivot) <= leash_distance:
+    if global_position.distance_to(target_position) <= leash_distance:
         return
 
     _aggroed = false
     _returning_to_spawn = true
+    _wake_all_members()
     for member in get_alive_members():
         # Reset each member's anchor to their original spawn slot so
         # RETURN_TO_ANCHOR navigates home, not the now-distant center.
         var offset: Vector2 = _anchor_offsets.get(member, Vector2.ZERO)
-        member.anchor_position = spawn_pivot + offset
+        member.anchor_position = target_position + offset
         member.group_aggroed = false
         member.group_target = null
 
@@ -294,6 +305,12 @@ func _update_dormant_state() -> void:
     if _aggroed:
         return
 
+    # Creep target_position toward player regardless of dormant state.
+    target_position = target_position.move_toward(
+        _player.global_position,
+        chase_speed * dormant_check_interval,
+    )
+
     var dist := _player.global_position.distance_to(global_position)
     var should_sleep := dist > dormant_distance
 
@@ -304,3 +321,12 @@ func _update_dormant_state() -> void:
     for member in get_alive_members():
         member.dormant = should_sleep
         member.set_enabled(not should_sleep)
+
+
+func _wake_all_members() -> void:
+    if not dormant:
+        return
+    dormant = false
+    for member in get_alive_members():
+        member.dormant = false
+        member.set_enabled(true)

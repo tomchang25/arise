@@ -41,6 +41,6 @@ cooldown = 10.0
 color = Color(0.9, 0.4, 1, 1)
 scene = ExtResource("3_ninja")
 
-[node name="SummonManager" type="Node" unique_id=745671814 groups=["summon_manager"]]
+[node name="SummonManager" type="Node2D" unique_id=342019114 groups=["summon_manager"]]
 script = ExtResource("1_manager")
 army_types = Array[ExtResource("2_type")]([SubResource("SummonType_warrior"), SubResource("SummonType_archer"), SubResource("SummonType_knight"), SubResource("SummonType_mage")])
