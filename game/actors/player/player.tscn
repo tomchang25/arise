@@ -501,9 +501,6 @@ layer_name = &"player"
 mask_names = Array[StringName]([&"enemy"])
 collision_layer = 1
 collision_mask = 2
-tick_enabled = null
-tick_interval = null
-tick_stagger = null
 metadata/_custom_type_script = "uid://bhtdp3vwcylqh"
 
 [node name="Hurtbox" type="Area2D" parent="." unique_id=101171387]
@@ -609,6 +606,8 @@ stats = SubResource("Resource_5qatl")
 [node name="StateMachine" type="Node" parent="." unique_id=54803581 node_paths=PackedStringArray("initial_state")]
 script = ExtResource("11_b15sj")
 initial_state = NodePath("Idle")
+tick_enabled = false
+tick_interval = 0.016
 
 [node name="Idle" type="Node" parent="StateMachine" unique_id=1748923165]
 script = ExtResource("6_2iqu4")

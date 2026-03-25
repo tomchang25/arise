@@ -33,10 +33,10 @@ extends AttackEffect
 var _beam_fill: Polygon2D
 var _beam_outline: Line2D
 
-
 # ─────────────────────────────────────────────
 # PhaseEffect / AttackEffect overrides
 # ─────────────────────────────────────────────
+
 
 func setup(ctx: EffectContext) -> void:
     super.setup(ctx)
@@ -57,10 +57,10 @@ func play(duration: float = 5.0) -> void:
     await get_tree().create_timer(duration).timeout
     finished.emit()
 
-
 # ─────────────────────────────────────────────
 # Pool lifecycle
 # ─────────────────────────────────────────────
+
 
 func reset() -> void:
     if _beam_fill != null:
@@ -71,10 +71,10 @@ func reset() -> void:
         _beam_outline = null
     super.reset()
 
-
 # ─────────────────────────────────────────────
 # Internal helpers
 # ─────────────────────────────────────────────
+
 
 func _build_beam_vfx() -> void:
     var hw := beam_width * 0.5
@@ -85,12 +85,14 @@ func _build_beam_vfx() -> void:
     fill_color.a = fill_alpha
     _beam_fill = Polygon2D.new()
     _beam_fill.color = fill_color
-    _beam_fill.polygon = PackedVector2Array([
-        Vector2(-hl, -hw),
-        Vector2( hl, -hw),
-        Vector2( hl,  hw),
-        Vector2(-hl,  hw),
-    ])
+    _beam_fill.polygon = PackedVector2Array(
+        [
+            Vector2(-hl, -hw),
+            Vector2(hl, -hw),
+            Vector2(hl, hw),
+            Vector2(-hl, hw),
+        ],
+    )
     add_child(_beam_fill)
 
     # Glowing edge outline.
@@ -100,9 +102,9 @@ func _build_beam_vfx() -> void:
     _beam_outline.joint_mode = Line2D.LINE_JOINT_ROUND
     _beam_outline.closed = true
     _beam_outline.add_point(Vector2(-hl, -hw))
-    _beam_outline.add_point(Vector2( hl, -hw))
-    _beam_outline.add_point(Vector2( hl,  hw))
-    _beam_outline.add_point(Vector2(-hl,  hw))
+    _beam_outline.add_point(Vector2(hl, -hw))
+    _beam_outline.add_point(Vector2(hl, hw))
+    _beam_outline.add_point(Vector2(-hl, hw))
     add_child(_beam_outline)
 
 

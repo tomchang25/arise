@@ -39,10 +39,10 @@ extends VfxEffect
 ## Drawn procedurally in play(); no pre-authored Line2D needed in the scene.
 var _ring: Line2D
 
-
 # ─────────────────────────────────────────────
 # PhaseEffect / AttackEffect overrides
 # ─────────────────────────────────────────────
+
 
 ## setup() is called by PhaseSequencer right after instantiation.
 ## We skip super.setup() because there is intentionally no Hitbox here.
@@ -57,10 +57,10 @@ func play(duration: float = 1.5) -> void:
     await _animate_warning(duration)
     finished.emit()
 
-
 # ─────────────────────────────────────────────
 # Pool lifecycle
 # ─────────────────────────────────────────────
+
 
 func reset() -> void:
     if _ring != null:
@@ -68,10 +68,10 @@ func reset() -> void:
         _ring = null
     super.reset()
 
-
 # ─────────────────────────────────────────────
 # Internal helpers
 # ─────────────────────────────────────────────
+
 
 ## Build the ring Line2D programmatically so the scene file stays minimal.
 func _build_ring() -> void:
@@ -99,12 +99,14 @@ func _animate_warning(duration: float) -> Tween:
     # Scale the ring up and down `pulse_count` times over `pulse_duration`.
     var pulse_tween := create_tween().set_loops(pulse_count)
     pulse_tween.tween_property(
-        _ring, "scale",
+        _ring,
+        "scale",
         Vector2.ONE * pulse_scale,
         pulse_duration / (pulse_count * 2.0),
     ).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
     pulse_tween.tween_property(
-        _ring, "scale",
+        _ring,
+        "scale",
         Vector2.ONE,
         pulse_duration / (pulse_count * 2.0),
     ).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
@@ -116,12 +118,14 @@ func _animate_warning(duration: float) -> Tween:
     # --- Flash phase: rapid opacity blink to signal imminent burst ---
     var flash_tween := create_tween().set_loops(3)
     flash_tween.tween_property(
-        _ring, "modulate:a",
+        _ring,
+        "modulate:a",
         0.1,
         flash_duration / 6.0,
     ).set_trans(Tween.TRANS_LINEAR)
     flash_tween.tween_property(
-        _ring, "modulate:a",
+        _ring,
+        "modulate:a",
         1.0,
         flash_duration / 6.0,
     ).set_trans(Tween.TRANS_LINEAR)

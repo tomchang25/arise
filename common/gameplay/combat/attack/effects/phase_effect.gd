@@ -80,7 +80,7 @@ func play(_duration: float = 0.0) -> void:
 ## previous use. Subclasses should call super.reset() last.
 func reset() -> void:
     attacker_source = null
-    set_process(false)
+    set_process(true)
     visible = true
 
 

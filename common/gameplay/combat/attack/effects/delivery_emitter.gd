@@ -235,7 +235,6 @@ func _spawn_child_delivery(def: AttackDefinition, origin: Vector2, dir: Vector2)
 
     _fire_and_setup(request, child_ctx, def, dir)
 
-
 # -------------------------
 # Pool lifecycle
 # -------------------------
@@ -244,7 +243,6 @@ func _spawn_child_delivery(def: AttackDefinition, origin: Vector2, dir: Vector2)
 func reset() -> void:
     _parent_ctx = null
     super.reset()
-
 
 # -------------------------
 # Internal

@@ -37,10 +37,10 @@ extends AttackEffect
 
 var _burst_vfx_nodes: Array[Node] = []
 
-
 # ─────────────────────────────────────────────
 # PhaseEffect / AttackEffect overrides
 # ─────────────────────────────────────────────
+
 
 func setup(ctx: EffectContext) -> void:
     super.setup(ctx)
@@ -55,10 +55,10 @@ func play(duration: float = 0.2) -> void:
     await get_tree().create_timer(duration).timeout
     finished.emit()
 
-
 # ─────────────────────────────────────────────
 # Pool lifecycle
 # ─────────────────────────────────────────────
+
 
 func reset() -> void:
     for node in _burst_vfx_nodes:
@@ -69,10 +69,10 @@ func reset() -> void:
     modulate = Color.WHITE
     super.reset()
 
-
 # ─────────────────────────────────────────────
 # Internal helpers
 # ─────────────────────────────────────────────
+
 
 ## Returns the offset that shifts sector geometry so its centroid lands at origin.
 ## Sector centroid is at (2r·sin(α))/(3α) from the apex along the bisector.
@@ -133,12 +133,14 @@ func _play_burst_vfx(duration: float) -> void:
     var tween := create_tween()
     tween.set_parallel(true)
     tween.tween_property(
-        self, "scale",
+        self,
+        "scale",
         Vector2(1.35, 1.35),
         duration,
     ).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
     tween.tween_property(
-        self, "modulate:a",
+        self,
+        "modulate:a",
         0.0,
         duration,
     ).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)

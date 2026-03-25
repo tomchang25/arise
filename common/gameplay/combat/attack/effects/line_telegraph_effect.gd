@@ -39,10 +39,10 @@ extends VfxEffect
 var _rect_outline: Line2D
 var _source_line: Line2D
 
-
 # ─────────────────────────────────────────────
 # PhaseEffect overrides
 # ─────────────────────────────────────────────
+
 
 func _process(_delta: float) -> void:
     super._process(_delta)
@@ -59,10 +59,10 @@ func play(duration: float = 5.0) -> void:
     await _animate(duration)
     finished.emit()
 
-
 # ─────────────────────────────────────────────
 # Pool lifecycle
 # ─────────────────────────────────────────────
+
 
 func reset() -> void:
     if _rect_outline != null:
@@ -73,10 +73,10 @@ func reset() -> void:
         _source_line = null
     super.reset()
 
-
 # ─────────────────────────────────────────────
 # Internal helpers
 # ─────────────────────────────────────────────
+
 
 func _build_visuals() -> void:
     var hw := beam_width * 0.5
@@ -92,9 +92,9 @@ func _build_visuals() -> void:
     _rect_outline.end_cap_mode = Line2D.LINE_CAP_ROUND
     _rect_outline.closed = true
     _rect_outline.add_point(Vector2(-hl, -hw))
-    _rect_outline.add_point(Vector2( hl, -hw))
-    _rect_outline.add_point(Vector2( hl,  hw))
-    _rect_outline.add_point(Vector2(-hl,  hw))
+    _rect_outline.add_point(Vector2(hl, -hw))
+    _rect_outline.add_point(Vector2(hl, hw))
+    _rect_outline.add_point(Vector2(-hl, hw))
     add_child(_rect_outline)
 
     # Line from attacker back to this delivery marker (updated in _process).
@@ -120,12 +120,14 @@ func _animate(duration: float) -> void:
     # Pulse the rectangle outline.
     var pulse_tween := create_tween().set_loops(pulse_count)
     pulse_tween.tween_property(
-        _rect_outline, "scale",
+        _rect_outline,
+        "scale",
         Vector2.ONE * pulse_scale,
         pulse_dur / (pulse_count * 2.0),
     ).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
     pulse_tween.tween_property(
-        _rect_outline, "scale",
+        _rect_outline,
+        "scale",
         Vector2.ONE,
         pulse_dur / (pulse_count * 2.0),
     ).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
@@ -137,12 +139,14 @@ func _animate(duration: float) -> void:
     # Final flash: rapid opacity blink to signal imminent beam.
     var flash_tween := create_tween().set_loops(3)
     flash_tween.tween_property(
-        _rect_outline, "modulate:a",
+        _rect_outline,
+        "modulate:a",
         0.1,
         flash_dur / 6.0,
     ).set_trans(Tween.TRANS_LINEAR)
     flash_tween.tween_property(
-        _rect_outline, "modulate:a",
+        _rect_outline,
+        "modulate:a",
         1.0,
         flash_dur / 6.0,
     ).set_trans(Tween.TRANS_LINEAR)

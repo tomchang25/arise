@@ -50,10 +50,10 @@ func play(duration: float = 10.0) -> void:
     await _run_lifetime(duration)
     finished.emit()
 
-
 # ─────────────────────────────────────────────
 # Pool lifecycle
 # ─────────────────────────────────────────────
+
 
 func reset() -> void:
     if _fill != null:
