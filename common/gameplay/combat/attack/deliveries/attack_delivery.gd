@@ -106,6 +106,11 @@ func _trigger_phases() -> void:
         push_warning("AttackDelivery._trigger_phases: sequencer already running on '%s'" % name)
         return
 
+    # If the original attacker was destroyed before the phases even started, cancel.
+    if _context.attacker_source != null and not is_instance_valid(_context.attacker_source):
+        NodeRegistry.release(self)
+        return
+
     _sequencer = PhaseSequencer.new()
     add_child(_sequencer)
     _sequencer.all_phases_finished.connect(_on_phases_finished)

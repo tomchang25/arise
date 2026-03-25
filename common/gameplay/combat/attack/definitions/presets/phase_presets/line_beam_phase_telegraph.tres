@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="EffectPhaseDefinition" format=3 uid="uid://ddga2xkhejq5e"]
+
+[ext_resource type="PackedScene" uid="uid://bx3ral7mnvwk2" path="res://common/gameplay/combat/attack/effects/presets/line_telegraph_effect.tscn" id="1_oioi8"]
+[ext_resource type="Script" uid="uid://cmymyo0y1aoi7" path="res://common/gameplay/combat/attack/definitions/effect_phase_definition.gd" id="2_qvkl7"]
+
+[resource]
+script = ExtResource("2_qvkl7")
+effect_scene = ExtResource("1_oioi8")
+lifetime = 5.0
+max_targets = 0
+clear_records_on_exit = true
+metadata/_custom_type_script = "uid://cmymyo0y1aoi7"

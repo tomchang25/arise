@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://bx3ral7mnvwk2"]
+
+[ext_resource type="Script" uid="uid://clt3gvy8nk9qr2" path="res://common/gameplay/combat/attack/effects/line_telegraph_effect.gd" id="1_ltfx"]
+
+[node name="LineTelegraphEffect" type="Node2D" unique_id=101010101]
+script = ExtResource("1_ltfx")

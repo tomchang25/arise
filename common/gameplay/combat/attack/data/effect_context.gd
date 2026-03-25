@@ -39,6 +39,12 @@ var source_stats: Stats = null
 ## The definition that produced this attack. Carries multipliers, variance, etc.
 var definition: AttackDefinition = null
 
+## Live node reference to the original attacker — the actor who fired this attack.
+## Used by telegraph effects to draw a direction line toward the attacker and by
+## PhaseEffect.quit_on_source_invalid to detect when the attacker is destroyed
+## mid-phase. Null for emitted child deliveries (DeliveryEmitter spawns).
+var attacker_source: Node2D = null
+
 # -------------------------
 # Spawn-time snapshot
 # -------------------------
@@ -121,6 +127,7 @@ static func build(
     ctx.source_stats = stats
     ctx.definition = def
     ctx.spawn_depth = 0
+    ctx.attacker_source = source
 
     if def is PlaceAttackDefinition:
         if def.attack_scene == null:
@@ -241,6 +248,7 @@ func build_phase_override(phase_def: EffectPhaseDefinition) -> EffectContext:
     phase_ctx.definition = definition
     phase_ctx.knockback_dir = knockback_dir
     phase_ctx.knockback_source = knockback_source
+    phase_ctx.attacker_source = attacker_source
     phase_ctx.target_factions = target_factions
     phase_ctx.attack_scene = attack_scene
     phase_ctx.spawn_group = spawn_group
