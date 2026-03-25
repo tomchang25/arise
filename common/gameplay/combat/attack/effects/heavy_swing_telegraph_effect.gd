@@ -71,13 +71,23 @@ func play(duration: float = 5.0) -> void:
 # Internal helpers
 # ─────────────────────────────────────────────
 
+## Returns the offset that shifts sector geometry so its centroid lands at origin.
+## Sector centroid is at (2r·sin(α))/(3α) from the apex along the bisector.
+func _sector_centroid_offset() -> Vector2:
+    var half_arc := deg_to_rad(arc_angle_deg * 0.5)
+    if half_arc < 0.0001:
+        return Vector2.ZERO
+    return Vector2(-(2.0 * radius * sin(half_arc)) / (3.0 * half_arc), 0.0)
+
+
 func _build_visuals() -> void:
     var half_arc := deg_to_rad(arc_angle_deg * 0.5)
+    var off := _sector_centroid_offset()
 
     _sector_root = Node2D.new()
     add_child(_sector_root)
 
-    # Arc spanning from -half_arc to +half_arc.
+    # Arc spanning from -half_arc to +half_arc, shifted so centroid is at origin.
     _arc_line = Line2D.new()
     _arc_line.width = ring_width
     _arc_line.default_color = ring_color
@@ -87,23 +97,23 @@ func _build_visuals() -> void:
     for i in range(segments + 1):
         var t := float(i) / float(segments)
         var angle := lerp(-half_arc, half_arc, t)
-        _arc_line.add_point(Vector2.from_angle(angle) * radius)
+        _arc_line.add_point(Vector2.from_angle(angle) * radius + off)
     _sector_root.add_child(_arc_line)
 
-    # Radial from centre to arc start.
+    # Radial from apex to arc start.
     _radial_a = Line2D.new()
     _radial_a.width = ring_width
     _radial_a.default_color = ring_color
-    _radial_a.add_point(Vector2.ZERO)
-    _radial_a.add_point(Vector2.from_angle(-half_arc) * radius)
+    _radial_a.add_point(Vector2.ZERO + off)
+    _radial_a.add_point(Vector2.from_angle(-half_arc) * radius + off)
     _sector_root.add_child(_radial_a)
 
-    # Radial from centre to arc end.
+    # Radial from apex to arc end.
     _radial_b = Line2D.new()
     _radial_b.width = ring_width
     _radial_b.default_color = ring_color
-    _radial_b.add_point(Vector2.ZERO)
-    _radial_b.add_point(Vector2.from_angle(half_arc) * radius)
+    _radial_b.add_point(Vector2.ZERO + off)
+    _radial_b.add_point(Vector2.from_angle(half_arc) * radius + off)
     _sector_root.add_child(_radial_b)
 
     # Line from attacker back to this delivery marker.

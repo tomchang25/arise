@@ -59,16 +59,27 @@ func play(duration: float = 0.2) -> void:
 # Internal helpers
 # ─────────────────────────────────────────────
 
+## Returns the offset that shifts sector geometry so its centroid lands at origin.
+## Sector centroid is at (2r·sin(α))/(3α) from the apex along the bisector.
+func _sector_centroid_offset() -> Vector2:
+    var half_arc := deg_to_rad(arc_angle_deg * 0.5)
+    if half_arc < 0.0001:
+        return Vector2.ZERO
+    return Vector2(-(2.0 * radius * sin(half_arc)) / (3.0 * half_arc), 0.0)
+
+
 ## Builds a ConvexPolygonShape2D approximating the sector.
+## All points are shifted so the sector centroid is at origin.
 ## Valid for arc_angle_deg ≤ 180°; Godot computes the convex hull automatically.
 func _build_sector_shape() -> ConvexPolygonShape2D:
     var half_arc := deg_to_rad(arc_angle_deg * 0.5)
+    var off := _sector_centroid_offset()
     var pts := PackedVector2Array()
-    pts.append(Vector2.ZERO)
+    pts.append(Vector2.ZERO + off)
     for i in range(segments + 1):
         var t := float(i) / float(segments)
         var angle := lerp(-half_arc, half_arc, t)
-        pts.append(Vector2.from_angle(angle) * radius)
+        pts.append(Vector2.from_angle(angle) * radius + off)
     var shape := ConvexPolygonShape2D.new()
     shape.points = pts
     return shape
@@ -77,6 +88,7 @@ func _build_sector_shape() -> ConvexPolygonShape2D:
 ## Flashes the sector outline and expands it to signal the burst landing.
 func _play_burst_vfx(duration: float) -> void:
     var half_arc := deg_to_rad(arc_angle_deg * 0.5)
+    var off := _sector_centroid_offset()
 
     # Arc line.
     var arc_line := Line2D.new()
@@ -88,7 +100,7 @@ func _play_burst_vfx(duration: float) -> void:
     for i in range(segments + 1):
         var t := float(i) / float(segments)
         var angle := lerp(-half_arc, half_arc, t)
-        arc_line.add_point(Vector2.from_angle(angle) * radius)
+        arc_line.add_point(Vector2.from_angle(angle) * radius + off)
     add_child(arc_line)
 
     # Two radial lines.
@@ -96,8 +108,8 @@ func _play_burst_vfx(duration: float) -> void:
         var radial := Line2D.new()
         radial.width = edge_width
         radial.default_color = burst_color
-        radial.add_point(Vector2.ZERO)
-        radial.add_point(Vector2.from_angle(sign_val * half_arc) * radius)
+        radial.add_point(Vector2.ZERO + off)
+        radial.add_point(Vector2.from_angle(sign_val * half_arc) * radius + off)
         add_child(radial)
 
     # Expand and fade out.
