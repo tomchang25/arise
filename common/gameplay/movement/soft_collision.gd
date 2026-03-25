@@ -39,9 +39,9 @@ extends Node2D
 @export var mass: float = 1.0
 ## Base separation force applied at full overlap (dist = 0).
 @export var separation_force: float = 100.0
-## Maximum distance at which force is applied.
-## Also drives SpatialHash.cell_size — keep this consistent across all units.
-@export var min_distance: float = 12.0:
+## Maximum separation distance expressed in *cells* (cell = SpatialHash.CELL_SIZE pixels).
+## e.g. 0.75 cells = 0.75 × 16 = 12 px. Keep consistent across all unit types.
+@export var min_distance: float = 0.75:
     set(value):
         min_distance = max(value, 0.0)
 
@@ -88,11 +88,6 @@ var _tick_accumulator: float = 0.0
 func _ready() -> void:
     if Engine.is_editor_hint() or character == null:
         return
-
-    # Let this unit's min_distance set the global cell size.
-    # All units should share the same min_distance; the last one to call _ready()
-    # wins, but since they are equal it doesn't matter.
-    SpatialHash.cell_size = min_distance
 
     SpatialHash.register(character, collision_layer)
 
@@ -154,6 +149,8 @@ func _physics_process(delta: float) -> void:
 
 
 func _recalculate_separation() -> void:
+    # min_distance is in cells; convert to pixels for all distance comparisons.
+    var min_dist_px := min_distance * SpatialHash.CELL_SIZE
     var candidates := SpatialHash.query_nearby(character.global_position, min_distance, max_neighbours)
     var count := 0
     var total_separation := Vector2.ZERO
@@ -174,7 +171,7 @@ func _recalculate_separation() -> void:
         var diff: Vector2 = character.global_position - body.global_position
         var dist: float = diff.length()
 
-        if dist >= min_distance:
+        if dist >= min_dist_px:
             continue
 
         var direction: Vector2
@@ -184,7 +181,7 @@ func _recalculate_separation() -> void:
             # Exact overlap: push in a random direction to break symmetry.
             direction = Vector2(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0)).normalized()
 
-        var t := 1.0 - (dist / min_distance)
+        var t := 1.0 - (dist / min_dist_px)
         var force := separation_force * t / mass
 
         total_separation += direction * force

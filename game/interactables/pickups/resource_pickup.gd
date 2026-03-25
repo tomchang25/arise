@@ -2,7 +2,6 @@ class_name ResourcePickup
 extends BasePickup
 
 const MAX_ICON_SIZE := Vector2(8.0, 8.0)
-const DEFAULT_COLLISION_RADIUS := 4.0
 
 @export_group("Resource")
 @export var resource_data: ResourceData:
@@ -16,7 +15,6 @@ const DEFAULT_COLLISION_RADIUS := 4.0
 
 @export_group("Dependencies")
 @export var sprite_node: Sprite2D
-@export var collision_shape: CollisionShape2D
 
 # -------------------------
 # Lifecycle
@@ -88,10 +86,6 @@ func _refresh_visual() -> void:
 
     sprite_node.texture = resource_data.sprite
     _fit_sprite_to_max_size(sprite_node, MAX_ICON_SIZE)
-
-    if collision_shape != null and collision_shape.shape is CircleShape2D:
-        var circle_shape := collision_shape.shape as CircleShape2D
-        circle_shape.radius = DEFAULT_COLLISION_RADIUS
 
 
 func _fit_sprite_to_max_size(target: Sprite2D, max_size: Vector2) -> void:
