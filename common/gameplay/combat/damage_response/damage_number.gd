@@ -57,7 +57,7 @@ func reset() -> void:
     scale = Vector2.ONE
     modulate = Color(1, 1, 1, 1)
     rotation = 0.0
-    position = Vector2.ZERO
+    global_position = Vector2.ZERO
     visible = true
 
 

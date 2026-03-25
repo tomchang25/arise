@@ -35,10 +35,12 @@ extends AttackEffect
 @export var burst_color: Color = Color(1.0, 0.6, 0.15, 1.0)
 @export var edge_width: float = 5.0
 
+var _burst_vfx_nodes: Array[Node] = []
 
 # ─────────────────────────────────────────────
 # PhaseEffect / AttackEffect overrides
 # ─────────────────────────────────────────────
+
 
 func setup(ctx: EffectContext) -> void:
     super.setup(ctx)
@@ -52,12 +54,25 @@ func play(duration: float = 0.2) -> void:
 
     await get_tree().create_timer(duration).timeout
     finished.emit()
-    queue_free()
 
+# ─────────────────────────────────────────────
+# Pool lifecycle
+# ─────────────────────────────────────────────
+
+
+func reset() -> void:
+    for node in _burst_vfx_nodes:
+        if is_instance_valid(node):
+            node.queue_free()
+    _burst_vfx_nodes.clear()
+    scale = Vector2.ONE
+    modulate = Color.WHITE
+    super.reset()
 
 # ─────────────────────────────────────────────
 # Internal helpers
 # ─────────────────────────────────────────────
+
 
 ## Returns the offset that shifts sector geometry so its centroid lands at origin.
 ## Sector centroid is at (2r·sin(α))/(3α) from the apex along the bisector.
@@ -102,6 +117,7 @@ func _play_burst_vfx(duration: float) -> void:
         var angle := lerp(-half_arc, half_arc, t)
         arc_line.add_point(Vector2.from_angle(angle) * radius + off)
     add_child(arc_line)
+    _burst_vfx_nodes.append(arc_line)
 
     # Two radial lines.
     for sign_val in [-1, 1]:
@@ -111,17 +127,20 @@ func _play_burst_vfx(duration: float) -> void:
         radial.add_point(Vector2.ZERO + off)
         radial.add_point(Vector2.from_angle(sign_val * half_arc) * radius + off)
         add_child(radial)
+        _burst_vfx_nodes.append(radial)
 
     # Expand and fade out.
     var tween := create_tween()
     tween.set_parallel(true)
     tween.tween_property(
-        self, "scale",
+        self,
+        "scale",
         Vector2(1.35, 1.35),
         duration,
     ).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
     tween.tween_property(
-        self, "modulate:a",
+        self,
+        "modulate:a",
         0.0,
         duration,
     ).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)

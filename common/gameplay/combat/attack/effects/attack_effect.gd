@@ -4,7 +4,8 @@ extends PhaseEffect
 ##
 ## Wires the Hitbox with an EffectContext and reacts to play() being called.
 ## Owns no lifetime timer — that remains on AttackDelivery.
-## Never calls queue_free directly.
+## Never calls queue_free directly — PhaseSequencer releases this node back to
+## the pool via NodeRegistry.release() after the finished signal.
 ##
 ## Hitbox is optional.
 ## A subclass or scene that has no Hitbox child is a VFX-only effect and will
@@ -60,7 +61,6 @@ func play(duration: float = 0.0) -> void:
     if duration > 0.0:
         await get_tree().create_timer(duration).timeout
     finished.emit()
-    queue_free()
 
 # -------------------------
 # Internal helpers
@@ -84,3 +84,24 @@ func _on_enemy_hit() -> void:
     targets_hit_count += 1
     if max_targets > 0 and targets_hit_count >= max_targets:
         hitbox.enabled = false
+
+# -------------------------
+# Pool lifecycle
+# -------------------------
+
+
+func reset() -> void:
+    if hitbox != null:
+        if hitbox.hit_enemy.is_connected(_on_enemy_hit):
+            hitbox.hit_enemy.disconnect(_on_enemy_hit)
+        hitbox.reset()
+        hitbox = null
+    targets_hit_count = 0
+    max_targets = 1
+    super.reset()
+
+
+func set_enabled(value: bool) -> void:
+    super.set_enabled(value)
+    if hitbox != null:
+        hitbox.set_enabled(value)

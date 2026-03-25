@@ -44,13 +44,26 @@ func setup(ctx: EffectContext) -> void:
 
 
 ## play() renders the scorch and fades it out. Emits finished when done.
-## Do NOT call super() — VfxOnlyEffect inherits AttackEffect.play() which would
-## queue_free immediately; we manage our own lifetime here.
+## Do NOT call super() — VfxEffect.play() does not manage our custom lifetime.
 func play(duration: float = 10.0) -> void:
     _build_decal()
     await _run_lifetime(duration)
     finished.emit()
-    queue_free()
+
+# ─────────────────────────────────────────────
+# Pool lifecycle
+# ─────────────────────────────────────────────
+
+
+func reset() -> void:
+    if _fill != null:
+        _fill.queue_free()
+        _fill = null
+    if _edge != null:
+        _edge.queue_free()
+        _edge = null
+    modulate = Color.WHITE
+    super.reset()
 
 # ─────────────────────────────────────────────
 # Internal helpers

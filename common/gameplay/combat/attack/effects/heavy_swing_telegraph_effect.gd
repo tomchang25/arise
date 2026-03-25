@@ -43,18 +43,19 @@ extends VfxEffect
 var _arc_line: Line2D
 var _radial_a: Line2D
 var _radial_b: Line2D
-var _sector_root: Node2D   # Parent of the three sector lines for batch animation.
+var _sector_root: Node2D # Parent of the three sector lines for batch animation.
 var _source_line: Line2D
-
 
 # ─────────────────────────────────────────────
 # PhaseEffect overrides
 # ─────────────────────────────────────────────
 
+
 func _process(_delta: float) -> void:
     super._process(_delta)
     if _source_line == null:
         return
+
     if attacker_source != null and is_instance_valid(attacker_source):
         _source_line.set_point_position(0, to_local(attacker_source.global_position))
     else:
@@ -66,10 +67,27 @@ func play(duration: float = 5.0) -> void:
     await _animate(duration)
     finished.emit()
 
+# ─────────────────────────────────────────────
+# Pool lifecycle
+# ─────────────────────────────────────────────
+
+
+func reset() -> void:
+    if _sector_root != null:
+        _sector_root.queue_free()
+        _sector_root = null
+        _arc_line = null
+        _radial_a = null
+        _radial_b = null
+    if _source_line != null:
+        _source_line.queue_free()
+        _source_line = null
+    super.reset()
 
 # ─────────────────────────────────────────────
 # Internal helpers
 # ─────────────────────────────────────────────
+
 
 ## Returns the offset that shifts sector geometry so its centroid lands at origin.
 ## Sector centroid is at (2r·sin(α))/(3α) from the apex along the bisector.
@@ -122,8 +140,8 @@ func _build_visuals() -> void:
     _source_line.default_color = source_line_color
     _source_line.begin_cap_mode = Line2D.LINE_CAP_BOX
     _source_line.end_cap_mode = Line2D.LINE_CAP_BOX
-    _source_line.add_point(Vector2.ZERO)  # Updated in _process.
-    _source_line.add_point(Vector2.ZERO)  # This delivery marker.
+    _source_line.add_point(Vector2.ZERO) # Updated in _process.
+    _source_line.add_point(Vector2.ZERO) # This delivery marker.
     add_child(_source_line)
 
     # Initialise immediately to avoid single-frame flicker.
@@ -138,12 +156,14 @@ func _animate(duration: float) -> void:
     # Pulse the whole sector root.
     var pulse_tween := create_tween().set_loops(pulse_count)
     pulse_tween.tween_property(
-        _sector_root, "scale",
+        _sector_root,
+        "scale",
         Vector2.ONE * pulse_scale,
         pulse_dur / (pulse_count * 2.0),
     ).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
     pulse_tween.tween_property(
-        _sector_root, "scale",
+        _sector_root,
+        "scale",
         Vector2.ONE,
         pulse_dur / (pulse_count * 2.0),
     ).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
@@ -155,12 +175,14 @@ func _animate(duration: float) -> void:
     # Final flash before burst lands.
     var flash_tween := create_tween().set_loops(3)
     flash_tween.tween_property(
-        _sector_root, "modulate:a",
+        _sector_root,
+        "modulate:a",
         0.1,
         flash_dur / 6.0,
     ).set_trans(Tween.TRANS_LINEAR)
     flash_tween.tween_property(
-        _sector_root, "modulate:a",
+        _sector_root,
+        "modulate:a",
         1.0,
         flash_dur / 6.0,
     ).set_trans(Tween.TRANS_LINEAR)

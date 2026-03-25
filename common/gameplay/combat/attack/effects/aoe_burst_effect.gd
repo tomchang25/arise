@@ -31,10 +31,10 @@ extends AttackEffect
 
 var _ring: Line2D
 
-
 # ─────────────────────────────────────────────
 # PhaseEffect / AttackEffect overrides
 # ─────────────────────────────────────────────
+
 
 func setup(ctx: EffectContext) -> void:
     # Wire the Hitbox through the base class (finds first Hitbox child).
@@ -53,13 +53,11 @@ func play(duration: float = 0.2) -> void:
 
     await get_tree().create_timer(duration).timeout
     finished.emit()
-    # Note: AttackEffect.play() calls queue_free after finished — we mirror that here.
-    queue_free()
-
 
 # ─────────────────────────────────────────────
 # Internal helpers
 # ─────────────────────────────────────────────
+
 
 func _build_ring() -> void:
     _ring = Line2D.new()
@@ -76,6 +74,17 @@ func _build_ring() -> void:
     _ring.scale = Vector2(0.2, 0.2)
     add_child(_ring)
 
+# ─────────────────────────────────────────────
+# Pool lifecycle
+# ─────────────────────────────────────────────
+
+
+func reset() -> void:
+    if _ring != null:
+        _ring.queue_free()
+        _ring = null
+    super.reset()
+
 
 ## Tween the ring outward from 20 % to 120 % scale while fading out.
 func _play_burst_vfx(duration: float) -> void:
@@ -83,13 +92,15 @@ func _play_burst_vfx(duration: float) -> void:
     tween.set_parallel(true)
 
     tween.tween_property(
-        _ring, "scale",
+        _ring,
+        "scale",
         Vector2(1.2, 1.2),
         duration,
     ).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 
     tween.tween_property(
-        _ring, "modulate:a",
+        _ring,
+        "modulate:a",
         0.0,
         duration,
     ).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
