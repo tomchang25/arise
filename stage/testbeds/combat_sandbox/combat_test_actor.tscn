@@ -6,7 +6,7 @@
 [ext_resource type="Script" uid="uid://w30s7yqi1p3d" path="res://common/gameplay/movement/movement_module.gd" id="4_ov0ts"]
 [ext_resource type="Script" uid="uid://dqbwdw1d7k7tu" path="res://common/gameplay/combat/attack/definitions/attack_definition.gd" id="4_t2wgf"]
 [ext_resource type="Script" uid="uid://hyy86fs5b0fs" path="res://common/gameplay/detection/detection_module.gd" id="5_6rd2i"]
-[ext_resource type="Resource" uid="uid://dv8mq2ml0rp3s" path="res://common/gameplay/combat/attack/definitions/presets/rpg_recursive_definition.tres" id="5_rut13"]
+[ext_resource type="Resource" uid="uid://dv8mq2ml0rp3s" path="res://common/gameplay/combat/attack/definitions/presets/attack_presets/rpg_recursive_definition.tres" id="5_rut13"]
 [ext_resource type="Script" uid="uid://bb4mbrq1u7pl" path="res://common/gameplay/combat/combat_module.gd" id="6_k6bne"]
 [ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="7_t4ipe"]
 [ext_resource type="Script" uid="uid://i2xvg4o1geuj" path="res://common/gameplay/combat/attack/data/weapon_data.gd" id="8_pqotf"]
