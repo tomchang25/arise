@@ -68,6 +68,7 @@ character = NodePath("..")
 movement_module = NodePath("../Module/MovementModule")
 layer_name = &"enemy"
 mask_names = Array[StringName]([&"player", &"army", &"enemy"])
+crowd_block_start = 3.0
 collision_layer = 2
 collision_mask = 259
 metadata/_custom_type_script = "uid://bhtdp3vwcylqh"
