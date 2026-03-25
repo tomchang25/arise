@@ -37,7 +37,6 @@
 [ext_resource type="Resource" uid="uid://csppceje2neh5" path="res://common/audio/presets/sfx/default_died_audio.tres" id="19_qsypv"]
 [ext_resource type="Script" uid="uid://6jeesy7iltw" path="res://common/gameplay/combat/damage_response/damage_number_module.gd" id="20_lje7i"]
 [ext_resource type="PackedScene" uid="uid://qhqm7usjk4s4" path="res://common/gameplay/combat/damage_response/damage_number.tscn" id="21_7c4js"]
-[ext_resource type="PackedScene" uid="uid://d0tswwb1d3smv" path="res://common/gameplay/health_bar/health_bar.tscn" id="23_6xo6p"]
 [ext_resource type="PackedScene" path="res://game/actors/player/presets/green_projectile_effect.tscn" id="24_grproj"]
 
 [sub_resource type="PackedScene" id="PackedScene_f7g0i"]
@@ -452,7 +451,7 @@ _data = {
 &"RollUp": SubResource("Animation_ivlxb")
 }
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_3do8f"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_0nwbe"]
 radius = 50.0
 
 [sub_resource type="Resource" id="Resource_5qatl"]
@@ -464,7 +463,7 @@ metadata/_custom_type_script = "uid://bkgf2cii3bfri"
 [sub_resource type="CircleShape2D" id="CircleShape2D_fxn5h"]
 radius = 48.0
 
-[node name="Player" type="CharacterBody2D" unique_id=1080162393 node_paths=PackedStringArray("sprite", "hurtbox", "damage_receiver", "hit_feedback", "damage_number", "health_bar", "combat_module", "reach_detection", "movement_module", "animation_module", "pickup_collector", "state_machine") groups=["player"]]
+[node name="Player" type="CharacterBody2D" unique_id=1080162393 node_paths=PackedStringArray("sprite", "hurtbox", "damage_receiver", "hit_feedback", "damage_number", "combat_module", "reach_detection", "movement_module", "animation_module", "pickup_collector", "state_machine") groups=["player"]]
 collision_mask = 4
 motion_mode = 1
 script = ExtResource("1_b15sj")
@@ -474,7 +473,6 @@ hurtbox = NodePath("Hurtbox")
 damage_receiver = NodePath("Module/DamageReceiverModule")
 hit_feedback = NodePath("Module/HitFeedbackModule")
 damage_number = NodePath("Module/DamageNumberModule")
-health_bar = NodePath("Module/HealthBar")
 combat_module = NodePath("Module/DetectionPivot/CombatModule")
 reach_detection = NodePath("Module/DetectionPivot/DetectionModule")
 movement_module = NodePath("Module/MovementModule")
@@ -547,7 +545,7 @@ script = ExtResource("10_8nq4u")
 radius = 50.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/DetectionModule" unique_id=508858704]
-shape = SubResource("CircleShape2D_3do8f")
+shape = SubResource("CircleShape2D_0nwbe")
 debug_color = Color(0, 0.101960786, 0.69803923, 0.11764706)
 
 [node name="PickupCollectorModule" type="Area2D" parent="Module/DetectionPivot" unique_id=639109990 node_paths=PackedStringArray("owner_body", "inventory_owner", "magnet_shape")]
@@ -577,10 +575,11 @@ animation_tree = NodePath("../../Visual/AnimationTree")
 script = ExtResource("12_i5w6q")
 hurtbox = NodePath("../../Hurtbox")
 
-[node name="HitFeedbackModule" type="Node" parent="Module" unique_id=1072170173 node_paths=PackedStringArray("damage_receiver")]
+[node name="HitFeedbackModule" type="Node" parent="Module" unique_id=1072170173 node_paths=PackedStringArray("damage_receiver", "movement_module")]
 script = ExtResource("13_41lfd")
 stats = SubResource("Resource_5qatl")
 damage_receiver = NodePath("../DamageReceiverModule")
+movement_module = NodePath("../MovementModule")
 hit_particles_scene = ExtResource("15_m4n5g")
 death_particles_scene = ExtResource("16_6o7jk")
 damaged_audio = ExtResource("17_747sf")
@@ -591,17 +590,6 @@ died_audio = ExtResource("19_qsypv")
 script = ExtResource("20_lje7i")
 damage_receiver = NodePath("../DamageReceiverModule")
 damage_number_scene = ExtResource("21_7c4js")
-
-[node name="HealthBar" parent="Module" unique_id=857941001 instance=ExtResource("23_6xo6p")]
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -12.0
-offset_top = 4.0
-offset_right = 12.0
-offset_bottom = 8.0
-grow_horizontal = 2
-stats = SubResource("Resource_5qatl")
 
 [node name="StateMachine" type="Node" parent="." unique_id=54803581 node_paths=PackedStringArray("initial_state")]
 script = ExtResource("11_b15sj")

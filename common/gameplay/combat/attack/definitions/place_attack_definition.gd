@@ -9,4 +9,4 @@ extends DetachedAttackDefinition
 @export var attack_range: float = 40.0
 
 ## How long the spawned AttackEffect stays alive.
-@export var lifetime: float = 0.20
+@export var lifetime: float = 1.0

@@ -7,8 +7,10 @@
 
 [resource]
 script = ExtResource("1_0qfyc")
-limiter_key = &"slash"
-volume_db = -10.0
+limiter_key = &"minislash"
+max_per_window = 8
+window_sec = 0.5
+volume_db = -20.0
 bus_id = 1
 streams = Array[AudioStream]([ExtResource("2_p7ul2"), ExtResource("3_kvsu7"), ExtResource("4_kvsu7")])
 use_random_pitch = true
