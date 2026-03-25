@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://f6v1r8cmqzjb4"]
+[gd_scene format=3 uid="uid://cch566fd6snkd"]
 
 [ext_resource type="Script" uid="uid://ghv8lzn3qo5av7" path="res://common/gameplay/combat/attack/deliveries/heavy_swing_delivery.gd" id="1_hsd"]
 

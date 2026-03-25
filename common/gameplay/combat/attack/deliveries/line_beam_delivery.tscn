@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://e9w4k2fynxjt8"]
+[gd_scene format=3 uid="uid://bfi8y0ip3qn3h"]
 
 [ext_resource type="Script" uid="uid://flb7kzm4pn4zu6" path="res://common/gameplay/combat/attack/deliveries/line_beam_delivery.gd" id="1_lbd"]
 

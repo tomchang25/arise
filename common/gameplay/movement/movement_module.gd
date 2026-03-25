@@ -65,6 +65,7 @@ func _physics_process(delta: float) -> void:
         character.velocity = _computed_velocity
         character.move_and_slide()
 
+
 # -------------------------
 # Common API
 # -------------------------

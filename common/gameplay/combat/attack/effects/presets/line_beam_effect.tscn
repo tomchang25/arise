@@ -1,10 +1,11 @@
-[gd_scene format=3 uid="uid://btk8n4pqzv3mj"]
+[gd_scene format=3 uid="uid://btk8n4pq0v3mj"]
 
-[ext_resource type="Script" uid="uid://clb4hxz7mj0wr3" path="res://common/gameplay/combat/attack/effects/line_beam_effect.gd" id="1_lbfx"]
+[ext_resource type="Script" uid="uid://b0wnltn4as0ch" path="res://common/gameplay/combat/attack/effects/line_beam_effect.gd" id="1_lbfx"]
 [ext_resource type="Script" uid="uid://co1s16xd7omkk" path="res://common/gameplay/combat/hit_detection/hitbox/hitbox.gd" id="2_lbfx"]
 
 [node name="LineBeamEffect" type="Node2D" unique_id=202020202]
 script = ExtResource("1_lbfx")
+quit_on_source_invalid = true
 
 [node name="Hitbox" type="Area2D" parent="." unique_id=202020203]
 script = ExtResource("2_lbfx")

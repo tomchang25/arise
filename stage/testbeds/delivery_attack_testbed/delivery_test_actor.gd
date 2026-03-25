@@ -15,6 +15,7 @@ extends Node2D
 @export var stats: Stats
 @export var line_beam_def: PlaceAttackDefinition
 @export var heavy_swing_def: PlaceAttackDefinition
+@onready var movement_module: MovementModule = $MovementModule
 
 var _line_beam: PlaceAttackModule
 var _heavy_swing: PlaceAttackModule
@@ -28,6 +29,12 @@ func _ready() -> void:
     _heavy_swing = PlaceAttackModule.new()
     _heavy_swing.setup(heavy_swing_def, stats)
     add_child(_heavy_swing)
+
+    movement_module.set_manual_mode()
+
+
+func _process(_delta: float) -> void:
+    movement_module.set_manual_velocity(Input.get_vector("move_left", "move_right", "move_up", "move_down") * 100.0)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -45,3 +52,5 @@ func _unhandled_input(event: InputEvent) -> void:
             if _heavy_swing.can_attack():
                 _heavy_swing.execute_attack(mouse)
                 _heavy_swing.end_attack()
+        KEY_K:
+            queue_free() # For testing cleanup of active deliveries when the attacker is destroyed.

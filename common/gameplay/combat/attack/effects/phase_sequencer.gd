@@ -119,6 +119,10 @@ func _run_next_phase() -> void:
         _run_next_phase()
         return
 
+    if not is_instance_valid(_parent_ctx.attacker_source):
+        all_phases_finished.emit()
+        return
+
     # Build a per-phase context fork so phase overrides don't bleed into other phases.
     var phase_ctx := _parent_ctx.build_phase_override(phase_def)
     effect.setup(phase_ctx)
@@ -128,11 +132,13 @@ func _run_next_phase() -> void:
     effect.attacker_source = phase_ctx.attacker_source
 
     # Wire force_quit to unblock the await below and stop remaining phases.
-    effect.force_quit.connect(func():
-        _force_quit = true
-        if is_instance_valid(effect):
-            effect.finished.emit()
-    , CONNECT_ONE_SHOT)
+    effect.force_quit.connect(
+        func():
+            _force_quit = true
+            if is_instance_valid(effect):
+                effect.finished.emit(),
+        CONNECT_ONE_SHOT,
+    )
 
     effect.play(phase_def.lifetime)
 
