@@ -1,0 +1,184 @@
+[gd_scene format=3 uid="uid://d218k012ltkq5"]
+
+[ext_resource type="Script" uid="uid://lam3q1e7rkcn" path="res://game/ui/settings/settings_menu.gd" id="1_settings"]
+
+[node name="SettingsMenu" type="Control" unique_id=115459530 node_paths=PackedStringArray("fullscreen_toggle", "master_slider", "music_slider", "sfx_slider")]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_settings")
+fullscreen_toggle = NodePath("Panel/Margin/VBox/DisplaySection/FullscreenRow/FullscreenToggle")
+master_slider = NodePath("Panel/Margin/VBox/AudioSection/MasterRow/MasterSlider")
+music_slider = NodePath("Panel/Margin/VBox/AudioSection/MusicRow/MusicSlider")
+sfx_slider = NodePath("Panel/Margin/VBox/AudioSection/SFXRow/SFXSlider")
+
+[node name="Overlay" type="ColorRect" parent="." unique_id=1254850200]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.6)
+
+[node name="Panel" type="Panel" parent="." unique_id=1414006588]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -140.0
+offset_right = 200.0
+offset_bottom = 140.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Margin" type="MarginContainer" parent="Panel" unique_id=972904000]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="VBox" type="VBoxContainer" parent="Panel/Margin" unique_id=2118396771]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="Panel/Margin/VBox" unique_id=213783771]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Settings"
+horizontal_alignment = 1
+
+[node name="HSep1" type="HSeparator" parent="Panel/Margin/VBox" unique_id=1340571688]
+layout_mode = 2
+
+[node name="DisplaySection" type="VBoxContainer" parent="Panel/Margin/VBox" unique_id=1909407447]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="DisplayLabel" type="Label" parent="Panel/Margin/VBox/DisplaySection" unique_id=227034880]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Display"
+
+[node name="FullscreenRow" type="HBoxContainer" parent="Panel/Margin/VBox/DisplaySection" unique_id=43778269]
+layout_mode = 2
+
+[node name="FullscreenLabel" type="Label" parent="Panel/Margin/VBox/DisplaySection/FullscreenRow" unique_id=2108331226]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 9
+text = "Fullscreen"
+
+[node name="FullscreenToggle" type="CheckButton" parent="Panel/Margin/VBox/DisplaySection/FullscreenRow" unique_id=413664533]
+layout_mode = 2
+
+[node name="HSep2" type="HSeparator" parent="Panel/Margin/VBox" unique_id=92883557]
+layout_mode = 2
+
+[node name="AudioSection" type="VBoxContainer" parent="Panel/Margin/VBox" unique_id=1288499113]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="AudioLabel" type="Label" parent="Panel/Margin/VBox/AudioSection" unique_id=200104107]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Audio"
+
+[node name="MasterRow" type="HBoxContainer" parent="Panel/Margin/VBox/AudioSection" unique_id=1711869058]
+layout_mode = 2
+
+[node name="MasterLabel" type="Label" parent="Panel/Margin/VBox/AudioSection/MasterRow" unique_id=1494424052]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 9
+text = "Master Volume"
+
+[node name="MasterSlider" type="HSlider" parent="Panel/Margin/VBox/AudioSection/MasterRow" unique_id=787592481]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="MusicRow" type="HBoxContainer" parent="Panel/Margin/VBox/AudioSection" unique_id=1593349030]
+layout_mode = 2
+
+[node name="MusicLabel" type="Label" parent="Panel/Margin/VBox/AudioSection/MusicRow" unique_id=202812568]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 9
+text = "Music Volume"
+
+[node name="MusicSlider" type="HSlider" parent="Panel/Margin/VBox/AudioSection/MusicRow" unique_id=242222428]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="SFXRow" type="HBoxContainer" parent="Panel/Margin/VBox/AudioSection" unique_id=828848160]
+layout_mode = 2
+
+[node name="SFXLabel" type="Label" parent="Panel/Margin/VBox/AudioSection/SFXRow" unique_id=653899776]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 9
+text = "SFX Volume"
+
+[node name="SFXSlider" type="HSlider" parent="Panel/Margin/VBox/AudioSection/SFXRow" unique_id=166656066]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="Spacer" type="Control" parent="Panel/Margin/VBox" unique_id=1358500652]
+custom_minimum_size = Vector2(0, 4)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BottomRow" type="HBoxContainer" parent="Panel/Margin/VBox" unique_id=457557389]
+layout_mode = 2
+
+[node name="LeftButtons" type="HBoxContainer" parent="Panel/Margin/VBox/BottomRow" unique_id=864838895]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="ApplyButton" type="Button" parent="Panel/Margin/VBox/BottomRow/LeftButtons" unique_id=853374475]
+layout_mode = 2
+text = "Apply"
+
+[node name="ResetButton" type="Button" parent="Panel/Margin/VBox/BottomRow/LeftButtons" unique_id=614665917]
+layout_mode = 2
+text = "Reset to Defaults"
+
+[node name="CancelButton" type="Button" parent="Panel/Margin/VBox/BottomRow" unique_id=347877391]
+layout_mode = 2
+text = "Close"
+
+[node name="ExitButton" type="Button" parent="Panel/Margin/VBox/BottomRow" unique_id=780692722]
+visible = false
+layout_mode = 2
+text = "Exit"
+
+[connection signal="pressed" from="Panel/Margin/VBox/BottomRow/LeftButtons/ApplyButton" to="." method="_on_apply_pressed"]
+[connection signal="pressed" from="Panel/Margin/VBox/BottomRow/LeftButtons/ResetButton" to="." method="_on_reset_pressed"]
+[connection signal="pressed" from="Panel/Margin/VBox/BottomRow/CancelButton" to="." method="_on_cancel_pressed"]
+[connection signal="pressed" from="Panel/Margin/VBox/BottomRow/ExitButton" to="." method="_on_exit_pressed"]

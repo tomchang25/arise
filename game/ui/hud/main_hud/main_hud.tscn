@@ -6,8 +6,9 @@
 [ext_resource type="PackedScene" path="res://game/ui/hud/wave_hud/wave_hud.tscn" id="4_wavehud"]
 [ext_resource type="PackedScene" path="res://game/ui/hud/summon_hud/summon_hud.tscn" id="5_sumhud"]
 [ext_resource type="PackedScene" uid="uid://f4pdd61gb16u" path="res://game/ui/hud/minimap_hud/minimap_hud.tscn" id="6_mmhud"]
+[ext_resource type="PackedScene" uid="uid://d218k012ltkq5" path="res://game/ui/settings/settings_menu.tscn" id="7_settings"]
 
-[node name="MainHUD" type="Control" unique_id=1922058681 node_paths=PackedStringArray("player_hud", "debug_hud", "wave_hud", "summon_hud", "minimap_hud")]
+[node name="MainHUD" type="Control" unique_id=1922058681 node_paths=PackedStringArray("player_hud", "debug_hud", "wave_hud", "summon_hud", "settings_button", "settings_menu")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -19,7 +20,8 @@ player_hud = NodePath("PlayerHUD")
 debug_hud = NodePath("DebugHUD")
 wave_hud = NodePath("WaveHUD")
 summon_hud = NodePath("SummonHUD")
-minimap_hud = NodePath("")
+settings_button = NodePath("SettingsButton")
+settings_menu = NodePath("SettingsMenu")
 
 [node name="PlayerHUD" parent="." unique_id=89719240 instance=ExtResource("2_phud")]
 layout_mode = 1
@@ -43,3 +45,22 @@ offset_bottom = -10.0
 
 [node name="MinimapHUD" parent="." unique_id=2138124759 instance=ExtResource("6_mmhud")]
 layout_mode = 1
+
+[node name="SettingsMenu" parent="." unique_id=1827963766 instance=ExtResource("7_settings")]
+layout_mode = 1
+
+[node name="SettingsButton" type="Button" parent="." unique_id=867773542]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -632.0
+offset_top = -32.0
+offset_right = -564.0
+offset_bottom = -11.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 9
+text = "Settings"
