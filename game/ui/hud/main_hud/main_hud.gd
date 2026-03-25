@@ -10,6 +10,13 @@ extends Control
 @export var wave_hud: WaveHUD
 @export var summon_hud: SummonHUD
 @export var minimap_hud: MinimapHUD
+@export var settings_button: Button
+@export var settings_menu: SettingsMenu
+
+
+func _ready() -> void:
+    if settings_button and settings_menu:
+        settings_button.pressed.connect(settings_menu.open)
 
 
 ## Binds both player_hud and debug_hud to the given Stats object.

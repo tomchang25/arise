@@ -1,0 +1,189 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://game/ui/settings/settings_menu.gd" id="1_settings"]
+
+[node name="SettingsMenu" type="Control" node_paths=PackedStringArray("fullscreen_toggle", "master_slider", "music_slider", "sfx_slider")]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_settings")
+fullscreen_toggle = NodePath("Panel/Margin/VBox/DisplaySection/FullscreenRow/FullscreenToggle")
+master_slider = NodePath("Panel/Margin/VBox/AudioSection/MasterRow/MasterSlider")
+music_slider = NodePath("Panel/Margin/VBox/AudioSection/MusicRow/MusicSlider")
+sfx_slider = NodePath("Panel/Margin/VBox/AudioSection/SFXRow/SFXSlider")
+
+[node name="Overlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.6)
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -140.0
+offset_right = 200.0
+offset_bottom = 140.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Margin" type="MarginContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="VBox" type="VBoxContainer" parent="Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Settings"
+horizontal_alignment = 1
+
+[node name="HSep1" type="HSeparator" parent="Panel/Margin/VBox"]
+layout_mode = 2
+
+[node name="DisplaySection" type="VBoxContainer" parent="Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="DisplayLabel" type="Label" parent="Panel/Margin/VBox/DisplaySection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Display"
+
+[node name="FullscreenRow" type="HBoxContainer" parent="Panel/Margin/VBox/DisplaySection"]
+layout_mode = 2
+
+[node name="FullscreenLabel" type="Label" parent="Panel/Margin/VBox/DisplaySection/FullscreenRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 9
+text = "Fullscreen"
+
+[node name="FullscreenToggle" type="CheckButton" parent="Panel/Margin/VBox/DisplaySection/FullscreenRow"]
+layout_mode = 2
+
+[node name="HSep2" type="HSeparator" parent="Panel/Margin/VBox"]
+layout_mode = 2
+
+[node name="AudioSection" type="VBoxContainer" parent="Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="AudioLabel" type="Label" parent="Panel/Margin/VBox/AudioSection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Audio"
+
+[node name="MasterRow" type="HBoxContainer" parent="Panel/Margin/VBox/AudioSection"]
+layout_mode = 2
+
+[node name="MasterLabel" type="Label" parent="Panel/Margin/VBox/AudioSection/MasterRow"]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 9
+text = "Master Volume"
+
+[node name="MasterSlider" type="HSlider" parent="Panel/Margin/VBox/AudioSection/MasterRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+min_value = 0.0
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="MusicRow" type="HBoxContainer" parent="Panel/Margin/VBox/AudioSection"]
+layout_mode = 2
+
+[node name="MusicLabel" type="Label" parent="Panel/Margin/VBox/AudioSection/MusicRow"]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 9
+text = "Music Volume"
+
+[node name="MusicSlider" type="HSlider" parent="Panel/Margin/VBox/AudioSection/MusicRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+min_value = 0.0
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="SFXRow" type="HBoxContainer" parent="Panel/Margin/VBox/AudioSection"]
+layout_mode = 2
+
+[node name="SFXLabel" type="Label" parent="Panel/Margin/VBox/AudioSection/SFXRow"]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 9
+text = "SFX Volume"
+
+[node name="SFXSlider" type="HSlider" parent="Panel/Margin/VBox/AudioSection/SFXRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+min_value = 0.0
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="Spacer" type="Control" parent="Panel/Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 4)
+
+[node name="BottomRow" type="HBoxContainer" parent="Panel/Margin/VBox"]
+layout_mode = 2
+
+[node name="LeftButtons" type="HBoxContainer" parent="Panel/Margin/VBox/BottomRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="ApplyButton" type="Button" parent="Panel/Margin/VBox/BottomRow/LeftButtons"]
+layout_mode = 2
+text = "Apply"
+
+[node name="CancelButton" type="Button" parent="Panel/Margin/VBox/BottomRow/LeftButtons"]
+layout_mode = 2
+text = "Cancel"
+
+[node name="ResetButton" type="Button" parent="Panel/Margin/VBox/BottomRow/LeftButtons"]
+layout_mode = 2
+text = "Reset to Defaults"
+
+[node name="ExitButton" type="Button" parent="Panel/Margin/VBox/BottomRow"]
+layout_mode = 2
+text = "Exit"
+
+[connection signal="pressed" from="Panel/Margin/VBox/BottomRow/LeftButtons/ApplyButton" to="." method="_on_apply_pressed"]
+[connection signal="pressed" from="Panel/Margin/VBox/BottomRow/LeftButtons/CancelButton" to="." method="_on_cancel_pressed"]
+[connection signal="pressed" from="Panel/Margin/VBox/BottomRow/LeftButtons/ResetButton" to="." method="_on_reset_pressed"]
+[connection signal="pressed" from="Panel/Margin/VBox/BottomRow/ExitButton" to="." method="_on_exit_pressed"]
