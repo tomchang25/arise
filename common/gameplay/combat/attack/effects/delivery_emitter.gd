@@ -113,7 +113,6 @@ func play(duration: float = 0.0) -> void:
     if _parent_ctx == null:
         push_error("DeliveryEmitter: setup() was not called before play()")
         finished.emit()
-        queue_free()
         return
 
     # Resolve which definition to use before the depth check so we can validate it.
@@ -121,7 +120,6 @@ func play(duration: float = 0.0) -> void:
     if resolved_def == null:
         push_error("DeliveryEmitter: no definition available (set child_definition or enable reuse_parent_definition)")
         finished.emit()
-        queue_free()
         return
 
     # Depth guard — refuse to spawn if we are already at the ceiling.
@@ -136,7 +134,6 @@ func play(duration: float = 0.0) -> void:
         if duration > 0.0:
             await get_tree().create_timer(duration).timeout
         finished.emit()
-        queue_free()
         return
 
     if emit_interval <= 0.0:
@@ -156,7 +153,6 @@ func play(duration: float = 0.0) -> void:
             _emit_burst(resolved_def)
 
     finished.emit()
-    queue_free()
 
 # -------------------------
 # Internal
@@ -238,6 +234,21 @@ func _spawn_child_delivery(def: AttackDefinition, origin: Vector2, dir: Vector2)
     request.setup_direct(action, origin, spawn_ctx)
 
     _fire_and_setup(request, child_ctx, def, dir)
+
+
+# -------------------------
+# Pool lifecycle
+# -------------------------
+
+
+func reset() -> void:
+    _parent_ctx = null
+    super.reset()
+
+
+# -------------------------
+# Internal
+# -------------------------
 
 
 ## Async helper: executes the spawn request, sets up the delivery, and calls

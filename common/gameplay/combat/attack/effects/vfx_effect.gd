@@ -6,7 +6,9 @@ extends PhaseEffect
 ## warning telegraphs, environmental decals, or any effect that should
 ## persist for a duration without interacting with the Hitbox system.
 ##
-## play() waits `duration` seconds then emits `finished` and calls queue_free().
+## play() waits `duration` seconds then emits `finished`.
+## PhaseSequencer releases this node back to the pool via NodeRegistry.release()
+## after finished — do NOT call queue_free() in subclasses.
 ## Override play() in a subclass if you need a custom animation — emit
 ## finished.emit() yourself at the end, do NOT call super().
 ##
@@ -24,4 +26,3 @@ func play(duration: float = 0.0) -> void:
     if duration > 0.0:
         await get_tree().create_timer(duration).timeout
     finished.emit()
-    queue_free()

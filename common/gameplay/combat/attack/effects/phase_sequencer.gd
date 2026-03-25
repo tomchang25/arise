@@ -145,6 +145,9 @@ func _run_next_phase() -> void:
     # Wait for the effect to signal it is done, then advance.
     await effect.finished
 
+    # Return the effect to the pool before advancing (or stopping).
+    NodeRegistry.release(effect)
+
     # If the effect requested early quit, cancel remaining phases.
     if _force_quit:
         _running = false

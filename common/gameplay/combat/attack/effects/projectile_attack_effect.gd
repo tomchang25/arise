@@ -14,6 +14,8 @@ extends AttackEffect
 
 @onready var line_2d: Line2D = $Line2D
 
+var _vfx_tween: Tween = null
+
 
 func setup(ctx: EffectContext) -> void:
     super.setup(ctx)
@@ -51,7 +53,20 @@ func _play_projectile_vfx(duration: float = 1.0) -> void:
     line_2d.add_point(Vector2.ZERO)
     line_2d.add_point(Vector2(-projectile_length, 0.0))
 
-    # Non-looping tween — runs once over the full duration then stops.
-    var tween := create_tween().set_loops()
-    tween.tween_property(line_2d, "width", projectile_width * 1.2, duration * 0.1)
-    tween.tween_property(line_2d, "width", projectile_width, duration * 0.1)
+    # Infinite looping tween — killed in reset() when the effect is pooled.
+    if _vfx_tween != null:
+        _vfx_tween.kill()
+    _vfx_tween = create_tween().set_loops()
+    _vfx_tween.tween_property(line_2d, "width", projectile_width * 1.2, duration * 0.1)
+    _vfx_tween.tween_property(line_2d, "width", projectile_width, duration * 0.1)
+
+# -------------------------
+# Pool lifecycle
+# -------------------------
+
+
+func reset() -> void:
+    if _vfx_tween != null:
+        _vfx_tween.kill()
+        _vfx_tween = null
+    super.reset()

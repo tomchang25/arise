@@ -56,7 +56,20 @@ func play(duration: float = 5.0) -> void:
 
     await get_tree().create_timer(duration).timeout
     finished.emit()
-    queue_free()
+
+
+# ─────────────────────────────────────────────
+# Pool lifecycle
+# ─────────────────────────────────────────────
+
+func reset() -> void:
+    if _beam_fill != null:
+        _beam_fill.queue_free()
+        _beam_fill = null
+    if _beam_outline != null:
+        _beam_outline.queue_free()
+        _beam_outline = null
+    super.reset()
 
 
 # ─────────────────────────────────────────────

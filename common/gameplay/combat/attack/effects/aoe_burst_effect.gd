@@ -53,8 +53,6 @@ func play(duration: float = 0.2) -> void:
 
     await get_tree().create_timer(duration).timeout
     finished.emit()
-    # Note: AttackEffect.play() calls queue_free after finished — we mirror that here.
-    queue_free()
 
 
 # ─────────────────────────────────────────────
@@ -75,6 +73,17 @@ func _build_ring() -> void:
     # Start small and expand outward.
     _ring.scale = Vector2(0.2, 0.2)
     add_child(_ring)
+
+
+# ─────────────────────────────────────────────
+# Pool lifecycle
+# ─────────────────────────────────────────────
+
+func reset() -> void:
+    if _ring != null:
+        _ring.queue_free()
+        _ring = null
+    super.reset()
 
 
 ## Tween the ring outward from 20 % to 120 % scale while fading out.

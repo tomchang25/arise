@@ -68,6 +68,23 @@ func play(duration: float = 5.0) -> void:
 
 
 # ─────────────────────────────────────────────
+# Pool lifecycle
+# ─────────────────────────────────────────────
+
+func reset() -> void:
+    if _sector_root != null:
+        _sector_root.queue_free()
+        _sector_root = null
+        _arc_line = null
+        _radial_a = null
+        _radial_b = null
+    if _source_line != null:
+        _source_line.queue_free()
+        _source_line = null
+    super.reset()
+
+
+# ─────────────────────────────────────────────
 # Internal helpers
 # ─────────────────────────────────────────────
 

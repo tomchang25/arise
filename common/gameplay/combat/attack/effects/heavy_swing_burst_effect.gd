@@ -35,6 +35,8 @@ extends AttackEffect
 @export var burst_color: Color = Color(1.0, 0.6, 0.15, 1.0)
 @export var edge_width: float = 5.0
 
+var _burst_vfx_nodes: Array[Node] = []
+
 
 # ─────────────────────────────────────────────
 # PhaseEffect / AttackEffect overrides
@@ -52,7 +54,20 @@ func play(duration: float = 0.2) -> void:
 
     await get_tree().create_timer(duration).timeout
     finished.emit()
-    queue_free()
+
+
+# ─────────────────────────────────────────────
+# Pool lifecycle
+# ─────────────────────────────────────────────
+
+func reset() -> void:
+    for node in _burst_vfx_nodes:
+        if is_instance_valid(node):
+            node.queue_free()
+    _burst_vfx_nodes.clear()
+    scale = Vector2.ONE
+    modulate = Color.WHITE
+    super.reset()
 
 
 # ─────────────────────────────────────────────
@@ -102,6 +117,7 @@ func _play_burst_vfx(duration: float) -> void:
         var angle := lerp(-half_arc, half_arc, t)
         arc_line.add_point(Vector2.from_angle(angle) * radius + off)
     add_child(arc_line)
+    _burst_vfx_nodes.append(arc_line)
 
     # Two radial lines.
     for sign_val in [-1, 1]:
@@ -111,6 +127,7 @@ func _play_burst_vfx(duration: float) -> void:
         radial.add_point(Vector2.ZERO + off)
         radial.add_point(Vector2.from_angle(sign_val * half_arc) * radius + off)
         add_child(radial)
+        _burst_vfx_nodes.append(radial)
 
     # Expand and fade out.
     var tween := create_tween()

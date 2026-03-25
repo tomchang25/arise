@@ -59,6 +59,17 @@ func play(duration: float = 1.5) -> void:
 
 
 # ─────────────────────────────────────────────
+# Pool lifecycle
+# ─────────────────────────────────────────────
+
+func reset() -> void:
+    if _ring != null:
+        _ring.queue_free()
+        _ring = null
+    super.reset()
+
+
+# ─────────────────────────────────────────────
 # Internal helpers
 # ─────────────────────────────────────────────
 
