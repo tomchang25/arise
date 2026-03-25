@@ -75,6 +75,24 @@ func _unhandled_input(event: InputEvent) -> void:
                 summon(2)
             KEY_F4:
                 summon(3)
+    # Mouse: control active group target position
+    if event is InputEventMouseButton and event.pressed:
+        if _active_group_index >= _groups.size():
+            return
+        var active_group: ArmyGroup = _groups[_active_group_index]
+        if active_group == null:
+            return
+        var mouse_world_pos := get_viewport().get_canvas_transform().affine_inverse() * event.position
+        match event.button_index:
+            MOUSE_BUTTON_RIGHT:
+                if event.shift_pressed:
+                    active_group.set_target_relative(mouse_world_pos - _player.global_position)
+                else:
+                    active_group.set_target(mouse_world_pos)
+                get_viewport().set_input_as_handled()
+            MOUSE_BUTTON_MIDDLE:
+                active_group.reset_to_spawn()
+                get_viewport().set_input_as_handled()
 
 # -------------------------
 # Public API

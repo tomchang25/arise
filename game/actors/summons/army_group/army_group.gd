@@ -16,14 +16,9 @@ enum FormationType { RECTANGULAR, CIRCULAR }
 @export var grid_size := 12
 @export var formation_type: FormationType = FormationType.RECTANGULAR
 
-## When enabled, the anchor is updated to the player's world position every
-## [member track_interval] seconds. When disabled, the anchor stays wherever
-## it was last set.
-@export var track_player: bool = true
-
-## Seconds between automatic anchor updates when [member track_player] is true.
-## Set to 0 to update every physics frame.
-@export var track_interval: float = 0.05
+## Default world-space anchor position for this group.
+## Set per-group in the scene inspector.
+@export var spawn_position: Vector2
 
 # -------------------------
 # Exports — Aggro
@@ -49,6 +44,13 @@ enum FormationType { RECTANGULAR, CIRCULAR }
 ## Slot array — null means the slot is empty, otherwise holds the registered Army unit.
 var units: Array[Node]
 
+## The desired formation anchor — drives set_anchor() when target changes.
+## Use set_target(), set_target_relative(), or reset_to_spawn() to change it.
+var target_position: Vector2 = Vector2.ZERO
+
+## When non-zero, target_position tracks player.global_position + player_offset every frame.
+var player_offset: Vector2 = Vector2.ZERO
+
 ## The logical anchor position used to compute each unit's formation slot.
 ## Stored as a plain Vector2 so changing it does NOT move this Node2D.
 var _anchor: Vector2 = Vector2.ZERO
@@ -56,9 +58,6 @@ var _anchor: Vector2 = Vector2.ZERO
 ## Per-unit grid offsets in world units, keyed by unit node.
 ## Populated in register_member(), cleared on unit death / removal.
 var _unit_offsets: Dictionary = { }
-
-## Accumulated time for periodic anchor updates.
-var _track_timer: float = 0.0
 
 ## Accumulated time for position update (every POSITION_UPDATE_INTERVAL seconds).
 var _position_timer: float = 0.0
@@ -90,20 +89,15 @@ func _ready() -> void:
 
     reset_units()
 
-    if _player:
-        _anchor = _player.global_position
+    target_position = spawn_position
+    _anchor = target_position
 
 
 func _physics_process(delta: float) -> void:
-    # Sync anchor to player position.
-    if track_player and _player:
-        if track_interval <= 0.0:
-            set_anchor(_player.global_position)
-        else:
-            _track_timer += delta
-            if _track_timer >= track_interval:
-                _track_timer = 0.0
-                set_anchor(_player.global_position)
+    # Update target_position if tracking player with an offset.
+    if player_offset != Vector2.ZERO and _player:
+        target_position = _player.global_position + player_offset
+        set_anchor(target_position)
 
     # Update group node position to living member centroid.
     _position_timer += delta
@@ -177,6 +171,28 @@ func set_anchor(new_position: Vector2) -> void:
     for unit in get_all_units():
         var offset: Vector2 = _unit_offsets.get(unit, Vector2.ZERO)
         unit.anchor_position = _anchor + offset
+
+
+## Sets target_position to [param pos] and stops player tracking.
+func set_target(pos: Vector2) -> void:
+    target_position = pos
+    player_offset = Vector2.ZERO
+    set_anchor(target_position)
+
+
+## Sets player_offset to [param offset] and immediately updates target_position.
+func set_target_relative(offset: Vector2) -> void:
+    player_offset = offset
+    if _player:
+        target_position = _player.global_position + player_offset
+    set_anchor(target_position)
+
+
+## Resets target_position to spawn_position and stops player tracking.
+func reset_to_spawn() -> void:
+    target_position = spawn_position
+    player_offset = Vector2.ZERO
+    set_anchor(target_position)
 
 
 func get_first_empty_slot() -> int:

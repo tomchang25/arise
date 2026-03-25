@@ -32,12 +32,20 @@ signal members_changed
 ## forced back home. Set to 0 to disable leashing entirely.
 @export var leash_distance: float = 300.0
 
+## Speed (units/sec) at which target_position creeps toward the player when
+## not aggroed and not returning to spawn.
+@export var chase_speed: float = 20.0
+
 # -------------------------
 # Internal state
 # -------------------------
 
 ## Frozen spawn position — set once by the spawner, never changes.
 var spawn_pivot: Vector2 = Vector2.ZERO
+
+## Slowly advances toward the player each tick when not aggroed.
+## Initialized to spawn_pivot in _ready().
+var target_position: Vector2 = Vector2.ZERO
 
 var _members: Array[Enemy] = []
 var _living_count: int = 0
@@ -76,6 +84,7 @@ func _ready() -> void:
     # Capture the node's world position as the pivot the moment it enters the tree.
     # The spawner should place the node at the desired center before add_child().
     spawn_pivot = global_position
+    target_position = spawn_pivot
 
     _player = get_tree().get_first_node_in_group("player")
 
@@ -113,6 +122,16 @@ func _physics_process(delta: float) -> void:
         if _returning_to_spawn:
             if global_position.distance_to(spawn_pivot) < (leash_distance / 4):
                 _returning_to_spawn = false
+
+        # Creep target_position toward player when idle.
+        if not _aggroed and not _returning_to_spawn and _player:
+            target_position = target_position.move_toward(
+                _player.global_position, chase_speed * POSITION_UPDATE_INTERVAL
+            )
+            if global_position.distance_to(target_position) > leash_distance / 2.0:
+                dormant = false
+                for member in get_alive_members():
+                    member.dormant = false
     if dormant:
         return
 
