@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://e9w4k2fynxjt8"]
+
+[ext_resource type="Script" uid="uid://flb7kzm4pn4zu6" path="res://common/gameplay/combat/attack/deliveries/line_beam_delivery.gd" id="1_lbd"]
+
+[node name="LineBeamDelivery" type="CharacterBody2D" unique_id=505050505]
+collision_layer = 0
+collision_mask = 4
+script = ExtResource("1_lbd")

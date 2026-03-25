@@ -37,6 +37,27 @@ extends Node2D
 ## PhaseSequencer awaits this signal before advancing to the next phase.
 signal finished
 
+## Emitted when attacker_source becomes invalid and quit_on_source_invalid is true.
+## PhaseSequencer listens for this to cancel remaining phases early.
+signal force_quit
+
+## When true, _process() monitors attacker_source validity and emits force_quit
+## if the attacker node is freed during this phase.
+## Set to true on any effect that should stop when its attacker is destroyed.
+var quit_on_source_invalid: bool = false
+
+## Live reference to the original attacker node. Set by PhaseSequencer after
+## setup() so all effects can access the attacker for visuals or validity checks,
+## without needing to plumb it through each subclass setup() override.
+var attacker_source: Node2D = null
+
+
+func _process(_delta: float) -> void:
+    if quit_on_source_invalid and attacker_source != null:
+        if not is_instance_valid(attacker_source):
+            set_process(false)
+            force_quit.emit()
+
 
 ## Called by PhaseSequencer immediately after instantiation.
 ## Subclasses read ctx to configure hitboxes, emitter parameters, etc.

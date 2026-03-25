@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="PlaceAttackDefinition" format=3 uid="uid://i5m7q1ntyvpz3"]
+
+[ext_resource type="Script" uid="uid://dxe0yv70mfrn4" path="res://common/gameplay/combat/attack/definitions/place_attack_definition.gd" id="1_lbad"]
+[ext_resource type="Script" uid="uid://cmymyo0y1aoi7" path="res://common/gameplay/combat/attack/definitions/effect_phase_definition.gd" id="2_lbad"]
+[ext_resource type="PackedScene" uid="uid://e9w4k2fynxjt8" path="res://common/gameplay/combat/attack/deliveries/line_beam_delivery.tscn" id="3_lbad"]
+[ext_resource type="Resource" uid="uid://g7t5n0hpxqmv5" path="res://stage/testbeds/delivery_attack_testbed/line_beam_phase_telegraph.tres" id="4_lbad"]
+[ext_resource type="Resource" uid="uid://h3k8r4bwyjxf7" path="res://stage/testbeds/delivery_attack_testbed/line_beam_phase_attack.tres" id="5_lbad"]
+
+[resource]
+script = ExtResource("1_lbad")
+attack_scene = ExtResource("3_lbad")
+phases = Array[ExtResource("2_lbad")]([ExtResource("4_lbad"), ExtResource("5_lbad")])
+attack_range = 280.0
+lifetime = 11.0
+cooldown = 11.5
+metadata/_custom_type_script = "uid://dxe0yv70mfrn4"

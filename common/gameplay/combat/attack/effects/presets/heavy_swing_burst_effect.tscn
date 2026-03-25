@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://d5m8p3bqhvz7n"]
+
+[ext_resource type="Script" uid="uid://ehs6jzl5om3yt5" path="res://common/gameplay/combat/attack/effects/heavy_swing_burst_effect.gd" id="1_hsbfx"]
+[ext_resource type="Script" uid="uid://co1s16xd7omkk" path="res://common/gameplay/combat/hit_detection/hitbox/hitbox.gd" id="2_hsbfx"]
+
+[node name="HeavySwingBurstEffect" type="Node2D" unique_id=404040404]
+script = ExtResource("1_hsbfx")
+
+[node name="Hitbox" type="Area2D" parent="." unique_id=404040405]
+script = ExtResource("2_hsbfx")
+metadata/_custom_type_script = "uid://co1s16xd7omkk"

@@ -31,6 +31,10 @@ var _current_index: int = 0
 ## Set to true while a phase is running to guard against re-entrant calls.
 var _running: bool = false
 
+## Set by _on_force_quit() when an active PhaseEffect signals force_quit.
+## Checked after each effect.finished await to stop the sequence early.
+var _force_quit: bool = false
+
 # -------------------------
 # Public API
 # -------------------------
@@ -58,6 +62,7 @@ func start(phases: Array[EffectPhaseDefinition], parent_ctx: EffectContext) -> v
     _parent_ctx = parent_ctx
     _current_index = 0
     _running = true
+    _force_quit = false
     _run_next_phase()
 
 # -------------------------
@@ -117,9 +122,27 @@ func _run_next_phase() -> void:
     # Build a per-phase context fork so phase overrides don't bleed into other phases.
     var phase_ctx := _parent_ctx.build_phase_override(phase_def)
     effect.setup(phase_ctx)
+
+    # Forward the attacker source so effects can draw direction lines and monitor
+    # attacker validity via quit_on_source_invalid.
+    effect.attacker_source = phase_ctx.attacker_source
+
+    # Wire force_quit to unblock the await below and stop remaining phases.
+    effect.force_quit.connect(func():
+        _force_quit = true
+        if is_instance_valid(effect):
+            effect.finished.emit()
+    , CONNECT_ONE_SHOT)
+
     effect.play(phase_def.lifetime)
 
     # Wait for the effect to signal it is done, then advance.
     await effect.finished
+
+    # If the effect requested early quit, cancel remaining phases.
+    if _force_quit:
+        _running = false
+        all_phases_finished.emit()
+        return
 
     _run_next_phase()
