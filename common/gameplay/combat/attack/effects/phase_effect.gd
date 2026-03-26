@@ -51,12 +51,28 @@ var quit_on_source_invalid: bool = false
 ## without needing to plumb it through each subclass setup() override.
 var attacker_source: Node2D = null
 
+@export_group("Attacker Line")
+## When true, _build_attacker_line() draws a Line2D from attacker_source back
+## to this delivery marker. The line is tracked each frame in _process() and
+## freed in reset(). Call _build_attacker_line() from _build_visuals() to opt in.
+@export var show_attacker_line: bool = false
+@export var attacker_line_color: Color = Color(1.0, 0.45, 0.1, 0.45)
+@export var attacker_line_width: float = 2.0
+
+var _attacker_line: Line2D
+
 
 func _process(_delta: float) -> void:
     if quit_on_source_invalid:
         if not is_instance_valid(attacker_source):
             set_process(false)
             force_quit.emit()
+    if _attacker_line == null:
+        return
+    if attacker_source != null and is_instance_valid(attacker_source):
+        _attacker_line.set_point_position(0, to_local(attacker_source.global_position))
+    else:
+        _attacker_line.visible = false
 
 
 ## Called by PhaseSequencer immediately after instantiation.
@@ -69,6 +85,24 @@ func setup(_ctx: EffectContext) -> void:
 ## Subclasses run their timed logic here and emit finished when done.
 func play(_duration: float = 0.0) -> void:
     pass
+
+
+## Creates a Line2D connecting attacker_source back to this delivery marker.
+## Call from _build_visuals() to add the attacker indicator line.
+## Does nothing when show_attacker_line is false.
+func _build_attacker_line() -> void:
+    if not show_attacker_line:
+        return
+    _attacker_line = Line2D.new()
+    _attacker_line.width = attacker_line_width
+    _attacker_line.default_color = attacker_line_color
+    _attacker_line.begin_cap_mode = Line2D.LINE_CAP_BOX
+    _attacker_line.end_cap_mode = Line2D.LINE_CAP_BOX
+    _attacker_line.add_point(Vector2.ZERO)  # Point 0: attacker position, updated in _process.
+    _attacker_line.add_point(Vector2.ZERO)  # Point 1: this delivery marker.
+    add_child(_attacker_line)
+    if attacker_source != null and is_instance_valid(attacker_source):
+        _attacker_line.set_point_position(0, to_local(attacker_source.global_position))
 
 # -------------------------
 # Pool lifecycle
@@ -83,6 +117,9 @@ func reset() -> void:
     set_process(true)
     quit_on_source_invalid = false
     visible = true
+    if _attacker_line != null:
+        _attacker_line.queue_free()
+        _attacker_line = null
 
 
 ## Called by NodeRegistry on release. Disables the node so it is inert while

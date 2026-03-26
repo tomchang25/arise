@@ -36,30 +36,14 @@ extends VfxEffect
 ## Fraction of the lifetime used for the final flash-in at the end.
 @export var flash_fraction: float = 0.2
 
-@export_group("Attacker Line")
-@export var source_line_color: Color = Color(1.0, 0.45, 0.1, 0.45)
-@export var source_line_width: float = 2.0
-
 var _arc_line: Line2D
 var _radial_a: Line2D
 var _radial_b: Line2D
 var _sector_root: Node2D # Parent of the three sector lines for batch animation.
-var _source_line: Line2D
 
 # ─────────────────────────────────────────────
 # PhaseEffect overrides
 # ─────────────────────────────────────────────
-
-
-func _process(_delta: float) -> void:
-    super._process(_delta)
-    if _source_line == null:
-        return
-
-    if attacker_source != null and is_instance_valid(attacker_source):
-        _source_line.set_point_position(0, to_local(attacker_source.global_position))
-    else:
-        _source_line.visible = false
 
 
 func play(duration: float = 5.0) -> void:
@@ -79,9 +63,6 @@ func reset() -> void:
         _arc_line = null
         _radial_a = null
         _radial_b = null
-    if _source_line != null:
-        _source_line.queue_free()
-        _source_line = null
     super.reset()
 
 # ─────────────────────────────────────────────
@@ -134,19 +115,8 @@ func _build_visuals() -> void:
     _radial_b.add_point(Vector2.from_angle(half_arc) * radius + off)
     _sector_root.add_child(_radial_b)
 
-    # Line from attacker back to this delivery marker.
-    _source_line = Line2D.new()
-    _source_line.width = source_line_width
-    _source_line.default_color = source_line_color
-    _source_line.begin_cap_mode = Line2D.LINE_CAP_BOX
-    _source_line.end_cap_mode = Line2D.LINE_CAP_BOX
-    _source_line.add_point(Vector2.ZERO) # Updated in _process.
-    _source_line.add_point(Vector2.ZERO) # This delivery marker.
-    add_child(_source_line)
-
-    # Initialise immediately to avoid single-frame flicker.
-    if attacker_source != null and is_instance_valid(attacker_source):
-        _source_line.set_point_position(0, to_local(attacker_source.global_position))
+    show_attacker_line = true
+    _build_attacker_line()
 
 
 func _animate(duration: float) -> void:
