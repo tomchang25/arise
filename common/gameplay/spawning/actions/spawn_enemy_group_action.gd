@@ -28,6 +28,8 @@ func execute(transform: Transform2D, ctx: SpawnContext) -> Node:
 
     # Position before add_child so spawn_pivot captures correctly in EnemyGroup._ready()
     group.global_position = transform.origin
+    # Apply formation type from profile before members are registered.
+    group.formation_type = profile.formation_type
     ctx.spawn_parent.add_child(group)
 
     var rng := ctx.get_rng()
