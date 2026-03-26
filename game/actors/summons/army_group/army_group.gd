@@ -278,6 +278,10 @@ func is_grid_full() -> bool:
     return get_first_empty_slot() == -1
 
 
+func is_rallying() -> bool:
+    return _rallying
+
+
 func reset_units() -> void:
     units.clear()
     _unit_offsets.clear()

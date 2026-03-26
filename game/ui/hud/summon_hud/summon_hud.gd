@@ -8,6 +8,13 @@ extends Control
 @export var cards_container: HBoxContainer
 @export var group_cards_container: HBoxContainer
 
+const GROUP_COLORS: Array[Color] = [
+    Color(1.0, 0.25, 0.25, 1.0),   # Group 1 — red
+    Color(0.2, 1.0, 0.3, 1.0),     # Group 2 — green
+    Color(0.25, 0.55, 1.0, 1.0),   # Group 3 — blue
+    Color(0.75, 0.2, 1.0, 1.0),    # Group 4 — purple
+]
+
 var _cards: Array[SummonCard] = []
 var _group_panels: Array[PanelContainer] = []
 var _group_count_labels: Array[Label] = []
@@ -97,9 +104,10 @@ func _create_group_indicator(group_index: int) -> Array:
     var panel := PanelContainer.new()
     panel.custom_minimum_size = Vector2(54, 46)
 
+    var color: Color = GROUP_COLORS[group_index] if group_index < GROUP_COLORS.size() else Color.WHITE
     var style := StyleBoxFlat.new()
-    style.bg_color = Color(0.06, 0.06, 0.12, 0.85)
-    style.border_color = Color(0.4, 0.4, 0.5, 1)
+    style.bg_color = Color(color.r * 0.08, color.g * 0.08, color.b * 0.08, 0.85)
+    style.border_color = Color(color.r * 0.5, color.g * 0.5, color.b * 0.5, 0.7)
     style.border_width_left = 1
     style.border_width_right = 1
     style.border_width_top = 1
@@ -148,16 +156,17 @@ func _create_group_indicator(group_index: int) -> Array:
 func _update_group_highlight(active_index: int) -> void:
     for i in _group_styles.size():
         var style: StyleBoxFlat = _group_styles[i]
+        var color: Color = GROUP_COLORS[i] if i < GROUP_COLORS.size() else Color.WHITE
         if i == active_index:
-            style.bg_color = Color(0.15, 0.15, 0.3, 0.9)
-            style.border_color = Color(0.9, 0.85, 1.0, 1)
+            style.bg_color = Color(color.r * 0.25, color.g * 0.25, color.b * 0.25, 0.9)
+            style.border_color = color
             style.border_width_left = 2
             style.border_width_right = 2
             style.border_width_top = 2
             style.border_width_bottom = 2
         else:
-            style.bg_color = Color(0.06, 0.06, 0.12, 0.85)
-            style.border_color = Color(0.4, 0.4, 0.5, 1)
+            style.bg_color = Color(color.r * 0.08, color.g * 0.08, color.b * 0.08, 0.85)
+            style.border_color = Color(color.r * 0.5, color.g * 0.5, color.b * 0.5, 0.7)
             style.border_width_left = 1
             style.border_width_right = 1
             style.border_width_top = 1

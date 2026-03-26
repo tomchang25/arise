@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://bmlww50h5ia4c" path="res://game/actors/dummies/dummy.tscn" id="5_dummy"]
 [ext_resource type="PackedScene" uid="uid://b5mwmarkvp2t8" path="res://game/actors/summons/army_group/army_group.tscn" id="7_armygroup"]
 [ext_resource type="PackedScene" path="res://game/ui/hud/summon_hud/summon_hud.tscn" id="7_vw5go"]
+[ext_resource type="Script" path="res://game/ui/hud/summon_hud/group_cursor_overlay.gd" id="8_cursor"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_main"]
 vertices = PackedVector2Array(-500, -400, 500, -400, 500, 400, -500, 400)
@@ -38,6 +39,9 @@ spawn_position = Vector2(-80, 80)
 [node name="ArmyGroup4" parent="." unique_id=100000004 instance=ExtResource("7_armygroup")]
 group_id = 4
 spawn_position = Vector2(80, 80)
+
+[node name="GroupCursorOverlay" type="Node2D" parent="." unique_id=100000005]
+script = ExtResource("8_cursor")
 
 [node name="SummonManager" parent="." unique_id=1922368145 instance=ExtResource("4_summon")]
 
