@@ -160,9 +160,6 @@ layer_name = &"army"
 mask_names = Array[StringName]([&"player", &"army", &"enemy"])
 collision_layer = 256
 collision_mask = 259
-tick_enabled = null
-tick_interval = null
-tick_stagger = null
 metadata/_custom_type_script = "uid://bhtdp3vwcylqh"
 
 [node name="Hurtbox" type="Area2D" parent="." unique_id=103917815]
@@ -216,6 +213,7 @@ hurtbox = NodePath("../../Hurtbox")
 script = ExtResource("9_hitfb")
 damage_receiver = NodePath("../DamageReceiverModule")
 movement_module = NodePath("../MovementModule")
+flash_color = Color(1, 0.25, 0.25, 1)
 hit_particles_scene = ExtResource("10_hitfx")
 death_particles_scene = ExtResource("11_explode")
 damaged_audio = ExtResource("12_dmgsfx")

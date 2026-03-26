@@ -89,7 +89,7 @@ var _rally_last_dist: float = INF
 ## How long (seconds) distance must be unchanged before we force-cancel the rally.
 const RALLY_STUCK_TIMEOUT := 5.0
 ## Minimum distance improvement required to reset the stuck-timer.
-const RALLY_STUCK_MIN_DELTA := 4.0
+const RALLY_STUCK_MIN_DELTA := 16.0
 
 # -------------------------
 # Lifecycle

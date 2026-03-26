@@ -41,7 +41,7 @@ extends Node2D
 @export var separation_force: float = 100.0
 ## Maximum distance at which force is applied.
 ## Also drives SpatialHash.cell_size — keep this consistent across all units.
-@export var min_distance: float = 12.0:
+@export var min_distance: float = 16.0:
     set(value):
         min_distance = max(value, 0.0)
 
@@ -89,10 +89,10 @@ func _ready() -> void:
     if Engine.is_editor_hint() or character == null:
         return
 
-    # Let this unit's min_distance set the global cell size.
-    # All units should share the same min_distance; the last one to call _ready()
-    # wins, but since they are equal it doesn't matter.
-    SpatialHash.cell_size = min_distance
+    # # Let this unit's min_distance set the global cell size.
+    # # All units should share the same min_distance; the last one to call _ready()
+    # # wins, but since they are equal it doesn't matter.
+    # SpatialHash.cell_size = min_distance
 
     SpatialHash.register(character, collision_layer)
 

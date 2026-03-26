@@ -18,6 +18,11 @@ var _char_to_cell: Dictionary = { }
 
 var _char_to_layer: Dictionary = { }
 
+# _cell_layer_counts maps Vector2i → Dictionary[int, int]  (layer_bit → body_count).
+# Maintained in sync with _cells so get_directional_density can count masked bodies
+# in O(1) per cell instead of iterating every body.
+var _cell_layer_counts: Dictionary = { }
+
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
@@ -65,7 +70,7 @@ func query_nearby(pos: Vector2, radius: float, max_results: int = 4) -> Array:
     var r := ceili(radius / cell_size)
     var center := _cell_key(pos)
 
-    # ring = 0 corresponds to the cell itself，ring = 1 corresponds to adjacent cells
+    # ring = 0 corresponds to the cell itself, ring = 1 corresponds to adjacent cells
     for ring in range(0, r + 1):
         for dx in range(-ring, ring + 1):
             for dy in range(-ring, ring + 1):
@@ -85,6 +90,8 @@ func get_layer(character: CharacterBody2D) -> int:
     return _char_to_layer.get(character, 0xFFFFFFFF)
 
 
+## Returns a weighted density of nearby bodies in the given movement direction.
+## Uses pre-computed per-cell layer counts — O(1) per cell, O(9) total (fixed 3×3 grid).
 func get_directional_density(pos: Vector2, move_dir: Vector2, mask: int = 0) -> float:
     var center := _cell_key(pos)
     var dir := move_dir.normalized()
@@ -93,19 +100,24 @@ func get_directional_density(pos: Vector2, move_dir: Vector2, mask: int = 0) -> 
     for dx in range(-1, 2):
         for dy in range(-1, 2):
             var key := Vector2i(center.x + dx, center.y + dy)
-            if not _cells.has(key):
-                continue
+
+            # Use layer count table when available; fall back to cell size for mask == 0.
+            var count := 0
+            if mask == 0:
+                if not _cells.has(key):
+                    continue
+                count = _cells[key].size()
+            else:
+                if not _cell_layer_counts.has(key):
+                    continue
+                count = _count_masked(key, mask)
+                if count == 0:
+                    continue
 
             var weight := 0.35
             var offset := Vector2(dx, dy)
             if offset != Vector2.ZERO:
                 weight += max(offset.normalized().dot(dir), 0.0)
-
-            # Count only bodies that pass the mask filter
-            var count := 0
-            for body in _cells[key]:
-                if mask == 0 or (_char_to_layer.get(body, 0) & mask) != 0:
-                    count += 1
 
             density += count * weight
 
@@ -125,6 +137,14 @@ func _insert(character: CharacterBody2D, key: Vector2i) -> void:
         _cells[key] = []
     _cells[key].append(character)
 
+    # Update layer count table.
+    var layer: int = _char_to_layer.get(character, 0)
+    if layer != 0:
+        if not _cell_layer_counts.has(key):
+            _cell_layer_counts[key] = { }
+        var counts: Dictionary = _cell_layer_counts[key]
+        counts[layer] = counts.get(layer, 0) + 1
+
 
 func _remove(character: CharacterBody2D, key: Vector2i) -> void:
     if not _cells.has(key):
@@ -132,3 +152,26 @@ func _remove(character: CharacterBody2D, key: Vector2i) -> void:
     _cells[key].erase(character)
     if _cells[key].is_empty():
         _cells.erase(key)
+
+    # Update layer count table.
+    var layer: int = _char_to_layer.get(character, 0)
+    if layer != 0 and _cell_layer_counts.has(key):
+        var counts: Dictionary = _cell_layer_counts[key]
+        var new_count: int = counts.get(layer, 1) - 1
+        if new_count <= 0:
+            counts.erase(layer)
+        else:
+            counts[layer] = new_count
+        if counts.is_empty():
+            _cell_layer_counts.erase(key)
+
+
+## Sum the body counts for all layer bits that overlap [mask]. O(unique layers in cell).
+## In practice a cell holds at most 2-3 distinct layer values, so this is effectively O(1).
+func _count_masked(key: Vector2i, mask: int) -> int:
+    var counts: Dictionary = _cell_layer_counts[key]
+    var total := 0
+    for layer: int in counts:
+        if (layer & mask) != 0:
+            total += counts[layer]
+    return total
