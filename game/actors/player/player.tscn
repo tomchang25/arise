@@ -496,7 +496,7 @@ layer_name = &"player"
 mask_names = Array[StringName]([&"enemy"])
 collision_layer = 1
 collision_mask = 2
-tick_interval = 0.1
+tick_interval = 0.016
 metadata/_custom_type_script = "uid://bhtdp3vwcylqh"
 
 [node name="Hurtbox" type="Area2D" parent="." unique_id=101171387]
@@ -548,8 +548,8 @@ debug_color = Color(0, 0.101960786, 0.69803923, 0.11764706)
 
 [node name="PickupCollectorModule" type="Node2D" parent="Module/DetectionPivot" unique_id=639109990 node_paths=PackedStringArray("owner_body", "inventory_owner")]
 script = ExtResource("13_i5w6q")
-stats = SubResource("Resource_5qatl")
 owner_body = NodePath("../../..")
+stats = SubResource("Resource_5qatl")
 inventory_owner = NodePath("../../..")
 metadata/_custom_type_script = "uid://ce4d3x6pliud6"
 

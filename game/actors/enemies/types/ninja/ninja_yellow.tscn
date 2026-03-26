@@ -69,6 +69,7 @@ layer_name = &"enemy"
 mask_names = Array[StringName]([&"player", &"army", &"enemy"])
 collision_layer = 2
 collision_mask = 259
+tick_interval = 0.096
 metadata/_custom_type_script = "uid://bhtdp3vwcylqh"
 
 [node name="Hurtbox" type="Area2D" parent="." unique_id=1309115120]
