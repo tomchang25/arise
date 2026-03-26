@@ -1,12 +1,10 @@
 @tool
 class_name PickupCollectorModule
-extends Area2D
+extends Node2D
 
 signal pickup_entered(pickup: BasePickup)
 signal pickup_exited(pickup: BasePickup)
 signal pickup_collected(pickup: BasePickup)
-
-const PICKUP_MASK := 1 << 31
 
 @export var enabled := true:
     set = set_enabled
@@ -17,44 +15,39 @@ var _enabled: bool = true
 @export var owner_body: Node2D
 @export var stats: Stats
 @export var inventory_owner: Node
-@export var magnet_shape: CollisionShape2D
 
 @export_group("Collection")
 @export var resource_full_check_enabled := true
 
 @export_group("Magnet")
 @export var magnet_enabled := true
-@export var magnet_range: float = 48.0:
+@export var magnet_range: float = 64.0:
     set(value):
         magnet_range = max(value, 0.0)
-        _refresh_magnet_shape()
+
+@export_group("Poll")
+@export var poll_interval: float = 0.1
 
 var _pickups_in_range: Array[BasePickup] = []
+var _poll_accumulator: float = 0.0
 
 # -------------------------
 # Lifecycle
 # -------------------------
 
 
-func _init() -> void:
-    collision_layer = 0
-    collision_mask = PICKUP_MASK
-
-
 func _ready() -> void:
-    _refresh_magnet_shape()
     _refresh_runtime_state()
 
-    if not area_entered.is_connected(_on_area_entered):
-        area_entered.connect(_on_area_entered)
 
-    if not area_exited.is_connected(_on_area_exited):
-        area_exited.connect(_on_area_exited)
-
-
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
     if not _enabled:
         return
+
+    _poll_accumulator += delta
+    if _poll_accumulator >= poll_interval:
+        _poll_accumulator = 0.0
+        _poll_pickups()
 
     _cleanup_invalid_pickups()
 
@@ -299,20 +292,7 @@ func collect_item(item_data: ItemData, amount: int = 1) -> bool:
 
 
 func _refresh_runtime_state() -> void:
-    set_monitoring(_enabled)
-    set_monitorable(_enabled)
     set_physics_process(_enabled)
-
-
-func _refresh_magnet_shape() -> void:
-    if magnet_shape == null:
-        return
-
-    var circle_shape := magnet_shape.shape as CircleShape2D
-    if circle_shape == null:
-        return
-
-    circle_shape.radius = magnet_range
 
 
 func _cleanup_invalid_pickups() -> void:
@@ -320,6 +300,27 @@ func _cleanup_invalid_pickups() -> void:
         var pickup := _pickups_in_range[i]
         if pickup == null or not is_instance_valid(pickup):
             _pickups_in_range.remove_at(i)
+
+
+func _poll_pickups() -> void:
+    var nearby := PickupSpatialHash.query_nearby(global_position, magnet_range)
+    # Add newly discovered pickups that are within exact range.
+    for entry in nearby:
+        if not (entry is BasePickup):
+            continue
+        if not is_instance_valid(entry):
+            continue
+        if global_position.distance_to(entry.global_position) <= magnet_range:
+            _add_pickup(entry)
+
+    # Remove pickups that are no longer within range.
+    for i in range(_pickups_in_range.size() - 1, -1, -1):
+        var pickup := _pickups_in_range[i]
+        if pickup == null or not is_instance_valid(pickup):
+            _pickups_in_range.remove_at(i)
+            continue
+        if global_position.distance_to(pickup.global_position) > magnet_range:
+            _remove_pickup(pickup)
 
 
 func _add_pickup(pickup: BasePickup) -> void:
@@ -349,21 +350,5 @@ func _stop_runtime_state() -> void:
             pickup.clear_magnet_target(self)
 
     _pickups_in_range.clear()
+    _poll_accumulator = 0.0
     set_physics_process(false)
-
-# -------------------------
-# Signals / Callbacks
-# -------------------------
-
-
-func _on_area_entered(area: Area2D) -> void:
-    if not _enabled:
-        return
-
-    if area is BasePickup:
-        _add_pickup(area)
-
-
-func _on_area_exited(area: Area2D) -> void:
-    if area is BasePickup:
-        _remove_pickup(area)

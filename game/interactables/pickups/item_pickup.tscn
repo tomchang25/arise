@@ -3,21 +3,13 @@
 [ext_resource type="Script" uid="uid://oh44pat6k5c8" path="res://game/interactables/pickups/item_pickup.gd" id="1_mjlyj"]
 [ext_resource type="Resource" uid="uid://byvwlcsd2n5pv" path="res://common/audio/presets/sfx/default_pickup_audio.tres" id="2_4j51m"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_4j51m"]
-
-[node name="ItemPickup" type="Area2D" unique_id=815153095 node_paths=PackedStringArray("sprite_node", "label_node", "collision_shape")]
-collision_layer = 2147483648
-collision_mask = 0
+[node name="ItemPickup" type="Node2D" unique_id=815153095 node_paths=PackedStringArray("sprite_node", "label_node")]
 script = ExtResource("1_mjlyj")
 sprite_node = NodePath("Sprite2D")
 label_node = NodePath("IconLabel")
-collision_shape = NodePath("CollisionShape2D")
 collect_audio_event = ExtResource("2_4j51m")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=261044363]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=575429486]
-shape = SubResource("CircleShape2D_4j51m")
 
 [node name="IconLabel" type="Label" parent="." unique_id=407235690]
 anchors_preset = 5

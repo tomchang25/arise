@@ -21,9 +21,6 @@ metadata/_custom_type_script = "uid://bkgf2cii3bfri"
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6me2w"]
 size = Vector2(12, 12)
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_4022q"]
-radius = 48.0
-
 [node name="LootPickupTestbed" type="Node2D" unique_id=1798922732 node_paths=PackedStringArray("dummy", "player", "pickups_root", "world_root", "dummy_spawn", "player_spawn", "debug_label")]
 script = ExtResource("1_uqnsq")
 dummy = NodePath("World/Dummy")
@@ -84,16 +81,11 @@ script = ExtResource("4_enhpa")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="World/Player" unique_id=753707478]
 shape = SubResource("RectangleShape2D_6me2w")
 
-[node name="PickupCollectorModule" type="Area2D" parent="World/Player" unique_id=217611340 node_paths=PackedStringArray("owner_body", "inventory_owner")]
-collision_layer = 0
-collision_mask = 2147483648
+[node name="PickupCollectorModule" type="Node2D" parent="World/Player" unique_id=217611340 node_paths=PackedStringArray("owner_body", "inventory_owner")]
 script = ExtResource("8_6me2w")
 owner_body = NodePath("..")
 inventory_owner = NodePath("..")
 metadata/_custom_type_script = "uid://ce4d3x6pliud6"
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="World/Player/PickupCollectorModule" unique_id=1619089842]
-shape = SubResource("CircleShape2D_4022q")
 
 [node name="PickupsRoot" type="Node2D" parent="World" unique_id=386017114]
 

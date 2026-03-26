@@ -33,6 +33,7 @@ Debug="*uid://l63h0afxdmif"
 SpatialHash="*uid://b3r1aqsi2f3k"
 NodeRegistry="*uid://b5e1ke02ga4jv"
 SpawnThrottle="*res://global/autoload/spawn_throttle/spawn_throttle.gd"
+PickupSpatialHash="*uid://3yun0yqolhac"
 
 [debug]
 
