@@ -65,7 +65,7 @@ extends Node2D
 
 ## How often (in seconds) to recalculate separation force when tick_enabled is true.
 ## e.g. 0.1 = 10 Hz, 0.5 = 2 Hz.
-@export_range(0.016, 5.0, 0.016, "suffix:s") var tick_interval: float = 0.05
+@export_range(0.016, 5.0, 0.016, "suffix:s") var tick_interval: float = 0.10
 
 ## Stagger tick phases across units so they don't all recalculate on the same frame.
 ## When true, each unit starts with a random phase offset within [0, tick_interval).
