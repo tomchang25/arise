@@ -36,11 +36,28 @@ const LANE_COUNT := 3
 @export var ranged_lane_capacity: int = 1
 @export var free_lane_capacity: int = 2
 
-@export_group("Advancing Caps")
-## Maximum number of CLOSED groups per direction that may be in ADVANCING state.
+@export_group("Distances")
+## Distance from the castle at which STANDBY groups hold position.
+@export var standby_distance: float = 150.0
+## Distance from the castle at which ENGAGE groups attack.
+@export var engage_distance: float = 50.0
+## Informational: approximate spawn radius — EnemyGroup can read this to
+## know how far it started from the castle.
+@export var hold_distance: float = 300.0
+
+@export_group("Per-Direction Caps")
+## Maximum number of groups per direction that may be in STANDBY.
+@export var max_standby_per_dir: int = 2
+## Maximum number of CLOSED groups per direction that may be in ENGAGE.
 @export var max_advancing_closed: int = 2
-## Maximum number of RANGED groups per direction that may be in ADVANCING state.
+## Maximum number of RANGED groups per direction that may be in ENGAGE.
 @export var max_advancing_ranged: int = 8
+
+@export_group("Global Caps")
+## Maximum number of groups across all directions in STANDBY simultaneously.
+@export var max_global_standby: int = 8
+## Maximum number of groups across all directions in ENGAGE simultaneously.
+@export var max_global_engage: int = 4
 
 @export_group("Castle")
 ## Reference to the Castle node. Position is read at claim time.
@@ -68,8 +85,15 @@ var _lane_occupants: Array = []
 ## _free_lane_roles[dir_idx][slot_idx] -> int  (-1 = unassigned, 0 = CLOSED, 1 = RANGED)
 var _free_lane_roles: Array = []
 
-## _advancing_count[dir_idx][role_idx] -> int
+## _standby_count[dir_idx] -> int  (groups in STANDBY for that direction)
+var _standby_count: Array = []
+
+## _advancing_count[dir_idx][role_idx] -> int  (groups in ENGAGE for that direction)
 var _advancing_count: Array = []
+
+## Global counters across all directions.
+var _global_standby_count: int = 0
+var _global_engage_count: int = 0
 
 # -------------------------
 # Lifecycle
@@ -80,6 +104,7 @@ func _ready() -> void:
     _lane_states.resize(DIRECTION_COUNT)
     _lane_occupants.resize(DIRECTION_COUNT)
     _free_lane_roles.resize(DIRECTION_COUNT)
+    _standby_count.resize(DIRECTION_COUNT)
     _advancing_count.resize(DIRECTION_COUNT)
 
     for i in range(DIRECTION_COUNT):
@@ -94,6 +119,7 @@ func _ready() -> void:
             _make_null_array(free_lane_capacity),
         ]
         _free_lane_roles[i] = _make_int_array(free_lane_capacity, -1)
+        _standby_count[i] = 0
         _advancing_count[i] = [0, 0]  # index 0 = CLOSED, index 1 = RANGED
 
 # -------------------------
@@ -222,9 +248,35 @@ func get_total_occupancy(lane: Lane) -> int:
     return count
 
 
-## Requests permission for a group at dir_idx to be in ADVANCING state.
-## Returns true and increments the counter if under the per-direction cap.
-## Returns false when the cap is already reached — the caller should HOLD instead.
+## Requests permission for a group at dir_idx to enter STANDBY.
+## Checks both the per-direction cap and the global standby cap.
+## Returns true and increments both counters on success.
+## Returns false when either cap is already full.
+func request_standby(dir_idx: int) -> bool:
+    if dir_idx < 0 or dir_idx >= DIRECTION_COUNT:
+        return true
+    if _standby_count[dir_idx] >= max_standby_per_dir:
+        return false
+    if _global_standby_count >= max_global_standby:
+        return false
+    _standby_count[dir_idx] += 1
+    _global_standby_count += 1
+    return true
+
+
+## Notifies that a group at dir_idx has left STANDBY (promoted to ENGAGE or freed).
+## Decrements both the per-direction and global standby counters.
+func notify_left_standby(dir_idx: int) -> void:
+    if dir_idx < 0 or dir_idx >= DIRECTION_COUNT:
+        return
+    _standby_count[dir_idx] = maxi(_standby_count[dir_idx] - 1, 0)
+    _global_standby_count = maxi(_global_standby_count - 1, 0)
+
+
+## Requests permission for a group at dir_idx to enter ENGAGE.
+## Checks per-direction role cap and global engage cap.
+## Returns true and increments both counters on success.
+## Returns false when either cap is full.
 func request_advancing(dir_idx: int, role: EnemyGroupProfile.GroupRole) -> bool:
     if dir_idx < 0 or dir_idx >= DIRECTION_COUNT:
         return true
@@ -236,17 +288,21 @@ func request_advancing(dir_idx: int, role: EnemyGroupProfile.GroupRole) -> bool:
         cap = max_advancing_ranged
     if _advancing_count[dir_idx][role_idx] >= cap:
         return false
+    if _global_engage_count >= max_global_engage:
+        return false
     _advancing_count[dir_idx][role_idx] += 1
+    _global_engage_count += 1
     return true
 
 
-## Notifies that a group at dir_idx has left ADVANCING state (entered HOLDING,
-## ATTACKING, or was freed).  Decrements the per-direction counter.
+## Notifies that a group at dir_idx has left ENGAGE (depleted, removed, or demoted).
+## Decrements both the per-direction and global engage counters.
 func notify_left_advancing(dir_idx: int, role: EnemyGroupProfile.GroupRole) -> void:
     if dir_idx < 0 or dir_idx >= DIRECTION_COUNT:
         return
     var role_idx := int(role)
     _advancing_count[dir_idx][role_idx] = maxi(_advancing_count[dir_idx][role_idx] - 1, 0)
+    _global_engage_count = maxi(_global_engage_count - 1, 0)
 
 # -------------------------
 # Internal helpers
