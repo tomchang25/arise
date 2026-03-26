@@ -129,7 +129,7 @@ func _build_config_for_wave(wave: int) -> EncounterConfig:
     # Duplicate so we don't mutate the original exported resource.
     var config := base_encounter_config.duplicate() as EncounterConfig
     config.groups_per_round = _total_groups_this_wave
-    config.spawn_beyond_budget = true
+    config.spawn_mode = EncounterController.SpawnMode.WAVE
 
     var definition := _get_definition(wave)
     if definition != null and definition.group_table != null:

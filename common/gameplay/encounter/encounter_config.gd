@@ -7,12 +7,21 @@ extends Resource
 @export_group("Round Budget")
 ## How many groups to spawn before the round ends. -1 = endless round.
 @export var groups_per_round: int = 10
-## If true, spawning continues past the budget so enemies are always available to kill.
-## Use for extermination-style rounds where the player must reach a kill count.
-## If false, spawning stops once (killed + active) reaches the budget — player must
-## clear remaining stragglers themselves.
-## Use for wave-dense rounds where the group count is intentionally finite.
-@export var spawn_beyond_budget: bool = false
+## Controls how the kill budget interacts with spawning and the round-cleared signal.
+##
+##   WAVE          — Never spawns more groups than the budget allows.
+##                   round_cleared emits only after all spawned groups are killed
+##                   and the field is empty.
+##
+##   EXTERMINATION — Spawns beyond the budget so there are always enemies on the
+##                   field.  round_cleared emits as soon as kills reach the budget,
+##                   regardless of how many groups remain alive.  Spawning stops
+##                   once the budget is reached.
+##
+##   ENDLESS       — Same signal behaviour as EXTERMINATION (emits on budget hit),
+##                   but spawning never stops afterwards.  Set groups_per_round = -1
+##                   to suppress the signal entirely for a truly infinite encounter.
+@export var spawn_mode: EncounterController.SpawnMode = EncounterController.SpawnMode.WAVE
 
 @export_group("Pacing")
 ## How many groups should be alive at the same time before spawning pauses.

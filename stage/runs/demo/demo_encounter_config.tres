@@ -11,7 +11,7 @@
 [sub_resource type="Resource" id="Resource_76gxa"]
 script = ExtResource("2_hkh4f")
 scene = ExtResource("4_4loag")
-min_count = 20
+min_count = 10
 max_count = 20
 metadata/_custom_type_script = "uid://4agufvpi7c62"
 
@@ -34,7 +34,6 @@ entries = Array[ExtResource("1_l6dtp")]([SubResource("Resource_ovujv")])
 [resource]
 script = ExtResource("45_ylq1s")
 group_table = SubResource("Resource_pay2w")
-groups_per_round = 100
-spawn_beyond_budget = true
-target_active_groups = 16
+spawn_mode = 1
+target_active_groups = 40
 max_spawn_per_tick = 8

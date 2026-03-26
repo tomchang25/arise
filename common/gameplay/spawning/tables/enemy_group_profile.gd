@@ -1,6 +1,13 @@
 class_name EnemyGroupProfile
 extends Resource
 
+enum GroupRole { CLOSED, RANGED }
+
+@export_group("Role")
+## Every profile must declare its combat role.
+## CLOSED groups occupy the closed lane; RANGED groups occupy the ranged lane.
+@export var role: GroupRole = GroupRole.CLOSED
+
 @export_group("Group Scene")
 @export var group_scene: PackedScene
 

@@ -23,6 +23,11 @@ signal group_removed(group: EnemyGroup)
 @export_group("Warning Spawn")
 @export var warning_point_scene: PackedScene = preload("res://common/gameplay/spawning/points/warning_spawn_point.tscn")
 
+@export_group("Slot Manager")
+## Optional DirectionalSlotManager.  When assigned, _request_spawn() uses
+## role-filtered slot-aware spawning and spawn_position_resolver is ignored.
+@export var slot_manager: DirectionalSlotManager
+
 @export_group("Debug")
 @export var print_debug_log := false
 
@@ -31,6 +36,22 @@ signal group_removed(group: EnemyGroup)
 # -------------------------
 
 enum EncounterState { IDLE, ROUND_ACTIVE, ROUND_CLEARED }
+
+## Controls how the kill budget interacts with spawning and round-cleared signalling.
+##
+##   WAVE          — Never spawns more groups than the budget allows.
+##                   round_cleared emits only after all spawned groups are killed
+##                   and the field is empty.
+##
+##   EXTERMINATION — Spawns beyond the budget so there are always enemies on the
+##                   field.  round_cleared emits as soon as kills reach the budget,
+##                   regardless of how many groups remain alive.  Spawning stops
+##                   once the budget is reached (caller may clean up via force_kill_all).
+##
+##   ENDLESS       — Same signal behaviour as EXTERMINATION (emits on budget hit),
+##                   but spawning never stops afterwards.  Use groups_per_round = -1
+##                   to suppress the signal entirely for a truly infinite encounter.
+enum SpawnMode { WAVE, EXTERMINATION, ENDLESS }
 
 var _state: EncounterState = EncounterState.IDLE
 var _config: EncounterConfig = null
@@ -43,10 +64,19 @@ var _rng := RandomNumberGenerator.new()
 var _pending_spawns: int = 0
 var _force_kill_pending: bool = false
 
+## True after round_cleared has been emitted this round.
+## Prevents the signal from firing more than once per round.
+var _round_cleared_emitted: bool = false
+
+## dir_idx/lane bookkeeping per live group when slot_manager is active.
+## Key: EnemyGroup  Value: { "dir_idx": int, "lane": int }
+var _group_slot_data: Dictionary = { }
+
 ## Assign a callable from outside to resolve spawn positions.
 ## Signature: func() -> Variant
 ##   Returns Vector2, or a Dictionary with keys "position" (Vector2) and
 ##   optionally "validator" (SpawnPositionValidator), or null on failure.
+## Ignored when slot_manager is assigned.
 ## Example: encounter_controller.spawn_position_resolver = _find_spawn_position
 var spawn_position_resolver: Callable = Callable()
 
@@ -84,6 +114,9 @@ func start(config: EncounterConfig) -> void:
     _config = config
     _rng.randomize()
 
+    if slot_manager != null:
+        slot_manager.set_rng(_rng)
+
     encounter_started.emit()
     _begin_round()
 
@@ -108,6 +141,8 @@ func end(need_cleanup: bool = false) -> void:
     _groups_killed = 0
     _pending_spawns = 0
     _force_kill_pending = false
+    _round_cleared_emitted = false
+    _group_slot_data.clear()
 
     if need_cleanup:
         _clear_all_groups()
@@ -161,6 +196,7 @@ func get_active_member_count() -> int:
 func _begin_round() -> void:
     _groups_to_kill = _config.groups_per_round
     _groups_killed = 0
+    _round_cleared_emitted = false
     _spawn_timer = _config.initial_spawn_cooldown
     _state = EncounterState.ROUND_ACTIVE
     round_started.emit()
@@ -172,11 +208,14 @@ func _begin_round() -> void:
 func _run_pacing_tick() -> void:
     _cleanup_invalid()
 
-    var active := _active_groups.size() + _pending_spawns
-    if _is_kill_budget_exhausted():
+    if _is_spawn_stopped():
         return
 
-    # Within budget: only spawn if below the concurrent cap.
+    # Pause when all directional slots are occupied.
+    if slot_manager != null and slot_manager.all_slots_full():
+        return
+
+    var active := _active_groups.size() + _pending_spawns
     if active >= _config.target_active_groups:
         return
 
@@ -184,60 +223,84 @@ func _run_pacing_tick() -> void:
     var budget_left := _kill_budget_remaining()
     var count := mini(needed, _config.max_spawn_per_tick)
 
-    # In wave mode, never queue more groups than the remaining budget allows.
-    if budget_left >= 0:
-        count = mini(count, budget_left)
+    # In WAVE mode, never queue more than the remaining budget allows.
+    if budget_left != -1:
+        count = mini(count, maxi(budget_left, 0))
 
     for i in range(count):
         _pending_spawns += 1
         _request_spawn()
 
 
-func _is_kill_budget_exhausted() -> bool:
+## Returns true when spawning should be completely halted this tick.
+## WAVE:          stop once killed + active + pending reaches the budget.
+## EXTERMINATION: stop once kills reach the budget (field may still be populated).
+## ENDLESS:       never stop (budget only used for the cleared signal).
+## Endless round (groups_per_round < 0): never stop regardless of mode.
+func _is_spawn_stopped() -> bool:
     if _groups_to_kill < 0:
-        # Endless round — never exhausted.
         return false
 
-    if _config.spawn_beyond_budget:
-        # Extermination mode: keep spawning past the budget so enemies are always
-        # available to kill. Only stop once kills strictly exceed the budget.
-        return _groups_killed >= _groups_to_kill
+    match _config.spawn_mode:
+        SpawnMode.WAVE:
+            return (_groups_killed + _active_groups.size() + _pending_spawns) >= _groups_to_kill
+        SpawnMode.EXTERMINATION:
+            return _groups_killed >= _groups_to_kill
+        SpawnMode.ENDLESS:
+            return false
+        _:
+            return false
 
-    # Wave mode: hard stop once (killed + active) reaches the budget.
-    # Player must clear remaining stragglers themselves.
-    return (_groups_killed + _active_groups.size() + _pending_spawns) >= _groups_to_kill
 
-
+## Returns the number of additional groups that may be spawned before the budget
+## is reached, or -1 when the budget is unlimited for spawning purposes.
+## WAVE:          hard budget — pending spawns count against it.
+## EXTERMINATION: soft budget — pending spawns do not count (keep field full).
+## ENDLESS:       unlimited (-1).
 func _kill_budget_remaining() -> int:
     if _groups_to_kill < 0:
         return -1
-    if _config.spawn_beyond_budget:
-        # Extermination mode: budget is soft — remaining is unbounded.
-        return -1
-    return _groups_to_kill - (_groups_killed + _active_groups.size())
+
+    match _config.spawn_mode:
+        SpawnMode.WAVE:
+            # Pending spawns count so we never queue more than the budget allows.
+            return _groups_to_kill - (_groups_killed + _active_groups.size() + _pending_spawns)
+        SpawnMode.EXTERMINATION:
+            # Pending spawns do not count — we want the field kept full until the
+            # budget is hit, at which point _is_spawn_stopped() halts new spawns.
+            return _groups_to_kill - (_groups_killed + _active_groups.size())
+        SpawnMode.ENDLESS:
+            return -1
+        _:
+            return -1
 
 
 func _check_round_cleared() -> void:
     if _state != EncounterState.ROUND_ACTIVE:
         return
 
-    # Endless round — never clears naturally
+    # Endless round — never clears naturally.
     if _groups_to_kill < 0:
         return
 
-    if not _is_kill_budget_exhausted():
+    # Emit at most once per round.
+    if _round_cleared_emitted:
         return
 
-    if _config.spawn_beyond_budget:
-        # Extermination mode: kills exceeded the budget — signal immediately.
-        # Caller decides whether to clean up remaining active groups via force_kill_all().
-        pass
-    else:
-        # Wave mode: budget is reached but player must clear remaining stragglers.
-        _cleanup_invalid()
-        if not _active_groups.is_empty():
-            return
+    match _config.spawn_mode:
+        SpawnMode.WAVE:
+            # Budget must be exhausted and the field must be empty.
+            if not _is_spawn_stopped():
+                return
+            _cleanup_invalid()
+            if not _active_groups.is_empty():
+                return
+        SpawnMode.EXTERMINATION, SpawnMode.ENDLESS:
+            # Signal as soon as kills reach the budget, regardless of active groups.
+            if _groups_killed < _groups_to_kill:
+                return
 
+    _round_cleared_emitted = true
     _state = EncounterState.ROUND_CLEARED
     round_cleared.emit()
 
@@ -250,6 +313,57 @@ func _check_round_cleared() -> void:
 
 
 func _request_spawn() -> void:
+    if slot_manager != null:
+        _request_spawn_slotted()
+    else:
+        _request_spawn_legacy()
+
+
+func _request_spawn_slotted() -> void:
+    var role := _pick_role_for_spawn()
+    var slot := slot_manager.claim_slot(role)
+    var profile: EnemyGroupProfile = null
+
+    # Try preferred role first.
+    if slot != null:
+        profile = _config.group_table.pick_group_by_role(role, _rng)
+        if profile == null:
+            # No profiles for the preferred role — release and fall through to alt.
+            slot_manager.release_slot(slot["dir_idx"], slot["lane"], slot["slot_idx"])
+            slot = null
+
+    # Fall back to the other role when the preferred slot was full or had no profiles.
+    if slot == null:
+        var alt := EnemyGroupProfile.GroupRole.RANGED \
+        if role == EnemyGroupProfile.GroupRole.CLOSED \
+        else EnemyGroupProfile.GroupRole.CLOSED
+        slot = slot_manager.claim_slot(alt)
+
+        if slot != null:
+            role = alt
+            profile = _config.group_table.pick_group_by_role(role, _rng)
+
+    if slot == null or profile == null:
+        if slot != null:
+            slot_manager.release_slot(slot["dir_idx"], slot["lane"], slot["slot_idx"])
+        _pending_spawns -= 1
+        if profile == null:
+            Debug.warn("EncounterController: no profile in group table for any available role")
+        return
+
+    var dir_idx: int = slot["dir_idx"]
+    var lane: int = slot["lane"]
+    var slot_idx: int = slot["slot_idx"]
+    var position: Vector2 = slot["position"]
+
+    SpawnThrottle.enqueue(
+        &"encounter_enemy",
+        _spawn_group_slotted.bind(profile, dir_idx, lane, slot_idx, position, role),
+        0.1,
+    )
+
+
+func _request_spawn_legacy() -> void:
     var profile := _config.group_table.pick_group(_rng)
     if profile == null:
         Debug.warn("EncounterController: group table returned null profile")
@@ -258,6 +372,82 @@ func _request_spawn() -> void:
     SpawnThrottle.enqueue(&"encounter_enemy", _spawn_group.bind(profile), 0.1)
 
 
+## Slot-aware spawn path.  Calls mark_occupied after the warning resolves,
+## and release_slot on group depleted or removed.
+func _spawn_group_slotted(
+        group_profile: EnemyGroupProfile,
+        dir_idx: int,
+        lane: int,
+        slot_idx: int,
+        position: Vector2,
+        role: EnemyGroupProfile.GroupRole,
+) -> void:
+    if warning_point_scene == null:
+        Debug.warn("EncounterController: warning_point_scene is null — assign it in the editor")
+        slot_manager.release_slot(dir_idx, lane, slot_idx)
+        return
+
+    if not is_instance_valid(enemies_root):
+        Debug.warn("EncounterController: enemies_root is null or freed")
+        slot_manager.release_slot(dir_idx, lane, slot_idx)
+        return
+
+    if not is_instance_valid(enemies_container):
+        Debug.warn("EncounterController: enemies_container is null or freed")
+        slot_manager.release_slot(dir_idx, lane, slot_idx)
+        return
+
+    var action := SpawnEnemyGroupAction.new()
+    action.profile = group_profile
+    action.enemies_container = enemies_container
+
+    var ctx := SpawnContext.create(enemies_root)
+    ctx.rng_seed = _rng.randi()
+    ctx.source_node = self
+
+    var spawned := await SpawnWarningExecutor.execute_at_position(warning_point_scene, action, position, ctx)
+
+    _pending_spawns -= 1
+
+    if not is_instance_valid(self):
+        return
+
+    var group := spawned as EnemyGroup
+    if group == null:
+        slot_manager.release_slot(dir_idx, lane, slot_idx)
+        Debug.warn("EncounterController: warning spawn did not return an EnemyGroup")
+        return
+
+    # A force_kill_all() was called while this spawn was mid-warning — kill on arrival.
+    if _force_kill_pending:
+        slot_manager.release_slot(dir_idx, lane, slot_idx)
+        group.force_kill()
+        if _pending_spawns == 0:
+            _force_kill_pending = false
+        return
+
+    slot_manager.mark_occupied(dir_idx, lane, slot_idx, group)
+    _group_slot_data[group] = { "dir_idx": dir_idx, "lane": lane, "slot_idx": slot_idx }
+    group.setup_slot(slot_manager, dir_idx, role)
+
+    _active_groups.append(group)
+    group.group_depleted.connect(_on_group_depleted.bind(group))
+    group.group_removed.connect(_on_group_removed.bind(group))
+
+    group_spawned.emit(group)
+
+    if print_debug_log:
+        Debug.log(
+            "EncounterController: spawned '%s' at %s (dir=%s lane=%s)" % [
+                group_profile.resource_name,
+                position,
+                dir_idx,
+                lane,
+            ],
+        )
+
+
+## Legacy spawn path used when no slot_manager is assigned.
 func _spawn_group(group_profile: EnemyGroupProfile) -> void:
     if warning_point_scene == null:
         Debug.warn("EncounterController: warning_point_scene is null — assign it in the editor")
@@ -328,6 +518,21 @@ func _resolve_spawn_position() -> Variant:
         return null
     return spawn_position_resolver.call()
 
+
+## Picks the role whose lane has fewer total (WARNED + OCCUPIED) slots claimed.
+## Breaks ties randomly.
+func _pick_role_for_spawn() -> EnemyGroupProfile.GroupRole:
+    var closed_occ := slot_manager.get_total_occupancy(DirectionalSlotManager.Lane.CLOSED)
+    var ranged_occ := slot_manager.get_total_occupancy(DirectionalSlotManager.Lane.RANGED)
+    if closed_occ < ranged_occ:
+        return EnemyGroupProfile.GroupRole.CLOSED
+    elif ranged_occ < closed_occ:
+        return EnemyGroupProfile.GroupRole.RANGED
+    else:
+        if _rng.randi() % 2 == 0:
+            return EnemyGroupProfile.GroupRole.CLOSED
+        return EnemyGroupProfile.GroupRole.RANGED
+
 # -------------------------
 # Internal — Group Lifecycle
 # -------------------------
@@ -336,6 +541,7 @@ func _resolve_spawn_position() -> Variant:
 func _on_group_depleted(group: EnemyGroup) -> void:
     _active_groups.erase(group)
     _groups_killed += 1
+    _release_group_slot(group)
 
     group_depleted.emit(group)
 
@@ -347,6 +553,7 @@ func _on_group_depleted(group: EnemyGroup) -> void:
 
 func _on_group_removed(group: EnemyGroup) -> void:
     _active_groups.erase(group)
+    _release_group_slot(group)
 
     group_removed.emit(group)
 
@@ -355,6 +562,16 @@ func _on_group_removed(group: EnemyGroup) -> void:
 
     # Intentionally does NOT call _check_round_cleared.
     # Despawned groups do not count as kills and do not advance the round.
+
+
+func _release_group_slot(group: EnemyGroup) -> void:
+    if slot_manager == null:
+        return
+    if not _group_slot_data.has(group):
+        return
+    var data: Dictionary = _group_slot_data[group]
+    slot_manager.release_slot(data["dir_idx"], data["lane"], data["slot_idx"])
+    _group_slot_data.erase(group)
 
 
 func _clear_all_groups() -> void:

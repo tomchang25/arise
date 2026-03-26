@@ -1,0 +1,70 @@
+[gd_scene format=3 uid="uid://ceeimva1b2hob"]
+
+[ext_resource type="Script" uid="uid://jcjvega33mja" path="res://game/actors/castle/castle.gd" id="1_castle"]
+[ext_resource type="Texture2D" uid="uid://cm2c6n0ytikey" path="res://icon.svg" id="2_tb67b"]
+[ext_resource type="Script" uid="uid://dpi3inldik0ho" path="res://common/gameplay/combat/damage_response/damage_receiver_module.gd" id="3_castle"]
+[ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/gameplay/combat/hit_detection/hurtbox/hurtbox.gd" id="4_castle"]
+[ext_resource type="Script" uid="uid://duxq84e027el0" path="res://common/gameplay/combat/damage_response/hit_feedback_module.gd" id="5_castle"]
+[ext_resource type="PackedScene" uid="uid://c5uu71l3jwxu6" path="res://common/rendering/vfx/one_shot_hit_particles.tscn" id="6_castle"]
+[ext_resource type="PackedScene" uid="uid://duohq0xpsyv1" path="res://common/rendering/vfx/explosion.tscn" id="7_castle"]
+[ext_resource type="Resource" uid="uid://vp7463hsmyw0" path="res://common/audio/presets/sfx/default_damaged_audio.tres" id="8_castle"]
+[ext_resource type="Resource" uid="uid://xsccf58mw7d5" path="res://common/audio/presets/sfx/default_blocked_audio.tres" id="9_castle"]
+[ext_resource type="Resource" uid="uid://csppceje2neh5" path="res://common/audio/presets/sfx/default_died_audio.tres" id="10_castle"]
+[ext_resource type="Script" uid="uid://6jeesy7iltw" path="res://common/gameplay/combat/damage_response/damage_number_module.gd" id="11_castle"]
+[ext_resource type="PackedScene" uid="uid://qhqm7usjk4s4" path="res://common/gameplay/combat/damage_response/damage_number.tscn" id="12_castle"]
+[ext_resource type="PackedScene" uid="uid://d0tswwb1d3smv" path="res://common/gameplay/health_bar/health_bar.tscn" id="13_castle"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_castle"]
+radius = 20.0
+
+[node name="Castle" type="Node2D" unique_id=1663140236 node_paths=PackedStringArray("hurtbox", "damage_receiver", "hit_feedback", "damage_number", "health_bar") groups=["castle"]]
+script = ExtResource("1_castle")
+hurtbox = NodePath("Hurtbox")
+damage_receiver = NodePath("Module/DamageReceiverModule")
+hit_feedback = NodePath("Module/HitFeedbackModule")
+damage_number = NodePath("Module/DamageNumberModule")
+health_bar = NodePath("Module/HealthBar")
+
+[node name="Sprite" type="Sprite2D" parent="." unique_id=673291550]
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("2_tb67b")
+
+[node name="Hurtbox" type="Area2D" parent="." unique_id=2025616061]
+collision_mask = 2
+monitoring = false
+script = ExtResource("4_castle")
+metadata/_custom_type_script = "uid://dby4p11qhtin7"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=2076941241]
+shape = SubResource("CircleShape2D_castle")
+debug_color = Color(0.639216, 0.529412, 0, 0.329412)
+
+[node name="Module" type="Node2D" parent="." unique_id=2123622438]
+
+[node name="HealthBar" parent="Module" unique_id=401436496 instance=ExtResource("13_castle")]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -12.0
+offset_top = 4.0
+offset_right = 12.0
+offset_bottom = 8.0
+grow_horizontal = 2
+
+[node name="DamageReceiverModule" type="Node" parent="Module" unique_id=461929658]
+script = ExtResource("3_castle")
+
+[node name="HitFeedbackModule" type="Node" parent="Module" unique_id=2032356899 node_paths=PackedStringArray("damage_receiver")]
+script = ExtResource("5_castle")
+damage_receiver = NodePath("../DamageReceiverModule")
+flash_color = Color(1, 0.25, 0.25, 1)
+hit_particles_scene = ExtResource("6_castle")
+death_particles_scene = ExtResource("7_castle")
+damaged_audio = ExtResource("8_castle")
+blocked_audio = ExtResource("9_castle")
+died_audio = ExtResource("10_castle")
+
+[node name="DamageNumberModule" type="Node" parent="Module" unique_id=1473671893 node_paths=PackedStringArray("damage_receiver")]
+script = ExtResource("11_castle")
+damage_receiver = NodePath("../DamageReceiverModule")
+damage_number_scene = ExtResource("12_castle")
