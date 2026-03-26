@@ -16,7 +16,7 @@ enum FormationType { NONE, RECTANGULAR, CIRCULAR }
 # Exports — Anchor tracking
 # -------------------------
 
-@export var dormant_distance: float = 480.0
+@export var dormant_distance: float = 960.0
 @export var dormant_check_interval: float = 1.0
 
 ## Distance from group center at which members aggro the player.
@@ -185,7 +185,7 @@ func register_member(enemy: Enemy, setup_position: Vector2 = Vector2.ZERO) -> vo
         var offset := _convert_index_to_grid(slot_index) * grid_size
         _anchor_offsets[enemy] = offset
 
-        enemy.global_position = setup_position
+        enemy.global_position = spawn_pivot + offset
         enemy.anchor_position = spawn_pivot + offset
 
     _members.append(enemy)
