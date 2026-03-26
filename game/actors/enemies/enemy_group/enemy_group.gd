@@ -12,6 +12,9 @@ signal members_changed
 
 enum FormationType { NONE, RECTANGULAR, CIRCULAR }
 
+## Three-state pressure machine that governs how the group advances on the castle.
+enum PressureState { ADVANCING, HOLDING, ATTACKING }
+
 # -------------------------
 # Exports — Anchor tracking
 # -------------------------
@@ -46,9 +49,35 @@ enum FormationType { NONE, RECTANGULAR, CIRCULAR }
 ## World-space distance between adjacent formation slots (grid cell size).
 @export var grid_size: int = 16
 
-## Speed (units/sec) at which target_position creeps toward the player when
-## not aggroed and not returning to spawn.
+## Speed (units/sec) at which target_position creeps toward the castle when
+## ADVANCING and not aggroed.
 @export var chase_speed: float = 5.0
+
+# -------------------------
+# Exports — Pressure state
+# -------------------------
+
+## Reference to the Castle actor.  Used for pressure-state distance checks
+## and as the attack target when the group enters ATTACKING.
+## Falls back to (0, 0) when unset.
+@export var castle: Node2D
+
+## Distance from the castle at which the group transitions ADVANCING → HOLDING.
+@export var hold_distance: float = 300.0
+
+## Distance from the castle at which HOLDING may transition to ATTACKING
+## (once the hesitation timer has also expired).
+@export var attack_distance: float = 150.0
+
+## Extra distance buffer applied to the HOLDING → ADVANCING back-transition
+## to prevent oscillation.
+@export var hysteresis_margin: float = 40.0
+
+## Minimum seconds the group hesitates in HOLDING before it may enter ATTACKING.
+@export var hesitation_min: float = 1.0
+
+## Maximum seconds the group hesitates in HOLDING before it may enter ATTACKING.
+@export var hesitation_max: float = 3.0
 
 # -------------------------
 # Internal state
@@ -57,7 +86,7 @@ enum FormationType { NONE, RECTANGULAR, CIRCULAR }
 ## Frozen spawn position — set once by the spawner, never changes.
 var spawn_pivot: Vector2 = Vector2.ZERO
 
-## Slowly advances toward the player each tick when not aggroed.
+## Slowly advances toward the castle each tick when ADVANCING and not aggroed.
 ## Initialized to spawn_pivot in _ready().
 var target_position: Vector2 = Vector2.ZERO
 
@@ -95,6 +124,18 @@ var _returning_to_spawn: bool = false
 const AGGRO_CHECK_INTERVAL := 0.1
 
 # -------------------------
+# Pressure state internals
+# -------------------------
+
+var _pressure_state: PressureState = PressureState.ADVANCING
+
+## Countdown in seconds before HOLDING may transition to ATTACKING.
+## Starts at a random value in [hesitation_min, hesitation_max] on HOLDING entry.
+var _hesitation_remaining: float = 0.0
+
+var _rng := RandomNumberGenerator.new()
+
+# -------------------------
 # Lifecycle
 # -------------------------
 
@@ -104,6 +145,8 @@ func _ready() -> void:
     # The spawner should place the node at the desired center before add_child().
     spawn_pivot = global_position
     target_position = spawn_pivot
+
+    _rng.randomize()
 
     _player = get_tree().get_first_node_in_group("player")
 
@@ -121,11 +164,18 @@ func _physics_process(delta: float) -> void:
         _dormant_timer = 0.0
         _update_dormant_state()
 
+    # Hesitation timer — only active in HOLDING state.
+    if _pressure_state == PressureState.HOLDING:
+        _hesitation_remaining -= delta
+
     # Update group position to the live centroid every POSITION_UPDATE_INTERVAL seconds.
     _position_timer += delta
     if _position_timer >= POSITION_UPDATE_INTERVAL:
         _position_timer = 0.0
         global_position = get_center()
+
+        # Evaluate pressure state transitions each position tick.
+        _update_pressure_state()
 
         # Propagate updated anchor_positions to all living members.
         for member in get_alive_members():
@@ -328,6 +378,58 @@ func _convert_index_to_circular(index: int) -> Vector2:
     return Vector2(cos(angle) * k, sin(angle) * k)
 
 # -------------------------
+# Internal — pressure state machine
+# -------------------------
+
+
+## Evaluates transitions between ADVANCING, HOLDING, and ATTACKING.
+## Called every POSITION_UPDATE_INTERVAL (0.1 s) from the position tick.
+func _update_pressure_state() -> void:
+    var castle_pos := _get_castle_pos()
+    var dist := global_position.distance_to(castle_pos)
+
+    match _pressure_state:
+        PressureState.ADVANCING:
+            if dist <= hold_distance:
+                _enter_holding()
+
+        PressureState.HOLDING:
+            if dist > hold_distance + hysteresis_margin:
+                _pressure_state = PressureState.ADVANCING
+            elif dist <= attack_distance and _hesitation_remaining <= 0.0:
+                _enter_attacking()
+
+        PressureState.ATTACKING:
+            pass  # Terminal — no outgoing transitions.
+
+
+func _enter_holding() -> void:
+    _pressure_state = PressureState.HOLDING
+    _hesitation_remaining = _rng.randf_range(hesitation_min, hesitation_max)
+
+
+func _enter_attacking() -> void:
+    _pressure_state = PressureState.ATTACKING
+    # Assign the castle as the group target so individual enemy FSMs can attack it.
+    var castle_node := _get_castle_node()
+    if castle_node != null:
+        for member in get_alive_members():
+            member.group_aggroed = true
+            member.group_target = castle_node
+
+
+func _get_castle_pos() -> Vector2:
+    if is_instance_valid(castle):
+        return castle.global_position
+    return Vector2.ZERO
+
+
+func _get_castle_node() -> Node2D:
+    if is_instance_valid(castle):
+        return castle
+    return null
+
+# -------------------------
 # Internal
 # -------------------------
 
@@ -431,11 +533,14 @@ func _update_dormant_state() -> void:
     if _aggroed:
         return
 
-    # Creep target_position toward player regardless of dormant state.
-    target_position = target_position.move_toward(
-        _player.global_position,
-        chase_speed * dormant_check_interval,
-    )
+    # ADVANCING: creep target_position toward the castle.
+    # HOLDING / ATTACKING: target_position is frozen at the group level.
+    if _pressure_state == PressureState.ADVANCING:
+        var castle_pos := _get_castle_pos()
+        target_position = target_position.move_toward(
+            castle_pos,
+            chase_speed * dormant_check_interval,
+        )
 
     var dist := _player.global_position.distance_to(global_position)
     var should_sleep := dist > dormant_distance

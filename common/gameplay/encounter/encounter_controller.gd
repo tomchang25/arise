@@ -23,6 +23,11 @@ signal group_removed(group: EnemyGroup)
 @export_group("Warning Spawn")
 @export var warning_point_scene: PackedScene = preload("res://common/gameplay/spawning/points/warning_spawn_point.tscn")
 
+@export_group("Slot Manager")
+## Optional DirectionalSlotManager.  When assigned, _request_spawn() uses
+## role-filtered slot-aware spawning and spawn_position_resolver is ignored.
+@export var slot_manager: DirectionalSlotManager
+
 @export_group("Debug")
 @export var print_debug_log := false
 
@@ -43,10 +48,15 @@ var _rng := RandomNumberGenerator.new()
 var _pending_spawns: int = 0
 var _force_kill_pending: bool = false
 
+## dir_idx/lane bookkeeping per live group when slot_manager is active.
+## Key: EnemyGroup  Value: { "dir_idx": int, "lane": int }
+var _group_slot_data: Dictionary = {}
+
 ## Assign a callable from outside to resolve spawn positions.
 ## Signature: func() -> Variant
 ##   Returns Vector2, or a Dictionary with keys "position" (Vector2) and
 ##   optionally "validator" (SpawnPositionValidator), or null on failure.
+## Ignored when slot_manager is assigned.
 ## Example: encounter_controller.spawn_position_resolver = _find_spawn_position
 var spawn_position_resolver: Callable = Callable()
 
@@ -84,6 +94,9 @@ func start(config: EncounterConfig) -> void:
     _config = config
     _rng.randomize()
 
+    if slot_manager != null:
+        slot_manager.set_rng(_rng)
+
     encounter_started.emit()
     _begin_round()
 
@@ -108,6 +121,7 @@ func end(need_cleanup: bool = false) -> void:
     _groups_killed = 0
     _pending_spawns = 0
     _force_kill_pending = false
+    _group_slot_data.clear()
 
     if need_cleanup:
         _clear_all_groups()
@@ -174,6 +188,10 @@ func _run_pacing_tick() -> void:
 
     var active := _active_groups.size() + _pending_spawns
     if _is_kill_budget_exhausted():
+        return
+
+    # Pause when all directional slots are occupied.
+    if slot_manager != null and slot_manager.all_slots_full():
         return
 
     # Within budget: only spawn if below the concurrent cap.
@@ -250,6 +268,49 @@ func _check_round_cleared() -> void:
 
 
 func _request_spawn() -> void:
+    if slot_manager != null:
+        _request_spawn_slotted()
+    else:
+        _request_spawn_legacy()
+
+
+func _request_spawn_slotted() -> void:
+    var role := _pick_role_for_spawn()
+    var slot := slot_manager.claim_slot(role)
+
+    if slot == null:
+        # Preferred role is fully occupied; try the other role.
+        var alt := EnemyGroupProfile.GroupRole.RANGED \
+            if role == EnemyGroupProfile.GroupRole.CLOSED \
+            else EnemyGroupProfile.GroupRole.CLOSED
+        slot = slot_manager.claim_slot(alt)
+        if slot != null:
+            role = alt
+
+    if slot == null:
+        # No lane available for either role — undo the pending increment.
+        _pending_spawns -= 1
+        return
+
+    var dir_idx: int = slot["dir_idx"]
+    var lane: int = slot["lane"]
+    var position: Vector2 = slot["position"]
+
+    var profile := _config.group_table.pick_group_by_role(role, _rng)
+    if profile == null:
+        slot_manager.release_slot(dir_idx, lane)
+        _pending_spawns -= 1
+        Debug.warn("EncounterController: no profile in group table for role %s" % role)
+        return
+
+    SpawnThrottle.enqueue(
+        &"encounter_enemy",
+        _spawn_group_slotted.bind(profile, dir_idx, lane, position),
+        0.1,
+    )
+
+
+func _request_spawn_legacy() -> void:
     var profile := _config.group_table.pick_group(_rng)
     if profile == null:
         Debug.warn("EncounterController: group table returned null profile")
@@ -258,6 +319,74 @@ func _request_spawn() -> void:
     SpawnThrottle.enqueue(&"encounter_enemy", _spawn_group.bind(profile), 0.1)
 
 
+## Slot-aware spawn path.  Calls mark_occupied after the warning resolves,
+## and release_slot on group depleted or removed.
+func _spawn_group_slotted(
+    group_profile: EnemyGroupProfile,
+    dir_idx: int,
+    lane: int,
+    position: Vector2,
+) -> void:
+    if warning_point_scene == null:
+        Debug.warn("EncounterController: warning_point_scene is null — assign it in the editor")
+        slot_manager.release_slot(dir_idx, lane)
+        return
+
+    if not is_instance_valid(enemies_root):
+        Debug.warn("EncounterController: enemies_root is null or freed")
+        slot_manager.release_slot(dir_idx, lane)
+        return
+
+    if not is_instance_valid(enemies_container):
+        Debug.warn("EncounterController: enemies_container is null or freed")
+        slot_manager.release_slot(dir_idx, lane)
+        return
+
+    var action := SpawnEnemyGroupAction.new()
+    action.profile = group_profile
+    action.enemies_container = enemies_container
+
+    var ctx := SpawnContext.create(enemies_root)
+    ctx.rng_seed = _rng.randi()
+    ctx.source_node = self
+
+    var spawned := await SpawnWarningExecutor.execute_at_position(warning_point_scene, action, position, ctx)
+
+    _pending_spawns -= 1
+
+    if not is_instance_valid(self):
+        return
+
+    var group := spawned as EnemyGroup
+    if group == null:
+        slot_manager.release_slot(dir_idx, lane)
+        Debug.warn("EncounterController: warning spawn did not return an EnemyGroup")
+        return
+
+    # A force_kill_all() was called while this spawn was mid-warning — kill on arrival.
+    if _force_kill_pending:
+        slot_manager.release_slot(dir_idx, lane)
+        group.force_kill()
+        if _pending_spawns == 0:
+            _force_kill_pending = false
+        return
+
+    slot_manager.mark_occupied(dir_idx, lane, group)
+    _group_slot_data[group] = { "dir_idx": dir_idx, "lane": lane }
+
+    _active_groups.append(group)
+    group.group_depleted.connect(_on_group_depleted.bind(group))
+    group.group_removed.connect(_on_group_removed.bind(group))
+
+    group_spawned.emit(group)
+
+    if print_debug_log:
+        Debug.log("EncounterController: spawned '%s' at %s (dir=%s lane=%s)" % [
+            group_profile.resource_name, position, dir_idx, lane,
+        ])
+
+
+## Legacy spawn path used when no slot_manager is assigned.
 func _spawn_group(group_profile: EnemyGroupProfile) -> void:
     if warning_point_scene == null:
         Debug.warn("EncounterController: warning_point_scene is null — assign it in the editor")
@@ -328,6 +457,21 @@ func _resolve_spawn_position() -> Variant:
         return null
     return spawn_position_resolver.call()
 
+
+## Picks the role whose lane has fewer total (WARNED + OCCUPIED) slots claimed.
+## Breaks ties randomly.
+func _pick_role_for_spawn() -> EnemyGroupProfile.GroupRole:
+    var closed_occ := slot_manager.get_total_occupancy(DirectionalSlotManager.Lane.CLOSED)
+    var ranged_occ := slot_manager.get_total_occupancy(DirectionalSlotManager.Lane.RANGED)
+    if closed_occ < ranged_occ:
+        return EnemyGroupProfile.GroupRole.CLOSED
+    elif ranged_occ < closed_occ:
+        return EnemyGroupProfile.GroupRole.RANGED
+    else:
+        if _rng.randi() % 2 == 0:
+            return EnemyGroupProfile.GroupRole.CLOSED
+        return EnemyGroupProfile.GroupRole.RANGED
+
 # -------------------------
 # Internal — Group Lifecycle
 # -------------------------
@@ -336,6 +480,7 @@ func _resolve_spawn_position() -> Variant:
 func _on_group_depleted(group: EnemyGroup) -> void:
     _active_groups.erase(group)
     _groups_killed += 1
+    _release_group_slot(group)
 
     group_depleted.emit(group)
 
@@ -347,6 +492,7 @@ func _on_group_depleted(group: EnemyGroup) -> void:
 
 func _on_group_removed(group: EnemyGroup) -> void:
     _active_groups.erase(group)
+    _release_group_slot(group)
 
     group_removed.emit(group)
 
@@ -355,6 +501,16 @@ func _on_group_removed(group: EnemyGroup) -> void:
 
     # Intentionally does NOT call _check_round_cleared.
     # Despawned groups do not count as kills and do not advance the round.
+
+
+func _release_group_slot(group: EnemyGroup) -> void:
+    if slot_manager == null:
+        return
+    if not _group_slot_data.has(group):
+        return
+    var data: Dictionary = _group_slot_data[group]
+    slot_manager.release_slot(data["dir_idx"], data["lane"])
+    _group_slot_data.erase(group)
 
 
 func _clear_all_groups() -> void:
