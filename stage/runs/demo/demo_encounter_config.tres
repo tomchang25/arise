@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://bnght76nweh38" path="res://common/gameplay/encounter/encounter_group_entry.gd" id="1_l6dtp"]
 [ext_resource type="Script" uid="uid://4agufvpi7c62" path="res://common/gameplay/spawning/tables/group_member_entry.gd" id="2_hkh4f"]
 [ext_resource type="PackedScene" uid="uid://buchtmrw1gbrr" path="res://game/actors/enemies/types/ninja/ninja_yellow.tscn" id="4_4loag"]
+[ext_resource type="PackedScene" uid="uid://31x7n43mme6c" path="res://game/actors/enemies/types/ninja/ninja_red.tscn" id="5_red"]
 [ext_resource type="PackedScene" uid="uid://cssols6rmii6m" path="res://game/actors/enemies/enemy_group/enemy_group.tscn" id="4_djk5q"]
 [ext_resource type="Script" uid="uid://dqd4tlipj2ii8" path="res://common/gameplay/spawning/tables/enemy_group_profile.gd" id="40_hsid8"]
 [ext_resource type="Script" uid="uid://sgjwmvk38ykj" path="res://common/gameplay/encounter/encounter_group_table.gd" id="44_oy635"]
@@ -17,6 +18,7 @@ metadata/_custom_type_script = "uid://4agufvpi7c62"
 
 [sub_resource type="Resource" id="Resource_cejx2"]
 script = ExtResource("40_hsid8")
+role = 0
 group_scene = ExtResource("4_djk5q")
 entries = Array[ExtResource("2_hkh4f")]([SubResource("Resource_76gxa")])
 max_total = 20
@@ -29,7 +31,27 @@ group_profile = SubResource("Resource_cejx2")
 
 [sub_resource type="Resource" id="Resource_pay2w"]
 script = ExtResource("44_oy635")
-entries = Array[ExtResource("1_l6dtp")]([SubResource("Resource_ovujv")])
+entries = Array[ExtResource("1_l6dtp")]([SubResource("Resource_ovujv"), SubResource("Resource_rngentry")])
+
+[sub_resource type="Resource" id="Resource_rngmem"]
+script = ExtResource("2_hkh4f")
+scene = ExtResource("5_red")
+min_count = 8
+max_count = 10
+metadata/_custom_type_script = "uid://4agufvpi7c62"
+
+[sub_resource type="Resource" id="Resource_rngprof"]
+script = ExtResource("40_hsid8")
+role = 1
+group_scene = ExtResource("4_djk5q")
+entries = Array[ExtResource("2_hkh4f")]([SubResource("Resource_rngmem")])
+max_total = 10
+formation_type = 2
+metadata/_custom_type_script = "uid://dqd4tlipj2ii8"
+
+[sub_resource type="Resource" id="Resource_rngentry"]
+script = ExtResource("1_l6dtp")
+group_profile = SubResource("Resource_rngprof")
 
 [resource]
 script = ExtResource("45_ylq1s")
