@@ -135,6 +135,12 @@ var _hesitation_remaining: float = 0.0
 
 var _rng := RandomNumberGenerator.new()
 
+## Assigned by EncounterController via setup_slot() after the warning spawn lands.
+## Used to track and enforce the per-direction advancing cap.
+var slot_manager: DirectionalSlotManager = null
+var dir_idx: int = -1
+var _group_role: EnemyGroupProfile.GroupRole = EnemyGroupProfile.GroupRole.CLOSED
+
 # -------------------------
 # Lifecycle
 # -------------------------
@@ -203,6 +209,8 @@ func _physics_process(delta: float) -> void:
 
 func _notification(what: int) -> void:
     if what == NOTIFICATION_PREDELETE:
+        if _pressure_state == PressureState.ADVANCING:
+            _leave_advancing()
         if not _was_depleted:
             group_removed.emit()
 
@@ -294,6 +302,24 @@ func force_kill() -> void:
 func set_formation_type(type: FormationType) -> void:
     formation_type = type
     _rebuild_formation()
+
+
+## Called by EncounterController after the group lands to register its slot manager,
+## direction index, and role for advancing-cap enforcement.
+## If the per-direction advancing cap is already full the group enters HOLDING
+## immediately instead of continuing to advance.
+func setup_slot(
+    manager: DirectionalSlotManager,
+    direction_idx: int,
+    group_role: EnemyGroupProfile.GroupRole,
+) -> void:
+    slot_manager = manager
+    dir_idx = direction_idx
+    _group_role = group_role
+    # The group starts ADVANCING by default — request permission.
+    if _pressure_state == PressureState.ADVANCING:
+        if not slot_manager.request_advancing(dir_idx, _group_role):
+            _enter_holding()
 
 # -------------------------
 # Internal — formation
@@ -391,11 +417,12 @@ func _update_pressure_state() -> void:
     match _pressure_state:
         PressureState.ADVANCING:
             if dist <= hold_distance:
+                _leave_advancing()
                 _enter_holding()
 
         PressureState.HOLDING:
             if dist > hold_distance + hysteresis_margin:
-                _pressure_state = PressureState.ADVANCING
+                _enter_advancing()
             elif dist <= attack_distance and _hesitation_remaining <= 0.0:
                 _enter_attacking()
 
@@ -403,9 +430,24 @@ func _update_pressure_state() -> void:
             pass  # Terminal — no outgoing transitions.
 
 
+func _enter_advancing() -> void:
+    if slot_manager != null and dir_idx >= 0:
+        if not slot_manager.request_advancing(dir_idx, _group_role):
+            # Cap hit — stay in or re-enter HOLDING.
+            _enter_holding()
+            return
+    _pressure_state = PressureState.ADVANCING
+
+
 func _enter_holding() -> void:
     _pressure_state = PressureState.HOLDING
     _hesitation_remaining = _rng.randf_range(hesitation_min, hesitation_max)
+
+
+func _leave_advancing() -> void:
+    if slot_manager == null or dir_idx < 0:
+        return
+    slot_manager.notify_left_advancing(dir_idx, _group_role)
 
 
 func _enter_attacking() -> void:

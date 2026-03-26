@@ -284,7 +284,7 @@ func _request_spawn_slotted() -> void:
         profile = _config.group_table.pick_group_by_role(role, _rng)
         if profile == null:
             # No profiles for the preferred role — release and fall through to alt.
-            slot_manager.release_slot(slot["dir_idx"], slot["lane"])
+            slot_manager.release_slot(slot["dir_idx"], slot["lane"], slot["slot_idx"])
             slot = null
 
     # Fall back to the other role when the preferred slot was full or had no profiles.
@@ -299,7 +299,7 @@ func _request_spawn_slotted() -> void:
 
     if slot == null or profile == null:
         if slot != null:
-            slot_manager.release_slot(slot["dir_idx"], slot["lane"])
+            slot_manager.release_slot(slot["dir_idx"], slot["lane"], slot["slot_idx"])
         _pending_spawns -= 1
         if profile == null:
             Debug.warn("EncounterController: no profile in group table for any available role")
@@ -307,11 +307,12 @@ func _request_spawn_slotted() -> void:
 
     var dir_idx: int = slot["dir_idx"]
     var lane: int = slot["lane"]
+    var slot_idx: int = slot["slot_idx"]
     var position: Vector2 = slot["position"]
 
     SpawnThrottle.enqueue(
         &"encounter_enemy",
-        _spawn_group_slotted.bind(profile, dir_idx, lane, position),
+        _spawn_group_slotted.bind(profile, dir_idx, lane, slot_idx, position, role),
         0.1,
     )
 
@@ -331,21 +332,23 @@ func _spawn_group_slotted(
     group_profile: EnemyGroupProfile,
     dir_idx: int,
     lane: int,
+    slot_idx: int,
     position: Vector2,
+    role: EnemyGroupProfile.GroupRole,
 ) -> void:
     if warning_point_scene == null:
         Debug.warn("EncounterController: warning_point_scene is null — assign it in the editor")
-        slot_manager.release_slot(dir_idx, lane)
+        slot_manager.release_slot(dir_idx, lane, slot_idx)
         return
 
     if not is_instance_valid(enemies_root):
         Debug.warn("EncounterController: enemies_root is null or freed")
-        slot_manager.release_slot(dir_idx, lane)
+        slot_manager.release_slot(dir_idx, lane, slot_idx)
         return
 
     if not is_instance_valid(enemies_container):
         Debug.warn("EncounterController: enemies_container is null or freed")
-        slot_manager.release_slot(dir_idx, lane)
+        slot_manager.release_slot(dir_idx, lane, slot_idx)
         return
 
     var action := SpawnEnemyGroupAction.new()
@@ -365,20 +368,21 @@ func _spawn_group_slotted(
 
     var group := spawned as EnemyGroup
     if group == null:
-        slot_manager.release_slot(dir_idx, lane)
+        slot_manager.release_slot(dir_idx, lane, slot_idx)
         Debug.warn("EncounterController: warning spawn did not return an EnemyGroup")
         return
 
     # A force_kill_all() was called while this spawn was mid-warning — kill on arrival.
     if _force_kill_pending:
-        slot_manager.release_slot(dir_idx, lane)
+        slot_manager.release_slot(dir_idx, lane, slot_idx)
         group.force_kill()
         if _pending_spawns == 0:
             _force_kill_pending = false
         return
 
-    slot_manager.mark_occupied(dir_idx, lane, group)
-    _group_slot_data[group] = { "dir_idx": dir_idx, "lane": lane }
+    slot_manager.mark_occupied(dir_idx, lane, slot_idx, group)
+    _group_slot_data[group] = { "dir_idx": dir_idx, "lane": lane, "slot_idx": slot_idx }
+    group.setup_slot(slot_manager, dir_idx, role)
 
     _active_groups.append(group)
     group.group_depleted.connect(_on_group_depleted.bind(group))
@@ -515,7 +519,7 @@ func _release_group_slot(group: EnemyGroup) -> void:
     if not _group_slot_data.has(group):
         return
     var data: Dictionary = _group_slot_data[group]
-    slot_manager.release_slot(data["dir_idx"], data["lane"])
+    slot_manager.release_slot(data["dir_idx"], data["lane"], data["slot_idx"])
     _group_slot_data.erase(group)
 
 
