@@ -347,6 +347,11 @@ func _update_aggro_state() -> void:
         return
 
     if _rallying:
+        _aggroed = false
+        for unit in get_all_units():
+            (unit as Army).group_aggroed = false
+            (unit as Army).group_target = null
+
         return
 
     if not _aggroed:
