@@ -14,6 +14,8 @@ signal died(context)
 @export_group("Modules — Combat")
 @export var hurtbox: Hurtbox
 @export var damage_receiver: DamageReceiverModule
+@export var hit_feedback: HitFeedbackModule
+@export var damage_number: DamageNumberModule
 @export var health_bar: HealthBarModule
 
 # -------------------------
@@ -23,7 +25,7 @@ signal died(context)
 @export_group("Stats")
 ## Starting health pool.  Assign a large value to make the castle durable.
 @export var max_health: float = 10000.0
-@export var faction: Stats.Faction = Stats.Faction.NEUTRAL
+@export var faction: Stats.Faction = Stats.Faction.PLAYER
 
 # -------------------------
 # Runtime state
@@ -52,6 +54,10 @@ func _auto_wire_nodes() -> void:
         hurtbox = find_child("Hurtbox", true, false) as Hurtbox
     if not damage_receiver:
         damage_receiver = find_child("DamageReceiverModule", true, false) as DamageReceiverModule
+    if not hit_feedback:
+        hit_feedback = find_child("HitFeedbackModule", true, false) as HitFeedbackModule
+    if not damage_number:
+        damage_number = find_child("DamageNumberModule", true, false) as DamageNumberModule
     if not health_bar:
         health_bar = find_child("HealthBar", true, false) as HealthBarModule
 
@@ -73,6 +79,13 @@ func _bind_modules() -> void:
 
         if not damage_receiver.died.is_connected(_on_died):
             damage_receiver.died.connect(_on_died)
+
+    if hit_feedback:
+        hit_feedback.stats = stats
+        hit_feedback.damage_receiver = damage_receiver
+
+    if damage_number:
+        damage_number.damage_receiver = damage_receiver
 
     if health_bar:
         health_bar.bind(stats)

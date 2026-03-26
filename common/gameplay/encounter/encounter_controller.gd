@@ -277,31 +277,37 @@ func _request_spawn() -> void:
 func _request_spawn_slotted() -> void:
     var role := _pick_role_for_spawn()
     var slot := slot_manager.claim_slot(role)
+    var profile: EnemyGroupProfile = null
 
+    # Try preferred role first.
+    if slot != null:
+        profile = _config.group_table.pick_group_by_role(role, _rng)
+        if profile == null:
+            # No profiles for the preferred role — release and fall through to alt.
+            slot_manager.release_slot(slot["dir_idx"], slot["lane"])
+            slot = null
+
+    # Fall back to the other role when the preferred slot was full or had no profiles.
     if slot == null:
-        # Preferred role is fully occupied; try the other role.
         var alt := EnemyGroupProfile.GroupRole.RANGED \
             if role == EnemyGroupProfile.GroupRole.CLOSED \
             else EnemyGroupProfile.GroupRole.CLOSED
         slot = slot_manager.claim_slot(alt)
         if slot != null:
             role = alt
+            profile = _config.group_table.pick_group_by_role(role, _rng)
 
-    if slot == null:
-        # No lane available for either role — undo the pending increment.
+    if slot == null or profile == null:
+        if slot != null:
+            slot_manager.release_slot(slot["dir_idx"], slot["lane"])
         _pending_spawns -= 1
+        if profile == null:
+            Debug.warn("EncounterController: no profile in group table for any available role")
         return
 
     var dir_idx: int = slot["dir_idx"]
     var lane: int = slot["lane"]
     var position: Vector2 = slot["position"]
-
-    var profile := _config.group_table.pick_group_by_role(role, _rng)
-    if profile == null:
-        slot_manager.release_slot(dir_idx, lane)
-        _pending_spawns -= 1
-        Debug.warn("EncounterController: no profile in group table for role %s" % role)
-        return
 
     SpawnThrottle.enqueue(
         &"encounter_enemy",
