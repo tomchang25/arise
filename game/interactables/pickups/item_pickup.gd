@@ -2,7 +2,6 @@ class_name ItemPickup
 extends BasePickup
 
 const MAX_ICON_SIZE := Vector2(16.0, 16.0)
-const DEFAULT_COLLISION_RADIUS := 8.0
 
 @export_group("Item")
 @export var item_data: ItemData:
@@ -18,7 +17,6 @@ const DEFAULT_COLLISION_RADIUS := 8.0
 @export_group("Dependencies")
 @export var sprite_node: Sprite2D
 @export var label_node: Label
-@export var collision_shape: CollisionShape2D
 
 # -------------------------
 # Lifecycle
@@ -81,7 +79,6 @@ func _apply_to_collector(_collector: Node, pickup_collector_module: PickupCollec
 func _refresh_visual() -> void:
     _refresh_sprite()
     _refresh_label()
-    _refresh_collision()
 
 
 func _refresh_sprite() -> void:
@@ -110,12 +107,6 @@ func _refresh_label() -> void:
         label_node.text = "%s x%d" % [item_data.label, amount]
     else:
         label_node.text = item_data.label
-
-
-func _refresh_collision() -> void:
-    if collision_shape != null and collision_shape.shape is CircleShape2D:
-        var circle_shape := collision_shape.shape as CircleShape2D
-        circle_shape.radius = DEFAULT_COLLISION_RADIUS
 
 
 func _fit_sprite_to_max_size(target: Sprite2D, max_size: Vector2) -> void:

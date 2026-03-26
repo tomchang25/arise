@@ -460,8 +460,6 @@ mana = 100.0
 base_damage = 100.0
 metadata/_custom_type_script = "uid://bkgf2cii3bfri"
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_fxn5h"]
-radius = 48.0
 
 [node name="Player" type="CharacterBody2D" unique_id=1080162393 node_paths=PackedStringArray("sprite", "hurtbox", "damage_receiver", "hit_feedback", "damage_number", "combat_module", "reach_detection", "movement_module", "animation_module", "pickup_collector", "state_machine") groups=["player"]]
 collision_mask = 4
@@ -549,19 +547,12 @@ radius = 50.0
 shape = SubResource("CircleShape2D_0nwbe")
 debug_color = Color(0, 0.101960786, 0.69803923, 0.11764706)
 
-[node name="PickupCollectorModule" type="Area2D" parent="Module/DetectionPivot" unique_id=639109990 node_paths=PackedStringArray("owner_body", "inventory_owner", "magnet_shape")]
-collision_layer = 0
-collision_mask = 2147483648
+[node name="PickupCollectorModule" type="Node2D" parent="Module/DetectionPivot" unique_id=639109990 node_paths=PackedStringArray("owner_body", "inventory_owner")]
 script = ExtResource("13_i5w6q")
 owner_body = NodePath("../../..")
 stats = SubResource("Resource_5qatl")
 inventory_owner = NodePath("../../..")
-magnet_shape = NodePath("CollisionShape2D")
 metadata/_custom_type_script = "uid://ce4d3x6pliud6"
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Module/DetectionPivot/PickupCollectorModule" unique_id=1905794882]
-shape = SubResource("CircleShape2D_fxn5h")
-debug_color = Color(0.20784314, 0.15294118, 0.023529412, 0.18039216)
 
 [node name="MovementModule" type="Node" parent="Module" unique_id=658364954 node_paths=PackedStringArray("character")]
 script = ExtResource("9_1bvv4")

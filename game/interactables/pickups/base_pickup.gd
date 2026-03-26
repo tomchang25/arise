@@ -1,5 +1,5 @@
 class_name BasePickup
-extends Area2D
+extends Node2D
 
 signal collected(collector: Node, pickup_collector_module: PickupCollectorModule)
 signal despawned
@@ -39,14 +39,13 @@ var _magnet_target: PickupCollectorModule
 
 
 func _ready() -> void:
-    if not body_entered.is_connected(_on_body_entered):
-        body_entered.connect(_on_body_entered)
-
-    if not area_entered.is_connected(_on_area_entered):
-        area_entered.connect(_on_area_entered)
-
+    PickupSpatialHash.register(self)
     _init_runtime_state()
     _refresh_runtime_state()
+
+
+func _exit_tree() -> void:
+    PickupSpatialHash.unregister(self)
 
 
 func _physics_process(delta: float) -> void:
@@ -243,21 +242,4 @@ func _update_magnet(delta: float) -> void:
         return
 
     global_position = global_position.move_toward(target_position, magnet_speed * delta)
-
-# -------------------------
-# Signals / Callbacks
-# -------------------------
-
-
-func _on_body_entered(body: Node) -> void:
-    if _is_collected:
-        return
-
-    try_collect(body)
-
-
-func _on_area_entered(area: Area2D) -> void:
-    if _is_collected:
-        return
-
-    try_collect(area)
+    PickupSpatialHash.move(self, global_position)

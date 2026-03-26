@@ -3,18 +3,10 @@
 [ext_resource type="Script" uid="uid://du3sg6ghqnqr1" path="res://game/interactables/pickups/resource_pickup.gd" id="1_dutky"]
 [ext_resource type="Resource" uid="uid://byvwlcsd2n5pv" path="res://common/audio/presets/sfx/default_pickup_audio.tres" id="2_flpth"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_flpth"]
-
-[node name="ResourcePickup" type="Area2D" unique_id=815153095 node_paths=PackedStringArray("sprite_node", "collision_shape")]
-collision_layer = 2147483648
-collision_mask = 2147483648
+[node name="ResourcePickup" type="Node2D" unique_id=815153095 node_paths=PackedStringArray("sprite_node")]
 script = ExtResource("1_dutky")
 sprite_node = NodePath("Sprite2D")
-collision_shape = NodePath("CollisionShape2D")
 use_lifetime = true
 collect_audio_event = ExtResource("2_flpth")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=2100141285]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=575429486]
-shape = SubResource("CircleShape2D_flpth")
