@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://bl6qc51imn6xk" path="res://game/ui/hud/main_hud/main_hud.tscn" id="7_mainhud"]
 [ext_resource type="PackedScene" uid="uid://dnmq30kfm6svo" path="res://game/summon/summon_manager.tscn" id="8_summon"]
 [ext_resource type="PackedScene" uid="uid://b5mwmarkvp2t8" path="res://game/actors/summons/army_group/army_group.tscn" id="10_armygroup"]
+[ext_resource type="Script" path="res://game/ui/hud/summon_hud/group_cursor_overlay.gd" id="11_cursor"]
 
 [node name="Demo" type="Node2D" unique_id=535920825 node_paths=PackedStringArray("player", "player_spawn", "enemies_root", "debug_label", "encounter_controller", "despawn_controller", "wave_defense_controller", "main_hud")]
 script = ExtResource("1_a6hy3")
@@ -112,3 +113,6 @@ spawn_position_offset = Vector2(-40, -40)
 [node name="ArmyGroup4" parent="." unique_id=400000004 instance=ExtResource("10_armygroup")]
 group_id = 4
 spawn_position_offset = Vector2(-40, -40)
+
+[node name="GroupCursorOverlay" type="Node2D" parent="." unique_id=400000005]
+script = ExtResource("11_cursor")
