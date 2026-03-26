@@ -21,7 +21,7 @@ var _enabled: bool = true
 
 @export_group("Magnet")
 @export var magnet_enabled := true
-@export var magnet_range: float = 48.0:
+@export var magnet_range: float = 64.0:
     set(value):
         magnet_range = max(value, 0.0)
 
@@ -304,7 +304,6 @@ func _cleanup_invalid_pickups() -> void:
 
 func _poll_pickups() -> void:
     var nearby := PickupSpatialHash.query_nearby(global_position, magnet_range)
-
     # Add newly discovered pickups that are within exact range.
     for entry in nearby:
         if not (entry is BasePickup):

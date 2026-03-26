@@ -39,7 +39,6 @@ var _magnet_target: PickupCollectorModule
 
 
 func _ready() -> void:
-    PickupSpatialHash.register(self)
     _init_runtime_state()
     _refresh_runtime_state()
 
@@ -62,6 +61,10 @@ func _physics_process(delta: float) -> void:
     if magnet_enabled:
         _update_magnet(delta)
 
+
+func setup() -> void:
+    # Register in the spatial hash for pickup discovery.
+    PickupSpatialHash.register(self)
 # -------------------------
 # Runtime state
 # -------------------------

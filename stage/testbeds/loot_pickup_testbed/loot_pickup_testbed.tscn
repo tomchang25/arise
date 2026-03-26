@@ -21,7 +21,6 @@ metadata/_custom_type_script = "uid://bkgf2cii3bfri"
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6me2w"]
 size = Vector2(12, 12)
 
-
 [node name="LootPickupTestbed" type="Node2D" unique_id=1798922732 node_paths=PackedStringArray("dummy", "player", "pickups_root", "world_root", "dummy_spawn", "player_spawn", "debug_label")]
 script = ExtResource("1_uqnsq")
 dummy = NodePath("World/Dummy")

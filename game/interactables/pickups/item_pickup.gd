@@ -45,6 +45,7 @@ func reset() -> void:
 
 
 func setup_item(data: ItemData, stack_amount: int) -> void:
+    setup()
     item_data = data
     amount = max(stack_amount, 1)
     _refresh_visual()

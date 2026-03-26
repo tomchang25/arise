@@ -43,6 +43,7 @@ func reset() -> void:
 
 
 func setup_resource(data: ResourceData, stack_amount: int) -> void:
+    setup()
     resource_data = data
     amount = max(stack_amount, 1)
     _refresh_visual()

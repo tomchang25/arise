@@ -9,10 +9,10 @@ extends Node
 var cell_size: float = 64.0
 
 # _cells maps Vector2i → Array[Node2D]
-var _cells: Dictionary = {}
+var _cells: Dictionary = { }
 
 # Maps each registered pickup to its current cell key for cheap removal.
-var _pickup_to_cell: Dictionary = {}
+var _pickup_to_cell: Dictionary = { }
 
 # ---------------------------------------------------------------------------
 # Public API
@@ -69,7 +69,6 @@ func query_nearby(pos: Vector2, radius: float) -> Array:
                     results.append_array(_cells[key])
 
     return results
-
 
 # ---------------------------------------------------------------------------
 # Internal helpers
