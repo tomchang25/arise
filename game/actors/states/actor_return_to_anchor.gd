@@ -20,7 +20,16 @@ extends ActorState
 ## Timeout check
 @export var return_timeout: float = 10.0
 
+## Minimum distance (units/sec) the actor must be moving to skip force-arrive
+## when the timeout fires. If the actor is making meaningful progress it gets
+## another full timeout window instead of being teleported.
+@export var min_progress_speed: float = 15.0
+
 var _elapsed: float = 0.0
+
+## Accumulated displacement over the current timeout window, sampled each frame.
+var _window_distance: float = 0.0
+var _last_position: Vector2 = Vector2.ZERO
 
 
 func _init() -> void:
@@ -30,6 +39,8 @@ func _init() -> void:
 func _enter() -> void:
     actor.play_animation(Actor.ANIM_MOVE)
     _elapsed = 0.0
+    _window_distance = 0.0
+    _last_position = actor.global_position
     actor.navigation_finished.connect(_on_navigation_finished, CONNECT_ONE_SHOT)
 
 
@@ -45,6 +56,10 @@ func _update(delta: float) -> void:
     if vel.length() > 0.1:
         actor.set_facing_direction(vel, Actor.ANIM_MOVE)
 
+    # Accumulate displacement for progress tracking.
+    _window_distance += actor.global_position.distance_to(_last_position)
+    _last_position = actor.global_position
+
     # Re-engage check
     var dist_to_anchor := actor.get_distance_to_anchor()
     if dist_to_anchor <= re_engage_distance and actor.is_aggro_active():
@@ -55,6 +70,14 @@ func _update(delta: float) -> void:
     if return_timeout > 0.0:
         _elapsed += delta
         if _elapsed >= return_timeout:
+            # Skip force-arrive if the actor is making meaningful progress.
+            var speed_this_window := _window_distance / _elapsed
+            if speed_this_window >= min_progress_speed:
+                # Still moving — give another full window.
+                _elapsed = 0.0
+                _window_distance = 0.0
+                _last_position = actor.global_position
+                return
             _force_arrive()
             return
 

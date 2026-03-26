@@ -174,4 +174,3 @@ move_update_interval = 1.0
 
 [node name="ReturnToAnchor" type="Node" parent="StateMachine" unique_id=1469795797]
 script = ExtResource("30_back")
-re_engage_distance = 50.0

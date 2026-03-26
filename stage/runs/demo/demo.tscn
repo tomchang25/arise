@@ -10,10 +10,9 @@
 [ext_resource type="PackedScene" uid="uid://bl6qc51imn6xk" path="res://game/ui/hud/main_hud/main_hud.tscn" id="7_mainhud"]
 [ext_resource type="PackedScene" uid="uid://dnmq30kfm6svo" path="res://game/summon/summon_manager.tscn" id="8_summon"]
 [ext_resource type="PackedScene" uid="uid://b5mwmarkvp2t8" path="res://game/actors/summons/army_group/army_group.tscn" id="10_armygroup"]
-[ext_resource type="Script" path="res://game/ui/hud/summon_hud/group_cursor_overlay.gd" id="11_cursor"]
-[ext_resource type="PackedScene" uid="uid://nyl4e11rzn3xl" path="res://game/actors/castle/castle.tscn" id="12_cstl"]
-[ext_resource type="Script" uid="uid://o20k4y8fg5tnk" path="res://common/gameplay/encounter/directional_slot_manager.gd" id="13_dslm"]
-
+[ext_resource type="Script" uid="uid://cgg1iy7pqgdb5" path="res://game/ui/hud/summon_hud/group_cursor_overlay.gd" id="11_cursor"]
+[ext_resource type="PackedScene" uid="uid://ceeimva1b2hob" path="res://game/actors/castle/castle.tscn" id="12_cstl"]
+[ext_resource type="Script" uid="uid://ceq7e52rapnw5" path="res://common/gameplay/encounter/directional_slot_manager.gd" id="13_dslm"]
 
 [node name="Demo" type="Node2D" unique_id=535920825 node_paths=PackedStringArray("player", "player_spawn", "enemies_root", "debug_label", "encounter_controller", "despawn_controller", "wave_defense_controller", "main_hud")]
 script = ExtResource("1_a6hy3")
@@ -78,12 +77,10 @@ metadata/_custom_type_script = "uid://bwm8u3xypysu8"
 script = ExtResource("6_wvdef")
 encounter_controller = NodePath("../EncounterController")
 base_encounter_config = ExtResource("2_60flp")
-base_groups_per_wave = 5
-groups_increment_per_wave = 5
 
-[node name="Castle" parent="." instance=ExtResource("12_cstl")]
+[node name="Castle" parent="." unique_id=1162592973 instance=ExtResource("12_cstl")]
 
-[node name="DirectionalSlotManager" type="Node" parent="." node_paths=PackedStringArray("castle")]
+[node name="DirectionalSlotManager" type="Node" parent="." unique_id=604481275 node_paths=PackedStringArray("castle")]
 script = ExtResource("13_dslm")
 castle = NodePath("../Castle")
 

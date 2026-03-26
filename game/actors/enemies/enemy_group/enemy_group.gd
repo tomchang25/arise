@@ -54,7 +54,7 @@ enum PressureState { HOLDING, STANDBY, ENGAGE }
 
 ## Speed (units/sec) at which target_position creeps toward the castle when
 ## STANDBY and not aggroed.
-@export var chase_speed: float = 5.0
+@export var chase_speed: float = 40.0
 
 # -------------------------
 # Exports — Pressure state
@@ -306,9 +306,9 @@ func set_formation_type(type: FormationType) -> void:
 ## direction index, and role for tier-cap enforcement.
 ## The group starts in HOLDING and will poll for STANDBY promotion on the next tick.
 func setup_slot(
-    manager: DirectionalSlotManager,
-    direction_idx: int,
-    group_role: EnemyGroupProfile.GroupRole,
+        manager: DirectionalSlotManager,
+        direction_idx: int,
+        group_role: EnemyGroupProfile.GroupRole,
 ) -> void:
     slot_manager = manager
     dir_idx = direction_idx
@@ -409,13 +409,11 @@ func _update_pressure_state() -> void:
     match _pressure_state:
         PressureState.HOLDING:
             _try_promote_to_standby()
-
         PressureState.STANDBY:
             if _hesitation_remaining <= 0.0:
                 _try_promote_to_engage()
-
         PressureState.ENGAGE:
-            pass  # Terminal — no outgoing transitions.
+            pass # Terminal — no outgoing transitions.
 
 
 func _try_promote_to_standby() -> void:
@@ -517,7 +515,9 @@ func _update_aggro_state() -> void:
     if not _player:
         return
 
-    if _returning_to_spawn:
+    # In ENGAGE state, ignore returning_to_spawn — the castle is a fixed target.
+    # Even if pushed away, the group must keep attacking rather than stand idle.
+    if _returning_to_spawn and _pressure_state != PressureState.ENGAGE:
         return
 
     var dist := _player.global_position.distance_to(global_position)
@@ -528,15 +528,24 @@ func _update_aggro_state() -> void:
         _assign_targets_to_members()
 
     elif _aggroed:
-        # Deaggro if no targets remain in detection range.
         if detection_module == null or detection_module.get_closest_target(false) == null:
             _aggroed = false
-            _returning_to_spawn = true
-            for member in get_alive_members():
-                member.group_aggroed = false
-                member.group_target = null
+            # In ENGAGE state, do not return_to_spawn on deaggro —
+            # fall back to the castle as the attack target instead.
+            if _pressure_state != PressureState.ENGAGE:
+                _returning_to_spawn = true
+                for member in get_alive_members():
+                    member.group_aggroed = false
+                    member.group_target = null
+            else:
+                # Re-assign castle in case the target was cleared by deaggro.
+                var castle_node := _get_castle_node()
+                if castle_node != null:
+                    for member in get_alive_members():
+                        member.group_aggroed = true
+                        _assign_targets_to_members()
+                        # member.group_target = castle_node
         else:
-            # Re-assign each tick so members switch target if a closer one appears.
             _assign_targets_to_members()
 
 
@@ -562,6 +571,9 @@ func _get_closest_target_to(origin: Vector2, targets: Array[Node2D]) -> Node2D:
 
 func _check_leash() -> void:
     if leash_distance <= 0.0:
+        return
+
+    if _pressure_state == PressureState.ENGAGE:
         return
 
     # Use group center (global_position) as the leash reference — if the whole

@@ -1,6 +1,5 @@
 class_name DirectionalSlotManager
 extends Node
-
 ## Manages 8 directional slots (N=0, NE=1, E=2, SE=3, S=4, SW=5, W=6, NW=7)
 ## centered on the Castle.
 ##
@@ -25,11 +24,14 @@ const LANE_COUNT := 3
 # Exports
 # -------------------------
 
+@export_group("Slot Spreading")
+@export var slot_spread_angle: float = 0.15
+
 @export_group("Ring")
 ## Minimum distance from the castle at which groups spawn.
-@export var min_radius: float = 300.0
+@export var min_radius: float = 600.0
 ## Maximum distance from the castle at which groups spawn.
-@export var max_radius: float = 500.0
+@export var max_radius: float = 750.0
 
 @export_group("Lane Capacities")
 @export var closed_lane_capacity: int = 2
@@ -38,12 +40,12 @@ const LANE_COUNT := 3
 
 @export_group("Distances")
 ## Distance from the castle at which STANDBY groups hold position.
-@export var standby_distance: float = 150.0
+@export var standby_distance: float = 450.0
 ## Distance from the castle at which ENGAGE groups attack.
-@export var engage_distance: float = 50.0
+@export var engage_distance: float = 75.0
 ## Informational: approximate spawn radius — EnemyGroup can read this to
 ## know how far it started from the castle.
-@export var hold_distance: float = 300.0
+@export var hold_distance: float = 600.0
 
 @export_group("Per-Direction Caps")
 ## Maximum number of groups per direction that may be in STANDBY.
@@ -51,13 +53,13 @@ const LANE_COUNT := 3
 ## Maximum number of CLOSED groups per direction that may be in ENGAGE.
 @export var max_advancing_closed: int = 2
 ## Maximum number of RANGED groups per direction that may be in ENGAGE.
-@export var max_advancing_ranged: int = 8
+@export var max_advancing_ranged: int = 2
 
 @export_group("Global Caps")
 ## Maximum number of groups across all directions in STANDBY simultaneously.
-@export var max_global_standby: int = 8
+@export var max_global_standby: int = 16
 ## Maximum number of groups across all directions in ENGAGE simultaneously.
-@export var max_global_engage: int = 4
+@export var max_global_engage: int = 8
 
 @export_group("Castle")
 ## Reference to the Castle node. Position is read at claim time.
@@ -120,7 +122,7 @@ func _ready() -> void:
         ]
         _free_lane_roles[i] = _make_int_array(free_lane_capacity, -1)
         _standby_count[i] = 0
-        _advancing_count[i] = [0, 0]  # index 0 = CLOSED, index 1 = RANGED
+        _advancing_count[i] = [0, 0] # index 0 = CLOSED, index 1 = RANGED
 
 # -------------------------
 # Public API
@@ -178,7 +180,7 @@ func claim_slot(role: EnemyGroupProfile.GroupRole) -> Variant:
                 "dir_idx": dir_idx,
                 "lane": dedicated_lane,
                 "slot_idx": s,
-                "position": _compute_spawn_position(dir_idx),
+                "position": _compute_spawn_position(dir_idx, dedicated_lane, s),
             }
 
     # Fall back to FREE lane.
@@ -192,7 +194,7 @@ func claim_slot(role: EnemyGroupProfile.GroupRole) -> Variant:
                 "dir_idx": dir_idx,
                 "lane": Lane.FREE,
                 "slot_idx": s,
-                "position": _compute_spawn_position(dir_idx),
+                "position": _compute_spawn_position(dir_idx, Lane.FREE, s),
             }
 
     # Should not be reached when _remaining_capacity_for_role() is consistent.
@@ -335,11 +337,25 @@ func _remaining_capacity_for_role(dir_idx: int, role: EnemyGroupProfile.GroupRol
     return count
 
 
-## Computes a spawn position along the outward angle of dir_idx,
-## sampled within [min_radius, max_radius] around the castle.
+## Computes a spawn position for a specific lane/slot within dir_idx.
+## Slots are spread around the outward angle by slot_spread_angle per step,
+## so groups in the same direction don't all pile onto the same line.
 ## Direction 0 = N (straight up), stepping clockwise by 45° per index.
-func _compute_spawn_position(dir_idx: int) -> Vector2:
-    var angle := dir_idx * (PI / 4.0) - PI / 2.0
+func _compute_spawn_position(dir_idx: int, lane: int = 0, slot_idx: int = 0) -> Vector2:
+    var base_angle := dir_idx * (PI / 4.0) - PI / 2.0
+
+    # Give each (lane, slot) a unique linear index so offsets don't collide.
+    # Layout: [closed slots | ranged slots | free slots]
+    var capacities := [closed_lane_capacity, ranged_lane_capacity, free_lane_capacity]
+    var linear_idx := slot_idx
+    for l in range(lane):
+        linear_idx += capacities[l]
+
+    # Total slots in this direction; spread them symmetrically around base_angle.
+    var total_slots := closed_lane_capacity + ranged_lane_capacity + free_lane_capacity
+    var offset := (linear_idx - (total_slots - 1) * 0.5) * slot_spread_angle
+    var angle := base_angle + offset
+
     var radius: float
     if _rng != null:
         radius = _rng.randf_range(min_radius, max_radius)
