@@ -29,6 +29,7 @@ var use_path := false
 var crowd_block_ratio: float = 0.0
 
 var _computed_velocity: Vector2 = Vector2.ZERO
+var _separation_target: Vector2 = Vector2.ZERO
 
 # -------------------------
 # Lifecycle
@@ -58,6 +59,9 @@ func _physics_process(delta: float) -> void:
 
     knockback_velocity = knockback_velocity.move_toward(Vector2.ZERO, knockback_friction * delta)
 
+    var sep_target := _separation_target.limit_length(max_separation_speed)
+    separation_velocity = separation_velocity.lerp(sep_target, 1.0 - exp(-15.0 * delta))
+
     _computed_velocity = current_move + knockback_velocity + separation_velocity
 
     if use_direct_position:
@@ -81,6 +85,7 @@ func reset() -> void:
     use_manual = true
     use_path = false
     crowd_block_ratio = 0.0
+    _separation_target = Vector2.ZERO
 
 
 func set_enabled(value: bool) -> void:
@@ -199,8 +204,7 @@ func clear_knockback() -> void:
 
 
 func set_separation(velocity: Vector2) -> void:
-    var target := velocity.limit_length(max_separation_speed)
-    separation_velocity = separation_velocity.lerp(target, 0.3)
+    _separation_target = velocity
 
 
 func set_crowd_block_ratio(value: float) -> void:

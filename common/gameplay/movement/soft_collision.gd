@@ -77,6 +77,8 @@ var _enabled: bool = true
 var _cached_separation: Vector2 = Vector2.ZERO
 var _cached_crowd_block: float = 0.0
 
+var _last_pos: Vector2 = Vector2.ZERO
+
 # Accumulated time since the last tick recalculation.
 var _tick_accumulator: float = 0.0
 
@@ -132,16 +134,20 @@ func _physics_process(delta: float) -> void:
         return
 
     # Always keep the hash position current so neighbours query correctly.
-    SpatialHash.move(character, character.global_position)
+    var pos := character.global_position
+    if pos != _last_pos:
+        SpatialHash.move(character, pos)
+        _last_pos = pos
 
     if tick_enabled:
         _tick_accumulator += delta
         if _tick_accumulator >= tick_interval:
             _tick_accumulator -= tick_interval
             _recalculate_separation()
-        # Apply the most recently cached values every frame for smooth motion.
-        movement_module.set_separation(_cached_separation)
-        movement_module.set_crowd_block_ratio(_cached_crowd_block)
+
+            # Apply the most recently cached values every frame for smooth motion.
+            movement_module.set_separation(_cached_separation)
+            movement_module.set_crowd_block_ratio(_cached_crowd_block)
     else:
         # Original behaviour: recalculate every physics frame.
         _recalculate_separation()
@@ -172,10 +178,13 @@ func _recalculate_separation() -> void:
                 continue
 
         var diff: Vector2 = character.global_position - body.global_position
-        var dist: float = diff.length()
 
-        if dist >= min_distance:
+        var dist_sq := diff.length_squared()
+        var min_sq := min_distance * min_distance
+        if dist_sq >= min_sq:
             continue
+
+        var dist := sqrt(dist_sq)
 
         var direction: Vector2
         if dist > 0.0:
