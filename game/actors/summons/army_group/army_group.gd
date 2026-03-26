@@ -78,7 +78,18 @@ var _aggroed: bool = false
 var _aggro_timer: float = 0.0
 const AGGRO_CHECK_INTERVAL := 0.1
 
-var _returning_to_spawn: bool = false
+## True while the group is actively rallying back toward _anchor after a leash
+## break or an explicit set_target / reset_to_spawn call.
+var _rallying: bool = false
+
+## Stuck-detection for _rallying: records the group's distance to _anchor the
+## last time the stuck-timer was sampled, and accumulates time since that sample.
+var _rally_stuck_timer: float = 0.0
+var _rally_last_dist: float = INF
+## How long (seconds) distance must be unchanged before we force-cancel the rally.
+const RALLY_STUCK_TIMEOUT := 5.0
+## Minimum distance improvement required to reset the stuck-timer.
+const RALLY_STUCK_MIN_DELTA := 4.0
 
 # -------------------------
 # Lifecycle
@@ -128,9 +139,25 @@ func _physics_process(delta: float) -> void:
         # Leash check runs after position update so global_position is current.
         _check_leash()
 
-        if _returning_to_spawn:
-            if global_position.distance_to(_anchor) < (leash_distance / 4.0):
-                _returning_to_spawn = false
+        if _rallying:
+            var dist := global_position.distance_to(_anchor)
+            if dist < (leash_distance / 4.0):
+                # Reached the anchor — clear rally and reset stuck state.
+                _rallying = false
+                _rally_stuck_timer = 0.0
+                _rally_last_dist = INF
+            else:
+                # Stuck detection: accumulate time; reset if group moved enough.
+                _rally_stuck_timer += POSITION_UPDATE_INTERVAL
+                if dist < _rally_last_dist - RALLY_STUCK_MIN_DELTA:
+                    # Making meaningful progress — reset the clock.
+                    _rally_stuck_timer = 0.0
+                    _rally_last_dist = dist
+                elif _rally_stuck_timer >= RALLY_STUCK_TIMEOUT:
+                    # Stuck for too long — force-cancel the rally.
+                    _rallying = false
+                    _rally_stuck_timer = 0.0
+                    _rally_last_dist = INF
 
     # Aggro check.
     _aggro_timer += delta
@@ -197,6 +224,11 @@ func set_target(pos: Vector2) -> void:
     player_offset = Vector2.ZERO
     set_anchor(target_position)
 
+    _rallying = true
+    _rally_stuck_timer = 0.0
+    _rally_last_dist = INF
+    _aggroed = false
+
 
 ## Sets player_offset to [param offset] and immediately updates target_position.
 func set_target_relative(offset: Vector2) -> void:
@@ -205,12 +237,22 @@ func set_target_relative(offset: Vector2) -> void:
         target_position = _player.global_position + player_offset
     set_anchor(target_position)
 
+    _rallying = true
+    _rally_stuck_timer = 0.0
+    _rally_last_dist = INF
+    _aggroed = false
+
 
 ## Resets target_position to the resolved spawn position and stops player tracking.
 func reset_to_spawn() -> void:
     player_offset = spawn_position_offset
     target_position = _player.global_position + spawn_position_offset
     set_anchor(target_position)
+
+    _rallying = true
+    _rally_stuck_timer = 0.0
+    _rally_last_dist = INF
+    _aggroed = false
 
 
 func get_first_empty_slot() -> int:
@@ -300,7 +342,7 @@ func _update_aggro_state() -> void:
     if detection_module == null:
         return
 
-    if _returning_to_spawn:
+    if _rallying:
         return
 
     if not _aggroed:
@@ -332,7 +374,9 @@ func _check_leash() -> void:
         return
 
     _aggroed = false
-    _returning_to_spawn = true
+    _rallying = true
+    _rally_stuck_timer = 0.0
+    _rally_last_dist = INF
     for unit in get_all_units():
         var army := unit as Army
         army.group_aggroed = false
