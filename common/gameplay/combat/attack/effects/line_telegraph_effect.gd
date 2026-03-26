@@ -31,27 +31,11 @@ extends VfxEffect
 ## Fraction of the lifetime used for the final flash-in at the end.
 @export var flash_fraction: float = 0.2
 
-@export_group("Attacker Line")
-## Line drawn from the attacker node back to this delivery marker.
-@export var source_line_color: Color = Color(1.0, 0.85, 0.1, 0.45)
-@export var source_line_width: float = 2.0
-
 var _rect_outline: Line2D
-var _source_line: Line2D
 
 # ─────────────────────────────────────────────
 # PhaseEffect overrides
 # ─────────────────────────────────────────────
-
-
-func _process(_delta: float) -> void:
-    super._process(_delta)
-    if _source_line == null:
-        return
-    if attacker_source != null and is_instance_valid(attacker_source):
-        _source_line.set_point_position(0, to_local(attacker_source.global_position))
-    else:
-        _source_line.visible = false
 
 
 func play(duration: float = 5.0) -> void:
@@ -68,9 +52,6 @@ func reset() -> void:
     if _rect_outline != null:
         _rect_outline.queue_free()
         _rect_outline = null
-    if _source_line != null:
-        _source_line.queue_free()
-        _source_line = null
     super.reset()
 
 # ─────────────────────────────────────────────
@@ -97,20 +78,9 @@ func _build_visuals() -> void:
     _rect_outline.add_point(Vector2(-hl, hw))
     add_child(_rect_outline)
 
-    # Line from attacker back to this delivery marker (updated in _process).
-    _source_line = Line2D.new()
-    _source_line.width = source_line_width
-    _source_line.default_color = source_line_color
-    _source_line.begin_cap_mode = Line2D.LINE_CAP_BOX
-    _source_line.end_cap_mode = Line2D.LINE_CAP_BOX
-    # Point 0 = attacker position (updated each frame); point 1 = this marker.
-    _source_line.add_point(Vector2.ZERO)
-    _source_line.add_point(Vector2.ZERO)
-    add_child(_source_line)
-
-    # Initialise point 0 immediately so there's no single-frame flicker.
-    if attacker_source != null and is_instance_valid(attacker_source):
-        _source_line.set_point_position(0, to_local(attacker_source.global_position))
+    show_attacker_line = true
+    attacker_line_color = Color(1.0, 0.85, 0.1, 0.45)
+    _build_attacker_line()
 
 
 func _animate(duration: float) -> void:
