@@ -10,11 +10,13 @@ signal group_removed
 ## Emitted whenever the member list changes (for minimap or UI).
 signal members_changed
 
+enum FormationType { NONE, RECTANGULAR, CIRCULAR }
+
 # -------------------------
 # Exports — Anchor tracking
 # -------------------------
 
-@export var dormant_distance: float = 480.0
+@export var dormant_distance: float = 960.0
 @export var dormant_check_interval: float = 1.0
 
 ## Distance from group center at which members aggro the player.
@@ -31,6 +33,18 @@ signal members_changed
 ## Maximum distance any member may stray from spawn_pivot before being
 ## forced back home. Set to 0 to disable leashing entirely.
 @export var leash_distance: float = 300.0
+
+# -------------------------
+# Exports — Formation
+# -------------------------
+
+## Formation layout applied to registered members.
+## NONE keeps the random scatter positions set by the spawner.
+## RECTANGULAR and CIRCULAR assign slot-based grid offsets.
+@export var formation_type: FormationType = FormationType.NONE
+
+## World-space distance between adjacent formation slots (grid cell size).
+@export var grid_size: int = 16
 
 ## Speed (units/sec) at which target_position creeps toward the player when
 ## not aggroed and not returning to spawn.
@@ -51,10 +65,15 @@ var _members: Array[Enemy] = []
 var _living_count: int = 0
 var _was_depleted: bool = false
 
-## Per-member anchor offsets relative to _anchor.
-## Stored when a member is registered so anchor_position updates automatically
-## whenever set_anchor() is called.
+## Per-member anchor offsets relative to spawn_pivot / target_position.
+## Stored when a member is registered so anchor_position updates automatically.
+## When a formation is active these are derived from the slot grid; otherwise
+## they are the raw scatter offsets passed in by the spawner.
 var _anchor_offsets: Dictionary = { }
+
+## Formation slot array — index = slot number, value = Enemy (null = empty).
+## Only populated when formation_type != NONE.
+var _slots: Array[Enemy] = []
 
 ## Accumulated time for position update (every POSITION_UPDATE_INTERVAL seconds).
 var _position_timer: float = 0.0
@@ -146,19 +165,31 @@ func register_member(enemy: Enemy, setup_position: Vector2 = Vector2.ZERO) -> vo
     if _members.has(enemy):
         return
 
-    if position == Vector2.ZERO:
-        push_warning("EnemyGroup.register_member() called with null position")
+    if formation_type == FormationType.NONE:
+        # Scatter mode — honour the raw spawn position provided by the spawner.
+        if position == Vector2.ZERO:
+            push_warning("EnemyGroup.register_member() called with null position")
+        else:
+            enemy.global_position = setup_position
+            enemy.anchor_position = setup_position
+
+        _anchor_offsets[enemy] = enemy.anchor_position - global_position
     else:
-        enemy.global_position = setup_position
-        enemy.anchor_position = setup_position
+        # Formation mode — assign the next free slot and compute the grid offset.
+        var slot_index := _get_first_empty_slot()
+        # Grow the slot array if needed.
+        while _slots.size() <= slot_index:
+            _slots.append(null)
+        _slots[slot_index] = enemy
+
+        var offset := _convert_index_to_grid(slot_index) * grid_size
+        _anchor_offsets[enemy] = offset
+
+        enemy.global_position = spawn_pivot + offset
+        enemy.anchor_position = spawn_pivot + offset
 
     _members.append(enemy)
     _living_count += 1
-
-    # Store the member's anchor offset relative to the current group position.
-    # SpawnEnemyGroupAction sets enemy.anchor_position before calling register_member(),
-    # so we capture it here as the authoritative offset.
-    _anchor_offsets[enemy] = enemy.anchor_position - global_position
 
     if not enemy.died.is_connected(_on_member_died.bind(enemy)):
         enemy.died.connect(_on_member_died.bind(enemy))
@@ -206,6 +237,95 @@ func force_kill() -> void:
         member.queue_free()
 
     queue_free()
+
+
+## Changes the active formation type and immediately re-assigns anchor offsets
+## for all living members so the new layout takes effect at the next position tick.
+func set_formation_type(type: FormationType) -> void:
+    formation_type = type
+    _rebuild_formation()
+
+# -------------------------
+# Internal — formation
+# -------------------------
+
+
+func _rebuild_formation() -> void:
+    var alive := get_alive_members()
+
+    # Clear slot bookkeeping.
+    _slots.clear()
+    _anchor_offsets.clear()
+
+    if formation_type == FormationType.NONE:
+        # Restore scatter offsets: re-derive from current member positions.
+        for member in alive:
+            _anchor_offsets[member] = member.global_position - global_position
+        return
+
+    # Re-assign each living member a fresh formation slot.
+    for i in range(alive.size()):
+        var member := alive[i]
+        while _slots.size() <= i:
+            _slots.append(null)
+        _slots[i] = member
+
+        var offset := _convert_index_to_grid(i) * grid_size
+        _anchor_offsets[member] = offset
+        member.anchor_position = target_position + offset
+
+
+func _get_first_empty_slot() -> int:
+    for i in range(_slots.size()):
+        if _slots[i] == null:
+            return i
+    return _slots.size()
+
+
+## Dispatch to the correct formation-math function based on formation_type.
+func _convert_index_to_grid(index: int) -> Vector2:
+    match formation_type:
+        FormationType.CIRCULAR:
+            return _convert_index_to_circular(index)
+        _:
+            return _convert_index_to_rectangular(index)
+
+
+## Rectangular (spiral) formation.
+## Positions members in a square spiral expanding outward from the centre.
+func _convert_index_to_rectangular(index: int) -> Vector2:
+    index += 1
+    if index <= 0:
+        return Vector2.ZERO
+
+    var k := int(ceil((sqrt(index + 1) - 1) / 2))
+    var side_len := 2 * k
+    var max_index := (2 * k + 1) * (2 * k + 1) - 1
+    var offset := max_index - index
+
+    if offset < side_len:
+        return Vector2(k, -k + offset)
+    offset -= side_len
+    if offset < side_len:
+        return Vector2(k - offset, k)
+    offset -= side_len
+    if offset < side_len:
+        return Vector2(-k, k - offset)
+    offset -= side_len
+    return Vector2(-k + offset, -k)
+
+
+## Circular (ring-based) formation.
+## Ring 0: 1 slot; Ring k: 6·k slots; total through ring k = 1 + 3·k·(k+1).
+func _convert_index_to_circular(index: int) -> Vector2:
+    if index == 0:
+        return Vector2.ZERO
+
+    var k := int(floor((-3.0 + sqrt(9.0 + 12.0 * float(index - 1))) / 6.0)) + 1
+    var ring_start := 1 + 3 * (k - 1) * k
+    var pos_in_ring := index - ring_start
+    var angle := pos_in_ring * TAU / float(6 * k)
+    return Vector2(cos(angle) * k, sin(angle) * k)
 
 # -------------------------
 # Internal
@@ -286,6 +406,12 @@ func _on_member_died(_info, enemy: Enemy) -> void:
         _members.remove_at(idx)
 
     _anchor_offsets.erase(enemy)
+
+    # Free the formation slot so it can be reused.
+    var slot_idx := _slots.find(enemy)
+    if slot_idx != -1:
+        _slots[slot_idx] = null
+
     _living_count -= 1
     members_changed.emit()
 

@@ -14,6 +14,11 @@ extends Resource
 @export_group("Spawn Scatter")
 @export var spawn_radius: float = 30.0
 
+@export_group("Formation")
+## Formation layout to apply when the group is spawned.
+## NONE keeps the random scatter positions; RECTANGULAR and CIRCULAR use slot-based grids.
+@export var formation_type: EnemyGroup.FormationType = EnemyGroup.FormationType.NONE
+
 
 func is_valid() -> bool:
     if group_scene == null:

@@ -11,14 +11,16 @@
 [sub_resource type="Resource" id="Resource_76gxa"]
 script = ExtResource("2_hkh4f")
 scene = ExtResource("4_4loag")
-min_count = 8
-max_count = 8
+min_count = 20
+max_count = 20
 metadata/_custom_type_script = "uid://4agufvpi7c62"
 
 [sub_resource type="Resource" id="Resource_cejx2"]
 script = ExtResource("40_hsid8")
 group_scene = ExtResource("4_djk5q")
 entries = Array[ExtResource("2_hkh4f")]([SubResource("Resource_76gxa")])
+max_total = 20
+formation_type = 1
 metadata/_custom_type_script = "uid://dqd4tlipj2ii8"
 
 [sub_resource type="Resource" id="Resource_ovujv"]
@@ -34,5 +36,5 @@ script = ExtResource("45_ylq1s")
 group_table = SubResource("Resource_pay2w")
 groups_per_round = 100
 spawn_beyond_budget = true
-target_active_groups = 40
-max_spawn_per_tick = 10
+target_active_groups = 16
+max_spawn_per_tick = 8
