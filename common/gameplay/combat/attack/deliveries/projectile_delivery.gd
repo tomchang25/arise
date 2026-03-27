@@ -3,7 +3,7 @@ extends AttackDelivery
 
 var _speed: float = 500.0
 var _direction: Vector2 = Vector2.RIGHT
-var _travel_distance: float = 0.0
+var _travel_distance: float = INF
 
 
 func setup(ctx: EffectContext) -> void:
@@ -37,9 +37,11 @@ func _on_wall_hit() -> void:
 
 func reset() -> void:
     super.reset()
+    set_physics_process(true)
+
     _speed = 500.0
     _direction = Vector2.RIGHT
-    _travel_distance = 0.0
+    _travel_distance = INF
 
 
 func set_enabled(value: bool) -> void:
