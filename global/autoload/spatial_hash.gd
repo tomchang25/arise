@@ -79,9 +79,11 @@ func query_nearby(pos: Vector2, radius: float, max_results: int = 4) -> Array:
                     continue
                 var key := Vector2i(center.x + dx, center.y + dy)
                 if _cells.has(key):
-                    results.append_array(_cells[key])
-                    if results.size() >= max_results:
-                        return results
+                    for body in _cells[key]:
+                        results.append(body)
+                        if results.size() >= max_results:
+                            return results
+
     return results
 
 
@@ -149,6 +151,7 @@ func _insert(character: CharacterBody2D, key: Vector2i) -> void:
 func _remove(character: CharacterBody2D, key: Vector2i) -> void:
     if not _cells.has(key):
         return
+
     _cells[key].erase(character)
     if _cells[key].is_empty():
         _cells.erase(key)

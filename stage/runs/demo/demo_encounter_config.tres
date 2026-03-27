@@ -19,6 +19,7 @@ metadata/_custom_type_script = "uid://4agufvpi7c62"
 script = ExtResource("40_hsid8")
 group_scene = ExtResource("4_djk5q")
 entries = Array[ExtResource("2_hkh4f")]([SubResource("Resource_76gxa")])
+min_total = 10
 max_total = 20
 formation_type = 1
 metadata/_custom_type_script = "uid://dqd4tlipj2ii8"

@@ -11,4 +11,3 @@ mana = 100.0
 base_max_health = 50.0
 base_damage = 20.0
 base_defense = 5.0
-invuln_time = 0.01

@@ -69,6 +69,7 @@ layer_name = &"enemy"
 mask_names = Array[StringName]([&"player", &"army", &"enemy"])
 collision_layer = 2
 collision_mask = 259
+tick_interval = 0.20800000000000002
 metadata/_custom_type_script = "uid://bhtdp3vwcylqh"
 
 [node name="Hurtbox" type="Area2D" parent="." unique_id=1309115120]
@@ -114,11 +115,12 @@ script = ExtResource("6_combat")
 script = ExtResource("8_dmgreceiver")
 hurtbox = NodePath("../../Hurtbox")
 
-[node name="HitFeedbackModule" type="Node" parent="Module" unique_id=631790900 node_paths=PackedStringArray("damage_receiver", "movement_module")]
+[node name="HitFeedbackModule" type="Node" parent="Module" unique_id=631790900 node_paths=PackedStringArray("damage_receiver", "movement_module", "visuals")]
 script = ExtResource("9_hitfeedback")
 damage_receiver = NodePath("../DamageReceiverModule")
 movement_module = NodePath("../MovementModule")
 flash_color = Color(1, 0.25, 0.25, 1)
+visuals = NodePath("../../Sprite")
 hit_particles_scene = ExtResource("12_hit_vfx")
 death_particles_scene = ExtResource("13_death_vfx")
 damaged_audio = ExtResource("14_sfx_damaged")
