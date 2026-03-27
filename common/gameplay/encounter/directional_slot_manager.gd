@@ -53,13 +53,13 @@ const LANE_COUNT := 3
 ## Maximum number of CLOSED groups per direction that may be in ENGAGE.
 @export var max_advancing_closed: int = 2
 ## Maximum number of RANGED groups per direction that may be in ENGAGE.
-@export var max_advancing_ranged: int = 2
+@export var max_advancing_ranged: int = 1
 
 @export_group("Global Caps")
 ## Maximum number of groups across all directions in STANDBY simultaneously.
-@export var max_global_standby: int = 24
+@export var max_global_standby: int = 30
 ## Maximum number of groups across all directions in ENGAGE simultaneously.
-@export var max_global_engage: int = 16
+@export var max_global_engage: int = 20
 
 @export_group("Castle")
 ## Reference to the Castle node. Position is read at claim time.

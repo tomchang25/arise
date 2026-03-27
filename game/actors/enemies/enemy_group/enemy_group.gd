@@ -492,6 +492,9 @@ func _demote_to_holding() -> void:
     _release_tier_slot()
     _pressure_state = PressureState.HOLDING
 
+    target_position = global_position
+    _returning_to_spawn = false
+
 
 func _get_standby_dist() -> float:
     if slot_manager != null:
@@ -583,8 +586,9 @@ func _check_leash() -> void:
     if global_position.distance_to(target_position) <= leash_distance:
         return
 
-    _aggroed = false
-    _returning_to_spawn = true
+    # _aggroed = false
+    # _returning_to_spawn = true
+
     _demote_to_holding()
     _wake_all_members()
     for member in get_alive_members():

@@ -17,6 +17,8 @@ extends VfxEffect
 ##   lifetime      = 5.0   (telegraph duration before beam fires)
 ##   max_targets   = 0     (no damage)
 
+const PULSE_CYCLE_DURATION := 2.0
+
 @export_group("Beam Rectangle")
 ## How far the beam rectangle extends in the delivery's forward (+X) direction.
 @export var beam_length: float = 220.0
@@ -84,41 +86,50 @@ func _build_visuals() -> void:
 
 
 func _animate(duration: float) -> void:
-    var pulse_dur := duration * (1.0 - flash_fraction)
     var flash_dur := duration * flash_fraction
+    var pulse_total_dur := duration - flash_dur
 
-    # Pulse the rectangle outline.
-    var pulse_tween := create_tween().set_loops(pulse_count)
+    # Define fixed 2-second cycle
+    var cycle_duration: float = 2.0
+    # Calculate how many full cycles fit into the total pulse duration
+    var cycles := int(pulse_total_dur / cycle_duration)
+
+    # Create the pulse animation
+    var pulse_tween := create_tween().set_loops(cycles)
+
+    # Pulse Phase: Scale up and down over 1 second, then rest for 1 second
+    var pulse_speed := 0.5
+
     pulse_tween.tween_property(
         _rect_outline,
         "scale",
         Vector2.ONE * pulse_scale,
-        pulse_dur / (pulse_count * 2.0),
-    ).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+        pulse_speed,
+    ).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
     pulse_tween.tween_property(
         _rect_outline,
         "scale",
         Vector2.ONE,
-        pulse_dur / (pulse_count * 2.0),
-    ).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+        pulse_speed,
+    ).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 
-    await get_tree().create_timer(pulse_dur).timeout
-    pulse_tween.kill()
+    # Add a delay to fill the remainder of the 2s cycle (1.0s rest)
+    pulse_tween.tween_interval(cycle_duration - (pulse_speed * PULSE_CYCLE_DURATION))
+
+    # Wait for the total pulse phase to complete based on duration
+    # This ensures we transition to the final flash exactly on time
+    await get_tree().create_timer(pulse_total_dur).timeout
+
+    if pulse_tween.is_running():
+        pulse_tween.kill()
     _rect_outline.scale = Vector2.ONE
 
-    # Final flash: rapid opacity blink to signal imminent beam.
+    # Final flash: Rapid opacity blink to signal imminent beam
     var flash_tween := create_tween().set_loops(3)
-    flash_tween.tween_property(
-        _rect_outline,
-        "modulate:a",
-        0.1,
-        flash_dur / 6.0,
-    ).set_trans(Tween.TRANS_LINEAR)
-    flash_tween.tween_property(
-        _rect_outline,
-        "modulate:a",
-        1.0,
-        flash_dur / 6.0,
-    ).set_trans(Tween.TRANS_LINEAR)
+    var step := flash_dur / 6.0
+
+    flash_tween.tween_property(_rect_outline, "modulate:a", 0.1, step).set_trans(Tween.TRANS_LINEAR)
+    flash_tween.tween_property(_rect_outline, "modulate:a", 1.0, step).set_trans(Tween.TRANS_LINEAR)
 
     await flash_tween.finished

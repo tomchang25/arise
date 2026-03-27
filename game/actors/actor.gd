@@ -311,6 +311,14 @@ func get_attack_range(weapon_index: int = 0, attack_index: int = 0) -> float:
         return 0.0
     return combat_module.get_attack_range(weapon_index, attack_index)
 
+
+## Returns the AttackDefinition for the given weapon / attack slot, or null.
+## Routes through CombatModule so states never touch CombatModule internals directly.
+func get_attack_def(weapon_index: int = 0, attack_index: int = 0) -> AttackDefinition:
+    if combat_module == null:
+        return null
+    return combat_module.get_attack_def(weapon_index, attack_index)
+
 # -------------------------
 # Public API — animation
 # -------------------------
