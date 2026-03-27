@@ -10,7 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://bl6qc51imn6xk" path="res://game/ui/hud/main_hud/main_hud.tscn" id="7_mainhud"]
 [ext_resource type="PackedScene" uid="uid://dnmq30kfm6svo" path="res://game/summon/summon_manager.tscn" id="8_summon"]
 [ext_resource type="Resource" uid="uid://cuwjtogcy2gks" path="res://stage/runs/demo/beast_enemy_encounter.tres" id="8_uqwbr"]
-[ext_resource type="Resource" uid="uid://cw56eqbjv64v4" path="res://stage/runs/demo/octopus_enemy_encounter.tres" id="9_iunhq"]
+[ext_resource type="Resource" uid="uid://cw56eqbjv64v4" path="res://stage/runs/demo/ranged_normal_enemy_encounter.tres" id="9_iunhq"]
 [ext_resource type="PackedScene" uid="uid://b5mwmarkvp2t8" path="res://game/actors/summons/army_group/army_group.tscn" id="10_armygroup"]
 [ext_resource type="Script" uid="uid://cgg1iy7pqgdb5" path="res://game/ui/hud/summon_hud/group_cursor_overlay.gd" id="11_cursor"]
 [ext_resource type="Script" uid="uid://sgjwmvk38ykj" path="res://common/gameplay/encounter/encounter_group_table.gd" id="12_65bb3"]
@@ -41,6 +41,7 @@ encounter_controller = NodePath("EncounterController")
 despawn_controller = NodePath("DespawnController")
 wave_defense_controller = NodePath("WaveDefenseController")
 main_hud = NodePath("UI/MainHUD")
+print_hotkey_log = false
 
 [node name="Tilemaps" type="Node2D" parent="." unique_id=606999450]
 

@@ -14,9 +14,9 @@ metadata/_custom_type_script = "uid://cmymyo0y1aoi7"
 
 [sub_resource type="Resource" id="Resource_tu1f5"]
 script = ExtResource("5_s1ple")
-attack_range = 32.0
 attack_scene = ExtResource("2_cb5p8")
 phases = Array[ExtResource("3_5tadl")]([SubResource("Resource_04wdt")])
+attack_range = 32.0
 metadata/_custom_type_script = "uid://dxe0yv70mfrn4"
 
 [resource]
