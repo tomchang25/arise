@@ -130,7 +130,10 @@ func set_enabled(value: bool) -> void:
 
 
 func _physics_process(delta: float) -> void:
-    if Engine.is_editor_hint() or not _enabled or movement_module == null or character == null:
+    if Engine.is_editor_hint():
+        return
+
+    if not _enabled or movement_module == null or character == null:
         return
 
     # Always keep the hash position current so neighbours query correctly.
@@ -145,7 +148,7 @@ func _physics_process(delta: float) -> void:
             _tick_accumulator -= tick_interval
             _recalculate_separation()
 
-            # Apply the most recently cached values every frame for smooth motion.
+            # Apply the most recently cached values for smooth motion.
             movement_module.set_separation(_cached_separation)
             movement_module.set_crowd_block_ratio(_cached_crowd_block)
     else:

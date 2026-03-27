@@ -77,6 +77,7 @@ metadata/_custom_type_script = "uid://bwm8u3xypysu8"
 script = ExtResource("6_wvdef")
 encounter_controller = NodePath("../EncounterController")
 base_encounter_config = ExtResource("2_60flp")
+base_groups_per_wave = 40
 
 [node name="Castle" parent="." unique_id=1162592973 instance=ExtResource("12_cstl")]
 
