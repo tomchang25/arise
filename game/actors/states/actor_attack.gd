@@ -12,9 +12,9 @@ extends ActorState
 @export var attack_index: int = 0
 
 ## Slow-creep speed while repositioning inside the attack state.
-@export var attack_speed: float = 30.0
+@export var attack_speed: float = 100.0
 
-@export var move_update_interval: float = 0.1
+@export var move_update_interval: float = 1.0
 
 var _move_timer: float = 0.0
 

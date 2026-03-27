@@ -7,8 +7,8 @@
 ##   → ATTACK            if target enters reach zone
 extends ActorState
 
-@export var chase_speed: float = 150.0
-@export var move_update_interval: float = 0.1
+@export var chase_speed: float = 100.0
+@export var move_update_interval: float = 1.0
 
 var _move_timer: float = 0.0
 
