@@ -261,6 +261,9 @@ func get_attack_range(weapon_index: int, attack_index: int = 0) -> float:
     if def is PlaceAttackDefinition:
         return def.attack_range
 
+    if def is ProjectileAttackDefinition:
+        return def.attack_range
+
     return 0.0
 
 

@@ -32,5 +32,10 @@ extends AttackDefinition
 ##   phases[2]  scorch VFX only  (effect_scene = null, lifetime = 30.0)
 @export var phases: Array[EffectPhaseDefinition] = []
 
+@export_group("Attack Range")
+
+## Maximum distance from the actor the attack can be placed.
+@export var attack_range: float = 40.0
+
 @export_group("Cooldown")
 @export var cooldown: float = 0.5

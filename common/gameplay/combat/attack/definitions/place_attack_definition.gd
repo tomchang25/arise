@@ -5,8 +5,5 @@ extends DetachedAttackDefinition
 ## that places a hitbox at a location and does not need to move.
 
 @export_group("Place")
-## Maximum distance from the actor the attack can be placed.
-@export var attack_range: float = 40.0
-
 ## How long the spawned AttackEffect stays alive.
 @export var lifetime: float = 1.0
