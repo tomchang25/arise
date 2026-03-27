@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="EncounterGroupEntry" format=3 uid="uid://cw56eqbjv64v4"]
+
+[ext_resource type="Script" uid="uid://4agufvpi7c62" path="res://common/gameplay/spawning/tables/group_member_entry.gd" id="1_rdd57"]
+[ext_resource type="PackedScene" uid="uid://leucic7ytnmo" path="res://game/actors/enemies/types/octopus/octopus_red.tscn" id="2_siwtf"]
+[ext_resource type="PackedScene" uid="uid://cssols6rmii6m" path="res://game/actors/enemies/enemy_group/enemy_group.tscn" id="3_7tkrp"]
+[ext_resource type="Script" uid="uid://dqd4tlipj2ii8" path="res://common/gameplay/spawning/tables/enemy_group_profile.gd" id="4_t16um"]
+[ext_resource type="Script" uid="uid://bnght76nweh38" path="res://common/gameplay/encounter/encounter_group_entry.gd" id="5_kmyhs"]
+
+[sub_resource type="Resource" id="Resource_y0j4y"]
+script = ExtResource("1_rdd57")
+scene = ExtResource("2_siwtf")
+metadata/_custom_type_script = "uid://4agufvpi7c62"
+
+[sub_resource type="Resource" id="Resource_7c27o"]
+script = ExtResource("4_t16um")
+role = 1
+group_scene = ExtResource("3_7tkrp")
+entries = Array[ExtResource("1_rdd57")]([SubResource("Resource_y0j4y")])
+metadata/_custom_type_script = "uid://dqd4tlipj2ii8"
+
+[resource]
+script = ExtResource("5_kmyhs")
+group_profile = SubResource("Resource_7c27o")
+weight = 1
+metadata/_custom_type_script = "uid://bnght76nweh38"
