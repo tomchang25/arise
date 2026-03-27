@@ -223,7 +223,7 @@ func register_member(enemy: Enemy, setup_position: Vector2 = Vector2.ZERO) -> vo
 
     if formation_type == FormationType.NONE:
         # Scatter mode — honour the raw spawn position provided by the spawner.
-        if position == Vector2.ZERO:
+        if setup_position == Vector2.ZERO:
             push_warning("EnemyGroup.register_member() called with null position")
         else:
             enemy.global_position = setup_position
@@ -453,11 +453,15 @@ func _enter_engage() -> void:
     else:
         target_position = castle_pos
     # Assign castle as attack target for all members.
-    var castle_node := _get_castle_node()
-    if castle_node != null:
-        for member in get_alive_members():
-            member.group_aggroed = true
-            member.group_target = castle_node
+    # Castle should be present in detection; fall back to direct reference if not.
+    if detection_module != null and detection_module.get_targets(false).size() > 0:
+        _assign_targets_to_members()
+    else:
+        var castle_node := _get_castle_node()
+        if castle_node != null:
+            for member in get_alive_members():
+                member.group_aggroed = true
+                member.group_target = castle_node
 
 
 func _leave_standby() -> void:
@@ -520,15 +524,13 @@ func _update_aggro_state() -> void:
     if _returning_to_spawn and _pressure_state != PressureState.ENGAGE:
         return
 
-    var dist := _player.global_position.distance_to(global_position)
-
-    if not _aggroed and dist < aggro_range:
-        _aggroed = true
-        _wake_all_members()
-        _assign_targets_to_members()
-
-    elif _aggroed:
-        if detection_module == null or detection_module.get_closest_target(false) == null:
+    if not _aggroed:
+        if detection_module != null and detection_module.get_targets(false).size() > 0:
+            _aggroed = true
+            _wake_all_members()
+            _assign_targets_to_members()
+    else:
+        if detection_module == null or detection_module.get_targets(false).size() == 0:
             _aggroed = false
             # In ENGAGE state, do not return_to_spawn on deaggro —
             # fall back to the castle as the attack target instead.
@@ -538,13 +540,13 @@ func _update_aggro_state() -> void:
                     member.group_aggroed = false
                     member.group_target = null
             else:
-                # Re-assign castle in case the target was cleared by deaggro.
+                # Detection is empty — castle should normally be present in detection,
+                # but fall back to a direct reference as a safety net.
                 var castle_node := _get_castle_node()
                 if castle_node != null:
                     for member in get_alive_members():
                         member.group_aggroed = true
-                        _assign_targets_to_members()
-                        # member.group_target = castle_node
+                        member.group_target = castle_node
         else:
             _assign_targets_to_members()
 
