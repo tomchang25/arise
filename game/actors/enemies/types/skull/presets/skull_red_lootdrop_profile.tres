@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="LootDropProfile" format=3 uid="uid://bmcxne1gmwqk1"]
+
+[ext_resource type="Script" uid="uid://0hg831gihu68" path="res://common/gameplay/loot/loot_drop_profile.gd" id="1_2n1e3"]
+[ext_resource type="Script" uid="uid://bil6iq1so8k4p" path="res://common/gameplay/loot/loot_drop_table.gd" id="2_1eeg2"]
+[ext_resource type="Resource" uid="uid://bnktdr8gebf26" path="res://game/actors/presets/lootdrop/general_gold_drop_table.tres" id="3_gthb0"]
+[ext_resource type="Resource" uid="uid://bymapbieufmgs" path="res://game/actors/presets/lootdrop/general_resources_drop_table.tres" id="4_goadu"]
+
+[resource]
+script = ExtResource("1_2n1e3")
+tables = Array[ExtResource("2_1eeg2")]([ExtResource("3_gthb0"), ExtResource("4_goadu")])
+metadata/_custom_type_script = "uid://0hg831gihu68"

@@ -42,6 +42,8 @@ var _trigger_component: TriggerComponent
 ## drive cleanup via queue_free.  Set by subclasses (e.g. TimebombDelivery).
 var _wait_for_effect: bool = false
 
+var _released: bool = false
+
 
 func setup(ctx: EffectContext) -> void:
     _context = ctx
@@ -122,6 +124,10 @@ func _trigger_phases() -> void:
 
 
 func _on_phases_finished() -> void:
+    if _released:
+        return
+
+    _released = true
     NodeRegistry.release(self)
 
 # -------------------------
@@ -130,6 +136,10 @@ func _on_phases_finished() -> void:
 
 
 func _on_timeout() -> void:
+    if _released:
+        return
+
+    _released = true
     NodeRegistry.release(self)
 
 # -------------------------
@@ -141,6 +151,7 @@ func reset() -> void:
     _context = null
     _wait_for_effect = false
     _trigger_component = null
+    _released = false
     if _sequencer != null:
         _sequencer.queue_free()
         _sequencer = null

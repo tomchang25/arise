@@ -36,7 +36,7 @@ const BASE_LEVEL_XP_INCREMENT_PER_LEVEL: float = 50.0
         base_max_health = value
         recalculate_stats()
 
-@export var base_max_mana: float = 100.0:
+@export var base_max_mana: float = 0.0:
     set(value):
         base_max_mana = value
         recalculate_stats()
@@ -90,7 +90,6 @@ var current_crit_multiplier: float = 1.5
 func _init() -> void:
     setup_stats()
 
-
 # -------------------------
 # Lifecycle
 # -------------------------
@@ -102,7 +101,6 @@ func setup_stats() -> void:
     mana = current_max_mana
     souls = max(0, souls)
     gold = max(0, gold)
-
 
 # -------------------------
 # Stats Recalculation
@@ -126,7 +124,6 @@ func recalculate_stats() -> void:
 
     stats_recalculated.emit()
 
-
 # -------------------------
 # Health
 # -------------------------
@@ -146,7 +143,6 @@ func recover_health(amount: float) -> bool:
 
 func take_damage(damage: float) -> void:
     health -= damage
-
 
 # -------------------------
 # Mana
@@ -174,7 +170,6 @@ func spend_mana(amount: float) -> bool:
     mana -= amount
     return true
 
-
 # -------------------------
 # Souls
 # -------------------------
@@ -200,7 +195,6 @@ func spend_souls(amount: int) -> bool:
 
     souls -= amount
     return true
-
 
 # -------------------------
 # Gold
@@ -228,7 +222,6 @@ func spend_gold(amount: int) -> bool:
     gold -= amount
     return true
 
-
 # -------------------------
 # XP
 # -------------------------
@@ -245,7 +238,6 @@ func _get_level_from_xp(total_xp: float) -> int:
     while total_xp >= get_xp_required_for_level(estimated_lvl + 1):
         estimated_lvl += 1
     return estimated_lvl
-
 
 # -------------------------
 # Debug / Reset
@@ -265,7 +257,6 @@ func reset_runtime_resources(reset_health_value: float = -1.0, reset_mana_value:
 
     souls = max(0, reset_souls_value)
     gold = max(0, reset_gold_value)
-
 
 # -------------------------
 # Property Setters

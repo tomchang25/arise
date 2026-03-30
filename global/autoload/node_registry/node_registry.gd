@@ -40,13 +40,18 @@ func prewarm(scene: PackedScene, count: int, parent: Node) -> void:
 func acquire(scene: PackedScene, parent: Node, pooled: bool = false) -> Node:
     var key := scene.resource_path
 
-    if pooled and _registry.has(key) and not _registry[key].is_empty():
-        var p: Node = _registry[key].pop_back()
-        _node_to_key[p] = key
-        parent.add_child(p)
-        if p.has_method("reset"):
-            p.reset()
-        return p
+    if pooled and _registry.has(key):
+        while not _registry[key].is_empty():
+            var p: Node = _registry[key].pop_back()
+            if not is_instance_valid(p):
+                # Node was freed externally — discard and try next
+                _node_to_key.erase(p)
+                continue
+            _node_to_key[p] = key
+            parent.add_child(p)
+            if p.has_method("reset"):
+                p.reset()
+            return p
 
     var node := scene.instantiate()
     # Track the key so release() does not require the scene to be passed again.
@@ -71,7 +76,7 @@ func release(node: Node) -> void:
     _node_to_key.erase(node)
 
     if node.get_parent() != null:
-        node.get_parent().remove_child(node)
+        node.get_parent().call_deferred("remove_child",node)
 
     if not _registry.has(key):
         _registry[key] = []

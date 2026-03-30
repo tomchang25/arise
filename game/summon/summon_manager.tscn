@@ -6,7 +6,7 @@
 
 [sub_resource type="Resource" id="SummonType_warrior"]
 script = ExtResource("2_type")
-max_count = 30
+max_count = 100
 cooldown = 1.0
 summon_count = 5
 color = Color(1, 0.4, 0.4, 1)
@@ -16,7 +16,7 @@ scene = ExtResource("3_ninja")
 script = ExtResource("2_type")
 label = "Archer"
 soul_cost = 10
-max_count = 20
+max_count = 0
 cooldown = 2.0
 summon_count = 4
 color = Color(0.4, 1, 0.4, 1)
@@ -26,7 +26,7 @@ scene = ExtResource("3_ninja")
 script = ExtResource("2_type")
 label = "Knight"
 soul_cost = 20
-max_count = 10
+max_count = 0
 cooldown = 5.0
 summon_count = 2
 color = Color(0.4, 0.6, 1, 1)
@@ -36,7 +36,7 @@ scene = ExtResource("3_ninja")
 script = ExtResource("2_type")
 label = "Mage"
 soul_cost = 50
-max_count = 4
+max_count = 0
 cooldown = 10.0
 color = Color(0.9, 0.4, 1, 1)
 scene = ExtResource("3_ninja")

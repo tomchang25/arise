@@ -65,8 +65,21 @@ func _play_projectile_vfx(duration: float = 1.0) -> void:
 # -------------------------
 
 
+func _on_enemy_hit() -> void:
+    super._on_enemy_hit()
+    if max_targets > 0 and targets_hit_count >= max_targets:
+        finished.emit()
+
+
 func reset() -> void:
     if _vfx_tween != null:
         _vfx_tween.kill()
         _vfx_tween = null
     super.reset()
+
+
+func set_enabled(value: bool) -> void:
+    if not value and _vfx_tween != null:
+        _vfx_tween.kill()
+        _vfx_tween = null
+    super.set_enabled(value)

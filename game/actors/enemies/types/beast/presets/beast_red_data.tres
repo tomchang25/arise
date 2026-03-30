@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3 uid="uid://jqfrwljmqs2h"]
+
+[ext_resource type="Resource" uid="uid://cxtsvt887w7gv" path="res://game/actors/enemies/types/beast/presets/beast_red_lootdrop_profile.tres" id="1_e4wv6"]
+[ext_resource type="Script" uid="uid://boqrgdnjxi8n8" path="res://game/actors/enemies/enemy_data.gd" id="1_ofyw7"]
+[ext_resource type="Script" uid="uid://i2xvg4o1geuj" path="res://common/gameplay/combat/attack/data/weapon_data.gd" id="2_45x3c"]
+[ext_resource type="Resource" uid="uid://bmuw6lbgd2p04" path="res://game/actors/enemies/types/beast/presets/beast_red_stats.tres" id="3_j7gdq"]
+[ext_resource type="Resource" uid="uid://dkfl63ybhnyc" path="res://game/actors/presets/attack/general_mini_slash_weapon.tres" id="5_e4wv6"]
+
+[resource]
+resource_local_to_scene = true
+script = ExtResource("1_ofyw7")
+drop_profile = ExtResource("1_e4wv6")
+stats = ExtResource("3_j7gdq")
+weapons = Array[ExtResource("2_45x3c")]([ExtResource("5_e4wv6")])
+metadata/_custom_type_script = "uid://boqrgdnjxi8n8"

@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="Stats" format=3 uid="uid://bmuw6lbgd2p04"]
+
+[ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="1_yfe2o"]
+
+[resource]
+resource_local_to_scene = true
+script = ExtResource("1_yfe2o")
+faction = 1
+health = 50.0
+base_max_health = 50.0
+base_defense = 5.0

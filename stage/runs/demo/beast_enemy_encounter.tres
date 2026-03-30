@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="EncounterGroupEntry" format=3 uid="uid://cuwjtogcy2gks"]
+
+[ext_resource type="Script" uid="uid://4agufvpi7c62" path="res://common/gameplay/spawning/tables/group_member_entry.gd" id="1_afjxw"]
+[ext_resource type="PackedScene" uid="uid://b3srkep5ofofa" path="res://game/actors/enemies/types/beast/beast_red.tscn" id="2_5siyy"]
+[ext_resource type="PackedScene" uid="uid://cssols6rmii6m" path="res://game/actors/enemies/enemy_group/enemy_group.tscn" id="3_i3sgl"]
+[ext_resource type="Script" uid="uid://dqd4tlipj2ii8" path="res://common/gameplay/spawning/tables/enemy_group_profile.gd" id="4_qh5o7"]
+[ext_resource type="Script" uid="uid://bnght76nweh38" path="res://common/gameplay/encounter/encounter_group_entry.gd" id="5_0a7qi"]
+
+[sub_resource type="Resource" id="Resource_76gxa"]
+script = ExtResource("1_afjxw")
+scene = ExtResource("2_5siyy")
+min_count = 4
+max_count = 10
+metadata/_custom_type_script = "uid://4agufvpi7c62"
+
+[sub_resource type="Resource" id="Resource_cejx2"]
+script = ExtResource("4_qh5o7")
+group_scene = ExtResource("3_i3sgl")
+entries = Array[ExtResource("1_afjxw")]([SubResource("Resource_76gxa")])
+min_total = 4
+formation_type = 1
+metadata/_custom_type_script = "uid://dqd4tlipj2ii8"
+
+[resource]
+script = ExtResource("5_0a7qi")
+group_profile = SubResource("Resource_cejx2")

@@ -34,8 +34,8 @@ const LANE_COUNT := 3
 @export var max_radius: float = 750.0
 
 @export_group("Lane Capacities")
-@export var closed_lane_capacity: int = 2
-@export var ranged_lane_capacity: int = 1
+@export var closed_lane_capacity: int = 3
+@export var ranged_lane_capacity: int = 3
 @export var free_lane_capacity: int = 2
 
 @export_group("Distances")
@@ -53,13 +53,13 @@ const LANE_COUNT := 3
 ## Maximum number of CLOSED groups per direction that may be in ENGAGE.
 @export var max_advancing_closed: int = 2
 ## Maximum number of RANGED groups per direction that may be in ENGAGE.
-@export var max_advancing_ranged: int = 2
+@export var max_advancing_ranged: int = 1
 
 @export_group("Global Caps")
 ## Maximum number of groups across all directions in STANDBY simultaneously.
-@export var max_global_standby: int = 16
+@export var max_global_standby: int = 30
 ## Maximum number of groups across all directions in ENGAGE simultaneously.
-@export var max_global_engage: int = 8
+@export var max_global_engage: int = 20
 
 @export_group("Castle")
 ## Reference to the Castle node. Position is read at claim time.

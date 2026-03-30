@@ -2,17 +2,34 @@
 
 [ext_resource type="TileSet" uid="uid://b41stnir1xvrs" path="res://stage/tilesets/dungeon_tile_set.tres" id="1_60flp"]
 [ext_resource type="Script" uid="uid://dffu7f1p8ijuv" path="res://stage/runs/demo/demo.gd" id="1_a6hy3"]
-[ext_resource type="Resource" uid="uid://bh3bhwgvnoheu" path="res://stage/runs/demo/demo_encounter_config.tres" id="2_60flp"]
 [ext_resource type="PackedScene" uid="uid://i0w72n7e6is8" path="res://stage/systems/player_with_camera.tscn" id="2_pxgj2"]
 [ext_resource type="Script" uid="uid://qonxf7sblp5f" path="res://common/gameplay/encounter/encounter_controller.gd" id="4_a6hy3"]
 [ext_resource type="Script" uid="uid://bwm8u3xypysu8" path="res://common/gameplay/despawn/despawn_controller.gd" id="5_60flp"]
 [ext_resource type="Script" uid="uid://cqbsn4xt87m8m" path="res://game/wave_defense/wave_defense_controller.gd" id="6_wvdef"]
+[ext_resource type="Script" uid="uid://bnght76nweh38" path="res://common/gameplay/encounter/encounter_group_entry.gd" id="7_jgkva"]
 [ext_resource type="PackedScene" uid="uid://bl6qc51imn6xk" path="res://game/ui/hud/main_hud/main_hud.tscn" id="7_mainhud"]
 [ext_resource type="PackedScene" uid="uid://dnmq30kfm6svo" path="res://game/summon/summon_manager.tscn" id="8_summon"]
+[ext_resource type="Resource" uid="uid://cuwjtogcy2gks" path="res://stage/runs/demo/beast_enemy_encounter.tres" id="8_uqwbr"]
+[ext_resource type="Resource" uid="uid://cw56eqbjv64v4" path="res://stage/runs/demo/ranged_normal_enemy_encounter.tres" id="9_iunhq"]
 [ext_resource type="PackedScene" uid="uid://b5mwmarkvp2t8" path="res://game/actors/summons/army_group/army_group.tscn" id="10_armygroup"]
 [ext_resource type="Script" uid="uid://cgg1iy7pqgdb5" path="res://game/ui/hud/summon_hud/group_cursor_overlay.gd" id="11_cursor"]
+[ext_resource type="Script" uid="uid://sgjwmvk38ykj" path="res://common/gameplay/encounter/encounter_group_table.gd" id="12_65bb3"]
 [ext_resource type="PackedScene" uid="uid://ceeimva1b2hob" path="res://game/actors/castle/castle.tscn" id="12_cstl"]
 [ext_resource type="Script" uid="uid://ceq7e52rapnw5" path="res://common/gameplay/encounter/directional_slot_manager.gd" id="13_dslm"]
+[ext_resource type="Script" uid="uid://bs5epdft4ockv" path="res://common/gameplay/encounter/encounter_config.gd" id="13_smkhn"]
+
+[sub_resource type="Resource" id="Resource_jgkva"]
+script = ExtResource("12_65bb3")
+entries = Array[ExtResource("7_jgkva")]([ExtResource("8_uqwbr"), ExtResource("9_iunhq")])
+metadata/_custom_type_script = "uid://sgjwmvk38ykj"
+
+[sub_resource type="Resource" id="Resource_bi6xt"]
+script = ExtResource("13_smkhn")
+group_table = SubResource("Resource_jgkva")
+target_active_groups = 50
+max_spawn_per_tick = 8
+initial_spawn_cooldown = 1.0
+metadata/_custom_type_script = "uid://bs5epdft4ockv"
 
 [node name="Demo" type="Node2D" unique_id=535920825 node_paths=PackedStringArray("player", "player_spawn", "enemies_root", "debug_label", "encounter_controller", "despawn_controller", "wave_defense_controller", "main_hud")]
 script = ExtResource("1_a6hy3")
@@ -23,8 +40,8 @@ debug_label = NodePath("UI/DebugLabel")
 encounter_controller = NodePath("EncounterController")
 despawn_controller = NodePath("DespawnController")
 wave_defense_controller = NodePath("WaveDefenseController")
-encounter_config = ExtResource("2_60flp")
 main_hud = NodePath("UI/MainHUD")
+print_hotkey_log = false
 
 [node name="Tilemaps" type="Node2D" parent="." unique_id=606999450]
 
@@ -76,8 +93,8 @@ metadata/_custom_type_script = "uid://bwm8u3xypysu8"
 [node name="WaveDefenseController" type="Node" parent="." unique_id=123456789 node_paths=PackedStringArray("encounter_controller")]
 script = ExtResource("6_wvdef")
 encounter_controller = NodePath("../EncounterController")
-base_encounter_config = ExtResource("2_60flp")
-base_groups_per_wave = 40
+base_encounter_config = SubResource("Resource_bi6xt")
+base_groups_per_wave = 50
 
 [node name="Castle" parent="." unique_id=1162592973 instance=ExtResource("12_cstl")]
 
@@ -99,12 +116,12 @@ offset_top = -11.0
 offset_right = 40.0
 offset_bottom = 11.0
 grow_vertical = 2
-theme_override_font_sizes/font_size = 6
 metadata/_edit_use_anchors_ = true
 
 [node name="MainHUD" parent="UI" unique_id=231930507 instance=ExtResource("7_mainhud")]
 
-[node name="SummonManager" parent="." unique_id=745671814 instance=ExtResource("8_summon")]
+[node name="SummonManager" parent="." unique_id=745671814 node_paths=PackedStringArray("armies_container") instance=ExtResource("8_summon")]
+armies_container = NodePath(".")
 
 [node name="ArmyGroup1" parent="." unique_id=400000001 instance=ExtResource("10_armygroup")]
 group_id = 1

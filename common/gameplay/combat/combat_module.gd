@@ -261,7 +261,20 @@ func get_attack_range(weapon_index: int, attack_index: int = 0) -> float:
     if def is PlaceAttackDefinition:
         return def.attack_range
 
+    if def is ProjectileAttackDefinition:
+        return def.attack_range
+
     return 0.0
+
+
+## Returns the AttackDefinition at the given weapon / attack slot, or null.
+## Provides states a clean path to read definition fields (e.g. prepare_animation,
+## locks_movement) without accessing WeaponHandle internals directly.
+func get_attack_def(weapon_index: int, attack_index: int = 0) -> AttackDefinition:
+    var handle := _get_handle(weapon_index)
+    if handle == null:
+        return null
+    return handle.get_def(attack_index)
 
 
 ## Set a runtime range override for a specific weapon/attack.
