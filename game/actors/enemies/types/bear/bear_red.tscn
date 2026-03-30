@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://bmdh4vf3luco6" path="res://game/actors/enemies/enemy.gd" id="1_hjy8e"]
 [ext_resource type="Resource" uid="uid://c2bearreddta1" path="res://game/actors/enemies/types/bear/presets/bear_red_data.tres" id="2_ve1cc"]
 [ext_resource type="Material" uid="uid://4sxc1efucw5k" path="res://common/rendering/shaders/dynamic_color_overlay.tres" id="3_r2srp"]
-[ext_resource type="Texture2D" path="res://game/actors/enemies/types/bear/assets/bear_red.png" id="4_ve1cc"]
+[ext_resource type="Texture2D" uid="uid://dudkoppvmxnal" path="res://game/actors/enemies/types/bear/assets/bear_red.png" id="4_ve1cc"]
 [ext_resource type="Script" uid="uid://bhtdp3vwcylqh" path="res://common/gameplay/movement/soft_collision.gd" id="5_ajpeu"]
 [ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/gameplay/combat/hit_detection/hurtbox/hurtbox.gd" id="6_xi5o4"]
 [ext_resource type="AnimationLibrary" uid="uid://1cgn4grov0yk" path="res://game/actors/presets/animation/16frames_animations.res" id="7_ymnhl"]
@@ -23,7 +23,7 @@
 [ext_resource type="Script" uid="uid://ds7jcv6cdv02p" path="res://common/gameplay/navigation/navigation_module.gd" id="21_pv7am"]
 [ext_resource type="Script" uid="uid://dldqypakv40re" path="res://common/gameplay/animation/animation_module.gd" id="22_7hsk2"]
 [ext_resource type="Script" uid="uid://i1ibypyr38xv" path="res://common/gameplay/loot/loot_drop_module.gd" id="23_321vf"]
-[ext_resource type="Resource" uid="uid://a2bearredltp1" path="res://game/actors/enemies/types/bear/presets/bear_red_lootdrop_profile.tres" id="24_ve1cc"]
+[ext_resource type="Resource" uid="uid://2bearredltp1" path="res://game/actors/enemies/types/bear/presets/bear_red_lootdrop_profile.tres" id="24_ve1cc"]
 [ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/framework/state_machine/state_machine.gd" id="25_3epwy"]
 [ext_resource type="Script" uid="uid://buw12hs4rl23y" path="res://game/actors/states/actor_idle.gd" id="26_skxyu"]
 [ext_resource type="Script" uid="uid://ghkrjx4eskgd" path="res://game/actors/states/actor_wander.gd" id="27_7ribh"]
@@ -35,7 +35,7 @@
 radius = 8.0
 height = 20.0
 
-[node name="BearRed" type="CharacterBody2D" unique_id=2200000001 node_paths=PackedStringArray("loot_drop", "sprite", "hurtbox", "damage_receiver", "hit_feedback", "damage_number", "health_bar", "combat_module", "movement_module", "navigation_module", "animation_module", "soft_collision", "state_machine") groups=["enemies"]]
+[node name="BearRed" type="CharacterBody2D" unique_id=-2094967295 node_paths=PackedStringArray("loot_drop", "sprite", "hurtbox", "damage_receiver", "hit_feedback", "damage_number", "health_bar", "combat_module", "movement_module", "navigation_module", "animation_module", "soft_collision", "state_machine") groups=["enemies"]]
 collision_layer = 2
 collision_mask = 0
 script = ExtResource("1_hjy8e")
@@ -54,14 +54,14 @@ animation_module = NodePath("Module/AnimationModule")
 soft_collision = NodePath("SoftCollision")
 state_machine = NodePath("StateMachine")
 
-[node name="Sprite" type="Sprite2D" parent="." unique_id=2200000002]
+[node name="Sprite" type="Sprite2D" parent="." unique_id=-2094967294]
 material = ExtResource("3_r2srp")
 texture = ExtResource("4_ve1cc")
 offset = Vector2(0, -8)
 hframes = 4
 vframes = 4
 
-[node name="SoftCollision" type="Node2D" parent="." unique_id=2200000003 node_paths=PackedStringArray("character", "movement_module") groups=["enemies"]]
+[node name="SoftCollision" type="Node2D" parent="." unique_id=-2094967293 node_paths=PackedStringArray("character", "movement_module") groups=["enemies"]]
 script = ExtResource("5_ajpeu")
 character = NodePath("..")
 movement_module = NodePath("../Module/MovementModule")
@@ -71,32 +71,32 @@ collision_layer = 2
 collision_mask = 259
 metadata/_custom_type_script = "uid://bhtdp3vwcylqh"
 
-[node name="Hurtbox" type="Area2D" parent="." unique_id=2200000004]
+[node name="Hurtbox" type="Area2D" parent="." unique_id=-2094967292]
 collision_layer = 2
 collision_mask = 0
 monitoring = false
 script = ExtResource("6_xi5o4")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=2200000005]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=-2094967291]
 position = Vector2(0, -8)
 shape = SubResource("CapsuleShape2D_hurtbox")
 debug_color = Color(0.639216, 0.529412, 0, 0.329412)
 
-[node name="Visual" type="Node2D" parent="." unique_id=2200000006]
+[node name="Visual" type="Node2D" parent="." unique_id=-2094967290]
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Visual" unique_id=2200000007]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Visual" unique_id=-2094967289]
 libraries/ = ExtResource("7_ymnhl")
 
-[node name="AnimationTree" type="AnimationTree" parent="Visual" unique_id=2200000008]
+[node name="AnimationTree" type="AnimationTree" parent="Visual" unique_id=-2094967288]
 tree_root = ExtResource("8_tcrb5")
 anim_player = NodePath("../AnimationPlayer")
 parameters/StateMachine/Attack/blend_position = Vector2(0, 0)
 parameters/StateMachine/Move/blend_position = Vector2(0, 0)
 parameters/TimeScale/scale = 1.0
 
-[node name="Module" type="Node2D" parent="." unique_id=2200000009]
+[node name="Module" type="Node2D" parent="." unique_id=-2094967287]
 
-[node name="HealthBar" parent="Module" unique_id=2200000010 instance=ExtResource("9_0e3tq")]
+[node name="HealthBar" parent="Module" unique_id=-2094967286 instance=ExtResource("9_0e3tq")]
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
@@ -106,15 +106,15 @@ offset_right = 12.0
 offset_bottom = 8.0
 grow_horizontal = 2
 
-[node name="CombatModule" type="Node2D" parent="Module" unique_id=2200000011]
+[node name="CombatModule" type="Node2D" parent="Module" unique_id=-2094967285]
 position = Vector2(0, -6)
 script = ExtResource("10_oi8cw")
 
-[node name="DamageReceiverModule" type="Node" parent="Module" unique_id=2200000012 node_paths=PackedStringArray("hurtbox")]
+[node name="DamageReceiverModule" type="Node" parent="Module" unique_id=-2094967284 node_paths=PackedStringArray("hurtbox")]
 script = ExtResource("11_ix6h0")
 hurtbox = NodePath("../../Hurtbox")
 
-[node name="HitFeedbackModule" type="Node" parent="Module" unique_id=2200000013 node_paths=PackedStringArray("damage_receiver", "movement_module", "visuals")]
+[node name="HitFeedbackModule" type="Node" parent="Module" unique_id=-2094967283 node_paths=PackedStringArray("damage_receiver", "movement_module", "visuals")]
 script = ExtResource("12_rqq3m")
 damage_receiver = NodePath("../DamageReceiverModule")
 movement_module = NodePath("../MovementModule")
@@ -126,48 +126,48 @@ damaged_audio = ExtResource("15_uvl8k")
 blocked_audio = ExtResource("16_dlqyj")
 died_audio = ExtResource("17_xff7h")
 
-[node name="DamageNumberModule" type="Node" parent="Module" unique_id=2200000014 node_paths=PackedStringArray("damage_receiver")]
+[node name="DamageNumberModule" type="Node" parent="Module" unique_id=-2094967282 node_paths=PackedStringArray("damage_receiver")]
 script = ExtResource("18_ecch5")
 damage_receiver = NodePath("../DamageReceiverModule")
 damage_number_scene = ExtResource("19_vll0s")
 
-[node name="MovementModule" type="Node" parent="Module" unique_id=2200000015 node_paths=PackedStringArray("character")]
+[node name="MovementModule" type="Node" parent="Module" unique_id=-2094967281 node_paths=PackedStringArray("character")]
 script = ExtResource("20_cl8ro")
 character = NodePath("../..")
 use_direct_position = true
 
-[node name="NavigationModule" type="Node2D" parent="Module" unique_id=2200000016 node_paths=PackedStringArray("character", "movement")]
+[node name="NavigationModule" type="Node2D" parent="Module" unique_id=-2094967280 node_paths=PackedStringArray("character", "movement")]
 script = ExtResource("21_pv7am")
 character = NodePath("../..")
 movement = NodePath("../MovementModule")
 max_speed = 40.0
 
-[node name="AnimationModule" type="Node" parent="Module" unique_id=2200000017 node_paths=PackedStringArray("actor", "animation_tree")]
+[node name="AnimationModule" type="Node" parent="Module" unique_id=-2094967279 node_paths=PackedStringArray("actor", "animation_tree")]
 script = ExtResource("22_7hsk2")
 actor = NodePath("../..")
 animation_tree = NodePath("../../Visual/AnimationTree")
 
-[node name="LootDropModule" type="Node" parent="Module" unique_id=2200000018 node_paths=PackedStringArray("owner_node")]
+[node name="LootDropModule" type="Node" parent="Module" unique_id=-2094967278 node_paths=PackedStringArray("owner_node")]
 script = ExtResource("23_321vf")
 owner_node = NodePath("../..")
 drop_profile = ExtResource("24_ve1cc")
 
-[node name="StateMachine" type="Node" parent="." unique_id=2200000019 node_paths=PackedStringArray("initial_state")]
+[node name="StateMachine" type="Node" parent="." unique_id=-2094967277 node_paths=PackedStringArray("initial_state")]
 script = ExtResource("25_3epwy")
 initial_state = NodePath("Idle")
 tick_interval = 0.496
 
-[node name="Idle" type="Node" parent="StateMachine" unique_id=2200000020]
+[node name="Idle" type="Node" parent="StateMachine" unique_id=-2094967276]
 script = ExtResource("26_skxyu")
 
-[node name="Wander" type="Node" parent="StateMachine" unique_id=2200000021]
+[node name="Wander" type="Node" parent="StateMachine" unique_id=-2094967275]
 script = ExtResource("27_7ribh")
 
-[node name="Chase" type="Node" parent="StateMachine" unique_id=2200000022]
+[node name="Chase" type="Node" parent="StateMachine" unique_id=-2094967274]
 script = ExtResource("28_i3480")
 
-[node name="Attack" type="Node" parent="StateMachine" unique_id=2200000023]
+[node name="Attack" type="Node" parent="StateMachine" unique_id=-2094967273]
 script = ExtResource("29_bryxw")
 
-[node name="ReturnToAnchor" type="Node" parent="StateMachine" unique_id=2200000024]
+[node name="ReturnToAnchor" type="Node" parent="StateMachine" unique_id=-2094967272]
 script = ExtResource("30_uebvj")

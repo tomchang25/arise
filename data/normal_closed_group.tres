@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="EncounterGroupEntry" format=3 uid="uid://dhmwk34yev23u"]
+
+[ext_resource type="Script" uid="uid://4agufvpi7c62" path="res://common/gameplay/spawning/tables/group_member_entry.gd" id="1_b1fsb"]
+[ext_resource type="PackedScene" uid="uid://b3srkep5ofofa" path="res://game/actors/enemies/types/beast/beast_red.tscn" id="2_4b81u"]
+[ext_resource type="PackedScene" uid="uid://dx4lkv61pag63" path="res://game/actors/enemies/types/skull/skull_red.tscn" id="4_vqex8"]
+[ext_resource type="PackedScene" uid="uid://cssols6rmii6m" path="res://game/actors/enemies/enemy_group/enemy_group.tscn" id="5_o8p3i"]
+[ext_resource type="Script" uid="uid://dqd4tlipj2ii8" path="res://common/gameplay/spawning/tables/enemy_group_profile.gd" id="6_s3dsf"]
+[ext_resource type="Script" uid="uid://bnght76nweh38" path="res://common/gameplay/encounter/encounter_group_entry.gd" id="7_2y4u6"]
+
+[sub_resource type="Resource" id="Resource_76gxa"]
+script = ExtResource("1_b1fsb")
+scene = ExtResource("2_4b81u")
+min_count = 2
+max_count = 4
+metadata/_custom_type_script = "uid://4agufvpi7c62"
+
+[sub_resource type="Resource" id="Resource_qh5o7"]
+script = ExtResource("1_b1fsb")
+scene = ExtResource("4_vqex8")
+max_count = 2
+metadata/_custom_type_script = "uid://4agufvpi7c62"
+
+[sub_resource type="Resource" id="Resource_cejx2"]
+script = ExtResource("6_s3dsf")
+group_scene = ExtResource("5_o8p3i")
+entries = Array[ExtResource("1_b1fsb")]([SubResource("Resource_76gxa"), SubResource("Resource_qh5o7")])
+min_total = 2
+max_total = 6
+formation_type = 1
+metadata/_custom_type_script = "uid://dqd4tlipj2ii8"
+
+[resource]
+script = ExtResource("7_2y4u6")
+group_profile = SubResource("Resource_cejx2")

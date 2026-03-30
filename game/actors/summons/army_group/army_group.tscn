@@ -6,7 +6,10 @@
 [node name="ArmyGroup" type="Node2D" unique_id=175484690 node_paths=PackedStringArray("detection_module") groups=["army_group"]]
 y_sort_enabled = true
 script = ExtResource("1_armygrp")
+spawn_position_offset = Vector2(-40, -40)
 detection_module = NodePath("DetectionModule")
+aggro_range = 180.0
+deaggro_range = 240.0
 leash_distance = 240.0
 
 [node name="DetectionModule" type="Area2D" parent="." unique_id=1416516153]

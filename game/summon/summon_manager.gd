@@ -134,7 +134,7 @@ func summon(type_index: int) -> bool:
         var unit := SpawnExecutor.execute_at_position(spawn_action, _player.global_position, spawn_ctx) as Army
         if unit == null:
             continue
-        unit.modulate = army_type.color
+        # unit.modulate = army_type.color
         active_group.register_member(unit, _player.global_position)
         _tracked_units[type_index].append(unit)
         _counts[type_index] += 1

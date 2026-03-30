@@ -27,11 +27,11 @@ settings_menu = NodePath("SettingsMenu")
 
 [node name="PlayerHUD" parent="." unique_id=627799983 instance=ExtResource("2_phud")]
 layout_mode = 0
-offset_left = 2.0
-offset_top = 50.0
-offset_right = 242.0
-offset_bottom = 110.0
-scale = Vector2(2, 2)
+offset_left = -1.9999998
+offset_top = 40.0
+offset_right = 238.0
+offset_bottom = 100.0
+scale = Vector2(1.6, 1.6)
 
 [node name="DebugHUD" parent="." unique_id=1580955801 instance=ExtResource("3_dbghud")]
 visible = false
@@ -43,15 +43,17 @@ anchors_preset = -1
 anchor_top = 0.81000006
 anchor_bottom = 0.81000006
 offset_left = -294.0
-offset_top = -56.200073
+offset_top = -98.20007
 offset_right = 306.0
-offset_bottom = -0.20007324
+offset_bottom = -42.200073
 
 [node name="SummonHUD" parent="." unique_id=376944848 instance=ExtResource("5_sumhud")]
 layout_mode = 1
-offset_left = -319.0
-offset_top = -138.0
-offset_right = 321.0
+offset_left = -395.0
+offset_top = -179.0
+offset_right = 245.0
+offset_bottom = -51.0
+scale = Vector2(1.2, 1.2)
 
 [node name="MinimapHUD" parent="." unique_id=2138124759 instance=ExtResource("6_mmhud")]
 layout_mode = 1

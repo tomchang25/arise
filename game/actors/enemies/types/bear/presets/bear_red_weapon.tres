@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="WeaponData" format=3 uid="uid://e2bearredwpn1"]
+[gd_resource type="Resource" script_class="WeaponData" format=3 uid="uid://6viopt4sptwa"]
 
 [ext_resource type="Script" uid="uid://dqbwdw1d7k7tu" path="res://common/gameplay/combat/attack/definitions/attack_definition.gd" id="1_atdef"]
 [ext_resource type="Script" uid="uid://i2xvg4o1geuj" path="res://common/gameplay/combat/attack/data/weapon_data.gd" id="2_wpdat"]
@@ -13,18 +13,18 @@ script = ExtResource("4_phdef")
 effect_scene = ExtResource("6_tgfx")
 lifetime = 3.0
 max_targets = 0
-clear_records_on_exit = true
+quit_on_source_invalid = true
 metadata/_custom_type_script = "uid://cmymyo0y1aoi7"
 
 [sub_resource type="Resource" id="BearSwingAttack"]
 script = ExtResource("3_pldef")
-attack_range = 120.0
 lifetime = 4.5
 attack_scene = ExtResource("5_deliv")
 phases = Array[ExtResource("4_phdef")]([SubResource("Phase_Telegraph"), ExtResource("7_burst")])
-locks_movement = true
-prepare_animation = &"Attack"
+attack_range = 120.0
 cooldown = 5.0
+prepare_animation = &"Idle"
+locks_movement = true
 metadata/_custom_type_script = "uid://dxe0yv70mfrn4"
 
 [resource]

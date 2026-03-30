@@ -49,6 +49,7 @@ func setup(ctx: EffectContext) -> void:
 
 func play(duration: float = 0.2) -> void:
     _build_ring()
+    _build_attacker_line()
     _play_burst_vfx(duration)
 
     await get_tree().create_timer(duration).timeout

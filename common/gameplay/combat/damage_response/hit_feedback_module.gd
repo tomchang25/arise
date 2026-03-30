@@ -98,7 +98,7 @@ func is_enabled() -> bool:
 
 
 func _get_flash_time_from_invuln() -> float:
-    var t := stats.invuln_time
+    var t := max(stats.invuln_time, 0.3)
     return min(t * 1.2, t + 0.1)
 
 

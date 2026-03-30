@@ -1,0 +1,42 @@
+[gd_resource type="Resource" script_class="EncounterGroupEntry" format=3 uid="uid://b0x2y3trxrd61"]
+
+[ext_resource type="Script" uid="uid://4agufvpi7c62" path="res://common/gameplay/spawning/tables/group_member_entry.gd" id="1_pk4rh"]
+[ext_resource type="PackedScene" uid="uid://b3srkep5ofofa" path="res://game/actors/enemies/types/beast/beast_red.tscn" id="2_cm5m0"]
+[ext_resource type="PackedScene" uid="uid://d2bearredscen" path="res://game/actors/enemies/types/bear/bear_red.tscn" id="3_a4oao"]
+[ext_resource type="PackedScene" uid="uid://dx4lkv61pag63" path="res://game/actors/enemies/types/skull/skull_red.tscn" id="4_pa2xh"]
+[ext_resource type="PackedScene" uid="uid://cssols6rmii6m" path="res://game/actors/enemies/enemy_group/enemy_group.tscn" id="5_yhun8"]
+[ext_resource type="Script" uid="uid://dqd4tlipj2ii8" path="res://common/gameplay/spawning/tables/enemy_group_profile.gd" id="6_i02pj"]
+[ext_resource type="Script" uid="uid://bnght76nweh38" path="res://common/gameplay/encounter/encounter_group_entry.gd" id="7_6aahd"]
+
+[sub_resource type="Resource" id="Resource_76gxa"]
+script = ExtResource("1_pk4rh")
+scene = ExtResource("2_cm5m0")
+min_count = 2
+max_count = 4
+metadata/_custom_type_script = "uid://4agufvpi7c62"
+
+[sub_resource type="Resource" id="Resource_i3sgl"]
+script = ExtResource("1_pk4rh")
+scene = ExtResource("3_a4oao")
+min_count = 0
+metadata/_custom_type_script = "uid://4agufvpi7c62"
+
+[sub_resource type="Resource" id="Resource_qh5o7"]
+script = ExtResource("1_pk4rh")
+scene = ExtResource("4_pa2xh")
+max_count = 2
+metadata/_custom_type_script = "uid://4agufvpi7c62"
+
+[sub_resource type="Resource" id="Resource_cejx2"]
+script = ExtResource("6_i02pj")
+group_scene = ExtResource("5_yhun8")
+entries = Array[ExtResource("1_pk4rh")]([SubResource("Resource_76gxa"), SubResource("Resource_i3sgl"), SubResource("Resource_qh5o7")])
+min_total = 2
+max_total = 6
+formation_type = 1
+metadata/_custom_type_script = "uid://dqd4tlipj2ii8"
+
+[resource]
+script = ExtResource("7_6aahd")
+group_profile = SubResource("Resource_cejx2")
+weight = 1

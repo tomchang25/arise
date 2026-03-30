@@ -6,7 +6,7 @@
 [resource]
 script = ExtResource("2_7m6ki")
 effect_scene = ExtResource("1_njvs8")
-knockback_mode = 1
-knockback_force = 200.0
+knockback_force = 400.0
 max_targets = -1
+quit_on_source_invalid = true
 metadata/_custom_type_script = "uid://cmymyo0y1aoi7"

@@ -1,6 +1,6 @@
 extends PlayerState
 
-@export var attack_move_speed: float = 40.0
+@export var attack_move_speed: float = 100.0
 
 ## Which weapon to fire (index into CombatModule.weapons).
 @export var weapon_index: int = 0

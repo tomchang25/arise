@@ -41,12 +41,17 @@ func acquire(scene: PackedScene, parent: Node, pooled: bool = false) -> Node:
     var key := scene.resource_path
 
     if pooled and _registry.has(key):
-        while not _registry[key].is_empty():
-            var p: Node = _registry[key].pop_back()
+        var pool: Array = _registry[key]
+        var i := pool.size() - 1
+        while i >= 0:
+            # Read by index first — avoid pop on a potentially freed reference
+            var p := pool[i] as Node
             if not is_instance_valid(p):
-                # Node was freed externally — discard and try next
-                _node_to_key.erase(p)
+                push_warning("NodePool.acquire: discarding freed instance at index %d for '%s'" % [i, key])
+                pool.remove_at(i)
+                i -= 1
                 continue
+            pool.remove_at(i)
             _node_to_key[p] = key
             parent.add_child(p)
             if p.has_method("reset"):
@@ -76,7 +81,7 @@ func release(node: Node) -> void:
     _node_to_key.erase(node)
 
     if node.get_parent() != null:
-        node.get_parent().call_deferred("remove_child",node)
+        node.get_parent().call_deferred("remove_child", node)
 
     if not _registry.has(key):
         _registry[key] = []

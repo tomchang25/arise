@@ -32,9 +32,9 @@
 
 [sub_resource type="Resource" id="Resource_i7vl2"]
 script = ExtResource("3_lhn60")
-mana = 100.0
-base_max_health = 1000.0
+base_max_health = 200.0
 base_damage = 20.0
+base_defense = 20.0
 metadata/_custom_type_script = "uid://bkgf2cii3bfri"
 
 [sub_resource type="Resource" id="Resource_btvt0"]
@@ -147,7 +147,6 @@ state_machine = NodePath("StateMachine")
 
 [node name="Sprite" type="Sprite2D" parent="." unique_id=1410171533]
 material = ExtResource("2_mat")
-position = Vector2(0, -6)
 texture = ExtResource("3_tex")
 hframes = 4
 vframes = 7
@@ -209,11 +208,12 @@ grow_horizontal = 2
 script = ExtResource("8_dmgrcv")
 hurtbox = NodePath("../../Hurtbox")
 
-[node name="HitFeedbackModule" type="Node" parent="Module" unique_id=340645115 node_paths=PackedStringArray("damage_receiver", "movement_module")]
+[node name="HitFeedbackModule" type="Node" parent="Module" unique_id=340645115 node_paths=PackedStringArray("damage_receiver", "movement_module", "visuals")]
 script = ExtResource("9_hitfb")
 damage_receiver = NodePath("../DamageReceiverModule")
 movement_module = NodePath("../MovementModule")
 flash_color = Color(1, 0.25, 0.25, 1)
+visuals = NodePath("../../Sprite")
 hit_particles_scene = ExtResource("10_hitfx")
 death_particles_scene = ExtResource("11_explode")
 damaged_audio = ExtResource("12_dmgsfx")
@@ -250,7 +250,6 @@ script = ExtResource("21_idle")
 
 [node name="Chase" type="Node" parent="StateMachine" unique_id=1191885151]
 script = ExtResource("22_chase")
-chase_speed = 100.0
 
 [node name="Attack" type="Node" parent="StateMachine" unique_id=245208749]
 script = ExtResource("23_attack")

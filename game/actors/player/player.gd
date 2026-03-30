@@ -472,8 +472,8 @@ func get_nearest_reachable_target() -> Node2D:
 
 ## True when there is a valid target in reach.
 func has_auto_attack_target() -> bool:
-    return false
-    # return can_attack() and is_instance_valid(get_nearest_reachable_target())
+    # \return false
+    return can_attack() and is_instance_valid(get_nearest_reachable_target())
 
 # -------------------------
 # Public API — aim helpers

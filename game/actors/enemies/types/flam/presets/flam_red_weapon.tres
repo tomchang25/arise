@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="WeaponData" format=3 uid="uid://e1flamredwpn1"]
+[gd_resource type="Resource" script_class="WeaponData" format=3 uid="uid://50pokt4sptwa"]
 
 [ext_resource type="Script" uid="uid://dqbwdw1d7k7tu" path="res://common/gameplay/combat/attack/definitions/attack_definition.gd" id="1_atdef"]
 [ext_resource type="Script" uid="uid://i2xvg4o1geuj" path="res://common/gameplay/combat/attack/data/weapon_data.gd" id="2_wpdat"]
@@ -7,36 +7,29 @@
 [ext_resource type="PackedScene" uid="uid://cch566fd6snkd" path="res://common/gameplay/combat/attack/deliveries/heavy_swing_delivery.tscn" id="5_deliv"]
 [ext_resource type="PackedScene" uid="uid://clxc3oxcvglpk" path="res://common/gameplay/combat/attack/effects/presets/telegraph_warning_effect.tscn" id="6_tgfx"]
 [ext_resource type="PackedScene" uid="uid://q5y5v02vna1a" path="res://common/gameplay/combat/attack/effects/presets/aoe_burst_effect.tscn" id="7_burst"]
-[ext_resource type="Resource" uid="uid://c4ylh670njncp" path="res://common/gameplay/combat/attack/definitions/presets/phase_presets/rpg_phase_burn.tres" id="8_burn"]
 
 [sub_resource type="Resource" id="Phase_Telegraph"]
 script = ExtResource("4_phdef")
 effect_scene = ExtResource("6_tgfx")
 lifetime = 10.0
 max_targets = 0
-clear_records_on_exit = true
+quit_on_source_invalid = true
 metadata/_custom_type_script = "uid://cmymyo0y1aoi7"
 
 [sub_resource type="Resource" id="Phase_Burst"]
 script = ExtResource("4_phdef")
 effect_scene = ExtResource("7_burst")
-lifetime = 0.2
 knockback_mode = 1
-knockback_force = 100.0
+knockback_force = 500.0
 max_targets = -1
-metadata/_custom_type_script = "uid://cmymyo0y1aoi7"
-
-[sub_resource type="Resource" id="Phase_Scorch"]
-script = ExtResource("4_phdef")
-lifetime = 5.0
 metadata/_custom_type_script = "uid://cmymyo0y1aoi7"
 
 [sub_resource type="Resource" id="FlamBombAttack"]
 script = ExtResource("3_pldef")
-attack_range = 100.0
 lifetime = 21.0
 attack_scene = ExtResource("5_deliv")
-phases = Array[ExtResource("4_phdef")]([SubResource("Phase_Telegraph"), SubResource("Phase_Burst"), ExtResource("8_burn"), SubResource("Phase_Scorch")])
+phases = Array[ExtResource("4_phdef")]([SubResource("Phase_Telegraph"), SubResource("Phase_Burst")])
+attack_range = 300.0
 cooldown = 22.0
 metadata/_custom_type_script = "uid://dxe0yv70mfrn4"
 
