@@ -76,7 +76,7 @@ func release(node: Node) -> void:
     _node_to_key.erase(node)
 
     if node.get_parent() != null:
-        node.get_parent().remove_child(node)
+        node.get_parent().call_deferred("remove_child",node)
 
     if not _registry.has(key):
         _registry[key] = []
