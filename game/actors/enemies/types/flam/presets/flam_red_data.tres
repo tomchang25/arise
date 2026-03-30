@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3 uid="uid://c1flamreddta1"]
+
+[ext_resource type="Resource" uid="uid://a1flamredltp1" path="res://game/actors/enemies/types/flam/presets/flam_red_lootdrop_profile.tres" id="1_osl0k"]
+[ext_resource type="Script" uid="uid://boqrgdnjxi8n8" path="res://game/actors/enemies/enemy_data.gd" id="2_ro0ba"]
+[ext_resource type="Resource" uid="uid://b1flamredsts1" path="res://game/actors/enemies/types/flam/presets/flam_red_stats.tres" id="3_w1s7x"]
+[ext_resource type="Script" uid="uid://i2xvg4o1geuj" path="res://common/gameplay/combat/attack/data/weapon_data.gd" id="4_j4rkb"]
+[ext_resource type="Resource" uid="uid://e1flamredwpn1" path="res://game/actors/enemies/types/flam/presets/flam_red_weapon.tres" id="5_osl0k"]
+
+[resource]
+resource_local_to_scene = true
+script = ExtResource("2_ro0ba")
+drop_profile = ExtResource("1_osl0k")
+stats = ExtResource("3_w1s7x")
+weapons = Array[ExtResource("4_j4rkb")]([ExtResource("5_osl0k")])
+metadata/_custom_type_script = "uid://boqrgdnjxi8n8"
