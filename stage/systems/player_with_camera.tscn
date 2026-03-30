@@ -10,12 +10,8 @@ radius = 50.0
 collision_mask = 5
 
 [node name="Camera2D" type="Camera2D" parent="." index="0" unique_id=1788111139]
-position = Vector2(0, 40)
-zoom = Vector2(0.2, 0.2)
+position = Vector2(0, 20)
 script = ExtResource("2_q3mwe")
 
 [node name="CollisionShape2D" parent="Module/DetectionPivot/DetectionModule" parent_id_path=PackedInt32Array(2069352823) index="0" unique_id=508858704]
 shape = SubResource("CircleShape2D_cn24k")
-
-[node name="MovementModule" parent="Module" parent_id_path=PackedInt32Array(170022229) index="1" unique_id=658364954]
-max_separation_speed = 120.0

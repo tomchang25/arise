@@ -1,12 +1,13 @@
-[gd_resource type="Resource" script_class="Stats" format=3 uid="uid://c6c0cwjf1vkp0"]
+[gd_resource type="Resource" script_class="Stats" format=3 uid="uid://b1flamredsts1"]
 
 [ext_resource type="Script" uid="uid://bkgf2cii3bfri" path="res://common/gameplay/stats/stats.gd" id="1_sg05b"]
 
 [resource]
 script = ExtResource("1_sg05b")
 faction = 1
-health = 40.0
-base_max_health = 40.0
-base_damage = 25.0
+health = 60.0
+base_max_health = 60.0
+base_damage = 100.0
 base_defense = 0.0
+base_crit_chance = 1.0
 metadata/_custom_type_script = "uid://bkgf2cii3bfri"

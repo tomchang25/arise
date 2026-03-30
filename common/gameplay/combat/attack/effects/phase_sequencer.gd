@@ -107,7 +107,7 @@ func _run_next_phase() -> void:
     spawn_ctx.setup(get_parent(), 0, null, { })
 
     var spawn_action := SpawnPackedSceneAction.create(phase_def.effect_scene)
-    spawn_action.use_pool = true
+    spawn_action.use_pool = false
 
     var effect := SpawnExecutor.execute_at_node(spawn_action, get_parent() as Node2D, spawn_ctx) as PhaseEffect
 

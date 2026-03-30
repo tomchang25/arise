@@ -1,11 +1,11 @@
 extends Camera2D
 
 @export var zoom_speed: float = 0.1
-@export var min_zoom: float = 0.2
-@export var max_zoom: float = 2.0
+@export var min_zoom: float = 2.0
+@export var max_zoom: float = 4.0
 @export var zoom_duration: float = 0.2  # How long the smoothing takes
 
-var target_zoom: float = 0.2
+var target_zoom: float = 3.0
 
 
 func _input(event: InputEvent) -> void:

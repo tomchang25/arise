@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://q5y5v02vna1a"]
 
-[ext_resource type="Script" uid="uid://d1otqsnr5pnwp" path="res://common/gameplay/combat/attack/effects/aoe_burst_effect.gd" id="1_i26r0"]
+[ext_resource type="Script" uid="uid://v71ug3kxn864" path="res://common/gameplay/combat/attack/effects/aoe_burst_effect.gd" id="1_i26r0"]
 [ext_resource type="Script" uid="uid://co1s16xd7omkk" path="res://common/gameplay/combat/hit_detection/hitbox/hitbox.gd" id="1_lp716"]
 
 [node name="AoeBurstEffect" type="Node2D" unique_id=982390600]

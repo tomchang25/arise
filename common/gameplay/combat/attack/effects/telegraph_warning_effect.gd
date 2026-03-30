@@ -54,6 +54,7 @@ func setup(_ctx: EffectContext) -> void:
 ## Do NOT call super() — we emit finished ourselves at the end.
 func play(duration: float = 1.5) -> void:
     _build_ring()
+    _build_attacker_line()
     await _animate_warning(duration)
     finished.emit()
 

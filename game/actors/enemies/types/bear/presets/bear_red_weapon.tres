@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="WeaponData" format=3 uid="uid://6viopt4sptwa"]
+
+[ext_resource type="Script" uid="uid://dqbwdw1d7k7tu" path="res://common/gameplay/combat/attack/definitions/attack_definition.gd" id="1_atdef"]
+[ext_resource type="Script" uid="uid://i2xvg4o1geuj" path="res://common/gameplay/combat/attack/data/weapon_data.gd" id="2_wpdat"]
+[ext_resource type="Script" uid="uid://dxe0yv70mfrn4" path="res://common/gameplay/combat/attack/definitions/place_attack_definition.gd" id="3_pldef"]
+[ext_resource type="Script" uid="uid://cmymyo0y1aoi7" path="res://common/gameplay/combat/attack/definitions/effect_phase_definition.gd" id="4_phdef"]
+[ext_resource type="PackedScene" uid="uid://cch566fd6snkd" path="res://common/gameplay/combat/attack/deliveries/heavy_swing_delivery.tscn" id="5_deliv"]
+[ext_resource type="PackedScene" uid="uid://c2r7taxkfdn5y" path="res://common/gameplay/combat/attack/effects/presets/heavy_swing_telegraph_effect.tscn" id="6_tgfx"]
+[ext_resource type="Resource" uid="uid://deuaj3ihu7qen" path="res://common/gameplay/combat/attack/definitions/presets/phase_presets/heavy_swing_phase_attack.tres" id="7_burst"]
+
+[sub_resource type="Resource" id="Phase_Telegraph"]
+script = ExtResource("4_phdef")
+effect_scene = ExtResource("6_tgfx")
+lifetime = 3.0
+max_targets = 0
+quit_on_source_invalid = true
+metadata/_custom_type_script = "uid://cmymyo0y1aoi7"
+
+[sub_resource type="Resource" id="BearSwingAttack"]
+script = ExtResource("3_pldef")
+lifetime = 4.5
+attack_scene = ExtResource("5_deliv")
+phases = Array[ExtResource("4_phdef")]([SubResource("Phase_Telegraph"), ExtResource("7_burst")])
+attack_range = 120.0
+cooldown = 5.0
+prepare_animation = &"Idle"
+locks_movement = true
+metadata/_custom_type_script = "uid://dxe0yv70mfrn4"
+
+[resource]
+script = ExtResource("2_wpdat")
+weapon_name = "BearSwing"
+attacks = Array[ExtResource("1_atdef")]([SubResource("BearSwingAttack")])
+metadata/_custom_type_script = "uid://i2xvg4o1geuj"

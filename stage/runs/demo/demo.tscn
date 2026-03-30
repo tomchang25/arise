@@ -9,10 +9,12 @@
 [ext_resource type="Script" uid="uid://bnght76nweh38" path="res://common/gameplay/encounter/encounter_group_entry.gd" id="7_jgkva"]
 [ext_resource type="PackedScene" uid="uid://bl6qc51imn6xk" path="res://game/ui/hud/main_hud/main_hud.tscn" id="7_mainhud"]
 [ext_resource type="PackedScene" uid="uid://dnmq30kfm6svo" path="res://game/summon/summon_manager.tscn" id="8_summon"]
-[ext_resource type="Resource" uid="uid://cuwjtogcy2gks" path="res://stage/runs/demo/beast_enemy_encounter.tres" id="8_uqwbr"]
-[ext_resource type="Resource" uid="uid://cw56eqbjv64v4" path="res://stage/runs/demo/ranged_normal_enemy_encounter.tres" id="9_iunhq"]
+[ext_resource type="Resource" uid="uid://b0x2y3trxrd61" path="res://data/elite_closed_group.tres" id="8_uqwbr"]
+[ext_resource type="Resource" uid="uid://cohnfxftqmke8" path="res://data/elite_ranged_group.tres" id="9_iunhq"]
 [ext_resource type="PackedScene" uid="uid://b5mwmarkvp2t8" path="res://game/actors/summons/army_group/army_group.tscn" id="10_armygroup"]
+[ext_resource type="Resource" uid="uid://dhmwk34yev23u" path="res://data/normal_closed_group.tres" id="10_jgkva"]
 [ext_resource type="Script" uid="uid://cgg1iy7pqgdb5" path="res://game/ui/hud/summon_hud/group_cursor_overlay.gd" id="11_cursor"]
+[ext_resource type="Resource" uid="uid://dw0fbxg4o4tf7" path="res://data/normal_ranged_group.tres" id="11_jgkva"]
 [ext_resource type="Script" uid="uid://sgjwmvk38ykj" path="res://common/gameplay/encounter/encounter_group_table.gd" id="12_65bb3"]
 [ext_resource type="PackedScene" uid="uid://ceeimva1b2hob" path="res://game/actors/castle/castle.tscn" id="12_cstl"]
 [ext_resource type="Script" uid="uid://ceq7e52rapnw5" path="res://common/gameplay/encounter/directional_slot_manager.gd" id="13_dslm"]
@@ -20,13 +22,13 @@
 
 [sub_resource type="Resource" id="Resource_jgkva"]
 script = ExtResource("12_65bb3")
-entries = Array[ExtResource("7_jgkva")]([ExtResource("8_uqwbr"), ExtResource("9_iunhq")])
+entries = Array[ExtResource("7_jgkva")]([ExtResource("8_uqwbr"), ExtResource("9_iunhq"), ExtResource("10_jgkva"), ExtResource("11_jgkva")])
 metadata/_custom_type_script = "uid://sgjwmvk38ykj"
 
 [sub_resource type="Resource" id="Resource_bi6xt"]
 script = ExtResource("13_smkhn")
 group_table = SubResource("Resource_jgkva")
-target_active_groups = 50
+target_active_groups = 30
 max_spawn_per_tick = 8
 initial_spawn_cooldown = 1.0
 metadata/_custom_type_script = "uid://bs5epdft4ockv"
@@ -94,7 +96,7 @@ metadata/_custom_type_script = "uid://bwm8u3xypysu8"
 script = ExtResource("6_wvdef")
 encounter_controller = NodePath("../EncounterController")
 base_encounter_config = SubResource("Resource_bi6xt")
-base_groups_per_wave = 50
+base_groups_per_wave = 30
 
 [node name="Castle" parent="." unique_id=1162592973 instance=ExtResource("12_cstl")]
 
@@ -125,19 +127,15 @@ armies_container = NodePath(".")
 
 [node name="ArmyGroup1" parent="." unique_id=400000001 instance=ExtResource("10_armygroup")]
 group_id = 1
-spawn_position_offset = Vector2(-40, -40)
 
 [node name="ArmyGroup2" parent="." unique_id=400000002 instance=ExtResource("10_armygroup")]
 group_id = 2
-spawn_position_offset = Vector2(-40, -40)
 
 [node name="ArmyGroup3" parent="." unique_id=400000003 instance=ExtResource("10_armygroup")]
 group_id = 3
-spawn_position_offset = Vector2(-40, -40)
 
 [node name="ArmyGroup4" parent="." unique_id=400000004 instance=ExtResource("10_armygroup")]
 group_id = 4
-spawn_position_offset = Vector2(-40, -40)
 
 [node name="GroupCursorOverlay" type="Node2D" parent="." unique_id=400000005]
 script = ExtResource("11_cursor")

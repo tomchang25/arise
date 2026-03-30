@@ -1,0 +1,173 @@
+[gd_scene format=3 uid="uid://d2bearredscen"]
+
+[ext_resource type="Script" uid="uid://bmdh4vf3luco6" path="res://game/actors/enemies/enemy.gd" id="1_hjy8e"]
+[ext_resource type="Resource" uid="uid://c2bearreddta1" path="res://game/actors/enemies/types/bear/presets/bear_red_data.tres" id="2_ve1cc"]
+[ext_resource type="Material" uid="uid://4sxc1efucw5k" path="res://common/rendering/shaders/dynamic_color_overlay.tres" id="3_r2srp"]
+[ext_resource type="Texture2D" uid="uid://dudkoppvmxnal" path="res://game/actors/enemies/types/bear/assets/bear_red.png" id="4_ve1cc"]
+[ext_resource type="Script" uid="uid://bhtdp3vwcylqh" path="res://common/gameplay/movement/soft_collision.gd" id="5_ajpeu"]
+[ext_resource type="Script" uid="uid://dby4p11qhtin7" path="res://common/gameplay/combat/hit_detection/hurtbox/hurtbox.gd" id="6_xi5o4"]
+[ext_resource type="AnimationLibrary" uid="uid://1cgn4grov0yk" path="res://game/actors/presets/animation/16frames_animations.res" id="7_ymnhl"]
+[ext_resource type="AnimationNodeBlendTree" uid="uid://ch6huh1doffp3" path="res://game/actors/presets/animation/16frames_animation_tree.res" id="8_tcrb5"]
+[ext_resource type="PackedScene" uid="uid://d0tswwb1d3smv" path="res://common/gameplay/health_bar/health_bar.tscn" id="9_0e3tq"]
+[ext_resource type="Script" uid="uid://bb4mbrq1u7pl" path="res://common/gameplay/combat/combat_module.gd" id="10_oi8cw"]
+[ext_resource type="Script" uid="uid://dpi3inldik0ho" path="res://common/gameplay/combat/damage_response/damage_receiver_module.gd" id="11_ix6h0"]
+[ext_resource type="Script" uid="uid://duxq84e027el0" path="res://common/gameplay/combat/damage_response/hit_feedback_module.gd" id="12_rqq3m"]
+[ext_resource type="PackedScene" uid="uid://c5uu71l3jwxu6" path="res://common/rendering/vfx/one_shot_hit_particles.tscn" id="13_r772a"]
+[ext_resource type="PackedScene" uid="uid://duohq0xpsyv1" path="res://common/rendering/vfx/explosion.tscn" id="14_a3613"]
+[ext_resource type="Resource" uid="uid://vp7463hsmyw0" path="res://common/audio/presets/sfx/default_damaged_audio.tres" id="15_uvl8k"]
+[ext_resource type="Resource" uid="uid://xsccf58mw7d5" path="res://common/audio/presets/sfx/default_blocked_audio.tres" id="16_dlqyj"]
+[ext_resource type="Resource" uid="uid://csppceje2neh5" path="res://common/audio/presets/sfx/default_died_audio.tres" id="17_xff7h"]
+[ext_resource type="Script" uid="uid://6jeesy7iltw" path="res://common/gameplay/combat/damage_response/damage_number_module.gd" id="18_ecch5"]
+[ext_resource type="PackedScene" uid="uid://qhqm7usjk4s4" path="res://common/gameplay/combat/damage_response/damage_number.tscn" id="19_vll0s"]
+[ext_resource type="Script" uid="uid://w30s7yqi1p3d" path="res://common/gameplay/movement/movement_module.gd" id="20_cl8ro"]
+[ext_resource type="Script" uid="uid://ds7jcv6cdv02p" path="res://common/gameplay/navigation/navigation_module.gd" id="21_pv7am"]
+[ext_resource type="Script" uid="uid://dldqypakv40re" path="res://common/gameplay/animation/animation_module.gd" id="22_7hsk2"]
+[ext_resource type="Script" uid="uid://i1ibypyr38xv" path="res://common/gameplay/loot/loot_drop_module.gd" id="23_321vf"]
+[ext_resource type="Resource" uid="uid://2bearredltp1" path="res://game/actors/enemies/types/bear/presets/bear_red_lootdrop_profile.tres" id="24_ve1cc"]
+[ext_resource type="Script" uid="uid://lsk26m6ixhqu" path="res://common/framework/state_machine/state_machine.gd" id="25_3epwy"]
+[ext_resource type="Script" uid="uid://buw12hs4rl23y" path="res://game/actors/states/actor_idle.gd" id="26_skxyu"]
+[ext_resource type="Script" uid="uid://ghkrjx4eskgd" path="res://game/actors/states/actor_wander.gd" id="27_7ribh"]
+[ext_resource type="Script" uid="uid://bdtpmymrh152k" path="res://game/actors/states/actor_chase.gd" id="28_i3480"]
+[ext_resource type="Script" uid="uid://cikpejrf13cy1" path="res://game/actors/states/actor_attack.gd" id="29_bryxw"]
+[ext_resource type="Script" uid="uid://c5oa2ppydf4o3" path="res://game/actors/states/actor_return_to_anchor.gd" id="30_uebvj"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_hurtbox"]
+radius = 8.0
+height = 20.0
+
+[node name="BearRed" type="CharacterBody2D" unique_id=-2094967295 node_paths=PackedStringArray("loot_drop", "sprite", "hurtbox", "damage_receiver", "hit_feedback", "damage_number", "health_bar", "combat_module", "movement_module", "navigation_module", "animation_module", "soft_collision", "state_machine") groups=["enemies"]]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("1_hjy8e")
+data = ExtResource("2_ve1cc")
+loot_drop = NodePath("Module/LootDropModule")
+sprite = NodePath("Sprite")
+hurtbox = NodePath("Hurtbox")
+damage_receiver = NodePath("Module/DamageReceiverModule")
+hit_feedback = NodePath("Module/HitFeedbackModule")
+damage_number = NodePath("Module/DamageNumberModule")
+health_bar = NodePath("Module/HealthBar")
+combat_module = NodePath("Module/CombatModule")
+movement_module = NodePath("Module/MovementModule")
+navigation_module = NodePath("Module/NavigationModule")
+animation_module = NodePath("Module/AnimationModule")
+soft_collision = NodePath("SoftCollision")
+state_machine = NodePath("StateMachine")
+
+[node name="Sprite" type="Sprite2D" parent="." unique_id=-2094967294]
+material = ExtResource("3_r2srp")
+texture = ExtResource("4_ve1cc")
+offset = Vector2(0, -8)
+hframes = 4
+vframes = 4
+
+[node name="SoftCollision" type="Node2D" parent="." unique_id=-2094967293 node_paths=PackedStringArray("character", "movement_module") groups=["enemies"]]
+script = ExtResource("5_ajpeu")
+character = NodePath("..")
+movement_module = NodePath("../Module/MovementModule")
+layer_name = &"enemy"
+mask_names = Array[StringName]([&"player", &"army", &"enemy"])
+collision_layer = 2
+collision_mask = 259
+metadata/_custom_type_script = "uid://bhtdp3vwcylqh"
+
+[node name="Hurtbox" type="Area2D" parent="." unique_id=-2094967292]
+collision_layer = 2
+collision_mask = 0
+monitoring = false
+script = ExtResource("6_xi5o4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=-2094967291]
+position = Vector2(0, -8)
+shape = SubResource("CapsuleShape2D_hurtbox")
+debug_color = Color(0.639216, 0.529412, 0, 0.329412)
+
+[node name="Visual" type="Node2D" parent="." unique_id=-2094967290]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Visual" unique_id=-2094967289]
+libraries/ = ExtResource("7_ymnhl")
+
+[node name="AnimationTree" type="AnimationTree" parent="Visual" unique_id=-2094967288]
+tree_root = ExtResource("8_tcrb5")
+anim_player = NodePath("../AnimationPlayer")
+parameters/StateMachine/Attack/blend_position = Vector2(0, 0)
+parameters/StateMachine/Move/blend_position = Vector2(0, 0)
+parameters/TimeScale/scale = 1.0
+
+[node name="Module" type="Node2D" parent="." unique_id=-2094967287]
+
+[node name="HealthBar" parent="Module" unique_id=-2094967286 instance=ExtResource("9_0e3tq")]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -12.0
+offset_top = 4.0
+offset_right = 12.0
+offset_bottom = 8.0
+grow_horizontal = 2
+
+[node name="CombatModule" type="Node2D" parent="Module" unique_id=-2094967285]
+position = Vector2(0, -6)
+script = ExtResource("10_oi8cw")
+
+[node name="DamageReceiverModule" type="Node" parent="Module" unique_id=-2094967284 node_paths=PackedStringArray("hurtbox")]
+script = ExtResource("11_ix6h0")
+hurtbox = NodePath("../../Hurtbox")
+
+[node name="HitFeedbackModule" type="Node" parent="Module" unique_id=-2094967283 node_paths=PackedStringArray("damage_receiver", "movement_module", "visuals")]
+script = ExtResource("12_rqq3m")
+damage_receiver = NodePath("../DamageReceiverModule")
+movement_module = NodePath("../MovementModule")
+flash_color = Color(1, 0.25, 0.25, 1)
+visuals = NodePath("../../Sprite")
+hit_particles_scene = ExtResource("13_r772a")
+death_particles_scene = ExtResource("14_a3613")
+damaged_audio = ExtResource("15_uvl8k")
+blocked_audio = ExtResource("16_dlqyj")
+died_audio = ExtResource("17_xff7h")
+
+[node name="DamageNumberModule" type="Node" parent="Module" unique_id=-2094967282 node_paths=PackedStringArray("damage_receiver")]
+script = ExtResource("18_ecch5")
+damage_receiver = NodePath("../DamageReceiverModule")
+damage_number_scene = ExtResource("19_vll0s")
+
+[node name="MovementModule" type="Node" parent="Module" unique_id=-2094967281 node_paths=PackedStringArray("character")]
+script = ExtResource("20_cl8ro")
+character = NodePath("../..")
+use_direct_position = true
+
+[node name="NavigationModule" type="Node2D" parent="Module" unique_id=-2094967280 node_paths=PackedStringArray("character", "movement")]
+script = ExtResource("21_pv7am")
+character = NodePath("../..")
+movement = NodePath("../MovementModule")
+max_speed = 40.0
+
+[node name="AnimationModule" type="Node" parent="Module" unique_id=-2094967279 node_paths=PackedStringArray("actor", "animation_tree")]
+script = ExtResource("22_7hsk2")
+actor = NodePath("../..")
+animation_tree = NodePath("../../Visual/AnimationTree")
+
+[node name="LootDropModule" type="Node" parent="Module" unique_id=-2094967278 node_paths=PackedStringArray("owner_node")]
+script = ExtResource("23_321vf")
+owner_node = NodePath("../..")
+drop_profile = ExtResource("24_ve1cc")
+
+[node name="StateMachine" type="Node" parent="." unique_id=-2094967277 node_paths=PackedStringArray("initial_state")]
+script = ExtResource("25_3epwy")
+initial_state = NodePath("Idle")
+tick_interval = 0.496
+
+[node name="Idle" type="Node" parent="StateMachine" unique_id=-2094967276]
+script = ExtResource("26_skxyu")
+
+[node name="Wander" type="Node" parent="StateMachine" unique_id=-2094967275]
+script = ExtResource("27_7ribh")
+
+[node name="Chase" type="Node" parent="StateMachine" unique_id=-2094967274]
+script = ExtResource("28_i3480")
+
+[node name="Attack" type="Node" parent="StateMachine" unique_id=-2094967273]
+script = ExtResource("29_bryxw")
+
+[node name="ReturnToAnchor" type="Node" parent="StateMachine" unique_id=-2094967272]
+script = ExtResource("30_uebvj")

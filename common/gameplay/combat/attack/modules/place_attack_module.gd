@@ -18,7 +18,7 @@ func _execute_attack_logic(target_position: Vector2) -> void:
         return
 
     var action := SpawnPackedSceneAction.create(ctx.attack_scene)
-    action.use_pool = true
+    action.use_pool = false
 
     var spawn_parent := SpawnContext.resolve_spawn_parent(ctx.spawn_group, self)
     if not is_instance_valid(spawn_parent):
